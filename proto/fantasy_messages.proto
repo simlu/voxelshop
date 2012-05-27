@@ -1,0 +1,26 @@
+package com.pixelatedgames.fos.protobufs;
+
+enum FantasyMessageType {
+	LOGIN = 1;
+	POSITION = 2;
+}
+
+message FantasyMessage {	
+	// Identifies which field is filled in.
+	required FantasyMessageType type = 1;
+	
+	// One of the following will be filled in.
+	optional Login login = 2;
+	optional Position position = 3;
+}
+
+message Login {	
+	optional FantasyMessageType type = 1 [default = LOGIN];	
+	required string username = 2;
+}
+
+message Position {
+	optional FantasyMessageType type = 1 [default = POSITION];		
+	required int64 x = 2;
+	required int64 y = 3;
+}

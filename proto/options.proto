@@ -1,0 +1,14 @@
+// Copyright (c) 2010 , NetEase.com,Inc. All rights reserved.
+//
+// Author: Yang Bo (pop.atry@gmail.com)
+//
+// Use, modification and distribution are subject to the "New BSD License"
+// as listed at <url: http://www.opensource.org/licenses/bsd-license.php >.
+import "descriptor.proto";
+option java_package="com.netease.protocGenAs3";
+extend google.protobuf.MessageOptions {
+  optional bool as3_bindable = 9393[default = false];
+  optional string as3_amf_alias = 9394;
+  optional bool as3_amf_auto_alias = 9395[default = false];
+}
+
