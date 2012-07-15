@@ -2,7 +2,88 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6663e3f-9c0a-4db3-a1a5-3d9fcbffa891" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/AppleJavaExtensions.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/asm-debug-all.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/jinput.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/lwjgl-debug.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/lwjgl.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/lwjgl_test.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/lwjgl_util.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/lwjgl_util_applet.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/jar/lzma.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/linux/libjinput-linux.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/linux/libjinput-linux64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/linux/liblwjgl.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/linux/liblwjgl64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/linux/libopenal.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/linux/libopenal64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/macosx/libjinput-osx.jnilib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/macosx/liblwjgl.jnilib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/macosx/openal.dylib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/solaris/liblwjgl.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/solaris/liblwjgl64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/solaris/libopenal.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/solaris/libopenal64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/OpenAL32.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/OpenAL64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/jinput-dx8.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/jinput-dx8_64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/jinput-raw.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/jinput-raw_64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/lwjgl.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/native/windows/lwjgl64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/Footsteps.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/appletlogo.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/appletprogress.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/ball.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/ball_sm.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/center.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/ding.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/left.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/logo/lwjgl_logo-with_jacket.ai" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/lwjgl_16x16.xpm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/lwjgl_32x32.xpm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/right.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/alien.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/alien2.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/alien3.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/gotyou.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/hit.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/loose.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/pressanykey.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/ship.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/shot.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/shot.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/start.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/win.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/spaceinvaders/youwin.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/.name" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/ant.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/compiler.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/copyright/profiles_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/scopes/scope_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/uiDesigner.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/foc-jd.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/3rdparty/jinput_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/3rdparty/jogl_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/3rdparty/lzma_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/3rdparty/openal_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/CREDITS" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/LICENSE" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/README" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/doc/lwjgl_hidden_switches.text" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/logo/lwjgl_logo-with_jacket.svg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/libs/lwjgl-2.8.4/res/resources.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/src/Main.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc-jd/src/Window.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fos.iml" afterPath="$PROJECT_DIR$/fos.iml" />
     </list>
     <ignored path="fos.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -64,7 +145,17 @@
     <favorites_list name="fos" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="FantasyClient.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/FantasyClient.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="31" column="18" selection-start="967" selection-end="967" vertical-scroll-proportion="0.5255648">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -100,8 +191,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="width" value="1696" />
+    <option name="height" value="1026" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -141,26 +232,16 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="fos" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -387,6 +468,20 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -404,9 +499,9 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RunManager" selected="Application.Main">
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
@@ -478,6 +573,24 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -504,24 +617,6 @@
       <envs />
       <properties />
       <listeners />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -611,7 +706,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -619,22 +714,22 @@
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6002227" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39955357" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3995381" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.6002227" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924107" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39957264" sideWeight="0.6002227" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32959402" sideWeight="0.6004464" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3290441" sideWeight="0.6004619" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924107" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -804,14 +899,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="732" column="7" selection-start="29101" selection-end="29101" vertical-scroll-proportion="0.034">
-          <folding />
-        </state>
+        <state line="732" column="7" selection-start="29101" selection-end="29101" vertical-scroll-proportion="0.034" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/FantasyClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="18" selection-start="967" selection-end="967" vertical-scroll-proportion="0.23781677">
+        <state line="31" column="18" selection-start="967" selection-end="967" vertical-scroll-proportion="0.5255648">
           <folding />
         </state>
       </provider>

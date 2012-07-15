@@ -1,7 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="faa9bcb8-a61b-4f52-83b5-334995f8d6cc" name="Default" comment="" />
+    <list default="true" id="faa9bcb8-a61b-4f52-83b5-334995f8d6cc" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/AppleJavaExtensions.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/asm-debug-all.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/jinput.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/lwjgl-debug.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/lwjgl.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/lwjgl_test.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/lwjgl_util.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/lwjgl_util_applet.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/jar/lzma.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/linux/libjinput-linux.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/linux/libjinput-linux64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/linux/liblwjgl.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/linux/liblwjgl64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/linux/libopenal.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/linux/libopenal64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/macosx/libjinput-osx.jnilib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/macosx/liblwjgl.jnilib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/macosx/openal.dylib" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/solaris/liblwjgl.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/solaris/liblwjgl64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/solaris/libopenal.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/solaris/libopenal64.so" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/OpenAL32.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/OpenAL64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/jinput-dx8.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/jinput-dx8_64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/jinput-raw.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/jinput-raw_64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/lwjgl.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/native/windows/lwjgl64.dll" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/Footsteps.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/appletlogo.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/appletprogress.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/ball.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/ball_sm.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/center.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/ding.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/left.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/logo/lwjgl_logo-with_jacket.ai" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/lwjgl_16x16.xpm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/lwjgl_32x32.xpm" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/right.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/alien.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/alien2.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/alien3.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/gotyou.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/hit.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/loose.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/pressanykey.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/ship.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/shot.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/shot.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/start.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/win.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/spaceinvaders/youwin.gif" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.name" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/foc-jd.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/3rdparty/jinput_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/3rdparty/jogl_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/3rdparty/lzma_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/3rdparty/openal_license.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/CREDITS" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/LICENSE" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/README" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/doc/lwjgl_hidden_switches.text" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/logo/lwjgl_logo-with_jacket.svg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libs/lwjgl-2.8.4/res/resources.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Main.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/Window.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../fos/.idea/misc.xml" afterPath="$PROJECT_DIR$/../fos/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../fos/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../fos/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../fos/fos.iml" afterPath="$PROJECT_DIR$/../fos/fos.iml" />
+    </list>
     <ignored path="foc-jd.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -61,7 +144,16 @@
       <file leaf-file-name="Main.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="0" selection-start="380" selection-end="380" vertical-scroll-proportion="0.5503597">
+            <state line="7" column="58" selection-start="171" selection-end="171" vertical-scroll-proportion="0.21402878">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Window.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Window.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4" column="19" selection-start="117" selection-end="123" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -76,9 +168,13 @@
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
+        <option value="$PROJECT_DIR$/src/Display.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
       </list>
     </option>
@@ -89,7 +185,7 @@
     <option name="width" value="1696" />
     <option name="height" value="1026" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
     <OptionsSetting value="true" id="Checkout" />
@@ -169,7 +265,7 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="project.propVCSSupport.VCSs.Git" />
+    <property name="options.lastSelected" value="editor.preferences.import" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -184,17 +280,23 @@
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="Main" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="VM_PARAMETERS" value="-Djava.library.path=libs/lwjgl-2.8.4/native/windows" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="foc-jd" />
       <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -336,29 +438,30 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3995381" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.249694" sideWeight="0.6709007" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3290993" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.249694" sideWeight="0.6709007" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
@@ -422,12 +525,19 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/Window.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="0" selection-start="380" selection-end="380" vertical-scroll-proportion="0.5503597">
+        <state line="4" column="19" selection-start="117" selection-end="123" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="58" selection-start="171" selection-end="171" vertical-scroll-proportion="0.21402878">
+          <folding />
         </state>
       </provider>
     </entry>
