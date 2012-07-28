@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:annotation-config />
+
+    <!-- invoke default look and feel (jide) -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>com.jidesoft.plaf.LookAndFeelFactory</value></property>
+        <property name="targetMethod"><value>installDefaultLookAndFeelAndExtension</value></property>
+    </bean>
+
+    <!-- create the language selector (localization) -->
+    <bean id="LangSelector" class="com.vitco.util.lang.LangSelector">
+        <!-- set language bundle -->
+        <property name="languageBundle" value="resource/bundle/LangBundle"></property>
+        <!-- select language and country -->
+        <property name="language" value="en"></property>
+        <property name="country" value="US"></property>
+    </bean>
+
+    <!-- handles the different sub-windows -->
+    <bean id="SubWindowManager" class="com.vitco.layout.SubWindowManager">
+        <!-- requires the language selector -->
+        <property name="langSelector" ref="LangSelector"></property>
+    </bean>
+
+    <!-- creates the main window -->
+    <bean id="MainWindowManager" class="com.vitco.layout.MainWindowManager">
+        <constructor-arg value="PS4k - Alpha Version"/>
+        <!-- requires the sub-window preparation -->
+        <property name="subWindowManager" ref="SubWindowManager"></property>
+    </bean>
+</beans>
