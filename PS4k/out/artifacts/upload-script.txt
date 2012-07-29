@@ -1,0 +1,16 @@
+# Automatically abort script on errors
+option batch abort
+# Disable overwrite confirmations that conflict with the previous
+option confirm off
+# Connect using a password
+open sftp://AmY@fantasy-mmorpg.com -hostkey="ssh-rsa 2048 8d:05:de:e2:d9:78:90:43:ae:00:d9:59:de:b1:12:7e"
+# Change remote directory
+cd /tools/ps4k
+# Force binary mode transfer
+option transfer binary
+# Upload the file to current working directory
+synchronize remote "C:\Users\VM Win 7\Dropbox\git\fo2\ps4k\out\artifacts\webdata\" "/tools/ps4k"
+# Disconnect
+close
+# Exit WinSCP
+exit

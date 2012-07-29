@@ -7,17 +7,8 @@
     </content>
     <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/lib/jide" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/lib/jide" recursive="false" />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="spring" level="project" />
+    <orderEntry type="library" name="jide" level="project" />
   </component>
 </module>
 
