@@ -53,7 +53,7 @@
                 showGripper="false" showTitleBar="true"
                 sideDockAllowed="true" sideTitle="Console"
                 slidingAutohide="true" tabDockAllowed="true"
-                tabTitle="Console" title="Console" undockedBounds="279; 554; 741; 150"/>
+                tabTitle="Console" title="Console" undockedBounds="4; 4; 200; 538"/>
             <DockableFrame autohidable="false" autohide="false"
                 autohideHeight="200" autohideShowing="false"
                 autohideWhenActive="false" autohideWidth="200"
@@ -83,7 +83,7 @@
                 showGripper="false" showTitleBar="true"
                 sideDockAllowed="true" sideTitle="Time Line"
                 slidingAutohide="true" tabDockAllowed="true"
-                tabTitle="Time Line" title="Time Line" undockedBounds="0; 0; 741; 150"/>
+                tabTitle="Time Line" title="Time Line" undockedBounds="4; 4; 200; 538"/>
         </DockableFrames>
     </DockingManager>
     <DockableBarManager floatable="true" hidable="false"

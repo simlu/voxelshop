@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
+Class-Path: lib/spring.jar lib/jide.jar
 Main-Class: com.vitco.Main
 

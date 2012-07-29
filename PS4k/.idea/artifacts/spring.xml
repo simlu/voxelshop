@@ -1,0 +1,28 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="spring">
+    <output-path>$PROJECT_DIR$/out/artifacts/PS4k_jar/lib</output-path>
+    <root id="archive" name="spring.jar">
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/commons-logging-1.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.aop-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.asm-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.aspects-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.beans-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.context-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.context.support-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.core-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.expression-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.instrument-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.instrument.tomcat-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.jdbc-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.jms-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.orm-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.oxm-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.test-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.transaction-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.web-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.web.portlet-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.web.servlet-3.1.2.RELEASE.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/spring/org.springframework.web.struts-3.1.2.RELEASE.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

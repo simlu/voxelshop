@@ -1,3 +1,5 @@
-getdown.txt = f9a736ba7c1e78ae0f80ae69ae894358
-PS4k.jar = fa50679a09cbb40983ff93865ed72be2
-digest.txt = 2a39b435685abb24dda4af64dcddc779
+getdown.txt = d7be00fd54bae30d1b9bfc2cbb9d3844
+PS4k.jar = 95a444f8d35d928c90565d1e704f7363
+lib/jide.jar = 019720ac52b1c652e9d69b5b52901d61
+lib/spring.jar = 7b568e5fb2a305b5f84e4ffd7146c0f0
+digest.txt = 47c94055cab3f281228546530a68d2f7

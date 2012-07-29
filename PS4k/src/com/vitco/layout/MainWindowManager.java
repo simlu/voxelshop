@@ -25,6 +25,13 @@ import java.io.IOException;
 
 public class MainWindowManager extends DefaultDockableBarDockableHolder {
 
+    // holds the layout settings file uri
+    protected String layoutFileURI;
+    // setter method for layoutFileURI
+    public void setLayoutFileURI(String layoutFileURI) {
+        this.layoutFileURI = layoutFileURI;
+    }
+
     // SubWindowManager implementation that initializes all the the sub-windows.
     protected SubWindowManagerInterface subWindowManager;
     // setter method for SubWindowManager
@@ -39,7 +46,7 @@ public class MainWindowManager extends DefaultDockableBarDockableHolder {
         // save the state on exit of the program
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                getDockingManager().saveLayoutDataToFile("data/current.layout");
+                getDockingManager().saveLayoutDataToFile(layoutFileURI);
             }
         });
 
@@ -61,10 +68,10 @@ public class MainWindowManager extends DefaultDockableBarDockableHolder {
             this.loadInitialLayout("resource/layout/TopLayout.ilayout");
 
             // try to load the saved layout
-            File file=new File("data/current.layout");
+            File file=new File(layoutFileURI);
             this.getLayoutPersistence().loadLayoutData();
             if(file.isFile()) {
-                this.getDockingManager().loadLayoutDataFromFile("data/current.layout");
+                this.getDockingManager().loadLayoutDataFromFile(layoutFileURI);
             } else {
                 this.getLayoutPersistence().loadLayoutData();
             }

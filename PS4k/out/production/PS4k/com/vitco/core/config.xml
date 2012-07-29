@@ -38,5 +38,7 @@
         <constructor-arg value="PS4k - Alpha Version"/>
         <!-- requires the sub-window preparation -->
         <property name="subWindowManager" ref="SubWindowManager"></property>
+        <!-- layout file -->
+        <property name="layoutFileURI" value="settings/current.layout"></property>
     </bean>
 </beans>
