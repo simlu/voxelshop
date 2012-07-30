@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:aop="http://www.springframework.org/schema/aop"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-        http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+
+
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
@@ -27,18 +26,50 @@
         <property name="country" value="US"></property>
     </bean>
 
-    <!-- handles the different sub-windows -->
-    <bean id="SubWindowManager" class="com.vitco.layout.SubWindowManager">
-        <!-- requires the language selector -->
-        <property name="langSelector" ref="LangSelector"></property>
-    </bean>
-
     <!-- creates the main window -->
-    <bean id="MainWindowManager" class="com.vitco.layout.MainWindowManager">
+    <bean id="WindowManager" class="com.vitco.layout.WindowManager">
         <constructor-arg value="PS4k - Alpha Version"/>
-        <!-- requires the sub-window preparation -->
-        <property name="subWindowManager" ref="SubWindowManager"></property>
         <!-- layout file -->
         <property name="layoutFileURI" value="settings/current.layout"></property>
+        <!-- language selector -->
+        <property name="langSelector" ref="LangSelector"></property>
+        <!-- set the linkage map (bars) -->
+        <property name="barLinkageMap">
+            <map>
+                <entry>
+                    <key><value>mainMenu</value></key>
+                    <bean class="com.vitco.layout.bars.MainMenuLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>toolBar</value></key>
+                    <bean class="com.vitco.layout.bars.ToolBarLinkage"/>
+                </entry>
+            </map>
+        </property>
+        <!-- set the linkage map (frames) -->
+        <property name="frameLinkageMap">
+            <map>
+                <entry>
+                    <key><value>console</value></key>
+                    <bean class="com.vitco.layout.frames.ConsoleLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>mainView</value></key>
+                    <bean class="com.vitco.layout.frames.MainViewLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>shortcutManager</value></key>
+                    <bean class="com.vitco.layout.frames.ShortcutManagerLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>sideView</value></key>
+                    <bean class="com.vitco.layout.frames.SideViewLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>timeLine</value></key>
+                    <bean class="com.vitco.layout.frames.TimeLineLinkage"/>
+                </entry>
+            </map>
+        </property>
     </bean>
 </beans>

@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact name="lib">
+    <output-path>$PROJECT_DIR$/out/artifacts/PS4k_jar/lib</output-path>
+    <root id="root">
+      <element id="library" level="project" name="jide" />
+      <element id="library" level="project" name="spring" />
+    </root>
+  </artifact>
+</component>

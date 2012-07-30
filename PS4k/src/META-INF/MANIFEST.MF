@@ -1,4 +1,10 @@
 Manifest-Version: 1.0
-Class-Path: lib/spring.jar lib/jide.jar
+Class-Path: lib\commons-logging-1.1.1.jar lib\jide-action.jar lib\jide
+ -common.jar lib\jide-dock.jar lib\org.springframework.asm-3.1.2.RELEA
+ SE.jar lib\org.springframework.aspects-3.1.2.RELEASE.jar lib\org.spri
+ ngframework.beans-3.1.2.RELEASE.jar lib\org.springframework.context-3
+ .1.2.RELEASE.jar lib\org.springframework.core-3.1.2.RELEASE.jar lib\o
+ rg.springframework.expression-3.1.2.RELEASE.jar lib\org.springframewo
+ rk.orm-3.1.2.RELEASE.jar
 Main-Class: com.vitco.Main
 

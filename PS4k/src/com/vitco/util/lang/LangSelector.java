@@ -13,16 +13,15 @@ import java.util.ResourceBundle;
 */
 
 public final class LangSelector implements LangSelectorInterface {
-    protected String language;
-    protected String country;
-    protected Locale locale;
-    protected ResourceBundle rb;
-    protected String defaultFile;
+    private String language;
+    private String country;
+    private ResourceBundle rb;
+    private String defaultFile;
 
     @PostConstruct
     @Override
     public void init() {
-        locale = new Locale(language, country);
+        Locale locale = new Locale(language, country);
         rb = ResourceBundle.getBundle(defaultFile, locale);
     }
 
