@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<head>
+    <icon-item src="resource/img/icons/tools/draw.png"
+          tool-tip="draw_tooltip"
+          action="select_draw_tool"/>
+    <icon-item src="resource/img/icons/tools/animate.png"
+          tool-tip="animate_tooltip"
+          action="select_animate_tool"/>
+</head>

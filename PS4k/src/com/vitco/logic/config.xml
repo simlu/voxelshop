@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+
+
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:annotation-config />
+
+    <!-- invoke default look and feel (jide) -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>com.jidesoft.plaf.LookAndFeelFactory</value></property>
+        <property name="targetMethod"><value>installDefaultLookAndFeelAndExtension</value></property>
+    </bean>
+
+    <!-- create the language selector (localization) -->
+    <bean id="LangSelector" class="com.vitco.util.lang.LangSelector">
+        <!-- set language bundle -->
+        <property name="languageBundle" value="resource/bundle/LangBundle"/>
+        <!-- select language and country -->
+        <property name="language" value="en"/>
+        <property name="country" value="US"/>
+    </bean>
+
+    <!-- create ActionManager -->
+    <!-- this allows to register and execute actions -->
+    <bean id="ActionManager" class="com.vitco.util.action.ActionManager"/>
+
+    <!-- create MenuGenerator -->
+    <!-- handles the menu generation (from xml) -->
+    <bean id="MenuGenerator" class="com.vitco.util.menu.MenuGenerator">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="actionManager" ref="ActionManager"/>
+    </bean>
+
+    <!-- creates the main window -->
+    <bean id="WindowManager" class="com.vitco.layout.WindowManager">
+        <constructor-arg value="PS4k - Alpha Version"/>
+        <!-- layout file -->
+        <property name="layoutFile" value="settings/current.layout"/>
+        <!-- language selector -->
+        <property name="langSelector" ref="LangSelector"/>
+        <!-- set the linkage map (bars) -->
+        <property name="barLinkageMap">
+            <map>
+                <entry>
+                    <key><value>mainMenu</value></key>
+                    <bean id="MainMenuLinkage" class="com.vitco.layout.bars.MainMenuLinkage">
+                        <property name="menuGenerator" ref="MenuGenerator"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>toolBar</value></key>
+                    <bean id="ToolBarLinkage" class="com.vitco.layout.bars.ToolBarLinkage">
+                        <property name="menuGenerator" ref="MenuGenerator"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+        <!-- set the linkage map (frames) -->
+        <property name="frameLinkageMap">
+            <map>
+                <entry>
+                    <key><value>console</value></key>
+                    <bean id="ConsoleLinkage" class="com.vitco.layout.frames.ConsoleLinkage">
+                        <!-- to register the actions -->
+                        <property name="actionManager" ref="ActionManager"/>
+                        <property name="langSelector" ref="LangSelector"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>mainView</value></key>
+                    <bean id="MainViewLinkage" class="com.vitco.layout.frames.MainViewLinkage">
+                        <property name="actionManager" ref="ActionManager"/>
+                        <property name="langSelector" ref="LangSelector"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>shortcutManager</value></key>
+                    <bean id="ShortcutManagerLinkage" class="com.vitco.layout.frames.ShortcutManagerLinkage">
+                        <property name="actionManager" ref="ActionManager"/>
+                        <property name="langSelector" ref="LangSelector"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>sideView</value></key>
+                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage">
+                        <property name="actionManager" ref="ActionManager"/>
+                        <property name="langSelector" ref="LangSelector"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>timeLine</value></key>
+                    <bean id="TimeLineLinkage" class="com.vitco.layout.frames.TimeLineLinkage">
+                        <property name="actionManager" ref="ActionManager"/>
+                        <property name="langSelector" ref="LangSelector"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+</beans>

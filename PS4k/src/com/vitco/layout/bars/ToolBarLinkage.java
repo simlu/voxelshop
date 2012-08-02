@@ -1,11 +1,8 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
-import com.jidesoft.swing.JideButton;
 import com.vitco.util.lang.LangSelectorInterface;
-
-import javax.swing.*;
-import java.awt.*;
+import com.vitco.util.menu.MenuGeneratorInterface;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,25 +12,18 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class ToolBarLinkage implements BarLinkageInterface {
+    private MenuGeneratorInterface menuGenerator;
 
     @Override
-    public CommandBar buildBar(String key, LangSelectorInterface langSel) {
+    public void setMenuGenerator(MenuGeneratorInterface menuGenerator) {
+        this.menuGenerator = menuGenerator;
+    }
+
+    @Override
+    public CommandBar buildBar(String key) {
         CommandBar bar = new CommandBar(key);
 
-        JideButton jideButton;
-        // create the draw tool button
-        jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/tools/draw.png")
-        )));
-        jideButton.setToolTipText(langSel.getString("draw_tooltip"));
-        bar.add(jideButton);
-
-        // create the animation tool button
-        jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/tools/animate.png")
-        )));
-        jideButton.setToolTipText(langSel.getString("animate_tooltip"));
-        bar.add(jideButton);
+        menuGenerator.buildMenuFromXML(bar, "com/vitco/logic/tool_bar.xml");
 
         return bar;
     }

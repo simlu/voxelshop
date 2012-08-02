@@ -30,7 +30,7 @@
                 availableButtons="15" defaultCloseAction="0"
                 defaultEscapeAction="0" dockable="true" docked="true"
                 dockedHeight="400" dockedWidth="400" floatable="true"
-                floated="false" hidable="false" hidden="false"
+                floated="false" hidable="true" hidden="false"
                 initIndex="0" initMode="4" initSide="8" key="sideView"
                 maximizable="true" maximized="false"
                 preferredAutohideSide="-1" preferredSize="400; 400"
@@ -45,7 +45,7 @@
                 availableButtons="15" defaultCloseAction="0"
                 defaultEscapeAction="0" dockable="true" docked="false"
                 dockedHeight="400" dockedWidth="400" floatable="true"
-                floated="false" hidable="false" hidden="false"
+                floated="false" hidable="true" hidden="false"
                 initIndex="0" initMode="2" initSide="2" key="console"
                 maximizable="true" maximized="false"
                 preferredAutohideSide="-1" preferredSize="400; 400"
@@ -75,7 +75,7 @@
                 availableButtons="15" defaultCloseAction="0"
                 defaultEscapeAction="0" dockable="true" docked="false"
                 dockedHeight="200" dockedWidth="200" floatable="true"
-                floated="false" hidable="false" hidden="false"
+                floated="false" hidable="true" hidden="false"
                 initIndex="1" initMode="2" initSide="2" key="timeLine"
                 maximizable="true" maximized="false"
                 preferredAutohideSide="-1" preferredSize="200; 200"
@@ -99,7 +99,7 @@
                 showTitleBar="true" sideDockAllowed="true"
                 sideTitle="Shortcut Manager" slidingAutohide="true"
                 tabDockAllowed="true" tabTitle="Shortcut Manager"
-                title="Shortcut Manager" undockedBounds="4; 4; 200; 511"/>
+                title="Shortcut Manager" undockedBounds="4; 4; 200; 538"/>
         </DockableFrames>
     </DockingManager>
     <DockableBarManager floatable="true" hidable="false"

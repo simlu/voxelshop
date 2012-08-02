@@ -1,6 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
+import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 
 /**
@@ -11,6 +12,10 @@ import com.vitco.util.lang.LangSelectorInterface;
  * To change this template use File | Settings | File Templates.
  */
 public interface FrameLinkageInterface {
-    public DockableFrame buildFrame(String key, LangSelectorInterface langSel);
+    public void setLangSelector(LangSelectorInterface langSelector);
+    public void setActionManager(ActionManagerInterface actionManager);
+    public DockableFrame buildFrame(String key);
+    public void toggleHidden();
+    public boolean isHidden();
 }
 

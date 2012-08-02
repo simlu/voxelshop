@@ -1,8 +1,9 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
-import com.jidesoft.swing.JideButton;
+import com.jidesoft.action.CommandMenuBar;
 import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.util.menu.MenuGeneratorInterface;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,13 +13,19 @@ import com.vitco.util.lang.LangSelectorInterface;
  * To change this template use File | Settings | File Templates.
  */
 public class MainMenuLinkage implements BarLinkageInterface {
+    private MenuGeneratorInterface menuGenerator;
 
     @Override
-    public CommandBar buildBar(String key, LangSelectorInterface langSel) {
-        CommandBar bar = new CommandBar(key);
-        bar.add(new JideButton(langSel.getString("file_btn")));
-        bar.add(new JideButton(langSel.getString("edit_btn")));
-        bar.add(new JideButton(langSel.getString("view_btn")));
+    public void setMenuGenerator(MenuGeneratorInterface menuGenerator) {
+        this.menuGenerator = menuGenerator;
+    }
+
+    @Override
+    public CommandBar buildBar(String key) {
+        CommandMenuBar bar = new CommandMenuBar(key);
+
+        menuGenerator.buildMenuFromXML(bar, "com/vitco/logic/main_menu.xml");
+
         return bar;
     }
 }

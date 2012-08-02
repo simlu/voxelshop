@@ -1,6 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
+import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 
 /**
@@ -11,9 +12,36 @@ import com.vitco.util.lang.LangSelectorInterface;
  * To change this template use File | Settings | File Templates.
  */
 public class MainViewLinkage implements FrameLinkageInterface {
+    private DockableFrame frame;
+
+    private LangSelectorInterface langSelector;
     @Override
-    public DockableFrame buildFrame(String key, LangSelectorInterface langSel) {
-        DockableFrame frame = new DockableFrame(key, null);
+    public void setLangSelector(LangSelectorInterface langSelector) {
+        this.langSelector = langSelector;
+    }
+
+    private ActionManagerInterface actionManager;
+    @Override
+    public void setActionManager(ActionManagerInterface actionManager) {
+        this.actionManager = actionManager;
+    }
+
+    @Override
+    public DockableFrame buildFrame(String key) {
+        frame = new DockableFrame(key, null);
+
+        //...
+
         return frame;
+    }
+
+    @Override
+    public void toggleHidden() {
+        frame.setVisible(!frame.isVisible());
+    }
+
+    @Override
+    public boolean isHidden() {
+        return frame.isVisible();
     }
 }

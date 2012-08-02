@@ -62,7 +62,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     public DockableFrame prepareFrame(String key) {
         DockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
-            frame = frameLinkageMap.get(key).buildFrame(key, langSel);
+            frame = frameLinkageMap.get(key).buildFrame(key);
         } else {
             System.err.println("Error: No linkage class defined for frame \"" + key + "\"");
         }
@@ -77,7 +77,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
         CommandBar bar = null;
         if (barLinkageMap.containsKey(key)) {
-            bar = barLinkageMap.get(key).buildBar(key, langSel);
+            bar = barLinkageMap.get(key).buildBar(key);
         } else {
             System.err.println("Error: No linkage class defined for bar \"" + key + "\"");
         }
@@ -86,11 +86,11 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     }
 
     // holds the layout settings file uri
-    private String layoutFileURI;
-    // setter method for layoutFileURI
+    private String layoutFile;
+    // setter method for layoutFile
     @Override
-    public void setLayoutFileURI(String layoutFileURI) {
-        this.layoutFileURI = layoutFileURI;
+    public void setLayoutFile(String filename) {
+        this.layoutFile = filename;
     }
 
     // constructor
@@ -100,7 +100,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         // save the state on exit of the program
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                getDockingManager().saveLayoutDataToFile(layoutFileURI);
+                getDockingManager().saveLayoutDataToFile(layoutFile);
             }
         });
 
@@ -109,7 +109,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     @PostConstruct
     public void init() {
 
-        // default close action
+        // default close actions
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // set the icon
@@ -148,10 +148,10 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             ////////////////////
 
             // try to load the saved layout
-            File file=new File(layoutFileURI);
+            File file=new File(layoutFile);
             this.getLayoutPersistence().loadLayoutData();
             if(file.isFile()) {
-                this.getDockingManager().loadLayoutDataFromFile(layoutFileURI);
+                this.getDockingManager().loadLayoutDataFromFile(layoutFile);
             } else {
                 this.getLayoutPersistence().loadLayoutData();
             }

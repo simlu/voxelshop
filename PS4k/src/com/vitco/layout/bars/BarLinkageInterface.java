@@ -1,7 +1,7 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
-import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.util.menu.MenuGeneratorInterface;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,5 +11,6 @@ import com.vitco.util.lang.LangSelectorInterface;
  * To change this template use File | Settings | File Templates.
  */
 public interface BarLinkageInterface {
-    public CommandBar buildBar(String key, LangSelectorInterface langSel);
+    public CommandBar buildBar(String key);
+    public void setMenuGenerator(MenuGeneratorInterface menuGenerator);
 }

@@ -19,6 +19,7 @@ public class Main {
         //com.jidesoft.utils.Lm.verifyLicense("Marc Fiume", "Savant Genome Browser", "1BimsQGmP.vjmoMbfkPdyh0gs3bl3932");
         //com.jidesoft.utils.Lm.verifyLicense("Bill Snyder", "CashForward", "U4Fnx9Ak6M1DGKsRXc2fNF8nTG0c2aC");
 
-        BeanFactory beanfactory = (BeanFactory) new ClassPathXmlApplicationContext("com/vitco/core/config.xml");
+        BeanFactory beanfactory = (BeanFactory) new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
+
     }
 }

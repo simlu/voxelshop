@@ -42,6 +42,13 @@ public final class LangSelector implements LangSelectorInterface {
 
     @Override
     public String getString(String key) {
-        return rb.getString(key);
+        if (rb.containsKey(key)) {
+            return rb.getString(key);
+        } else {
+            System.err.println("Error: This keyword unknown!");
+            System.err.println("Keyword: \"" + key + "\"");
+            return null;
+        }
+
     }
 }
