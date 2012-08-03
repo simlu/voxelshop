@@ -2,6 +2,7 @@ package com.vitco.util.action;
 
 import com.vitco.actions.ActionInterface;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,10 +35,40 @@ public class ActionManager implements ActionManagerInterface {
         if (map.containsKey(key)) {
             return map.get(key);
         } else {
-            System.err.println("Error: This action is note registered!");
+            System.err.println("Error: This action is not registered!");
             System.err.println("Action: \"" + key + "\"");
             return null;
         }
+    }
 
+    // validate things
+    @Override
+    public boolean performValidityCheck() {
+        boolean result = true;
+        for (String actionName : actionNames) {
+            if (!map.containsKey(actionName)) {
+                System.err.println("Error: This action is not registered!");
+                System.err.println("Action: \"" + actionName + "\"");
+                result = false;
+            }
+        }
+        for (String key : map.keySet()) {
+            if (!actionNames.contains(key)) {
+                System.err.println("Error: This action is never used!");
+                System.err.println("Action: \"" + key + "\"");
+            }
+        }
+        return result;
+    }
+
+    // holds action names, to detect possible errors
+    private final ArrayList<String> actionNames = new ArrayList<String>();
+    @Override
+    public void registerActionName(String key) {
+        // only need to register this action name one (several pieces of code
+        // might be executing this action!)
+        if (!actionNames.contains(key)) {
+            actionNames.add(key);
+        }
     }
 }

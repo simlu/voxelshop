@@ -1,9 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.actions.ToggleButtonActionInterface;
-import com.vitco.util.action.ActionManagerInterface;
-import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.actions.StateActionInterface;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,37 +15,7 @@ import java.beans.PropertyChangeListener;
  * Time: 1:08 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ShortcutManagerLinkage implements FrameLinkageInterface {
-    private DockableFrame frame;
-
-    private LangSelectorInterface langSelector;
-    @Override
-    public void setLangSelector(LangSelectorInterface langSelector) {
-        this.langSelector = langSelector;
-    }
-
-    private ActionManagerInterface actionManager;
-    @Override
-    public void setActionManager(ActionManagerInterface actionManager) {
-        this.actionManager = actionManager;
-    }
-
-    private void registerActions() {
-        ToggleButtonActionInterface toggleButtonAction = new ToggleButtonActionInterface() {
-            @Override
-            public boolean getStatus() {
-                return isHidden();
-            }
-
-            @Override
-            public void performAction() {
-                toggleHidden();
-            }
-        };
-        actionManager.registerAction("toggle_shortcut_mg_visible", toggleButtonAction);
-        actionManager.registerAction("get_shortcut_mg_visible_status", toggleButtonAction);
-    }
-
+public class ShortcutManagerLinkage extends FrameLinkagePrototype {
     @Override
     public DockableFrame buildFrame(String key) {
         frame = new DockableFrame(key, null);
@@ -85,22 +53,18 @@ public class ShortcutManagerLinkage implements FrameLinkageInterface {
 
         frame.add(new JScrollPane(shortcut_table));
 
-        registerActions();
+        actionManager.registerAction("shortcut-mg_state-action_show", new StateActionInterface() {
+            @Override
+            public boolean getStatus() {
+                return isVisible();
+            }
+
+            @Override
+            public void performAction() {
+                toggleVisible();
+            }
+        });
 
         return frame;
-    }
-
-    @Override
-    public void toggleHidden() {
-        if (frame.getDockingManager().getFrame(frame.getName()).isVisible()) {
-            frame.getDockingManager().hideFrame(frame.getName());
-        } else {
-            frame.getDockingManager().showFrame(frame.getName());
-        }
-    }
-
-    @Override
-    public boolean isHidden() {
-        return frame.getDockingManager().getFrame(frame.getName()).isVisible();
     }
 }

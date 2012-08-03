@@ -1,5 +1,6 @@
 package com.vitco;
 
+import com.vitco.util.action.ActionManager;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -19,7 +20,10 @@ public class Main {
         //com.jidesoft.utils.Lm.verifyLicense("Marc Fiume", "Savant Genome Browser", "1BimsQGmP.vjmoMbfkPdyh0gs3bl3932");
         //com.jidesoft.utils.Lm.verifyLicense("Bill Snyder", "CashForward", "U4Fnx9Ak6M1DGKsRXc2fNF8nTG0c2aC");
 
-        BeanFactory beanfactory = (BeanFactory) new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
+        BeanFactory beanfactory = new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
+
+        // debug
+        ((ActionManager) beanfactory.getBean("ActionManager")).performValidityCheck();
 
     }
 }

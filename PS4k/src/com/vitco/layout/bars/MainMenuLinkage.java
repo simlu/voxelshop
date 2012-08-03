@@ -2,8 +2,6 @@ package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
 import com.jidesoft.action.CommandMenuBar;
-import com.vitco.util.lang.LangSelectorInterface;
-import com.vitco.util.menu.MenuGeneratorInterface;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,14 +10,7 @@ import com.vitco.util.menu.MenuGeneratorInterface;
  * Time: 12:07 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MainMenuLinkage implements BarLinkageInterface {
-    private MenuGeneratorInterface menuGenerator;
-
-    @Override
-    public void setMenuGenerator(MenuGeneratorInterface menuGenerator) {
-        this.menuGenerator = menuGenerator;
-    }
-
+public class MainMenuLinkage extends BarLinkagePrototype {
     @Override
     public CommandBar buildBar(String key) {
         CommandMenuBar bar = new CommandMenuBar(key);

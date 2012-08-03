@@ -1,9 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.actions.ToggleButtonActionInterface;
-import com.vitco.util.action.ActionManagerInterface;
-import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.actions.StateActionInterface;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -15,21 +13,7 @@ import java.beans.PropertyChangeListener;
  * Time: 1:08 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SideViewLinkage implements FrameLinkageInterface {
-    private DockableFrame frame;
-
-    private LangSelectorInterface langSelector;
-    @Override
-    public void setLangSelector(LangSelectorInterface langSelector) {
-        this.langSelector = langSelector;
-    }
-
-    private ActionManagerInterface actionManager;
-    @Override
-    public void setActionManager(ActionManagerInterface actionManager) {
-        this.actionManager = actionManager;
-    }
-
+public class SideViewLinkage extends FrameLinkagePrototype {
     @Override
     public DockableFrame buildFrame(String key) {
         frame = new DockableFrame(key, null);
@@ -48,38 +32,18 @@ public class SideViewLinkage implements FrameLinkageInterface {
 
         //...
 
-        registerActions();
-
-        return frame;
-    }
-
-    private void registerActions() {
-        ToggleButtonActionInterface toggleButtonAction = new ToggleButtonActionInterface() {
+        actionManager.registerAction("side-view_state-action_show", new StateActionInterface() {
             @Override
             public boolean getStatus() {
-                return isHidden();
+                return isVisible();
             }
 
             @Override
             public void performAction() {
-                toggleHidden();
+                toggleVisible();
             }
-        };
-        actionManager.registerAction("toggle_side_view_visible", toggleButtonAction);
-        actionManager.registerAction("get_side_view_status", toggleButtonAction);
-    }
+        });
 
-    @Override
-    public void toggleHidden() {
-        if (frame.getDockingManager().getFrame(frame.getName()).isVisible()) {
-            frame.getDockingManager().hideFrame(frame.getName());
-        } else {
-            frame.getDockingManager().showFrame(frame.getName());
-        }
-    }
-
-    @Override
-    public boolean isHidden() {
-        return frame.getDockingManager().getFrame(frame.getName()).isVisible();
+        return frame;
     }
 }

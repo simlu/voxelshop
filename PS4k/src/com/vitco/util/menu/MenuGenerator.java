@@ -3,7 +3,7 @@ package com.vitco.util.menu;
 import com.jidesoft.action.CommandBar;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideMenu;
-import com.vitco.actions.ToggleButtonActionInterface;
+import com.vitco.actions.StateActionInterface;
 import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import org.w3c.dom.Document;
@@ -56,7 +56,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
 
             Document doc = builder.parse(ClassLoader.getSystemResourceAsStream(xmlFile));
 
-            buildRecurive(doc.getFirstChild(), bar);
+            buildRecursive(doc.getFirstChild(), bar);
 
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -67,7 +67,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
         }
     }
 
-    private void buildRecurive(Node node, JComponent component) {
+    private void buildRecursive(Node node, JComponent component) {
 
         // build the menu
         String name = node.getNodeName();
@@ -79,19 +79,19 @@ public class MenuGenerator implements MenuGeneratorInterface {
                 component.add(mnu);
                 int len = list.getLength();
                 for (int i = 0; i < len; i++) {
-                    buildRecurive(list.item(i), mnu);
+                    buildRecursive(list.item(i), mnu);
                 }
             } else if (name.equals("head")) {
                 NodeList list = node.getChildNodes();
                 int len = list.getLength();
                 for (int i = 0; i < len; i++) {
-                    buildRecurive(list.item(i), component);
+                    buildRecursive(list.item(i), component);
                 }
             }
         } else {
             if (name.equals("item")) {
                 Element e = (Element) node;
-                if (e.hasAttribute("status")) {
+                if (e.hasAttribute("stateful") && e.getAttribute("stateful").equals("true")) {
                     // check if this is a check menu button
                     addCheckItem(component, e);
                 } else {
@@ -111,6 +111,8 @@ public class MenuGenerator implements MenuGeneratorInterface {
         JideButton jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource(e.getAttribute("src"))
         )));
+        // to perform validity check we need to register this name
+        actionManager.registerActionName(e.getAttribute("action"));
         jideButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -126,6 +128,8 @@ public class MenuGenerator implements MenuGeneratorInterface {
     // adds a default menu item
     private void addDefaultItem(JComponent component, final Element e) {
         JMenuItem item = new JMenuItem();
+        // to perform validity check we need to register this name
+        actionManager.registerActionName(e.getAttribute("action"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -140,6 +144,8 @@ public class MenuGenerator implements MenuGeneratorInterface {
     // adds an item that can be checked or unchecked
     private void addCheckItem(JComponent component, final Element e) {
         final JCheckBoxMenuItem item = new JCheckBoxMenuItem();
+        // to perform validity check we need to register this name
+        actionManager.registerActionName(e.getAttribute("action"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -149,6 +155,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
         });
         item.setText(langSel.getString(e.getAttribute("caption")));
 
+        // look up current check status
         item.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -156,7 +163,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
                     item.setSelected(
                             // triggered when the menu item is show
                             // this makes sure the "checked" is always current
-                            ((ToggleButtonActionInterface) actionManager.getAction(e.getAttribute("action"))).getStatus()
+                            ((StateActionInterface) actionManager.getAction(e.getAttribute("action"))).getStatus()
                     );
                 }
             }

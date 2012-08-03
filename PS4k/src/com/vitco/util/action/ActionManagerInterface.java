@@ -10,7 +10,10 @@ import com.vitco.actions.ActionInterface;
  * To change this template use File | Settings | File Templates.
  */
 public interface ActionManagerInterface {
-
+    // these methods are to detect errors!
+    public boolean performValidityCheck();
+    public void registerActionName(String key);
+    // the core methods
     public void registerAction(String key, ActionInterface action);
     public ActionInterface getAction(String key);
 }

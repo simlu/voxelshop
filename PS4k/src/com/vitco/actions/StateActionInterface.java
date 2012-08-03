@@ -7,6 +7,6 @@ package com.vitco.actions;
  * Time: 5:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface ToggleButtonActionInterface extends ActionInterface {
+public interface StateActionInterface extends ActionInterface {
     public boolean getStatus();
 }

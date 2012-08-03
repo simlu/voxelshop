@@ -4,8 +4,6 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-
-
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
@@ -42,22 +40,16 @@
         <constructor-arg value="PS4k - Alpha Version"/>
         <!-- layout file -->
         <property name="layoutFile" value="settings/current.layout"/>
-        <!-- language selector -->
-        <property name="langSelector" ref="LangSelector"/>
         <!-- set the linkage map (bars) -->
         <property name="barLinkageMap">
             <map>
                 <entry>
                     <key><value>mainMenu</value></key>
-                    <bean id="MainMenuLinkage" class="com.vitco.layout.bars.MainMenuLinkage">
-                        <property name="menuGenerator" ref="MenuGenerator"/>
-                    </bean>
+                    <bean id="MainMenuLinkage" class="com.vitco.layout.bars.MainMenuLinkage"/>
                 </entry>
                 <entry>
                     <key><value>toolBar</value></key>
-                    <bean id="ToolBarLinkage" class="com.vitco.layout.bars.ToolBarLinkage">
-                        <property name="menuGenerator" ref="MenuGenerator"/>
-                    </bean>
+                    <bean id="ToolBarLinkage" class="com.vitco.layout.bars.ToolBarLinkage"/>
                 </entry>
             </map>
         </property>
@@ -66,41 +58,26 @@
             <map>
                 <entry>
                     <key><value>console</value></key>
-                    <bean id="ConsoleLinkage" class="com.vitco.layout.frames.ConsoleLinkage">
-                        <!-- to register the actions -->
-                        <property name="actionManager" ref="ActionManager"/>
-                        <property name="langSelector" ref="LangSelector"/>
-                    </bean>
+                    <bean id="ConsoleLinkage" class="com.vitco.layout.frames.ConsoleLinkage"/>
                 </entry>
                 <entry>
                     <key><value>mainView</value></key>
-                    <bean id="MainViewLinkage" class="com.vitco.layout.frames.MainViewLinkage">
-                        <property name="actionManager" ref="ActionManager"/>
-                        <property name="langSelector" ref="LangSelector"/>
-                    </bean>
+                    <bean id="MainViewLinkage" class="com.vitco.layout.frames.MainViewLinkage"/>
                 </entry>
                 <entry>
                     <key><value>shortcutManager</value></key>
-                    <bean id="ShortcutManagerLinkage" class="com.vitco.layout.frames.ShortcutManagerLinkage">
-                        <property name="actionManager" ref="ActionManager"/>
-                        <property name="langSelector" ref="LangSelector"/>
-                    </bean>
+                    <bean id="ShortcutManagerLinkage" class="com.vitco.layout.frames.ShortcutManagerLinkage"/>
                 </entry>
                 <entry>
                     <key><value>sideView</value></key>
-                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage">
-                        <property name="actionManager" ref="ActionManager"/>
-                        <property name="langSelector" ref="LangSelector"/>
-                    </bean>
+                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage"/>
                 </entry>
                 <entry>
                     <key><value>timeLine</value></key>
-                    <bean id="TimeLineLinkage" class="com.vitco.layout.frames.TimeLineLinkage">
-                        <property name="actionManager" ref="ActionManager"/>
-                        <property name="langSelector" ref="LangSelector"/>
-                    </bean>
+                    <bean id="TimeLineLinkage" class="com.vitco.layout.frames.TimeLineLinkage"/>
                 </entry>
             </map>
         </property>
     </bean>
+
 </beans>

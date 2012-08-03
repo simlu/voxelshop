@@ -6,9 +6,8 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
-import com.vitco.layout.bars.BarLinkageInterface;
-import com.vitco.layout.frames.FrameLinkageInterface;
-import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.layout.bars.BarLinkagePrototype;
+import com.vitco.layout.frames.FrameLinkagePrototype;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -34,27 +33,19 @@ import java.util.Map;
 public class WindowManager extends DefaultDockableBarDockableHolder implements WindowManagerInterface {
 
     // maps the bars to the linkage class that deals with them
-    private Map<String, BarLinkageInterface> barLinkageMap;
+    private Map<String, BarLinkagePrototype> barLinkageMap;
     // set the map
     @Override
-    public void setBarLinkageMap(Map<String, BarLinkageInterface> map) {
+    public void setBarLinkageMap(Map<String, BarLinkagePrototype> map) {
         this.barLinkageMap = map;
     }
 
     // maps the frames to the linkage class that deals with them
-    private Map<String, FrameLinkageInterface> frameLinkageMap;
+    private Map<String, FrameLinkagePrototype> frameLinkageMap;
     // set the map
     @Override
-    public void setFrameLinkageMap(Map<String, FrameLinkageInterface> map) {
+    public void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map) {
         this.frameLinkageMap = map;
-    }
-
-    // handles the fetching of strings for keys for localization
-    private LangSelectorInterface langSel;
-    // setter method for langSel
-    @Override
-    public void setLangSelector(LangSelectorInterface langSel) {
-        this.langSel = langSel;
     }
 
     // prepare all frames

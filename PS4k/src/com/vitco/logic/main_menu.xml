@@ -9,17 +9,17 @@
     <menu caption="view_btn">
         <menu caption="tool_windows_btn">
             <item caption="shortcut_mg_btn"
-                  action="toggle_shortcut_mg_visible"
-                  status="get_shortcut_mg_visible_status"/>
+                  action="shortcut-mg_state-action_show"
+                  stateful="true"/>
             <item caption="side_view_btn"
-                  action="toggle_side_view_visible"
-                  status="get_side_view_visible_status"/>
+                  action="side-view_state-action_show"
+                  stateful="true"/>
             <item caption="time_line_btn"
-                  action="toggle_time_line_visible"
-                  status="get_time_line_visible_status"/>
+                  action="time-line_state-action_show"
+                  stateful="true"/>
             <item caption="console_btn"
-                  action="toggle_console_visible"
-                  status="get_console_visible_status"/>
+                  action="console_state-action_show"
+                  stateful="true"/>
         </menu>
     </menu>
 </head>
