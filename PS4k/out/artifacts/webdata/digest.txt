@@ -1,5 +1,5 @@
 getdown.txt = bb4a8997b64bb4338dccfca23e7faa27
-PS4k.jar = 92b6f80f5f7c9f885bbb01e196749601
+PS4k.jar = eacecb5db764d8f3bdde01e9e445582b
 lib/commons-logging-1.1.1.jar = 073a5c734e213bcbbb43af48ed479da3
 lib/jide-action.jar = ab2d9bc9fba475835d3a5bf7d9739eb6
 lib/jide-common.jar = a5d95c4a0e769b88bf066c3eebab2732
@@ -11,4 +11,4 @@ lib/org.springframework.context-3.1.2.RELEASE.jar = 44686e0bc347cf86a033c8cde931
 lib/org.springframework.core-3.1.2.RELEASE.jar = bac22be0b050985da1352a0b98221c54
 lib/org.springframework.expression-3.1.2.RELEASE.jar = 8714c0bdaa085456b02f24515cd796ee
 lib/org.springframework.orm-3.1.2.RELEASE.jar = 9b665e7ffcd8670319535761150c0fbe
-digest.txt = 210df4fd7e83893843647089f2aae41c
+digest.txt = b7a23f80c568ae745f68f82637dd5317

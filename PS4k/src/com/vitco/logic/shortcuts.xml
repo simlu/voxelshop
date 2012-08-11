@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head>
+    <frame name="mainView">
+        <shortcut ctrl="yes" alt="no" shift="no" key="C" action="main-view_action_copy" caption="main-view_copy_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="V" action="main-view_action_paste" caption="main-view_paste_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="Z" action="main-view_action_undo" caption="main-view_undo_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="Z" action="main-view_action_redo" caption="main-view_redo_caption" />
+    </frame>
+
+    <frame name="sideView">
+        <shortcut ctrl="yes" alt="no" shift="no" key="Z" action="side-view_action_undo" caption="side-view_undo_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="Z" action="side-view_action_redo" caption="side-view_redo_caption" />
+    </frame>
+
+    <frame name="console">
+    </frame>
+
+    <frame name="timeLine">
+    </frame>
+
+    <frame name="shortcutManager">
+    </frame>
+
+    <frame name="personal">
+    </frame>
+
+
+</head>

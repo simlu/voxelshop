@@ -8,6 +8,8 @@ import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
+import com.vitco.shortcut.ShortcutManagerInterface;
+import com.vitco.util.PreferencesInterface;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -40,6 +42,12 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.barLinkageMap = map;
     }
 
+    // var & setter
+    private PreferencesInterface preferences;
+    public void setPreferences(PreferencesInterface preferences) {
+        this.preferences = preferences;
+    }
+
     // maps the frames to the linkage class that deals with them
     private Map<String, FrameLinkagePrototype> frameLinkageMap;
     // set the map
@@ -48,19 +56,26 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.frameLinkageMap = map;
     }
 
+    // to hook the shortcut manager to the frames
+    private ShortcutManagerInterface shortcutManager;
+    @Override
+    public void setShortcutManager(ShortcutManagerInterface shortcutManager) {
+        this.shortcutManager = shortcutManager;
+    }
+
     // prepare all frames
     @Override
     public DockableFrame prepareFrame(String key) {
         DockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
             frame = frameLinkageMap.get(key).buildFrame(key);
+            shortcutManager.registerFrame(frame);
         } else {
             System.err.println("Error: No linkage class defined for frame \"" + key + "\"");
         }
 
         return frame;
     }
-
 
     // prepare all bars
     @Override
@@ -76,22 +91,15 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         return bar;
     }
 
-    // holds the layout settings file uri
-    private String layoutFile;
-    // setter method for layoutFile
-    @Override
-    public void setLayoutFile(String filename) {
-        this.layoutFile = filename;
-    }
-
     // constructor
     public WindowManager(String title) throws HeadlessException {
         super(title);
 
         // save the state on exit of the program
+        // this needs to be done BEFORE the window is closing
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                getDockingManager().saveLayoutDataToFile(layoutFile);
+                preferences.storeObject("customized_window_layout_data", getDockingManager().getLayoutRawData());
             }
         });
 
@@ -100,7 +108,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     @PostConstruct
     public void init() {
 
-        // default close actions
+        // default close action
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // set the icon
@@ -139,13 +147,14 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             ////////////////////
 
             // try to load the saved layout
-            File file=new File(layoutFile);
-            this.getLayoutPersistence().loadLayoutData();
-            if(file.isFile()) {
-                this.getDockingManager().loadLayoutDataFromFile(layoutFile);
+            this.getLayoutPersistence().beginLoadLayoutData();
+            byte[] layoutData = (byte[]) preferences.loadObject("customized_window_layout_data");
+            if(layoutData != null) {
+                this.getDockingManager().setLayoutRawData(layoutData);
             } else {
                 this.getLayoutPersistence().loadLayoutData();
             }
+
 
             this.toFront();
         } catch (ParserConfigurationException e) {

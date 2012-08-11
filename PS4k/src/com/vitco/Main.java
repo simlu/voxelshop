@@ -1,7 +1,8 @@
 package com.vitco;
 
-import com.vitco.util.action.ActionManager;
-import org.springframework.beans.factory.BeanFactory;
+import com.vitco.action.ActionManager;
+import com.vitco.util.Preferences;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -20,10 +21,22 @@ public class Main {
         //com.jidesoft.utils.Lm.verifyLicense("Marc Fiume", "Savant Genome Browser", "1BimsQGmP.vjmoMbfkPdyh0gs3bl3932");
         //com.jidesoft.utils.Lm.verifyLicense("Bill Snyder", "CashForward", "U4Fnx9Ak6M1DGKsRXc2fNF8nTG0c2aC");
 
-        BeanFactory beanfactory = new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
+        final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
 
         // debug
-        ((ActionManager) beanfactory.getBean("ActionManager")).performValidityCheck();
+        ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
 
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            public void run()
+            {
+                // make reference so this object doesn't get destroyed
+                Preferences pref = ((Preferences) context.getBean("Preferences"));
+                // trigger @PreDestroy
+                context.close();
+                // store the preferences (this needs to be done here, b/c
+                // some PreDestroy are used to store preferences!)
+                pref.save();
+            }
+        });
     }
 }

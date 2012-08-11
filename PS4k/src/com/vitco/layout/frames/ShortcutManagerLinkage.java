@@ -1,12 +1,12 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.actions.StateActionInterface;
+import com.vitco.action.types.StateActionPrototype;
+import com.vitco.shortcut.ShortcutManagerViewInterface;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,51 +16,32 @@ import java.beans.PropertyChangeListener;
  * To change this template use File | Settings | File Templates.
  */
 public class ShortcutManagerLinkage extends FrameLinkagePrototype {
+
+    // var & setter (we only need the shortcutManager in this frame!)
+    private ShortcutManagerViewInterface shortcutManagerView;
+    public void setShortcutManagerView(ShortcutManagerViewInterface shortcutManagerView) {
+        this.shortcutManagerView = shortcutManagerView;
+    }
+
     @Override
     public DockableFrame buildFrame(String key) {
-        frame = new DockableFrame(key, null);
+        frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource("resource/img/icons/frames/shortcutManager.png")
+        )));
+        updateTitle();
 
-        frame.addPropertyChangeListener("title", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String title = langSelector.getString("shortcut_mg_btn");
-                if (evt.getNewValue() != title) {
-                    frame.setTitle(title);
-                    frame.setTabTitle(title);
-                    frame.setSideTitle(title);
-                }
-            }
-        });
+        // add the tabbelPane to this frame
+        frame.add(shortcutManagerView.getEditTables());
 
-        String[][] data = {
-                {"Kathy", "Smith"},
-                {"John", "Doe"},
-                {"Sue", "Black"},
-                {"Jane", "White"},
-                {"Joe", "Brown"}
-        };
-
-        String[] columnNames = {"Action", "Shortcut"};
-
-        DefaultTableModel model = new DefaultTableModel(data,columnNames);
-
-        JTable shortcut_table = new JTable(model) {
-            @Override
-            public boolean isCellEditable(int rowIndex, int colIndex) {
-                return false;
-            }
-        };
-
-        frame.add(new JScrollPane(shortcut_table));
-
-        actionManager.registerAction("shortcut-mg_state-action_show", new StateActionInterface() {
+        // register action to show and hide this frame
+        actionManager.registerAction("shortcut-mg_state-action_show", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
                 return isVisible();
             }
 
             @Override
-            public void performAction() {
+            public void actionPerformed(ActionEvent e) {
                 toggleVisible();
             }
         });

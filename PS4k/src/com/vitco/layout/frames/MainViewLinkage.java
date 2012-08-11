@@ -14,7 +14,9 @@ public class MainViewLinkage extends FrameLinkagePrototype {
     public DockableFrame buildFrame(String key) {
         frame = new DockableFrame(key, null);
 
-        //...
+        updateTitle();
+
+        // ...
 
         return frame;
     }

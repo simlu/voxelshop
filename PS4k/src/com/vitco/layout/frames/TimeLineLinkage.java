@@ -1,10 +1,11 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.actions.StateActionInterface;
+import com.vitco.action.types.StateActionPrototype;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,28 +17,20 @@ import java.beans.PropertyChangeListener;
 public class TimeLineLinkage extends FrameLinkagePrototype {
     @Override
     public DockableFrame buildFrame(String key) {
-        frame = new DockableFrame(key, null);
+        frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource("resource/img/icons/frames/timeLine.png")
+        )));
 
-        frame.addPropertyChangeListener("title", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                String title = langSelector.getString("time_line_btn");
-                if (evt.getNewValue() != title) {
-                    frame.setTitle(title);
-                    frame.setTabTitle(title);
-                    frame.setSideTitle(title);
-                }
-            }
-        });
+        updateTitle();
 
-        actionManager.registerAction("time-line_state-action_show", new StateActionInterface() {
+        actionManager.registerAction("time-line_state-action_show", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
                 return isVisible();
             }
 
             @Override
-            public void performAction() {
+            public void actionPerformed(ActionEvent e) {
                 toggleVisible();
             }
         });

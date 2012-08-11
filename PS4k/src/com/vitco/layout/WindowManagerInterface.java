@@ -4,6 +4,7 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
+import com.vitco.shortcut.ShortcutManagerInterface;
 
 import java.util.Map;
 
@@ -21,6 +22,6 @@ public interface WindowManagerInterface {
     public void setBarLinkageMap(Map<String, BarLinkagePrototype> map);
     // set the key <-> frame class linkage map (defined in config.xml)
     public void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map);
-    // set the uri of the file that deals with the layout
-    public void setLayoutFile(String filename);
+    // set the ShortcutManager
+    public void setShortcutManager(ShortcutManagerInterface shortcutManager);
 }

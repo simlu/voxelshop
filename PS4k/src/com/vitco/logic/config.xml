@@ -10,13 +10,19 @@
     <context:annotation-config />
 
     <!-- invoke default look and feel (jide) -->
+    <!-- needs to go first !! -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass"><value>com.jidesoft.plaf.LookAndFeelFactory</value></property>
         <property name="targetMethod"><value>installDefaultLookAndFeelAndExtension</value></property>
     </bean>
 
+    <!-- holds general preferenes -->
+    <bean id="Preferences" class="com.vitco.util.Preferences" init-method="load">
+        <property name="storageFile" value="settings/pref.ser"/>
+    </bean>
+
     <!-- create the language selector (localization) -->
-    <bean id="LangSelector" class="com.vitco.util.lang.LangSelector">
+    <bean id="LangSelector" class="com.vitco.util.LangSelector">
         <!-- set language bundle -->
         <property name="languageBundle" value="resource/bundle/LangBundle"/>
         <!-- select language and country -->
@@ -25,12 +31,29 @@
     </bean>
 
     <!-- create ActionManager -->
-    <!-- this allows to register and execute actions -->
-    <bean id="ActionManager" class="com.vitco.util.action.ActionManager"/>
+    <!-- this allows to register and execute action -->
+    <bean id="ActionManager" class="com.vitco.action.ActionManager"/>
+
+    <!-- create ShortcutManager -->
+    <!-- allow registering the windows with the shortcuts -->
+    <bean id="ShortcutManager" class="com.vitco.shortcut.ShortcutManager">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="configFile" value="com/vitco/logic/shortcuts.xml"/>
+        <property name="actionManager" ref="ActionManager"/>
+        <property name="preferences" ref="Preferences"/>
+    </bean>
+
+    <!--handles displaying of shortcut manager-->
+    <bean id="ShortcutManagerView" class="com.vitco.shortcut.ShortcutManagerView">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="shortcutManager" ref="ShortcutManager"/>
+        <property name="actionManager" ref="ActionManager"/>
+        <property name="preferences" ref="Preferences"/>
+    </bean>
 
     <!-- create MenuGenerator -->
     <!-- handles the menu generation (from xml) -->
-    <bean id="MenuGenerator" class="com.vitco.util.menu.MenuGenerator">
+    <bean id="MenuGenerator" class="com.vitco.util.MenuGenerator">
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
     </bean>
@@ -38,8 +61,9 @@
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
         <constructor-arg value="PS4k - Alpha Version"/>
-        <!-- layout file -->
-        <property name="layoutFile" value="settings/current.layout"/>
+        <property name="preferences" ref="Preferences"/>
+        <!-- shortcut manager -->
+        <property name="shortcutManager" ref="ShortcutManager"/>
         <!-- set the linkage map (bars) -->
         <property name="barLinkageMap">
             <map>
@@ -66,7 +90,9 @@
                 </entry>
                 <entry>
                     <key><value>shortcutManager</value></key>
-                    <bean id="ShortcutManagerLinkage" class="com.vitco.layout.frames.ShortcutManagerLinkage"/>
+                    <bean id="ShortcutManagerLinkage" class="com.vitco.layout.frames.ShortcutManagerLinkage">
+                        <property name="shortcutManagerView" ref="ShortcutManagerView"/>
+                    </bean>
                 </entry>
                 <entry>
                     <key><value>sideView</value></key>
@@ -75,6 +101,10 @@
                 <entry>
                     <key><value>timeLine</value></key>
                     <bean id="TimeLineLinkage" class="com.vitco.layout.frames.TimeLineLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>personal</value></key>
+                    <bean id="PersonalLinkage" class="com.vitco.layout.frames.PersonalLinkage"/>
                 </entry>
             </map>
         </property>
