@@ -4,11 +4,7 @@ import com.jidesoft.action.CommandBar;
 import com.jidesoft.action.CommandMenuBar;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 7/30/12
- * Time: 12:07 PM
- * To change this template use File | Settings | File Templates.
+ * the main menu, uses menu generator to load content from file
  */
 public class MainMenuLinkage extends BarLinkagePrototype {
     @Override

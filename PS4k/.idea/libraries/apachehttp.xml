@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="apachehttp">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/apachehttp" />
+      <root url="file://$PROJECT_DIR$/lib/apachehttp" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/apachehttp" recursive="false" />
+  </library>
+</component>

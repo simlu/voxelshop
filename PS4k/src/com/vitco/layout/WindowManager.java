@@ -8,8 +8,9 @@ import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
-import com.vitco.shortcut.ShortcutManagerInterface;
-import com.vitco.util.PreferencesInterface;
+import com.vitco.logic.frames.shortcut.ShortcutManagerInterface;
+import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.util.pref.PreferencesInterface;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -21,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -40,6 +40,13 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     @Override
     public void setBarLinkageMap(Map<String, BarLinkagePrototype> map) {
         this.barLinkageMap = map;
+    }
+
+    // var & setter
+    private ErrorHandlerInterface errorHandler;
+    @Override
+    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+        this.errorHandler = errorHandler;
     }
 
     // var & setter
@@ -99,7 +106,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         // this needs to be done BEFORE the window is closing
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                preferences.storeObject("customized_window_layout_data", getDockingManager().getLayoutRawData());
+                preferences.storeObject("custom_raw_layout_data", getLayoutPersistence().getLayoutRawData());
             }
         });
 
@@ -148,21 +155,19 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
             // try to load the saved layout
             this.getLayoutPersistence().beginLoadLayoutData();
-            byte[] layoutData = (byte[]) preferences.loadObject("customized_window_layout_data");
+            byte[] layoutData = (byte[]) preferences.loadObject("custom_raw_layout_data");
             if(layoutData != null) {
-                this.getDockingManager().setLayoutRawData(layoutData);
+                getLayoutPersistence().setLayoutRawData(layoutData);
             } else {
                 this.getLayoutPersistence().loadLayoutData();
             }
-
-
             this.toFront();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            errorHandler.handle(e); // should not happen
         } catch (SAXException e) {
-            e.printStackTrace();
+            errorHandler.handle(e); // should not happen
         } catch (IOException e) {
-            e.printStackTrace();
+            errorHandler.handle(e); // should not happen
         }
     }
 

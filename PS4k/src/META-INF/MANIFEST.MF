@@ -5,6 +5,7 @@ Class-Path: lib\commons-logging-1.1.1.jar lib\jide-action.jar lib\jide
  ngframework.beans-3.1.2.RELEASE.jar lib\org.springframework.context-3
  .1.2.RELEASE.jar lib\org.springframework.core-3.1.2.RELEASE.jar lib\o
  rg.springframework.expression-3.1.2.RELEASE.jar lib\org.springframewo
- rk.orm-3.1.2.RELEASE.jar
+ rk.orm-3.1.2.RELEASE.jar lib\commons-codec-1.6.jar lib\httpcore-4.2.1
+ .jar lib\httpclient-4.2.1.jar lib\httpmime-4.2.1.jar
 Main-Class: com.vitco.Main
 

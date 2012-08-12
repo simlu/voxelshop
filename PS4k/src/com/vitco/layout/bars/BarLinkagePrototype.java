@@ -1,18 +1,16 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
-import com.vitco.util.MenuGeneratorInterface;
+import com.vitco.util.menu.MenuGeneratorInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 7/30/12
- * Time: 12:12 PM
- * To change this template use File | Settings | File Templates.
+ * Prototype of class that links bar to content.
  */
 public abstract class BarLinkagePrototype {
-    abstract public CommandBar buildBar(String key);
+    // constructs the bar (with content)
+    public abstract CommandBar buildBar(String key);
+    // var & setter
     protected MenuGeneratorInterface menuGenerator;
     @Autowired(required = true)
     public void setMenuGenerator(MenuGeneratorInterface menuGenerator) {

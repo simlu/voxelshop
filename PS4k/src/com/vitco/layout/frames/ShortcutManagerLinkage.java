@@ -1,19 +1,15 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.action.types.StateActionPrototype;
-import com.vitco.shortcut.ShortcutManagerViewInterface;
+import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.logic.frames.shortcut.ShortcutManagerViewInterface;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 7/30/12
- * Time: 1:08 PM
- * To change this template use File | Settings | File Templates.
+ * construct the shortcut manager frame
  */
 public class ShortcutManagerLinkage extends FrameLinkagePrototype {
 
@@ -25,12 +21,13 @@ public class ShortcutManagerLinkage extends FrameLinkagePrototype {
 
     @Override
     public DockableFrame buildFrame(String key) {
+        // construct frame
         frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource("resource/img/icons/frames/shortcutManager.png")
         )));
-        updateTitle();
+        updateTitle(); // update the title
 
-        // add the tabbelPane to this frame
+        // add the tabbelPane to this frame that manages all the shortcuts
         frame.add(shortcutManagerView.getEditTables());
 
         // register action to show and hide this frame

@@ -9,8 +9,8 @@ cd /tools/ps4k
 # Force binary mode transfer
 option transfer binary
 # Upload the file to current working directory
-synchronize remote "C:\Users\VM Win 7\Dropbox\git\fo2\ps4k\out\artifacts\webdata\" "/tools/ps4k" -delete
-synchronize remote "C:\Users\VM Win 7\Dropbox\git\fo2\ps4k\out\artifacts\webdata\lib\" "/tools/ps4k/lib" -delete
+synchronize remote "C:\Users\VM Win 7\Dropbox\git\fo2\ps4k\out\artifacts\webdata\" "/tools/ps4k/updater" -delete
+synchronize remote "C:\Users\VM Win 7\Dropbox\git\fo2\ps4k\out\artifacts\webdata\lib\" "/tools/ps4k/updater/lib" -delete
 # Disconnect
 close
 # Exit WinSCP

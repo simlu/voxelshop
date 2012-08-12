@@ -4,6 +4,7 @@
     <root id="root">
       <element id="library" level="project" name="jide" />
       <element id="library" level="project" name="spring" />
+      <element id="library" level="project" name="apachehttp" />
     </root>
   </artifact>
 </component>

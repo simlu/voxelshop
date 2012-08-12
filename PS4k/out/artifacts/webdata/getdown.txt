@@ -1,5 +1,5 @@
 # The URL from which the client is downloaded
-appbase = http://fantasy-mmorpg.com/tools/ps4k/
+appbase = http://fantasy-mmorpg.com/tools/ps4k/updater/
 
 # UI Configuration
 ui.name = PS4k
@@ -17,6 +17,10 @@ code = lib/org.springframework.context-3.1.2.RELEASE.jar
 code = lib/org.springframework.core-3.1.2.RELEASE.jar
 code = lib/org.springframework.expression-3.1.2.RELEASE.jar
 code = lib/org.springframework.orm-3.1.2.RELEASE.jar
+code = lib/commons-codec-1.6.jar
+code = lib/httpcore-4.2.1.jar
+code = lib/httpclient-4.2.1.jar
+code = lib/httpmime-4.2.1.jar
 
 # The main entry point for the application
 class = com.vitco.Main

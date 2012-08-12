@@ -4,7 +4,8 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
-import com.vitco.shortcut.ShortcutManagerInterface;
+import com.vitco.logic.frames.shortcut.ShortcutManagerInterface;
+import com.vitco.util.error.ErrorHandlerInterface;
 
 import java.util.Map;
 
@@ -15,13 +16,15 @@ import java.util.Map;
  */
 public interface WindowManagerInterface {
     // prepare a frame (key is the key of the frame)
-    public DockableFrame prepareFrame(String key);
+    DockableFrame prepareFrame(String key);
     // prepare a bar (key is the key of the frame)
-    public DockableBar prepareBar(String key);
+    DockableBar prepareBar(String key);
     // set the key <-> bar class linkage map (defined in config.xml)
-    public void setBarLinkageMap(Map<String, BarLinkagePrototype> map);
+    void setBarLinkageMap(Map<String, BarLinkagePrototype> map);
     // set the key <-> frame class linkage map (defined in config.xml)
-    public void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map);
+    void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map);
     // set the ShortcutManager
-    public void setShortcutManager(ShortcutManagerInterface shortcutManager);
+    void setShortcutManager(ShortcutManagerInterface shortcutManager);
+    // set error handler
+    void setErrorHandler(ErrorHandlerInterface errorHandler);
 }
