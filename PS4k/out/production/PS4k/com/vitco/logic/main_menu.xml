@@ -8,10 +8,10 @@
     </menu>
     <menu caption="view_btn">
         <menu caption="tool_windows_btn">
+            <item caption="console_caption" action="console_state-action_show" checkable="true"/>
             <item caption="shortcutManager_caption" action="shortcut-mg_state-action_show" checkable="true"/>
             <item caption="sideView_caption" action="side-view_state-action_show" checkable="true"/>
             <item caption="timeLine_caption" action="time-line_state-action_show" checkable="true"/>
-            <item caption="console_caption" action="console_state-action_show" checkable="true"/>
             <item caption="personal_caption" action="personal_state-action_show" checkable="true"/>
         </menu>
     </menu>

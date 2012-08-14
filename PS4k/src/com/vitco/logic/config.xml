@@ -13,7 +13,7 @@
     <bean id="ErrorHandler" class="com.vitco.util.error.ErrorHandler">
         <property name="langSelector" ref="LangSelector"/>
         <property name="debugReportUrl" value="http://www.fantasy-mmorpg.com/tools/ps4k/debug/upload.php"/>
-        <property name="consoleView" ref="ConsoleView"/>
+        <property name="console" ref="Console"/>
     </bean>
 
     <!-- set the default error handler -->
@@ -80,6 +80,7 @@
     <!-- create MenuGenerator -->
     <!-- handles the menu generation (from xml) -->
     <bean id="MenuGenerator" class="com.vitco.util.menu.MenuGenerator">
+        <property name="shortcutManager" ref="ShortcutManager"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="errorHandler" ref="ErrorHandler"/>

@@ -25,18 +25,37 @@ public abstract class FrameLinkagePrototype {
         this.actionManager = actionManager;
     }
 
+    // show frame
+    public void setVisible(boolean b) {
+        if (frame.getDockingManager() != null) {
+            if (b) {
+                frame.getDockingManager().showFrame(frame.getName());
+            } else {
+                frame.getDockingManager().hideFrame(frame.getName());
+            }
+        }
+    }
+
     // hide / show frame
-    protected void toggleVisible() {
-        if (frame.getDockingManager().getFrame(frame.getName()).isVisible()) {
-            frame.getDockingManager().hideFrame(frame.getName());
-        } else {
-            frame.getDockingManager().showFrame(frame.getName());
+    public void toggleVisible() {
+        if (frame.getDockingManager() != null) {
+            setVisible(!frame.getDockingManager().getFrame(frame.getName()).isVisible());
         }
     }
 
     // returns true iff frame is visible
-    protected boolean isVisible() {
-        return frame.getDockingManager().getFrame(frame.getName()).isVisible();
+    public boolean isAutohideShowing() {
+        return frame.getDockingManager() != null && frame.getDockingManager().getFrame(frame.getName()).isAutohideShowing();
+    }
+
+    // returns true iff frame is visible
+    public boolean isAutohide() {
+        return frame.getDockingManager() != null && frame.getDockingManager().getFrame(frame.getName()).isAutohide();
+    }
+
+    // returns true iff frame is visible
+    public boolean isVisible() {
+        return frame.getDockingManager() != null && frame.getDockingManager().getFrame(frame.getName()).isVisible();
     }
 
     // updates the title when the frame is ready

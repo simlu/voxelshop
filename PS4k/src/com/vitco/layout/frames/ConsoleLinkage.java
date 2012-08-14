@@ -27,7 +27,7 @@ public class ConsoleLinkage extends FrameLinkagePrototype {
         )));
         updateTitle(); // update the title
 
-        frame.add(consoleView.buildConsole());
+        frame.add(consoleView.buildConsole(this));
 
         // register action to hide/show this frame and get visible state
         actionManager.registerAction("console_state-action_show", new StateActionPrototype() {
@@ -37,7 +37,7 @@ public class ConsoleLinkage extends FrameLinkagePrototype {
             }
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void action(ActionEvent e) {
                 toggleVisible();
             }
         });

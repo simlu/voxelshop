@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <head>
+    <global>
+        <shortcut ctrl="yes" alt="no" shift="no" key="F1" action="console_state-action_show" caption="console_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="2" action="shortcut-mg_state-action_show" caption="shortcutManager_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="3" action="side-view_state-action_show" caption="sideView_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="4" action="time-line_state-action_show" caption="timeLine_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="5" action="personal_state-action_show" caption="personal_caption" />
+    </global>
+
     <frame name="mainView">
         <shortcut ctrl="yes" alt="no" shift="no" key="C" action="main-view_action_copy" caption="main-view_copy_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="V" action="main-view_action_paste" caption="main-view_paste_caption" />
@@ -13,6 +21,9 @@
     </frame>
 
     <frame name="console">
+        <shortcut ctrl="yes" alt="no" shift="yes" key="A" action="console_toggle_auto_show" caption="console_auto-show_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="console_toggle_auto_scroll" caption="console_auto-scroll_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="C" action="console_action_clear" caption="console_clear_caption" />
     </frame>
 
     <frame name="timeLine">

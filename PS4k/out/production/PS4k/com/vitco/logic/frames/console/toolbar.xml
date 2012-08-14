@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head>
+    <icon-item src="resource/img/framebars/console/auto_scroll.png"
+               tool-tip="console_toggle_auto_scroll_tooltip"
+               action="console_toggle_auto_scroll" checkable="true"/>
+    <icon-item src="resource/img/framebars/console/auto_show.png"
+               tool-tip="console_toggle_auto_show_tooltip"
+               action="console_toggle_auto_show" checkable="true"/>
+    <icon-item src="resource/img/framebars/console/clear.png"
+               tool-tip="console_clear_tooltip"
+               action="console_action_clear"/>
+</head>

@@ -3,6 +3,7 @@ package com.vitco.logic.frames.shortcut;
 import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.util.pref.PreferencesInterface;
 
 import javax.swing.*;
 
@@ -23,4 +24,14 @@ public interface ShortcutManagerInterface {
     // convert KeyStroke to string representation
     String asString(KeyStroke keyStroke);
     void setErrorHandler(ErrorHandlerInterface errorHandler);
+    void setPreferences(PreferencesInterface preferences);
+    void activateGlobalShortcuts();
+    void deactivateGlobalShortcuts();
+
+    // get global KeyStroke by action
+    KeyStroke getGlobalShortcutByAction(String actionName);
+
+    void addGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
+
+    void removeGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
 }

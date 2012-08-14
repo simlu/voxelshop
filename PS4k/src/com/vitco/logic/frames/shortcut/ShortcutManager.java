@@ -1,7 +1,7 @@
 package com.vitco.logic.frames.shortcut;
 
-import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.FileTools;
+import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
@@ -17,8 +17,10 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,8 +35,53 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // holds the mapping: frame -> (KeyStroke, actionName)
     private final Map<String, ArrayList<ShortcutObject>> map = new HashMap<String, ArrayList<ShortcutObject>>();
 
+    // holds the global shortcuts (KeyStroke, actionName)
+    private final ArrayList<ShortcutObject> global = new ArrayList<ShortcutObject>();
+    private final Map<KeyStroke, ShortcutObject> globalByKeyStroke = new HashMap<KeyStroke, ShortcutObject>();
+    private final Map<String, ShortcutObject> globalByAction = new HashMap<String, ShortcutObject>();
+    private final ArrayList<GlobalShortcutChangeListener> globalShortcutChangeListeners =
+            new ArrayList<GlobalShortcutChangeListener>();
+    private final KeyEventDispatcher globalProcessor = new KeyEventDispatcher() {
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+            KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+            if (globalByKeyStroke.containsKey(keyStroke)) {
+                actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
+                        new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
+                );
+                e.consume();
+                return true;
+            }
+            return false;
+        }
+    };
+    // rewrite the fast access data
+    private void refreshGlobal() {
+        globalByKeyStroke.clear();
+        globalByAction.clear();
+        for (ShortcutObject shortcutObject : global) {
+            globalByKeyStroke.put(shortcutObject.keyStroke, shortcutObject);
+            globalByAction.put(shortcutObject.actionName, shortcutObject);
+        }
+        // notify all listeners
+        for (GlobalShortcutChangeListener gscl : globalShortcutChangeListeners) {
+            gscl.onChange();
+        }
+    }
+
+    @Override
+    public void addGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener) {
+        globalShortcutChangeListeners.add(globalShortcutChangeListener);
+    }
+
+    @Override
+    public void removeGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener) {
+        globalShortcutChangeListeners.remove(globalShortcutChangeListener);
+    }
+
     // var & setter
     private PreferencesInterface preferences;
+    @Override
     public void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
@@ -82,48 +129,86 @@ public class ShortcutManager implements ShortcutManagerInterface {
         return result;
     }
 
+
+    // get global KeyStroke by action
+    @Override
+    public KeyStroke getGlobalShortcutByAction(String actionName) {
+       if (globalByAction.containsKey(actionName)) {
+           return globalByAction.get(actionName).keyStroke;
+       } else {
+           return null;
+       }
+    }
+
     // get shortcuts as string array (loc caption, str representation)
     @Override
     public String[][] getShortcuts(String frameKey) {
-        if (map.containsKey(frameKey)) {
-            ArrayList<ShortcutObject> shortcuts = map.get(frameKey);
-            String[][] result = new String[shortcuts.size()][];
-            for (int i = 0, len = shortcuts.size(); i < len; i++) {
+        if (frameKey != null) {
+            if (map.containsKey(frameKey)) {
+                ArrayList<ShortcutObject> shortcuts = map.get(frameKey);
+                String[][] result = new String[shortcuts.size()][];
+                for (int i = 0, len = shortcuts.size(); i < len; i++) {
+                    result[i] = new String[]{
+                            langSel.getString(shortcuts.get(i).caption),
+                            asString(shortcuts.get(i).keyStroke)
+                    };
+                }
+                return result;
+            } else {
+                System.err.println("Error: Shortcuts for the non-existing frame \"" + frameKey + "\" were requested.");
+                return null;
+            }
+        } else {
+            String[][] result = new String[global.size()][];
+            for (int i = 0, len = global.size(); i < len; i++) {
                 result[i] = new String[]{
-                        langSel.getString(shortcuts.get(i).caption),
-                        asString(shortcuts.get(i).keyStroke)
+                        langSel.getString(global.get(i).caption),
+                        asString(global.get(i).keyStroke)
                 };
             }
             return result;
-        } else {
-            System.err.println("Error: Shortcuts for the non-existing frame \"" + frameKey + "\" were requested.");
-            return null;
         }
     }
 
     // update (keystroke,action) registration for a frame and shortcut id
     @Override
     public boolean updateShortcutObject(KeyStroke keyStroke, String frame, int id) {
-        if (map.containsKey(frame)) {
-            if (map.get(frame).size() > id) {
-                ShortcutObject shortcutObject = map.get(frame).get(id);
-                shortcutObject.linkedFrame.unregisterKeyboardAction(shortcutObject.keyStroke); // un-register old
-                shortcutObject.keyStroke = keyStroke;
-                final String actionName = shortcutObject.actionName;
-                AbstractAction action = new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        actionManager.getAction(actionName).actionPerformed(evt);
-                    }
-                };
-                shortcutObject.linkedFrame.registerKeyboardAction(
-                        action, shortcutObject.keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
-                );
-                return true;
+        boolean result = false;
+        if (frame != null) {
+            // for frame
+            if (map.containsKey(frame)) {
+                if (map.get(frame).size() > id) {
+                    final ShortcutObject shortcutObject = map.get(frame).get(id);
+                    shortcutObject.linkedFrame.unregisterKeyboardAction(shortcutObject.keyStroke); // un-register old
+                    shortcutObject.keyStroke = keyStroke;
+                    final String actionName = shortcutObject.actionName;
+                    // lazy shortcut registration (the action might not be ready!)
+                    actionManager.performWhenActionIsReady(actionName, new Runnable() {
+                        @Override
+                        public void run() {
+                            shortcutObject.linkedFrame.registerKeyboardAction(
+                                    actionManager.getAction(actionName),
+                                    shortcutObject.keyStroke,
+                                    JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+                            );
+                        }
+                    });
+                    result = true;
+                }
+            } else {
+                System.err.println("Error: Can not set KeyStroke for frame \"" + frame + "\" and id \"" + id + "\".");
+            }
+        } else {
+            // for global
+            if (global.size() > id) {
+                global.get(id).keyStroke = keyStroke;
+                refreshGlobal(); // need to rewrite the fast access
+                result = true;
+            } else {
+                System.err.println("Error: Can not set KeyStroke for global and id \"" + id + "\".");
             }
         }
-        System.err.println("Error: Can not set KeyStroke for frame \"" + frame + "\" and id \"" + id + "\".");
-        return false;
+        return result;
     }
 
     // convert KeyStroke to string representation
@@ -132,20 +217,38 @@ public class ShortcutManager implements ShortcutManagerInterface {
         return keyStroke.toString().replace("pressed", "+").toUpperCase();
     }
 
-    // check if this shortcut is not already used
+    // check if this shortcut is not already used (global or in this frame)
     @Override
     public boolean isFreeShortcut(String frame, KeyStroke keyStroke) {
-        // check that this shortcut is not already set for an action
-        if (map.containsKey(frame)) {
-            for (ShortcutObject shortcutObject : map.get(frame)) {
-                if (shortcutObject.keyStroke.equals(keyStroke)) {
-                    return false;
+        boolean result = true;
+        if (frame != null) {
+            // check that this shortcut is not already set for an action in this frame
+            if (map.containsKey(frame)) {
+                for (ShortcutObject shortcutObject : map.get(frame)) {
+                    if (shortcutObject.keyStroke.equals(keyStroke)) {
+                        result = false;
+                    }
+                }
+            } else {
+                System.err.println("Error: Can not find frame \"" + frame + "\".");
+            }
+        } else {
+            // check that this shortcut is not already set in any frame
+            for (String key : map.keySet()) {
+                for (ShortcutObject shortcutObject : map.get(key)) {
+                    if (shortcutObject.keyStroke.equals(keyStroke)) {
+                        result = false;
+                    }
                 }
             }
-            return true;
         }
-        System.err.println("Error: Can not find frame \"" + frame + "\".");
-        return true;
+        // check that the shortcut is not already used globally
+        for (ShortcutObject shortcutObject : global) {
+            if (shortcutObject.keyStroke.equals(keyStroke)) {
+                result = false;
+            }
+        }
+        return result;
     }
 
     // check if we want to allow this shortcut
@@ -164,45 +267,66 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77,
                 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
                 // 0-9
-                30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+                48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+                // f1 - f12
+                112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
         })).contains(keyStroke.getKeyCode());
     }
 
-    // internal - check that this action is not yet in the frame
+    // internal - check that this action is not yet in this frame
     private boolean usedAction(String frameName, String actionName) {
-        // check that this shortcut is not already set for an action
-        if (map.containsKey(frameName)) {
-            for (ShortcutObject shortcutObject : map.get(frameName)) {
+        boolean result = false;
+        if (frameName != null) {
+            // check that this shortcut is not already set for an action
+            if (map.containsKey(frameName)) {
+                for (ShortcutObject shortcutObject : map.get(frameName)) {
+                    if (shortcutObject.actionName.equals(actionName)) {
+                        result = true;
+                    }
+                }
+            } else {
+                System.err.println("Error: Can not find frame \"" + frameName + "\".");
+            }
+        } else {
+            for (ShortcutObject shortcutObject : global) {
                 if (shortcutObject.actionName.equals(actionName)) {
-                    return true;
+                    result = true;
                 }
             }
-            return false;
         }
-        System.err.println("Error: Can not find frame \"" + frameName + "\".");
-        return false;
+        return result;
     }
 
-    // internal - check that this caption localization is not yet used
+    // internal - check that this caption localization is not yet used in this frame
     private boolean usedCaption(String frameName, String caption) {
-        // check that this shortcut is not already set for an action
-        if (map.containsKey(frameName)) {
-            for (ShortcutObject shortcutObject : map.get(frameName)) {
+        boolean result = false;
+        if (frameName != null) {
+            // check that this shortcut is not already set for an action
+            if (map.containsKey(frameName)) {
+                for (ShortcutObject shortcutObject : map.get(frameName)) {
+                    if (shortcutObject.caption.equals(caption)) {
+                        result = true;
+                    }
+                }
+            } else {
+                System.err.println("Error: Can not find frame \"" + frameName + "\".");
+            }
+        } else {
+            for (ShortcutObject shortcutObject : global) {
                 if (shortcutObject.caption.equals(caption)) {
-                    return true;
+                    result = true;
                 }
             }
-            return false;
         }
-        System.err.println("Error: Can not find frame \"" + frameName + "\".");
-        return false;
+        return result;
     }
 
     // store shortcuts in file
     @PreDestroy
     public void onDestruct() {
         // store the shortcut map in file
-        preferences.storeObject("all_shortcuts_as_map", map);
+        preferences.storeObject("all_frame_shortcuts_as_map", map);
+        preferences.storeObject("global_shortcuts_as_map", global);
     }
 
     // load the xml files that maps (shortcut, action)
@@ -256,11 +380,113 @@ public class ShortcutManager implements ShortcutManagerInterface {
             }
         }
 
+        // check if we have global hotkeys stored
+        storedShortcuts = preferences.loadObject("global_shortcuts_as_map");
+        if (storedShortcuts != null) {
+            ArrayList tmp = (ArrayList)storedShortcuts;
+            for (ShortcutObject so1 : global) {
+                for (Object so2 : tmp) {
+                    // only update existing actions
+                    if (so1.actionName.equals(((ShortcutObject)so2).actionName)) {
+                        so1.keyStroke = ((ShortcutObject)so2).keyStroke;
+                    }
+                }
+            }
+        }
+        // make sure the list updated
+        refreshGlobal();
+
+    }
+
+    // convert string into keycode
+    private int strToKeyCode(String str) {
+        int result = 0;
+        if (str.length() == 1) {
+            result = str.toCharArray()[0];
+        } else {
+            if (str.startsWith("F")) {
+                str = str.substring(1);
+            }
+            try {
+                int tmp = Integer.valueOf(str);
+                if ((tmp >= 1) && (tmp <= 12)) {
+                    result = 111 + tmp;
+                }
+            } catch (NumberFormatException e) {
+                errorHandler.handle(e);
+            }
+        }
+        return result;
+    }
+
+    // internal - build a shortcut object from xml element
+    private ShortcutObject buildShortcut(Element e, String frameName) {
+        ShortcutObject shortcutObject = new ShortcutObject();
+        // store
+        shortcutObject.actionName = e.getAttribute("action");
+        shortcutObject.caption = e.getAttribute("caption");
+        // build the keystroke
+        int controller = 0;
+        if (e.getAttribute("ctrl").equals("yes")) {
+            controller = controller | InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK;
+        }
+        if (e.getAttribute("alt").equals("yes")) {
+            controller = controller | InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK;
+        }
+        if (e.getAttribute("shift").equals("yes")) {
+            controller = controller | InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK;
+        }
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(strToKeyCode(e.getAttribute("key")), controller);
+        shortcutObject.keyStroke = keyStroke;
+        // check if this keystroke is valid
+        if (!isValidShortcut(keyStroke)) {
+            System.err.println(
+                    "Error: Invalid shortcut \"" + asString(keyStroke) +
+                            "\" in xml file for action \"" + shortcutObject.actionName + "\" " +
+                            (frameName == null
+                                    ? "(global)."
+                                    : "and frame \"" + frameName + "\".")
+            );
+        }
+        // check if KeyStroke is free
+        if (!isFreeShortcut(frameName, keyStroke)) {
+            System.err.println(
+                    "Error: Duplicate shortcut \"" + asString(keyStroke) +
+                            "\" in xml file for action \"" + shortcutObject.actionName + "\" " +
+                            "and frame \"" + frameName + "\"."
+            );
+        }
+        // check if action is free (only allow one shortcut / action / frame)
+        if (usedAction(frameName, shortcutObject.actionName)) {
+            System.err.println(
+                    "Error: Duplicate action \"" + shortcutObject.actionName +
+                            "\" in xml file for shortcut \"" + asString(keyStroke) + "\" " +
+                            "and frame \"" + frameName + "\"."
+            );
+        }
+        // check if caption is free (only allow one shortcut / caption / frame)
+        if (usedCaption(frameName, shortcutObject.caption)) {
+            System.err.println(
+                    "Error: Duplicate caption id \"" + shortcutObject.caption +
+                            "\" in xml file for action \"" + shortcutObject.actionName + "\" " +
+                            "and frame \"" + frameName + "\"."
+            );
+        }
+        return shortcutObject;
     }
 
     // internal - add the shortcuts for this frame to the mapping
     private void addShortcuts(Node frame) {
-        if (frame.getNodeName().equals("frame")) {
+        if (frame.getNodeName().equals("global")) {
+            NodeList list = frame.getChildNodes();
+            for (int i = 0, len = list.getLength(); i < len; i++) {
+                if (list.item(i).getNodeName().equals("shortcut")) {
+                    Element e = (Element) list.item(i);
+                    global.add(buildShortcut(e, null));
+                }
+            }
+
+        } else if (frame.getNodeName().equals("frame")) {
             // get the frame name
             String frameName = ((Element) frame).getAttribute("name");
             NodeList list = frame.getChildNodes();
@@ -268,61 +494,23 @@ public class ShortcutManager implements ShortcutManagerInterface {
             map.put(frameName, shortcutObjectArray); // add to mapping
             for (int i = 0, len = list.getLength(); i < len; i++) {
                 if (list.item(i).getNodeName().equals("shortcut")) {
-                    ShortcutObject shortcutObject = new ShortcutObject();
-
                     Element e = (Element) list.item(i);
-                    // store
-                    shortcutObject.actionName = e.getAttribute("action");
-                    shortcutObject.caption = e.getAttribute("caption");
-                    // build the keystroke
-                    int controller = 0;
-                    if (e.getAttribute("ctrl").equals("yes")) {
-                        controller = controller | InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK;
-                    }
-                    if (e.getAttribute("alt").equals("yes")) {
-                        controller = controller | InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK;
-                    }
-                    if (e.getAttribute("shift").equals("yes")) {
-                        controller = controller | InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK;
-                    }
-                    KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getAttribute("key").toCharArray()[0], controller);
-                    shortcutObject.keyStroke = keyStroke;
-                    // check if this keystroke is valid
-                    if (!isValidShortcut(keyStroke)) {
-                        System.err.println(
-                                "Error: Invalid shortcut \"" + asString(keyStroke) +
-                                        "\" in xml file for action \"" + shortcutObject.actionName + "\" " +
-                                        "and frame \"" + frameName + "\"."
-                        );
-                    }
-                    // check if KeyStroke is free
-                    if (!isFreeShortcut(frameName, keyStroke)) {
-                        System.err.println(
-                                "Error: Duplicate shortcut \"" + asString(keyStroke) +
-                                        "\" in xml file for action \"" + shortcutObject.actionName + "\" " +
-                                        "and frame \"" + frameName + "\"."
-                        );
-                    }
-                    // check if action is free (only allow one shortcut / action)
-                    if (usedAction(frameName, shortcutObject.actionName)) {
-                        System.err.println(
-                                "Error: Duplicate action \"" + shortcutObject.actionName +
-                                        "\" in xml file for shortcut \"" + asString(keyStroke) + "\" " +
-                                        "and frame \"" + frameName + "\"."
-                        );
-                    }
-                    // check if caption is free (only allow one shortcut / caption)
-                    if (usedCaption(frameName, shortcutObject.caption)) {
-                        System.err.println(
-                                "Error: Duplicate caption id \"" + shortcutObject.caption +
-                                        "\" in xml file for action \"" + shortcutObject.actionName + "\" " +
-                                        "and frame \"" + frameName + "\"."
-                        );
-                    }
-                    shortcutObjectArray.add(shortcutObject);
+                    shortcutObjectArray.add(buildShortcut(e, frameName));
                 }
             }
         }
+    }
+
+    // activate global shortcuts
+    @Override
+    public void activateGlobalShortcuts() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(globalProcessor);
+    }
+
+    // deactivate global shortcuts
+    @Override
+    public void deactivateGlobalShortcuts() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(globalProcessor);
     }
 
     // initial registration of frames
@@ -333,14 +521,17 @@ public class ShortcutManager implements ShortcutManagerInterface {
             for (final ShortcutObject entry : shortcutObjectArray) {
                 // to perform validity check we need to register this name
                 actionManager.registerActionName(entry.actionName);
-                // lazy action execution (the action might not be ready!)
-                AbstractAction action = new AbstractAction() {
+                // lazy shortcut registration (the action might not be ready!)
+                actionManager.performWhenActionIsReady(entry.actionName, new Runnable() {
                     @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        actionManager.getAction(entry.actionName).actionPerformed(evt);
+                    public void run() {
+                        frame.registerKeyboardAction(
+                                actionManager.getAction(entry.actionName),
+                                entry.keyStroke,
+                                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+                        );
                     }
-                };
-                frame.registerKeyboardAction(action, entry.keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+                });
                 // store reference to frame
                 entry.linkedFrame = frame;
 

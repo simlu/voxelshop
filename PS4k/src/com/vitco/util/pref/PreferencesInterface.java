@@ -17,4 +17,9 @@ public interface PreferencesInterface {
     public Object loadObject(String key);
     public void storeObject(String key, Object value);
     public void setErrorHandler(ErrorHandlerInterface errorHandler);
+    boolean contains(String key);
+
+    void storeBoolean(String key, boolean value);
+
+    boolean loadBoolean(String key);
 }

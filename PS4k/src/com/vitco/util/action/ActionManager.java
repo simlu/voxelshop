@@ -14,6 +14,26 @@ public class ActionManager implements ActionManagerInterface {
     // maps strings to action
     private final Map<String, AbstractAction> map = new HashMap<String, AbstractAction>();
 
+    // maps action names to threads
+    private final Map<String, ArrayList<Runnable>> queStack = new HashMap<String, ArrayList<Runnable>>();
+
+    @Override
+    public void performWhenActionIsReady(String action, Runnable thread) {
+        if (map.containsKey(action)) {
+            thread.run(); // the action is already ready
+        } else {
+            // we need to wait till the action is ready
+            ArrayList<Runnable> value;
+            if (queStack.containsKey(action)) {
+                value = queStack.get(action);
+            } else {
+                value = new ArrayList<Runnable>();
+            }
+            value.add(thread);
+            queStack.put(action, value);
+        }
+    }
+
     // allows to register an action
     @Override
     public void registerAction(String key, AbstractAction action) {
@@ -21,6 +41,14 @@ public class ActionManager implements ActionManagerInterface {
             System.err.println("Error: The action \"" + key + "\" is already registered!");
         } else {
             map.put(key, action);
+            if (queStack.containsKey(key)) { // run the thread that was waiting for this action
+                ArrayList<Runnable> value = queStack.get(key);
+                for (Runnable thread : value) {
+                    thread.run();
+                }
+                value.clear(); // empty array list (unnecessary?)
+                queStack.remove(key); // free the key
+            }
         }
 
     }
@@ -44,7 +72,7 @@ public class ActionManager implements ActionManagerInterface {
                 System.err.println("Error: The action \"" + actionName + "\" is not registered!");
                 System.err.println("Creating dummy action.");
                 // register dummy action
-                map.put(actionName, new AbstractAction() {
+                registerAction(actionName, new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         System.out.println("Dummy Action \"" + actionName + "\"");
@@ -57,6 +85,9 @@ public class ActionManager implements ActionManagerInterface {
             if (!actionNames.contains(key)) {
                 System.err.println("Error: The action \"" + key + "\" is never used!");
             }
+        }
+        for (String key : queStack.keySet()) {
+            System.err.println("Error: The action \"" + key + "\" was never registered!");
         }
         return result;
     }

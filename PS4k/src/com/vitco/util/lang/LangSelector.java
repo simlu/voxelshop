@@ -46,7 +46,7 @@ public final class LangSelector implements LangSelectorInterface {
             return rb.getString(key);
         } else {
             System.err.println("Error: There is no keyword \"" + key + "\" defined in the language bundle!");
-            return null;
+            return "";
         }
 
     }

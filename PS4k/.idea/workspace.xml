@@ -7,125 +7,114 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3775d788-1cb3-4d79-83c9-f6bf480db621" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/apachehttp/commons-codec-1.6.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/apachehttp/httpclient-4.2.1.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/apachehttp/httpcore-4.2.1.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/apachehttp/httpmime-4.2.1.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/findbugs-idea.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/apachehttp.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/Console.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleView.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleViewInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerViewInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/DateTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/FileTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/ActionManagerInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/types/StateActionPrototype.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandler.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandlerInterface.java" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\action\ActionManager$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\action\ActionManager.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\action\ActionManagerInterface.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\action\types\StateActionPrototype.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManager$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManager$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManager.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerInterface.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$4.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$CellEditor$1$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$CellEditor$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$CellEditor.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView$TableRenderer.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerView.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutManagerViewInterface.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\shortcut\ShortcutObject.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\LangSelector.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\LangSelectorInterface.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGenerator$1.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGenerator$2.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGenerator$3.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGenerator$4.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGenerator$5.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGenerator$6.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGenerator.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\MenuGeneratorInterface.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\Preferences.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\PreferencesInterface.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\SerializableHelper.class" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/framebars/console/auto_scroll.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/framebars/console/auto_show.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/framebars/console/clear.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/ModelPrototype.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/ViewPrototype.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/toolbar.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/GlobalShortcutChangeListener.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/ChangeListener.java" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\commons-codec-1.6.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\commons-logging-1.1.1.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\httpclient-4.2.1.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\jide-action.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\jide-common.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\jide-dock.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\org.springframework.asm-3.1.2.RELEASE.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\org.springframework.aspects-3.1.2.RELEASE.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\org.springframework.beans-3.1.2.RELEASE.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\org.springframework.context-3.1.2.RELEASE.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\org.springframework.orm-3.1.2.RELEASE.jar" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\settings\pref.ser" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\action\ActionManagerInterface.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\action\types\StateActionPrototype.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\shortcut\ShortcutManagerInterface.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\shortcut\ShortcutManagerViewInterface.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util\SerializableHelper.java" afterPath="" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\action\ActionManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/ActionManager.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\shortcut\ShortcutManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManager.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\shortcut\ShortcutManagerView.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerView.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\shortcut\ShortcutObject.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutObject.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util\LangSelector.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/lang/LangSelector.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util\LangSelectorInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/lang/LangSelectorInterface.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util\MenuGenerator.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGenerator.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util\MenuGeneratorInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGeneratorInterface.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util\Preferences.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/pref/Preferences.java" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util\PreferencesInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/pref/PreferencesInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_installer/PS4k.exe" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_installer/PS4k.exe" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\Main$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\Main$1.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\Main.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\Main.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager$1.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager$2.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager$3.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManager.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManagerInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\WindowManagerInterface.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\BarLinkagePrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\BarLinkagePrototype.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\MainMenuLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\MainMenuLinkage.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\ToolBarLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\ToolBarLinkage.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ConsoleLinkage$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ConsoleLinkage$1.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ConsoleLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ConsoleLinkage.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\FrameLinkagePrototype$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\FrameLinkagePrototype$1.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\FrameLinkagePrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\FrameLinkagePrototype.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\MainViewLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\MainViewLinkage.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\PersonalLinkage$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\PersonalLinkage$1.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\PersonalLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\PersonalLinkage.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ShortcutManagerLinkage$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ShortcutManagerLinkage$1.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ShortcutManagerLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ShortcutManagerLinkage.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\SideViewLinkage$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\SideViewLinkage$1.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\SideViewLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\SideViewLinkage.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\TimeLineLinkage$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\TimeLineLinkage$1.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\TimeLineLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\TimeLineLinkage.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\res\color\VitcoColor.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\res\color\VitcoColor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/lib.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/lib.xml" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\Console.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\Console.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleView$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleView$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleView.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleView.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleViewInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\console\ConsoleViewInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManager$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManager$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManager$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManager$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManager.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManager.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$4.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$4.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$CellEditor$1$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$CellEditor$1$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$CellEditor$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$CellEditor$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$CellEditor.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$CellEditor.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$TableRenderer.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView$TableRenderer.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerView.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerViewInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutManagerViewInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutObject.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\frames\shortcut\ShortcutObject.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\ActionManager$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\ActionManager$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\ActionManager.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\ActionManager.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\ActionManagerInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\ActionManagerInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\types\StateActionPrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\action\types\StateActionPrototype.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\error\ErrorHandler.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\error\ErrorHandler.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\error\ErrorHandlerInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\error\ErrorHandlerInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\lang\LangSelector.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\lang\LangSelector.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$4.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$4.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$5.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$5.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$6.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator$6.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGenerator.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGeneratorInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\menu\MenuGeneratorInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\pref\Preferences.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\pref\Preferences.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\pref\PreferencesInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\pref\PreferencesInterface.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PS4k.iml" afterPath="$PROJECT_DIR$/PS4k.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/Readme.txt" afterPath="$PROJECT_DIR$/out/artifacts/Readme.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/upload-script.txt" afterPath="$PROJECT_DIR$/out/artifacts/upload-script.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/getdown.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/getdown.txt" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\config.xml" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\config.xml" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\main_menu.xml" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\main_menu.xml" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\shortcuts.xml" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\shortcuts.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" afterPath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/Main.java" afterPath="$PROJECT_DIR$/src/com/vitco/Main.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/WindowManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/WindowManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/WindowManagerInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/WindowManagerInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/bars/BarLinkagePrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/bars/BarLinkagePrototype.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/bars/MainMenuLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/bars/MainMenuLinkage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/bars/ToolBarLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/bars/ToolBarLinkage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/ConsoleLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/ConsoleLinkage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/FrameLinkagePrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/FrameLinkagePrototype.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/MainViewLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/MainViewLinkage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/PersonalLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/PersonalLinkage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/ShortcutManagerLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/ShortcutManagerLinkage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/SideViewLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/SideViewLinkage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/TimeLineLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/TimeLineLinkage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/config.xml" afterPath="$PROJECT_DIR$/src/com/vitco/logic/config.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/res/color/VitcoColor.java" afterPath="$PROJECT_DIR$/src/com/vitco/res/color/VitcoColor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/Console.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/Console.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleView.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleViewInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleViewInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerView.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerViewInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerViewInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutObject.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutObject.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/main_menu.xml" afterPath="$PROJECT_DIR$/src/com/vitco/logic/main_menu.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/shortcuts.xml" afterPath="$PROJECT_DIR$/src/com/vitco/logic/shortcuts.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/action/ActionManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/ActionManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/action/ActionManagerInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/ActionManagerInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/action/types/StateActionPrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/types/StateActionPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandler.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandlerInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandlerInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/lang/LangSelector.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/lang/LangSelector.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGenerator.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGeneratorInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGeneratorInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/pref/Preferences.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/pref/Preferences.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/pref/PreferencesInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/pref/PreferencesInterface.java" />
     </list>
     <ignored path="PS3k 2.0.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -210,22 +199,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/vitco/util/SerializableHelper.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/pref/Preferences.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/shortcut/ShortcutManager.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleInterface.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/DateTools.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleListener.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleView.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleViewInterface.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/logic/config.xml" />
-        <option value="$PROJECT_DIR$/src/com/vitco/layout/frames/ConsoleLinkage.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandlerInterface.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/FileTools.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandler.java" />
         <option value="$PROJECT_DIR$/resource/bundle/LangBundle.properties" />
-        <option value="$PROJECT_DIR$/src/com/vitco/Main.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/console/Console.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/action/types/StateActionPrototype.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/action/ChangeListener.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/ModelPrototype.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/layout/frames/FrameLinkagePrototype.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/Main.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutObject.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/config.xml" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/GlobalShortcutChangeListener.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/main_menu.xml" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerView.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/tool_bar.xml" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGenerator.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/shortcuts.xml" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManager.java" />
       </list>
     </option>
   </component>
@@ -280,30 +269,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -335,10 +300,6 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="META-INF" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -402,29 +363,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="error" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vitco" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="menu" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -447,6 +386,32 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="logic" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vitco" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logic" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frames" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -480,34 +445,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vitco" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="frames" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="console" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -517,15 +476,15 @@
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
     <property name="project.structure.last.edited" value="Artifacts" />
-    <property name="project.structure.proportion" value="0.15" />
     <property name="OverrideImplement.combined" value="true" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="Repository.Attach.JavaDocs" value="true" />
-    <property name="recentsLimit" value="5" />
-    <property name="MemberChooser.sorted" value="false" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
-    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="recentsLimit" value="5" />
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/JIDE/jide.3.4.4.eval/examples" />
+    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="ps4k" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -541,8 +500,8 @@
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GenerateAntBuildDialog.backupFiles" value="false" />
-    <property name="dynamic.classpath" value="false" />
     <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -550,21 +509,22 @@
       <recent name="com.vitco.layout" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\console" />
+      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\framebars" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\lib\apachehttp" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\icons\frames" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\META-INF\lib" />
-      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\namespace" />
-      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\lib\spring" />
     </key>
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.vitco.logic.frames.shortcut" />
       <recent name="com.vitco.actions" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\console" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\logic" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\menus" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\core" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\META-INF\lib" />
-      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\lib\spring" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Main">
@@ -673,6 +633,24 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -698,24 +676,6 @@
       <envs />
       <properties />
       <listeners />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -858,24 +818,25 @@
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.49734244" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852808" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32473445" sideWeight="0.64309764" order="3" side_tool="false" content_ui="tabs" x="466" y="150" width="433" height="438" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32996634" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3956229" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2912458" sideWeight="0.50949126" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.49734244" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18602885" sideWeight="0.32659933" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6700337" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4023569" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.49369746" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852808" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39984825" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2604404" sideWeight="0.6111111" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3888889" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.2912458" sideWeight="0.4851936" order="2" side_tool="false" content_ui="tabs" x="-167" y="-841" width="1099" height="675" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39939255" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2604404" sideWeight="0.6700337" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3888889" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.2912458" sideWeight="0.4851936" order="2" side_tool="false" content_ui="tabs" x="-156" y="-860" width="1099" height="675" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3262519" sideWeight="0.64309764" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -955,127 +916,148 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManager.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/console/Console.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="12" selection-start="989" selection-end="989" vertical-scroll-proportion="0.0">
+        <state line="15" column="17" selection-start="516" selection-end="516" vertical-scroll-proportion="0.20550458">
+          <folding>
+            <element signature="e#562#570#0" expanded="true" />
+            <element signature="e#1385#1393#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/action/types/StateActionPrototype.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="13" selection-start="761" selection-end="761" vertical-scroll-proportion="0.56330276">
+          <folding>
+            <element signature="e#412#428#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/action/ChangeListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="81" selection-start="117" selection-end="117" vertical-scroll-proportion="0.08994709">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/ModelPrototype.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="27" selection-start="177" selection-end="177" vertical-scroll-proportion="0.17989418">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerView.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/frames/FrameLinkagePrototype.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="160" column="59" selection-start="6242" selection-end="6358" vertical-scroll-proportion="0.0">
+        <state line="57" column="8" selection-start="1848" selection-end="1848" vertical-scroll-proportion="0.1904762">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandlerInterface.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/action/ActionManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="50" selection-start="483" selection-end="483" vertical-scroll-proportion="0.50268817">
+        <state line="67" column="36" selection-start="2243" selection-end="2245" vertical-scroll-proportion="0.31977817">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resource/bundle/LangBundle.properties">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/action/ActionManagerInterface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="56" selection-start="725" selection-end="725" vertical-scroll-proportion="0.6024465">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="ResourceBundle">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/FileTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="56" selection-start="724" selection-end="724" vertical-scroll-proportion="0.77936965">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/error/ErrorHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="12" selection-start="1694" selection-end="1694" vertical-scroll-proportion="-1.5558739">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/frames/ConsoleLinkage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="50" selection-start="437" selection-end="437" vertical-scroll-proportion="0.48710603">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/config.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="56" selection-start="861" selection-end="861" vertical-scroll-proportion="0.6469003">
+        <state line="7" column="17" selection-start="163" selection-end="163" vertical-scroll-proportion="0.20987654">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="13" selection-start="143" selection-end="143" vertical-scroll-proportion="0.27493262">
+        <state line="8" column="49" selection-start="233" selection-end="236" vertical-scroll-proportion="0.3207547">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/pref/Preferences.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/GlobalShortcutChangeListener.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="28" selection-start="2565" selection-end="2565" vertical-scroll-proportion="3.7574124">
+        <state line="6" column="15" selection-start="159" selection-end="159" vertical-scroll-proportion="0.17989418">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleView.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="10" selection-start="356" selection-end="356" vertical-scroll-proportion="0.49865228">
+        <state line="411" column="26" selection-start="16351" selection-end="16351" vertical-scroll-proportion="-1.6580645">
           <folding>
-            <element signature="e#739#899#0" expanded="true" />
-            <element signature="e#888#889#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1161#1196#0" expanded="true" />
+            <element signature="e#1325#1341#0" expanded="true" />
+            <element signature="e#1425#1452#0" expanded="true" />
+            <element signature="e#1530#1554#0" expanded="true" />
+            <element signature="e#1673#1703#0" expanded="true" />
+            <element signature="e#1762#2310#0" expanded="true" />
+            <element signature="e#2303#2304#0" expanded="true" />
+            <element signature="e#20125#20141#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/console/ConsoleViewInterface.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/tool_bar.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="30" selection-start="238" selection-end="238" vertical-scroll-proportion="0.41239893">
+        <state line="4" column="35" selection-start="170" selection-end="170" vertical-scroll-proportion="0.18328841">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/shortcuts.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="22" selection-start="1927" selection-end="1927" vertical-scroll-proportion="0.40431267">
+        <state line="3" column="55" selection-start="114" selection-end="114" vertical-scroll-proportion="0.1424581">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/bars/BarLinkagePrototype.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/main_menu.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="37" selection-start="438" selection-end="438" vertical-scroll-proportion="0.55654764">
+        <state line="10" column="88" selection-start="385" selection-end="394" vertical-scroll-proportion="0.45822102">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/DateTools.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/config.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="13" selection-start="180" selection-end="180" vertical-scroll-proportion="0.33333334">
+        <state line="82" column="64" selection-start="3901" selection-end="3901" vertical-scroll-proportion="1.9710145">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/shortcut/ShortcutManagerView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="219" column="40" selection-start="9589" selection-end="9589" vertical-scroll-proportion="-0.072463766">
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="class#TableRenderer#0;class#ShortcutManagerView#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/frames/console/Console.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/menu/MenuGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="17" selection-start="221" selection-end="221" vertical-scroll-proportion="0.30357143">
+        <state line="228" column="37" selection-start="9381" selection-end="9381" vertical-scroll-proportion="0.82749325">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#281#298#0" expanded="true" />
+            <element signature="e#5042#5385#0" expanded="true" />
+            <element signature="e#5374#5375#0" expanded="true" />
+            <element signature="e#6129#6651#0" expanded="true" />
+            <element signature="e#6640#6641#0" expanded="true" />
+            <element signature="e#7998#8183#0" expanded="true" />
+            <element signature="e#8172#8173#0" expanded="true" />
+            <element signature="e#9176#9708#0" expanded="true" />
+            <element signature="e#9697#9698#0" expanded="true" />
+            <element signature="e#10764#11350#0" expanded="true" />
+            <element signature="e#11339#11340#0" expanded="true" />
+            <element signature="e#12210#12741#0" expanded="true" />
+            <element signature="e#12730#12731#0" expanded="true" />
           </folding>
         </state>
       </provider>

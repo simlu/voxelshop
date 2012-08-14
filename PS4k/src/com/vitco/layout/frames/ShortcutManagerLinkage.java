@@ -38,7 +38,7 @@ public class ShortcutManagerLinkage extends FrameLinkagePrototype {
             }
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void action(ActionEvent e) {
                 toggleVisible();
             }
         });

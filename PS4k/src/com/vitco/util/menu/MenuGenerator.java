@@ -1,9 +1,12 @@
 package com.vitco.util.menu;
 
-import com.jidesoft.action.CommandBar;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideMenu;
+import com.jidesoft.swing.JideToggleButton;
+import com.vitco.logic.frames.shortcut.GlobalShortcutChangeListener;
+import com.vitco.logic.frames.shortcut.ShortcutManagerInterface;
 import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -18,7 +21,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -36,6 +38,13 @@ public class MenuGenerator implements MenuGeneratorInterface {
     }
 
     // var & setter
+    private ShortcutManagerInterface shortcutManager;
+    @Override
+    public void setShortcutManager(ShortcutManagerInterface shortcutManager) {
+        this.shortcutManager = shortcutManager;
+    }
+
+    // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
     public void setErrorHandler(ErrorHandlerInterface errorHandler) {
@@ -50,7 +59,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
     }
 
     @Override
-    public void buildMenuFromXML(CommandBar bar, String xmlFile) {
+    public void buildMenuFromXML(JComponent jComponent, String xmlFile) {
         try {
             // load the xml document
             DocumentBuilderFactory factory = DocumentBuilderFactory
@@ -59,7 +68,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
 
             Document doc = builder.parse(ClassLoader.getSystemResourceAsStream(xmlFile));
 
-            buildRecursive(doc.getFirstChild(), bar);
+            buildRecursive(doc.getFirstChild(), jComponent);
 
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
@@ -107,61 +116,111 @@ public class MenuGenerator implements MenuGeneratorInterface {
                 component.add(new JSeparator());
             } else if (name.equals("icon-item")) {
                 Element e = (Element) node;
-                addIconItem(component, e);
+                if (e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true")) {
+                    addCheckIconItem(component, e);
+                } else {
+                    addIconItem(component, e);
+                }
             }
         }
     }
 
+    private void handleMenuShortcut(final JMenuItem item, final Element e) {
+        // shortcut change events
+        KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
+        if (accelerator != null) {
+            item.setAccelerator(accelerator);
+        }
+        shortcutManager.addGlobalShortcutChangeListener(new GlobalShortcutChangeListener() {
+            @Override
+            public void onChange() {
+                KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
+                if (accelerator != null) {
+                    item.setAccelerator(accelerator);
+                }
+            }
+        });
+    }
+
+    private void handleButtonShortcutAndTooltip(final JideButton jideButton, final Element e) {
+        // shortcut change events
+        KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
+        if (accelerator != null) {
+            jideButton.setToolTipText(
+                    langSel.getString(e.getAttribute("tool-tip"))
+                            + " (" + shortcutManager.asString(accelerator) + ")"
+            );
+        } else {
+            // might still have a frame shortcut, we don't know
+            jideButton.setToolTipText(
+                    langSel.getString(e.getAttribute("tool-tip"))
+            );
+        }
+        shortcutManager.addGlobalShortcutChangeListener(new GlobalShortcutChangeListener() {
+            @Override
+            public void onChange() {
+                KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
+                if (accelerator != null) {
+                    jideButton.setToolTipText(
+                            langSel.getString(e.getAttribute("tool-tip"))
+                                    + " (" + shortcutManager.asString(accelerator) + ")"
+                    );
+                }
+            }
+        });
+    }
+
     // adds an item that has an icon and a tooltip
     private void addIconItem(JComponent component, final Element e) {
-        JideButton jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+        final JideButton jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource(e.getAttribute("src"))
         )));
         // to perform validity check we need to register this name
         actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action execution (the action might not be ready!)
-        jideButton.addActionListener(new AbstractAction() {
+        // lazy action linking (the action might not be ready!)
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
-                actionManager.getAction(e.getAttribute("action")).actionPerformed(evt);
+            public void run() {
+                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
             }
         });
         jideButton.setFocusable(false);
-        jideButton.setToolTipText(langSel.getString(e.getAttribute("tool-tip")));
+        handleButtonShortcutAndTooltip(jideButton, e);
         component.add(jideButton);
 
     }
 
     // adds a default menu item
     private void addDefaultItem(JComponent component, final Element e) {
-        JMenuItem item = new JMenuItem();
+        final JMenuItem item = new JMenuItem();
         // to perform validity check we need to register this name
         actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action execution (the action might not be ready!)
-        item.addActionListener(new AbstractAction() {
+        // lazy action linking (the action might not be ready!)
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
-                actionManager.getAction(e.getAttribute("action")).actionPerformed(evt);
+            public void run() {
+                item.addActionListener(actionManager.getAction(e.getAttribute("action")));
             }
         });
+        handleMenuShortcut(item, e);
         item.setText(langSel.getString(e.getAttribute("caption")));
         component.add(item);
     }
 
     // adds an item that can be checked or unchecked
-    private void addCheckItem(JComponent component, final Element e) {
+    private void addCheckItem(final JComponent component, final Element e) {
         final JCheckBoxMenuItem item = new JCheckBoxMenuItem();
         // to perform validity check we need to register this name
         actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action execution (the action might not be ready!)
-        item.addActionListener(new AbstractAction() {
+        // lazy action linking (the action might not be ready!)
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
-                actionManager.getAction(e.getAttribute("action")).actionPerformed(evt);
+            public void run() {
+                item.addActionListener(actionManager.getAction(e.getAttribute("action")));
             }
         });
+        handleMenuShortcut(item, e);
         item.setText(langSel.getString(e.getAttribute("caption")));
-
         // look up current check status
         item.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
             @Override
@@ -178,21 +237,55 @@ public class MenuGenerator implements MenuGeneratorInterface {
         component.add(item);
     }
 
-    // adds an item that can be grayed out
-    private void addGrayItem(JComponent component, final Element e) {
-        final JCheckBoxMenuItem item = new JCheckBoxMenuItem();
+    // adds an item that has an icon and a tooltip and is checkable
+    private void addCheckIconItem(JComponent component, final Element e) {
+        final JideToggleButton jideButton = new JideToggleButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource(e.getAttribute("src"))
+        )));
         // to perform validity check we need to register this name
         actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action execution (the action might not be ready!)
-        item.addActionListener(new AbstractAction() {
+        // lazy action linking (the action might not be ready!)
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
-                actionManager.getAction(e.getAttribute("action")).actionPerformed(evt);
+            public void run() {
+                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
             }
         });
-        item.setText(langSel.getString(e.getAttribute("caption")));
+        jideButton.setFocusable(false);
+        handleButtonShortcutAndTooltip(jideButton, e);
+        // make sure the action is ready
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
+            @Override
+            public void run() {
+                StateActionPrototype stateActionPrototype =
+                        ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
+                stateActionPrototype.addChangeListener(new ChangeListener() {
+                    @Override
+                    public void actionFired(boolean b) {
+                        jideButton.setSelected(b);
+                    }
+                });
+                jideButton.setSelected(stateActionPrototype.getStatus());
+            }
+        });
+        component.add(jideButton);
+    }
 
-        // look up current check status
+    // adds an item that can be grayed out
+    private void addGrayItem(JComponent component, final Element e) {
+        final JMenuItem item = new JMenuItem();
+        // to perform validity check we need to register this name
+        actionManager.registerActionName(e.getAttribute("action"));
+        // lazy action linking (the action might not be ready!)
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
+            @Override
+            public void run() {
+                item.addActionListener(actionManager.getAction(e.getAttribute("action")));
+            }
+        });
+        handleMenuShortcut(item, e);
+        item.setText(langSel.getString(e.getAttribute("caption")));
+        // look up current gray status
         item.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {

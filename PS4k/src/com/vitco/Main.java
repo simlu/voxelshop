@@ -6,11 +6,22 @@ import com.vitco.util.pref.Preferences;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+
 /**
  * Initially executed class
  */
 public class Main {
     public static void main(String[] args) throws Exception {
+
+        // turn off all logging
+        Enumeration<String> it = LogManager.getLogManager().getLoggerNames();
+        while (it.hasMoreElements()) {
+            LogManager.getLogManager().getLogger(it.nextElement()).setLevel(Level.OFF);
+        }
+
         // some licences I found online
         //com.jidesoft.utils.Lm.verifyLicense("Gareth Pidgeon", "ZoeOS", "DJoqM6VZ5apzIiGYUqwaFfnAXmREFrm1");
         //com.jidesoft.utils.Lm.verifyLicense("Marios Skounakis", "JOverseer", "L1R4Nx7vEp0nMbsoaHdH7nkRrx5F.dO");
@@ -18,6 +29,7 @@ public class Main {
         //com.jidesoft.utils.Lm.verifyLicense("Marc Fiume", "Savant Genome Browser", "1BimsQGmP.vjmoMbfkPdyh0gs3bl3932");
         //com.jidesoft.utils.Lm.verifyLicense("Bill Snyder", "CashForward", "U4Fnx9Ak6M1DGKsRXc2fNF8nTG0c2aC");
 
+        // check if we are in debug mode
         if ((args.length > 0) && args[0].equals("debug")) {
             ErrorHandler.setDebugMode();
         }
@@ -25,13 +37,27 @@ public class Main {
         // build the application
         final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
 
-        // debug
+        // for debugging
         ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
 
-        // add a hook
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-            public void run()
-            {
+//        // test console
+//        final Console console = ((Console) context.getBean("Console"));
+//        new Thread() {
+//            public void run() {
+//                while (true) {
+//                    console.addLine("text");
+//                    try {
+//                        sleep(2000);
+//                    } catch (InterruptedException e) {
+//                       //e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }.start();
+
+        // add a shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
                 // make reference so Preferences object doesn't get destroyed
                 Preferences pref = ((Preferences) context.getBean("Preferences"));
                 // trigger @PreDestroy

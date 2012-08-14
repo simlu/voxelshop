@@ -1,6 +1,6 @@
 package com.vitco.util.error;
 
-import com.vitco.logic.frames.console.ConsoleViewInterface;
+import com.vitco.logic.frames.console.ConsoleInterface;
 import com.vitco.util.DateTools;
 import com.vitco.util.FileTools;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -9,15 +9,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 
 /**
  * Deals with all the exceptions in the program. Writes them to file and tries to upload
@@ -26,10 +24,10 @@ import java.io.PrintStream;
 public class ErrorHandler implements ErrorHandlerInterface {
 
     // var & setter
-    private ConsoleViewInterface consoleView;
+    private ConsoleInterface console;
     @Override
-    public void setConsoleView(ConsoleViewInterface consoleView) {
-        this.consoleView = consoleView;
+    public void setConsole(ConsoleInterface console) {
+        this.console = console;
     }
 
     // var & setter
@@ -50,6 +48,40 @@ public class ErrorHandler implements ErrorHandlerInterface {
     @Override
     public void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
+    }
+
+    // constructor
+    public ErrorHandler() {
+        if (!debug) {
+            // write error to console
+            System.setErr(new PrintStream(new OutputStream() {
+                private String buffer = "";
+                @Override
+                public void write(int arg0) throws IOException {
+                    if (((char)arg0) == '\n') {
+                        console.addLine(buffer);
+                        buffer = "";
+                    } else {
+                        buffer += (char)arg0;
+                    }
+
+                }
+            }));
+            // write out to console
+            System.setOut(new PrintStream(new OutputStream() {
+                private String buffer = "";
+                @Override
+                public void write(int arg0) throws IOException {
+                    if (((char)arg0) == '\n') {
+                        console.addLine(buffer);
+                        buffer = "";
+                    } else {
+                        buffer += (char)arg0;
+                    }
+
+                }
+            }));
+        }
     }
 
     // handle exceptions
@@ -78,7 +110,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
                     e.printStackTrace(ps);
 
                     // upload to server
-                    uploadFile(temp);
+                    uploadFile(temp, e.getMessage());
 
                 } catch (FileNotFoundException e1) {
                     //e1.printStackTrace();
@@ -91,21 +123,22 @@ public class ErrorHandler implements ErrorHandlerInterface {
     }
 
     // upload file to server
-    private void uploadFile(File temp) {
+    private void uploadFile(File temp, String error) {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(debugReportUrl);
         try {
             FileBody body = new FileBody(temp);
             MultipartEntity reqEntity = new MultipartEntity();
+            reqEntity.addPart("error", new StringBody(error));
             reqEntity.addPart("report", body);
             httpPost.setEntity(reqEntity);
             HttpResponse response = httpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
             if (FileTools.inputStreamToString(entity.getContent()).equals("1")) {
                 // upload was successful, notify the user
-                consoleView.addLine(langSelector.getString("error_dialog_upload_ok"));
+                console.addLine(langSelector.getString("error_dialog_upload_ok"));
             } else {
-                consoleView.addLine(langSelector.getString("error_dialog_upload_failed"));
+                console.addLine(langSelector.getString("error_dialog_upload_failed"));
             }
             // do something useful with the response body
             // and ensure it is fully consumed

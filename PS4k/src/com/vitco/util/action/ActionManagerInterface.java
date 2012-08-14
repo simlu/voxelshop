@@ -12,4 +12,6 @@ public interface ActionManagerInterface {
     // the core methods
     void registerAction(String key, AbstractAction action);
     AbstractAction getAction(String key);
+
+    void performWhenActionIsReady(String action, Runnable thread);
 }

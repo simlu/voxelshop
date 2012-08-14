@@ -14,6 +14,11 @@ public class Preferences implements PreferencesInterface {
 
     private HashMap<String, Object> map = new HashMap<String, Object>();
 
+    @Override
+    public boolean contains(String key) {
+        return map.containsKey(key);
+    }
+
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
@@ -32,6 +37,11 @@ public class Preferences implements PreferencesInterface {
     }
 
     @Override
+    public void storeBoolean(String key, boolean value) {
+        map.put(key, value);
+    }
+
+    @Override
     public void storeInteger(String key, int value) {
         map.put(key, value);
     }
@@ -39,6 +49,11 @@ public class Preferences implements PreferencesInterface {
     @Override
     public void storeString(String key, String value) {
         map.put(key, value);
+    }
+
+    @Override
+    public boolean loadBoolean(String key) {
+        return map.containsKey(key) ? (Boolean)map.get(key) : false;
     }
 
     @Override

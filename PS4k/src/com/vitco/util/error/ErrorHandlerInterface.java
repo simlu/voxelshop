@@ -1,6 +1,6 @@
 package com.vitco.util.error;
 
-import com.vitco.logic.frames.console.ConsoleViewInterface;
+import com.vitco.logic.frames.console.ConsoleInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 
 /**
@@ -11,5 +11,5 @@ public interface ErrorHandlerInterface extends Thread.UncaughtExceptionHandler {
     void handle(Throwable e);
     void setLangSelector(LangSelectorInterface langSelector);
     void setDebugReportUrl(String debugReportUrl);
-    void setConsoleView(ConsoleViewInterface consoleView);
+    void setConsole(ConsoleInterface console);
 }

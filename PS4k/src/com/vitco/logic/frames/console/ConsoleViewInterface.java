@@ -1,12 +1,12 @@
 package com.vitco.logic.frames.console;
 
+import com.vitco.layout.frames.FrameLinkagePrototype;
+
 import javax.swing.*;
 
 /**
  * Displays console content and buttons to user.
  */
 public interface ConsoleViewInterface {
-    void setConsole(ConsoleInterface console);
-    JComponent buildConsole();
-    void addLine(String text);
+    JComponent buildConsole(FrameLinkagePrototype frame);
 }
