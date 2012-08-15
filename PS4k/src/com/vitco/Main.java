@@ -6,7 +6,6 @@ import com.vitco.util.pref.Preferences;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
@@ -14,13 +13,11 @@ import java.util.logging.LogManager;
  * Initially executed class
  */
 public class Main {
+
     public static void main(String[] args) throws Exception {
 
         // turn off all logging
-        Enumeration<String> it = LogManager.getLogManager().getLoggerNames();
-        while (it.hasMoreElements()) {
-            LogManager.getLogManager().getLogger(it.nextElement()).setLevel(Level.OFF);
-        }
+        LogManager.getLogManager().getLogger("").setLevel(Level.WARNING);
 
         // some licences I found online
         //com.jidesoft.utils.Lm.verifyLicense("Gareth Pidgeon", "ZoeOS", "DJoqM6VZ5apzIiGYUqwaFfnAXmREFrm1");

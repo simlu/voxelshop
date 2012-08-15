@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<xs:schema id="head" targetNamespace="http://www.unfine.de/schema/shortcuts" xmlns="http://www.unfine.de/schema/shortcuts" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified">
+    <xs:element name="shortcut">
+        <xs:complexType>
+            <xs:attribute name="ctrl" form="unqualified" type="xs:string" />
+            <xs:attribute name="alt" form="unqualified" type="xs:string" />
+            <xs:attribute name="shift" form="unqualified" type="xs:string" />
+            <xs:attribute name="key" form="unqualified" type="xs:string" />
+            <xs:attribute name="action" form="unqualified" type="xs:string" />
+            <xs:attribute name="caption" form="unqualified" type="xs:string" />
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="head">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="shortcut" />
+                <xs:element name="global">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="shortcut" minOccurs="1" maxOccurs="1" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="frame">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="shortcut" minOccurs="0" maxOccurs="unbounded" />
+                        </xs:sequence>
+                        <xs:attribute name="name" form="unqualified" type="xs:string" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

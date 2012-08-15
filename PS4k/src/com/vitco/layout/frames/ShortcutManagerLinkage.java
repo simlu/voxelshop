@@ -2,7 +2,7 @@ package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.util.action.types.StateActionPrototype;
-import com.vitco.logic.frames.shortcut.ShortcutManagerViewInterface;
+import com.vitco.frames.shortcut.ShortcutManagerViewInterface;
 
 import javax.swing.*;
 import java.awt.*;

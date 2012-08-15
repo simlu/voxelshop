@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.logic.frames.console.ConsoleViewInterface;
+import com.vitco.frames.console.ConsoleViewInterface;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;

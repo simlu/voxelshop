@@ -8,7 +8,7 @@ import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
-import com.vitco.logic.frames.shortcut.ShortcutManagerInterface;
+import com.vitco.frames.shortcut.ShortcutManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.pref.PreferencesInterface;
 import org.w3c.dom.Document;

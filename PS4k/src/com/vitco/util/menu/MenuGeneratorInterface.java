@@ -1,6 +1,6 @@
 package com.vitco.util.menu;
 
-import com.vitco.logic.frames.shortcut.ShortcutManagerInterface;
+import com.vitco.frames.shortcut.ShortcutManagerInterface;
 import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;

@@ -15,7 +15,7 @@ public class ActionManager implements ActionManagerInterface {
     private final Map<String, AbstractAction> map = new HashMap<String, AbstractAction>();
 
     // maps action names to threads
-    private final Map<String, ArrayList<Runnable>> queStack = new HashMap<String, ArrayList<Runnable>>();
+    private final Map<String, ArrayList<Runnable>> actionQueStack = new HashMap<String, ArrayList<Runnable>>();
 
     @Override
     public void performWhenActionIsReady(String action, Runnable thread) {
@@ -24,13 +24,13 @@ public class ActionManager implements ActionManagerInterface {
         } else {
             // we need to wait till the action is ready
             ArrayList<Runnable> value;
-            if (queStack.containsKey(action)) {
-                value = queStack.get(action);
+            if (actionQueStack.containsKey(action)) {
+                value = actionQueStack.get(action);
             } else {
                 value = new ArrayList<Runnable>();
             }
             value.add(thread);
-            queStack.put(action, value);
+            actionQueStack.put(action, value);
         }
     }
 
@@ -41,13 +41,16 @@ public class ActionManager implements ActionManagerInterface {
             System.err.println("Error: The action \"" + key + "\" is already registered!");
         } else {
             map.put(key, action);
-            if (queStack.containsKey(key)) { // run the thread that was waiting for this action
-                ArrayList<Runnable> value = queStack.get(key);
+            if (actionQueStack.containsKey(key)) { // run the thread that was waiting for this action
+                ArrayList<Runnable> value = actionQueStack.get(key);
                 for (Runnable thread : value) {
+                    // note: this can create an error if the action is not
+                    // the extended type of AbstractAction that was
+                    // expected (e.g. dummy action)
                     thread.run();
                 }
                 value.clear(); // empty array list (unnecessary?)
-                queStack.remove(key); // free the key
+                actionQueStack.remove(key); // free the key
             }
         }
 
@@ -63,6 +66,11 @@ public class ActionManager implements ActionManagerInterface {
         }
     }
 
+    // ===========================
+    // BELOW ERROR CHECKING
+
+    // holds action names, to detect possible errors
+    private final ArrayList<String> actionNames = new ArrayList<String>();
     // validate things
     @Override
     public boolean performValidityCheck() {
@@ -86,14 +94,13 @@ public class ActionManager implements ActionManagerInterface {
                 System.err.println("Error: The action \"" + key + "\" is never used!");
             }
         }
-        for (String key : queStack.keySet()) {
+        // this should always be empty as a dummy action is registered above
+        assert actionQueStack.size() == 0;
+        for (String key : actionQueStack.keySet()) {
             System.err.println("Error: The action \"" + key + "\" was never registered!");
         }
         return result;
     }
-
-    // holds action names, to detect possible errors
-    private final ArrayList<String> actionNames = new ArrayList<String>();
     @Override
     public void registerActionName(String key) {
         // only need to register this action name one (several pieces of code

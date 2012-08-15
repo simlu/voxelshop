@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<head>
+<head xmlns="http://www.unfine.de/schema/menu">
     <menu caption="file_btn">
         <!--<item caption="timeLine_caption" action="time-line_state-action_show" grayable="true"/>-->
     </menu>

@@ -35,9 +35,9 @@
     </bean>
 
     <!-- manages the console data -->
-    <bean id="Console" class="com.vitco.logic.frames.console.Console"/>
+    <bean id="Console" class="com.vitco.frames.console.Console"/>
     <!-- manages the console data display -->
-    <bean id="ConsoleView" class="com.vitco.logic.frames.console.ConsoleView">
+    <bean id="ConsoleView" class="com.vitco.frames.console.ConsoleView">
         <property name="console" ref="Console"/>
     </bean>
 
@@ -62,7 +62,7 @@
 
     <!-- create ShortcutManager -->
     <!-- allow registering the windows with the shortcuts -->
-    <bean id="ShortcutManager" class="com.vitco.logic.frames.shortcut.ShortcutManager">
+    <bean id="ShortcutManager" class="com.vitco.frames.shortcut.ShortcutManager">
         <property name="langSelector" ref="LangSelector"/>
         <property name="configFile" value="com/vitco/logic/shortcuts.xml"/>
         <property name="actionManager" ref="ActionManager"/>
@@ -71,7 +71,7 @@
     </bean>
 
     <!--handles displaying of shortcut manager-->
-    <bean id="ShortcutManagerView" class="com.vitco.logic.frames.shortcut.ShortcutManagerView">
+    <bean id="ShortcutManagerView" class="com.vitco.frames.shortcut.ShortcutManagerView">
         <property name="langSelector" ref="LangSelector"/>
         <property name="shortcutManager" ref="ShortcutManager"/>
         <property name="preferences" ref="Preferences"/>

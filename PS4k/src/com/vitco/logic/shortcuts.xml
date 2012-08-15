@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<head>
+<head xmlns="http://www.unfine.de/schema/shortcuts">
     <global>
         <shortcut ctrl="yes" alt="no" shift="no" key="F1" action="console_state-action_show" caption="console_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="2" action="shortcut-mg_state-action_show" caption="shortcutManager_caption" />
@@ -34,6 +34,4 @@
 
     <frame name="personal">
     </frame>
-
-
 </head>
