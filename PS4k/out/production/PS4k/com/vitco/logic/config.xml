@@ -41,6 +41,13 @@
         <property name="console" ref="Console"/>
     </bean>
 
+    <!-- animation data -->
+    <bean id="AnimationData" class="com.vitco.frames.engine.controller.animationdata.AnimationData"/>
+    <!-- side view -->
+    <bean id="SideView" class="com.vitco.frames.engine.model.SideView">
+        <property name="animationData" ref="AnimationData"/>
+    </bean>
+
     <!-- holds general preferenes -->
     <bean id="Preferences" class="com.vitco.util.pref.Preferences" init-method="load">
         <property name="storageFile" value="settings/pref.ser"/>
@@ -127,7 +134,9 @@
                 </entry>
                 <entry>
                     <key><value>sideView</value></key>
-                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage"/>
+                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage">
+                        <property name="sideView" ref="SideView"/>
+                    </bean>
                 </entry>
                 <entry>
                     <key><value>timeLine</value></key>

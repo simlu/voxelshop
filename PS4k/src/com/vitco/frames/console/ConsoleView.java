@@ -1,9 +1,9 @@
 package com.vitco.frames.console;
 
 import com.jidesoft.action.CommandMenuBar;
-import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.frames.ViewPrototype;
-import com.vitco.res.color.VitcoColor;
+import com.vitco.layout.frames.FrameLinkagePrototype;
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
@@ -11,8 +11,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 /**
@@ -28,8 +28,8 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         // the console
         final JTextArea textArea = new JTextArea();
         // set layout
-        textArea.setForeground(VitcoColor.DEFAULT_TEXT_COLOR);
-        textArea.setBackground(VitcoColor.DEFAULT_BG_COLOR);
+        textArea.setForeground(VitcoSettings.DEFAULT_TEXT_COLOR);
+        textArea.setBackground(VitcoSettings.DEFAULT_BG_COLOR);
         // load the previous console data
         ArrayList<String> consoleData = console.getConsoleData();
         for (String line : consoleData) {
@@ -55,7 +55,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             scrollPane.autoShow = preferences.loadBoolean("console_auto_show_status");
         }
         // only scroll when the user is not scrolling
-        scrollPane.getVerticalScrollBar().addMouseListener(new MouseListener() {
+        scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 scrollPane.tempScrollStop = true;
@@ -63,9 +63,6 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             @Override public void mouseReleased(MouseEvent e) {
                 scrollPane.tempScrollStop = false;
             }
-            @Override public void mouseClicked(MouseEvent e) {}
-            @Override public void mouseEntered(MouseEvent e) {}
-            @Override public void mouseExited(MouseEvent e) {}
         });
         // handle console events
         console.addConsoleListener(new ConsoleListener() {
@@ -115,7 +112,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         StateActionPrototype toggleAutoShow = new StateActionPrototype() {
             @Override
             public boolean getStatus() {
-                return scrollPane.autoShow;  //To change body of implemented methods use File | Settings | File Templates.
+                return scrollPane.autoShow;
             }
 
             @Override
@@ -130,7 +127,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         StateActionPrototype toggleAutoScroll = new StateActionPrototype() {
             @Override
             public boolean getStatus() {
-                return scrollPane.autoScroll;  //To change body of implemented methods use File | Settings | File Templates.
+                return scrollPane.autoScroll;
             }
 
             @Override

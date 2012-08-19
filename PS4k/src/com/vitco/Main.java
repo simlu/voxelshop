@@ -6,19 +6,12 @@ import com.vitco.util.pref.Preferences;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-
 /**
  * Initially executed class
  */
 public class Main {
 
     public static void main(String[] args) throws Exception {
-
-        // turn off all logging
-        LogManager.getLogManager().getLogger("").setLevel(Level.WARNING);
-
         // some licences I found online
         //com.jidesoft.utils.Lm.verifyLicense("Gareth Pidgeon", "ZoeOS", "DJoqM6VZ5apzIiGYUqwaFfnAXmREFrm1");
         //com.jidesoft.utils.Lm.verifyLicense("Marios Skounakis", "JOverseer", "L1R4Nx7vEp0nMbsoaHdH7nkRrx5F.dO");

@@ -231,6 +231,9 @@ public class MenuGenerator implements MenuGeneratorInterface {
                             // this makes sure the "checked" is always current
                             ((StateActionPrototype) actionManager.getAction(e.getAttribute("action"))).getStatus()
                     );
+                    if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
+                        item.setSelected(!item.isSelected());
+                    }
                 }
             }
         });
@@ -263,9 +266,11 @@ public class MenuGenerator implements MenuGeneratorInterface {
                     @Override
                     public void actionFired(boolean b) {
                         jideButton.setSelected(b);
+                        if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
+                            jideButton.setSelected(!jideButton.isSelected());
+                        }
                     }
                 });
-                jideButton.setSelected(stateActionPrototype.getStatus());
             }
         });
         component.add(jideButton);
@@ -295,6 +300,9 @@ public class MenuGenerator implements MenuGeneratorInterface {
                             // this makes sure the "checked" is always current
                             ((StateActionPrototype) actionManager.getAction(e.getAttribute("action"))).getStatus()
                     );
+                    if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
+                        item.setEnabled(!item.isEnabled());
+                    }
                 }
             }
         });

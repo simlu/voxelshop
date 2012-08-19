@@ -28,30 +28,10 @@ public class ErrorHandler implements ErrorHandlerInterface {
     @Override
     public void setConsole(ConsoleInterface console) {
         this.console = console;
+        initOutMapping();
     }
 
-    // var & setter
-    private String debugReportUrl;
-    @Override
-    public void setDebugReportUrl(String debugReportUrl) {
-        this.debugReportUrl = debugReportUrl;
-    }
-
-    // to check if we are in debug mode
-    private static boolean debug = false;
-    public static void setDebugMode() {
-        ErrorHandler.debug = true;
-    }
-
-    // var & setter
-    private LangSelectorInterface langSelector;
-    @Override
-    public void setLangSelector(LangSelectorInterface langSelector) {
-        this.langSelector = langSelector;
-    }
-
-    // constructor
-    public ErrorHandler() {
+    private void initOutMapping() {
         if (!debug) {
             // write error to console
             System.setErr(new PrintStream(new OutputStream() {
@@ -82,6 +62,26 @@ public class ErrorHandler implements ErrorHandlerInterface {
                 }
             }));
         }
+    }
+
+    // var & setter
+    private String debugReportUrl;
+    @Override
+    public void setDebugReportUrl(String debugReportUrl) {
+        this.debugReportUrl = debugReportUrl;
+    }
+
+    // to check if we are in debug mode
+    private static boolean debug = false;
+    public static void setDebugMode() {
+        ErrorHandler.debug = true;
+    }
+
+    // var & setter
+    private LangSelectorInterface langSelector;
+    @Override
+    public void setLangSelector(LangSelectorInterface langSelector) {
+        this.langSelector = langSelector;
     }
 
     // handle exceptions

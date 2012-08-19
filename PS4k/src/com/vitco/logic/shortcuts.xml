@@ -6,6 +6,7 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="3" action="side-view_state-action_show" caption="sideView_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="4" action="time-line_state-action_show" caption="timeLine_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="5" action="personal_state-action_show" caption="personal_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
     </global>
 
     <frame name="mainView">

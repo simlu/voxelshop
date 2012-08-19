@@ -1,7 +1,7 @@
 package com.vitco.frames.shortcut;
 
 import com.vitco.frames.ViewPrototype;
-import com.vitco.res.color.VitcoColor;
+import com.vitco.res.VitcoSettings;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -35,12 +35,12 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
         ) {
-            setForeground(VitcoColor.DEFAULT_TEXT_COLOR); // set text color
+            setForeground(VitcoSettings.DEFAULT_TEXT_COLOR); // set text color
             if (row == curRow && column == curCol && column == 1) {
-                setBackground(VitcoColor.DEFAULT_HOVER_COLOR); // hover effect
+                setBackground(VitcoSettings.DEFAULT_HOVER_COLOR); // hover effect
                 setToolTipText(langSelector.getString("dbl-clc-to-edit_tooltip"));
             } else {
-                setBackground(VitcoColor.DEFAULT_BG_COLOR);
+                setBackground(VitcoSettings.DEFAULT_BG_COLOR);
             }
             setBorder(defaultBorder); // padding
             setValue(value.toString()); // set the value
@@ -101,10 +101,10 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                                 // note: workaround for resize bug (part 1)
                                 table.setValueAt(shortcutText, rowIndex, vColIndex);
                             }
-                            component.setBackground(VitcoColor.EDIT_BG_COLOR);
+                            component.setBackground(VitcoSettings.EDIT_BG_COLOR);
                         } else { // this shortcut is already used (!)
                             // show error color for one second
-                            component.setBackground(VitcoColor.EDIT_ERROR_BG_COLOR);
+                            component.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
                             Toolkit.getDefaultToolkit().beep(); // play beep
                             new Thread() {
                                 @Override
@@ -115,7 +115,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                                         // no need to track this
                                         // e1.printStackTrace();
                                     }
-                                    component.setBackground(VitcoColor.EDIT_BG_COLOR);
+                                    component.setBackground(VitcoSettings.EDIT_BG_COLOR);
                                 }
                             }.start();
                         }
@@ -130,8 +130,8 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             });
             component.setHighlighter(null); // do not show selection
             component.setEditable(false); // hide the caret
-            component.setBackground(VitcoColor.EDIT_BG_COLOR); // bg color when edit
-            component.setForeground(VitcoColor.EDIT_TEXT_COLOR); // set text color when edit
+            component.setBackground(VitcoSettings.EDIT_BG_COLOR); // bg color when edit
+            component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
             return component;
         }
 
@@ -158,7 +158,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             };
             shortcut_table.setCellSelectionEnabled(false); // disable selection in table
             shortcut_table.setFocusable(false); // disable focus on cells
-            shortcut_table.setBackground(VitcoColor.DEFAULT_BG_COLOR); // set the default bg color (unnecessary)
+            shortcut_table.setBackground(VitcoSettings.DEFAULT_BG_COLOR); // set the default bg color (unnecessary)
             // add hover effect
             shortcut_table.addMouseMotionListener(new MouseMotionListener() {
 
@@ -220,9 +220,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
     // return a JTabbedPane that is autonomous and manages shortcuts
     @Override
     public JTabbedPane getEditTables() {
-        // create the content of this frame
-        // all frames names
-        String[][] frames = shortcutManager.getFrames();
+        // create the content of this frame (Shortcut Manager)
         // default header
         String[] columnNames = {
                 langSelector.getString("shortcut_mg_header_action"),
@@ -231,6 +229,14 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         // the different frame shortcuts are in different tabs
         final JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setFocusable(false); // looks nicer
+        // add the global shortcuts
+        String[][] globalShortcuts = shortcutManager.getShortcuts(null);
+        tabbedPane.addTab(
+                langSelector.getString("global_shortcuts_caption"),
+                new JScrollPane(createTab(globalShortcuts, columnNames, null))
+        );
+        // add the frame shortcuts
+        String[][] frames = shortcutManager.getFrames();
         for (String[] frame : frames) {
             // create the list of shortcuts for this frame
             String[][] data = shortcutManager.getShortcuts(frame[0]); // the shortcuts (list)
@@ -242,12 +248,6 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 );
             }
         }
-        // add the global shortcuts
-        String[][] globalShortcuts = shortcutManager.getShortcuts(null);
-        tabbedPane.addTab(
-                langSelector.getString("global_shortcuts_caption"),
-                new JScrollPane(createTab(globalShortcuts, columnNames, null))
-        );
 
         // load from preferences
         int selectedIndex = preferences.loadInteger("shortcut-manager_active-tab");

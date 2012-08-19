@@ -15,6 +15,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -112,9 +113,20 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
     }
 
-    @PostConstruct
-    public void init() {
+    @PreDestroy
+    @Override
+    public void finish() {
+        // store the boundary of the program (current window position)
+        preferences.storeObject("program_boundary_rect", this.getBounds());
+    }
 
+    @PostConstruct
+    @Override
+    public void init() {
+        if (preferences.contains("program_boundary_rect")) {
+            // load the boundary of the program (current window position)
+            this.setBounds((Rectangle)preferences.loadObject("program_boundary_rect"));
+        }
         // default close action
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

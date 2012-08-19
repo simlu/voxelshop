@@ -11,7 +11,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
     public CommandBar buildBar(String key) {
         CommandMenuBar bar = new CommandMenuBar(key);
 
-        menuGenerator.buildMenuFromXML(bar, "com/vitco/logic/main_menu.xml");
+        menuGenerator.buildMenuFromXML(bar, "com/vitco/layout/bars/main_menu.xml");
 
         return bar;
     }

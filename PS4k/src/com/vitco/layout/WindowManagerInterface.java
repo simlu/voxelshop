@@ -7,6 +7,8 @@ import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.frames.shortcut.ShortcutManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Map;
 
 /**
@@ -27,4 +29,10 @@ public interface WindowManagerInterface {
     void setShortcutManager(ShortcutManagerInterface shortcutManager);
     // set error handler
     void setErrorHandler(ErrorHandlerInterface errorHandler);
+
+    @PostConstruct
+    void init();
+
+    @PreDestroy
+    void finish();
 }

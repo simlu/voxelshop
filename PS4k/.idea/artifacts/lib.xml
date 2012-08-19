@@ -5,6 +5,7 @@
       <element id="library" level="project" name="jide" />
       <element id="library" level="project" name="spring" />
       <element id="library" level="project" name="apachehttp" />
+      <element id="library" level="project" name="rtree" />
     </root>
   </artifact>
 </component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="rtree">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/rtree" />
+      <root url="file://$PROJECT_DIR$/lib/rtree" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/rtree" recursive="false" />
+  </library>
+</component>

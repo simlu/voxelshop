@@ -13,7 +13,8 @@ public abstract class StateActionPrototype extends AbstractAction {
     // listener
     protected final ArrayList<ChangeListener> listener = new ArrayList<ChangeListener>();
     public void addChangeListener(ChangeListener changeListener) {
-        listener.add(changeListener);
+        listener.add(changeListener); // add
+        changeListener.actionFired(getStatus()); // update already directly
     }
 
     @Override

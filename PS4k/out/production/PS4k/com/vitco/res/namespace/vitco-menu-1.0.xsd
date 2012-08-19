@@ -8,6 +8,7 @@
             <xs:attribute name="action" form="unqualified" type="xs:string" />
             <xs:attribute name="checkable" form="unqualified" type="xs:string" />
             <xs:attribute name="grayable" form="unqualified" type="xs:string" />
+            <xs:attribute name="invert" form="unqualified" type="xs:string" />
         </xs:complexType>
     </xs:element>
 
@@ -17,6 +18,7 @@
             <xs:attribute name="tool-tip" form="unqualified" type="xs:string" />
             <xs:attribute name="action" form="unqualified" type="xs:string" />
             <xs:attribute name="checkable" form="unqualified" type="xs:string" />
+            <xs:attribute name="invert" form="unqualified" type="xs:string" />
         </xs:complexType>
     </xs:element>
 

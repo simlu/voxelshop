@@ -21,6 +21,8 @@ code = lib/commons-codec-1.6.jar
 code = lib/httpcore-4.2.1.jar
 code = lib/httpclient-4.2.1.jar
 code = lib/httpmime-4.2.1.jar
+code = lib/log4j-1.2.6.jar
+code = lib/rtree.jar
 
 # The main entry point for the application
 class = com.vitco.Main
