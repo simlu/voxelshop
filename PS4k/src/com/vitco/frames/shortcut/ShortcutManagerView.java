@@ -30,7 +30,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
 
     // layout of cells
     private class TableRenderer extends DefaultTableCellRenderer {
-        // render table cell
+        // mainview table cell
         @Override
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
@@ -146,7 +146,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
     // frame key can be null if we handle global shortcuts
     // global flag
     private JTable createTab(String[][] data, String[] columnNames, String frameKey) {
-            // create the default model
+            // create the default sideview
             DefaultTableModel model = new DefaultTableModel(data, columnNames);
             // create table, only allow editing for second column (shortcuts)
             JTable shortcut_table = new JTable(model) {

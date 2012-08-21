@@ -4,7 +4,7 @@ import com.vitco.util.pref.PreferencesInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Prototype for any model.
+ * Prototype for any sideview.
  */
 public abstract class ModelPrototype {
 

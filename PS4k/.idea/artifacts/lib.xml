@@ -6,6 +6,7 @@
       <element id="library" level="project" name="spring" />
       <element id="library" level="project" name="apachehttp" />
       <element id="library" level="project" name="rtree" />
+      <element id="library" level="project" name="render" />
     </root>
   </artifact>
 </component>

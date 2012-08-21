@@ -42,9 +42,13 @@
     </bean>
 
     <!-- animation data -->
-    <bean id="AnimationData" class="com.vitco.frames.engine.controller.animationdata.AnimationData"/>
+    <bean id="AnimationData" class="com.vitco.frames.engine.data.animationdata.AnimationData"/>
     <!-- side view -->
-    <bean id="SideView" class="com.vitco.frames.engine.model.SideView">
+    <bean id="SideView" class="com.vitco.frames.engine.sideview.SideView">
+        <property name="animationData" ref="AnimationData"/>
+    </bean>
+    <!-- main view -->
+    <bean id="MainView" class="com.vitco.frames.engine.mainview.MainView">
         <property name="animationData" ref="AnimationData"/>
     </bean>
 
@@ -124,7 +128,9 @@
                 </entry>
                 <entry>
                     <key><value>mainView</value></key>
-                    <bean id="MainViewLinkage" class="com.vitco.layout.frames.MainViewLinkage"/>
+                    <bean id="MainViewLinkage" class="com.vitco.layout.frames.MainViewLinkage">
+                        <property name="mainView" ref="MainView"/>
+                    </bean>
                 </entry>
                 <entry>
                     <key><value>shortcutManager</value></key>
