@@ -33,9 +33,9 @@ public class AnimationData extends AnimationDataCore implements AnimationDataInt
     }
 
     @Override
-    public int[][][] getPreviewLine() {
+    public float[][][] getPreviewLine() {
         if (isValid(previewLine[0]) && isValid(previewLine[1])) {
-            return new int[][][] {
+            return new float[][][] {
                     getPoint(previewLine[0]),
                     getPoint(previewLine[1])
             };

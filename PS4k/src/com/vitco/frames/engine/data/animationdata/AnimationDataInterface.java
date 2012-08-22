@@ -20,5 +20,5 @@ public interface AnimationDataInterface extends AnimationDataCoreInterface {
 
     void setPreviewLine(int id1, int id2);
 
-    int[][][] getPreviewLine();
+    float[][][] getPreviewLine();
 }

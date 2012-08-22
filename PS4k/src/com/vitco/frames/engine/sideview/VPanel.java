@@ -40,7 +40,7 @@ public class VPanel extends VPanelPrototype {
                 animationData.setPreviewLine(-1, -1); // reset the preview line
                 // move the point to the correct position
                 int[] realPoint = convert2D3D(new int[]{e.getX(), e.getY()}, 0);
-                int[] tmp = animationData.getPoint(dragPoint)[0]; // need this for the missing dimension
+                float[] tmp = animationData.getPoint(dragPoint)[0]; // need this for the missing dimension
                 animationData.movePoint(dragPoint,
                         (PERS[0] == 0 || PERS[1] == 0 ? realPoint[0] : tmp[0]),
                         (PERS[0] == 1 || PERS[1] == 1 ? realPoint[1] : tmp[1]),
@@ -191,7 +191,7 @@ public class VPanel extends VPanelPrototype {
             ig.setColor(VitcoSettings.ANIMATION_BG_COLOR);
             ig.fillRect(0, 0, SIZEX, SIZEY);
             // draw border
-            ig.setColor(VitcoSettings.ANIMATION_BORDER_COLOR);
+            ig.setColor(VitcoSettings.DEFAULT_BORDER_COLOR);
             ig.drawRect(0, 0, SIZEX, SIZEY);
 
             // draw the axis and center cross
@@ -205,15 +205,15 @@ public class VPanel extends VPanelPrototype {
         drawCenterCross(ig);
 
         // sideview the lines
-        ig.setColor(VitcoSettings.ANIMATION_LINE_COLOR);
+        ig.setColor(VitcoSettings.ANIMATION_LINE_INNER_COLOR);
         ig.setStroke(new BasicStroke(VitcoSettings.ANIMATION_LINE_SIZE));
-        for (int[][][] line : lines) {
+        for (float[][][] line : lines) {
             drawLine(line[0][0], line[1][0], ig);
         }
 
         // sideview preview line
         if (preview_line != null) {
-            if (!animationData.areConnected(preview_line[0][1][0], preview_line[1][1][0]) ) {
+            if (!animationData.areConnected((int)preview_line[0][1][0], (int)preview_line[1][1][0]) ) {
                 ig.setColor(VitcoSettings.ANIMATION_LINE_PREVIEW_ADD_COLOR);
             } else {
                 ig.setColor(VitcoSettings.ANIMATION_LINE_PREVIEW_REMOVE_COLOR);
@@ -223,7 +223,7 @@ public class VPanel extends VPanelPrototype {
 
         // draw points
         ig.setStroke(new BasicStroke(VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE)); // line size
-        for (int[][] point : points) {
+        for (float[][] point : points) {
             if (point[1][0] == selected_point) { // selected
                 drawPoint(point[0], ig,
                         VitcoSettings.ANIMATION_DOT_SEL_INNER_COLOR,

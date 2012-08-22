@@ -2,9 +2,7 @@ package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.frames.engine.mainview.MainViewInterface;
-import com.vitco.res.VitcoSettings;
 
-import javax.swing.*;
 import java.awt.event.MouseListener;
 
 /**
@@ -30,10 +28,7 @@ public class MainViewLinkage extends FrameLinkagePrototype {
             frame.removeMouseListener(ml);
         }
 
-        mainView.build(frame);
-
-        frame.setBorder(BorderFactory.createLineBorder(VitcoSettings.ANIMATION_BORDER_COLOR));
-
+        frame.add(mainView.build());
 
         return frame;
     }

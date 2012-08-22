@@ -1,7 +1,5 @@
 package com.vitco.frames.engine.mainview;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.swing.*;
 
 /**
@@ -12,12 +10,5 @@ import javax.swing.*;
  * To change this template use File | Settings | File Templates.
  */
 public interface MainViewInterface {
-
-    @PostConstruct
-    void init();
-
-    @PreDestroy
-    void finish();
-
-    void build(JComponent frame);
+    public JPanel build();
 }

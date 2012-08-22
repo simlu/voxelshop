@@ -14,11 +14,11 @@ import java.io.Serializable;
  */
 public interface AnimationDataCoreInterface extends Serializable {
     // adds a point, returns id of that point
-    int addPoint(int x, int y, int z);
+    int addPoint(float x, float y, float z);
     // removes point with id, returns true iff successful
     boolean removePoint(int id);
     // moves a point to the new coordinates
-    boolean movePoint(int id, int x, int y, int z);
+    boolean movePoint(int id, float x, float y, float z);
     // connects p1 and p2 with a line, true iff successful
     boolean connect(int id1, int id2);
     // removes all lines and all points
@@ -26,16 +26,16 @@ public interface AnimationDataCoreInterface extends Serializable {
     // disconnects p1 and p2, returns true iff successful
     boolean disconnect(int id1, int id2);
     // returns all the points
-    int[][][] getPoints();
+    float[][][] getPoints();
     // returns all the lines
-    int[][][][] getLines();
+    float[][][][] getLines();
     // adds a listener
     void addDataChangeListener(DataChangeListener dcl);
     // removes a listener
     void removeDataChangeListener(DataChangeListener dcl);
     // returns the formatted point for a key (key, x, y, z)
-    int[][] getPoint(int id);
+    float[][] getPoint(int id);
     // returns a nearest point if there are any in the radius
-    int getNearPoint(int x, int y, int z, float[] radius);
+    int getNearPoint(float x, float y, float z, float[] radius);
     boolean areConnected(int id1, int id2);
 }

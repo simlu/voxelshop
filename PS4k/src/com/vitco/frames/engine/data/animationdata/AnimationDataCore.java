@@ -1,7 +1,7 @@
 package com.vitco.frames.engine.data.animationdata;
 
 import com.vitco.frames.engine.data.listener.DataChangeListener;
-import com.vitco.util.RTree;
+import com.vitco.util.Indexer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +30,11 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
 
     protected final ArrayList<DataChangeListener> listeners = new ArrayList<DataChangeListener>();
 
-    private final Map<Integer, int[]> points = new HashMap<Integer, int[]>();
+    private final Map<Integer, float[]> points = new HashMap<Integer, float[]>();
     private final Map<String, int[]> lines = new HashMap<String, int[]>();
 
     // indexes (helper)
-    private final RTree<Integer> indexedPoints = new RTree<Integer>(50, 2, 3);
+    private final Indexer indexedPoints = new Indexer();
     private final Map<Integer, ArrayList<String>> pointToLine = new HashMap<Integer, ArrayList<String>>();
 
     private int lastAddedId = -1; // the last id that was added ("to get free id")
@@ -42,8 +42,8 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
     // internal - rebuild the r tree index for "near" point access
     private void rebuildIndex() {
         indexedPoints.clear();
-        for (Map.Entry<Integer, int[]> entry : points.entrySet()) {
-            int[] point = entry.getValue();
+        for (Map.Entry<Integer, float[]> entry : points.entrySet()) {
+            float[] point = entry.getValue();
             indexedPoints.insert(new float[]{point[0], point[1], point[2]}, ZEROS, entry.getKey());
         }
     }
@@ -75,7 +75,7 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
 
     // returns a nearest point if there are any in the radius (Voxel!)
     @Override
-    public int getNearPoint(int x, int y, int z, float[] radius) {
+    public int getNearPoint(float x, float y, float z, float[] radius) {
       // todo create test
       List<Integer> search =
               indexedPoints.search(
@@ -90,10 +90,10 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
     }
 
     @Override
-    public int addPoint(int x, int y, int z) {
+    public int addPoint(float x, float y, float z) {
         int id = getFreeId();
         pointToLine.put(id, new ArrayList<String>()); // this point is connected with zero lines
-        points.put(id, new int[]{x, y, z});
+        points.put(id, new float[]{x, y, z});
         indexedPoints.insert(new float[] {x, y, z}, ZEROS, id); // index
         notifyAnimationDataChangeListener();
         return id;
@@ -122,7 +122,7 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
                     }
                 }
             }
-            int[][] p = getPoint(id);
+            float[][] p = getPoint(id);
             if (points.remove(id) != null) {
                 if (indexedPoints.delete(new float[] {p[0][0], p[0][1], p[0][2]}, ZEROS, id)) { // index
                     notifyAnimationDataChangeListener();
@@ -134,12 +134,12 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
     }
 
     @Override
-    public boolean movePoint(int id, int x, int y, int z) {
+    public boolean movePoint(int id, float x, float y, float z) {
         boolean result = false;
         if (isValid(id)) {
-            int[][] p = getPoint(id);
+            float[][] p = getPoint(id);
             if (indexedPoints.delete(new float[] {p[0][0], p[0][1], p[0][2]}, ZEROS, id)) { // delete old index
-                points.put(id, new int[]{x, y, z});
+                points.put(id, new float[]{x, y, z});
                 indexedPoints.insert(new float[] {x, y, z}, ZEROS, id); // index
                 notifyAnimationDataChangeListener();
                 result = true;
@@ -200,22 +200,22 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
 
     // returns the formatted point for a key ([x, y, z], key)
     @Override
-    public int[][] getPoint(int id) {
+    public float[][] getPoint(int id) {
         if (isValid(id)) {
-            int[] point = points.get(id);
-            return new int[][] {point, new int[]{id}};
+            float[] point = points.get(id);
+            return new float[][] {point, new float[]{id}};
         } else {
             return null;
         }
     }
 
-    private int[][][] pointBuffer = new int[][][]{};
+    private float[][][] pointBuffer = new float[][][]{};
     private boolean pointBufferValid = false;
     @Override
-    public int[][][] getPoints() {
+    public float[][][] getPoints() {
         if (!pointBufferValid) {
             if (pointBuffer.length != points.size()) {
-                pointBuffer = new int[points.size()][][];
+                pointBuffer = new float[points.size()][][];
             }
             int i = 0;
             for (int key : points.keySet()) {
@@ -226,13 +226,13 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
         return pointBuffer.clone();
     }
 
-    private int[][][][] lineBuffer = new int[][][][]{};
+    private float[][][][] lineBuffer = new float[][][][]{};
     private boolean lineBufferValid = false;
     @Override
-    public int[][][][] getLines() {
+    public float[][][][] getLines() {
         if (!lineBufferValid) {
             if (lineBuffer.length != lines.size()) {
-               lineBuffer = new int[lines.size()][2][][];
+               lineBuffer = new float[lines.size()][2][][];
             }
             int i = 0;
             for (int[] value : lines.values()) {

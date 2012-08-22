@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.frames.engine.sideview.SideViewInterface;
+import com.vitco.frames.engine.sideview.SideViewsInterface;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
@@ -14,8 +14,8 @@ import java.awt.event.ActionEvent;
 public class SideViewLinkage extends FrameLinkagePrototype {
 
     // var & setter
-    private SideViewInterface sideView;
-    public void setSideView(SideViewInterface sideView) {
+    private SideViewsInterface sideView;
+    public void setSideView(SideViewsInterface sideView) {
         this.sideView = sideView;
     }
 

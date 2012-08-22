@@ -41,17 +41,6 @@
         <property name="console" ref="Console"/>
     </bean>
 
-    <!-- animation data -->
-    <bean id="AnimationData" class="com.vitco.frames.engine.data.animationdata.AnimationData"/>
-    <!-- side view -->
-    <bean id="SideView" class="com.vitco.frames.engine.sideview.SideView">
-        <property name="animationData" ref="AnimationData"/>
-    </bean>
-    <!-- main view -->
-    <bean id="MainView" class="com.vitco.frames.engine.mainview.MainView">
-        <property name="animationData" ref="AnimationData"/>
-    </bean>
-
     <!-- holds general preferenes -->
     <bean id="Preferences" class="com.vitco.util.pref.Preferences" init-method="load">
         <property name="storageFile" value="settings/pref.ser"/>
@@ -96,6 +85,31 @@
         <property name="actionManager" ref="ActionManager"/>
         <property name="errorHandler" ref="ErrorHandler"/>
     </bean>
+
+
+    <!--ENGINE STUFF-->
+    <!-- animation data -->
+    <bean id="AnimationData" class="com.vitco.frames.engine.data.animationdata.AnimationData"/>
+    <!-- side view -->
+    <bean id="SideView" class="com.vitco.frames.engine.sideview.SideViews">
+        <property name="animationData" ref="AnimationData"/>
+        <property name="sideViews">
+            <array value-type="com.vitco.frames.engine.sideview.SideView">
+                <bean class="com.vitco.frames.engine.sideview.SideView">
+                    <constructor-arg value="0"/>  <!--first view-->
+                </bean>
+                <bean class="com.vitco.frames.engine.sideview.SideView">
+                    <constructor-arg value="1"/>  <!--second view-->
+                </bean>
+                <bean class="com.vitco.frames.engine.sideview.SideView">
+                    <constructor-arg value="2"/> <!--third view-->
+                </bean>
+            </array>
+        </property>
+    </bean>
+    <!-- main view -->
+    <bean id="MainView" class="com.vitco.frames.engine.mainview.MainView"/>
+
 
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">

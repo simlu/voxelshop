@@ -19,11 +19,11 @@ import java.awt.event.*;
 public abstract class VPanelPrototype extends JPanel {
 
     // Animation Mode Vars
-    protected int[][][] points;
-    protected int[][][][] lines;
+    protected float[][][] points;
+    protected float[][][][] lines;
     protected int highlighted_point = -1;
     protected int selected_point = -1;
-    protected int[][][] preview_line = null;
+    protected float[][][] preview_line = null;
     protected transient MouseAdapter animationAdapter;
     protected abstract void animationDraw(Graphics g1);
 
@@ -75,7 +75,7 @@ public abstract class VPanelPrototype extends JPanel {
     }
 
     // internal - shift point (x, y, z) (stored) to correct viewing position (panel) as (x, y)
-    protected int[] convert3D2D(int[] point) {
+    protected int[] convert3D2D(float[] point) {
         int[] result = new int[2];
         result[0] = (int) Math.round(point[PERS[0]] * ZOOM + SHIFT_FOR_CENTER[0] - SHIFT_BY_USER[0]);
         result[1] = (int) Math.round(point[PERS[1]] * ZOOM + SHIFT_FOR_CENTER[1] - SHIFT_BY_USER[1]);
@@ -96,7 +96,7 @@ public abstract class VPanelPrototype extends JPanel {
     }
 
     // internal - draw a point (takes (x,y,z))
-    protected void drawPoint(int[] point, Graphics2D ig, Color innerColor, Color outerColor) {
+    protected void drawPoint(float[] point, Graphics2D ig, Color innerColor, Color outerColor) {
         int[] shiftPoint = convert3D2D(point);
         ig.setColor(innerColor);
         ig.fillOval(shiftPoint[0] - VitcoSettings.ANIMATION_CIRCLE_RADIUS,
@@ -111,7 +111,7 @@ public abstract class VPanelPrototype extends JPanel {
     }
 
     // internal - draw a line (takes (x,y,z), (x,y,z))
-    protected void drawLine(int[] p1, int[] p2, Graphics2D ig) {
+    protected void drawLine(float[] p1, float[] p2, Graphics2D ig) {
         // shift perspective
         int[][] curLine = new int[2][];
         curLine[0] = convert3D2D(p1);
@@ -119,61 +119,62 @@ public abstract class VPanelPrototype extends JPanel {
         ig.drawLine(curLine[0][0],curLine[0][1],curLine[1][0],curLine[1][1]);
     }
 
-    // internal - draw the center cross
+    // draw the axis
     protected void drawAxis(Graphics2D ig) {
 
         // mainview the outline (sides)
-        ig.setColor(VitcoSettings.ANIMATION_CROSS_OUTER_COLOR);
+        ig.setColor(VitcoSettings.ANIMATION_AXIS_OUTER_COLOR);
         ig.setStroke(new BasicStroke(
-                VitcoSettings.ANIMATION_CROSS_LINE_SIZE * (float) 1.2,
+                VitcoSettings.ANIMATION_AXIS_LINE_SIZE * (float) 1.2,
                 BasicStroke.CAP_ROUND,
                 BasicStroke.JOIN_BEVEL));
         ig.drawLine(10, 10,
-                10, SIZEY - 10 - Math.round(VitcoSettings.ANIMATION_CROSS_LINE_SIZE)
+                10, SIZEY - 10 - Math.round(VitcoSettings.ANIMATION_AXIS_LINE_SIZE)
         );
-        ig.drawLine(10 + Math.round(VitcoSettings.ANIMATION_CROSS_LINE_SIZE), SIZEY - 10,
+        ig.drawLine(10 + Math.round(VitcoSettings.ANIMATION_AXIS_LINE_SIZE), SIZEY - 10,
                 SIZEX - 10, SIZEY - 10
         );
 
         // mainview the inner (sides)
         GradientPaint gradient = new GradientPaint(10,10,
                 (PERS[1] == 0
-                        ? VitcoSettings.ANIMATION_CROSS_COLOR_X
+                        ? VitcoSettings.ANIMATION_AXIS_COLOR_X
                         : (PERS[1] == 1
-                        ? VitcoSettings.ANIMATION_CROSS_COLOR_Y
-                        : VitcoSettings.ANIMATION_CROSS_COLOR_Z)),
+                        ? VitcoSettings.ANIMATION_AXIS_COLOR_Y
+                        : VitcoSettings.ANIMATION_AXIS_COLOR_Z)),
                 SIZEX - 10, SIZEY - 10,
-                VitcoSettings.ANIMATION_CROSS_CENTER_COLOR,
+                VitcoSettings.ANIMATION_AXIS_CENTER_COLOR,
                 false);
         ig.setPaint(gradient);
         ig.setStroke(new BasicStroke(
-                VitcoSettings.ANIMATION_CROSS_LINE_SIZE,
+                VitcoSettings.ANIMATION_AXIS_LINE_SIZE,
                 BasicStroke.CAP_ROUND,
                 BasicStroke.JOIN_ROUND));
 
         ig.drawLine(10, 10,
-                10, SIZEY - 10 - Math.round(VitcoSettings.ANIMATION_CROSS_LINE_SIZE)
+                10, SIZEY - 10 - Math.round(VitcoSettings.ANIMATION_AXIS_LINE_SIZE)
         );
         gradient = new GradientPaint(10,10,
-                VitcoSettings.ANIMATION_CROSS_CENTER_COLOR,
+                VitcoSettings.ANIMATION_AXIS_CENTER_COLOR,
                 SIZEX - 10, SIZEY - 10,
                 (PERS[0] == 0
-                        ? VitcoSettings.ANIMATION_CROSS_COLOR_X
+                        ? VitcoSettings.ANIMATION_AXIS_COLOR_X
                         : (PERS[0] == 1
-                        ? VitcoSettings.ANIMATION_CROSS_COLOR_Y
-                        : VitcoSettings.ANIMATION_CROSS_COLOR_Z)),
+                        ? VitcoSettings.ANIMATION_AXIS_COLOR_Y
+                        : VitcoSettings.ANIMATION_AXIS_COLOR_Z)),
                 false);
         ig.setPaint(gradient);
-        ig.drawLine(10 + Math.round(VitcoSettings.ANIMATION_CROSS_LINE_SIZE), SIZEY - 10,
+        ig.drawLine(10 + Math.round(VitcoSettings.ANIMATION_AXIS_LINE_SIZE), SIZEY - 10,
                 SIZEX - 10, SIZEY - 10
         );
     }
 
+    // internal - draw the center cross
     protected void drawCenterCross(Graphics2D ig) {
         // draw center cross
         ig.setColor(Color.BLACK);
         ig.setStroke(new BasicStroke(1.0f));
-        int[] center = convert3D2D(new int[] {0, 0, 0});
+        int[] center = convert3D2D(new float[] {0, 0, 0});
         ig.drawLine(center[0] - 5, center[1], center[0] + 5, center[1]);
         ig.drawLine(center[0], center[1] - 5, center[0], center[1] + 5);
     }

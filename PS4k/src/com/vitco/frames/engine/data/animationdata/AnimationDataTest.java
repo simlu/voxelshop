@@ -90,13 +90,13 @@ public class AnimationDataTest {
         int id1 = ad.addPoint(1,2,3);
         int id2 = ad.addPoint(4,5,6);
         int id3 = ad.addPoint(7,8,9);
-        int[][][] points = ad.getPoints();
+        float[][][] points = ad.getPoints();
         assert points[0][1][0] == id1;
         assert points[0][0][0] == 1;
         assert points[0][0][1] == 2;
         assert points[0][0][2] == 3;
         ad.connect(id2, id3);
-        int[][][][] lines = ad.getLines();
+        float[][][][] lines = ad.getLines();
         assert lines[0][0][1][0] == id2;
         assert lines[0][1][1][0] == id3;
         ad.connect(id1, id3);

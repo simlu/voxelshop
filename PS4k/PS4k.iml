@@ -19,7 +19,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="rtree" level="project" />
     <orderEntry type="library" name="render" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">

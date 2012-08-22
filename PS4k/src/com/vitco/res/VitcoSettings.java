@@ -1,5 +1,7 @@
 package com.vitco.res;
 
+import com.threed.jpct.SimpleVector;
+
 import java.awt.*;
 
 /**
@@ -15,11 +17,11 @@ public final class VitcoSettings {
     public static final Color DEFAULT_HOVER_COLOR = new Color(235,241,251);
 
     // e.g. for side view
-    public static final Color ANIMATION_LINE_COLOR = new Color(230, 20, 30, 200);
+    public static final Color ANIMATION_LINE_INNER_COLOR = new Color(230, 20, 30, 200);
+    public static final Color ANIMATION_LINE_OUTER_COLOR = new Color(0, 0, 0, 100);
     public static final Color ANIMATION_LINE_PREVIEW_ADD_COLOR = new Color(0, 25, 212, 200);
     public static final Color ANIMATION_LINE_PREVIEW_REMOVE_COLOR = new Color(175, 175, 175, 200);
     public static final Color ANIMATION_BG_COLOR = new Color(126, 126, 126);
-    public static final Color ANIMATION_BORDER_COLOR = new Color(56, 56, 56);
     public static final Color ANIMATION_DOT_INNER_COLOR = new Color(230, 20, 30, 150);
     public static final Color ANIMATION_DOT_OUTER_COLOR = new Color(65, 8, 11, 200);
     public static final Color ANIMATION_DOT_HL_INNER_COLOR = new Color(255, 255, 255, 100);
@@ -31,30 +33,36 @@ public final class VitcoSettings {
     public static final float ANIMATION_CIRCLE_BORDER_SIZE = 1.0f;
     public static final int ANIMATION_CIRCLE_RADIUS = 8;
     // zoom for side view
-    public static final double SIDE_VIEW_COARSE_ZOOM_SPEED = 0.2; // for buttons
-    public static final double SIDE_VIEW_FINE_ZOOM_SPEED = 0.05; // for mouse wheel
-    public static final double SIDE_VIEW_MIN_ZOOM = 0.1;
-    public static final double SIDE_VIEW_MAX_ZOOM = 3;
+    public static final float SIDE_VIEW_COARSE_ZOOM_SPEED = 1000f; // for buttons
+    public static final float SIDE_VIEW_FINE_ZOOM_SPEED = 300f; // for mouse wheel
+    public static final float SIDE_VIEW_MIN_ZOOM = 10000f;
+    public static final float SIDE_VIEW_MAX_ZOOM = 30000f;
+    public static final float SIDE_VIEW_ZOOM_START = 20000f;
+    public static final float SIDE_VIEW_ZOOM_FOV = 0.015f;
+    public static final float SIDE_VIEW_SIDE_MOVE_FACTOR = 1f; // "drag" move content
 
-    public static final Color ANIMATION_CROSS_OUTER_COLOR = new Color(0, 0, 0, 255);
-    public static final Color ANIMATION_CROSS_CENTER_COLOR = new Color(65, 65, 65, 255);
-    public static final Color ANIMATION_CROSS_COLOR_X = new Color(141, 0, 0, 255);
-    public static final Color ANIMATION_CROSS_COLOR_Y = new Color(8, 141, 1, 255);
-    public static final Color ANIMATION_CROSS_COLOR_Z = new Color(0, 92, 180, 255);
-    public static final float ANIMATION_CROSS_LINE_SIZE = 5.0f;
+    // xyz orientation
+    public static final Color ANIMATION_AXIS_OUTER_COLOR = new Color(0, 0, 0, 255);
+    // can be removed...
+    public static final Color ANIMATION_AXIS_CENTER_COLOR = new Color(65, 65, 65, 255); // center color
+    public static final Color ANIMATION_AXIS_COLOR_X = new Color(141, 0, 0, 255);
+    public static final Color ANIMATION_AXIS_COLOR_Y = new Color(8, 141, 1, 255);
+    public static final Color ANIMATION_AXIS_COLOR_Z = new Color(0, 92, 180, 255);
+    public static final float ANIMATION_AXIS_LINE_SIZE = 3.5f;
+    public static final Color ANIMATION_CENTER_CROSS_COLOR = new Color(0, 0, 0, 255); // cross in the center
 
     // main view
-    public static final Color MAIN_VIEW_LINE_OVERLAY_COLOR = new Color(0, 0, 0, 50);
-    public static final float MAIN_VIEW_LINE_OVERLAY_SIZE = 6f;
-    public static final Color MAIN_VIEW_DOT_OVERLAY_COLOR = new Color(255, 0, 0, 200);
-    public static final float MAIN_VIEW_ZOOM_SPEED = 10;
+    public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 10;
+    public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
     public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 500;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
-    public static final float MAIN_VIEW_CAMERA_POSITION_X = 0;
-    public static final float MAIN_VIEW_CAMERA_POSITION_Y = -200;
-    public static final float MAIN_VIEW_CAMERA_POSITION_Z = -200;
-    public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // right click drag move
+    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(0, -200, -200);
+    public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // "drag" move content
     public static final float MAIN_VIEW_ROTATION_X_FACTOR = 0.02f;
     public static final float MAIN_VIEW_ROTATION_Y_FACTOR = 0.01f;
+    public static final Color MAIN_VIEW_GROUND_PLANE_COLOR = new Color(181, 181, 181);
+
+    // general
+    public static final Color DEFAULT_BORDER_COLOR = new Color(56, 56, 56);
 
 }
