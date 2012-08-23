@@ -1,4 +1,4 @@
-package com.vitco.frames.engine;
+package com.vitco.util;
 
 import com.threed.jpct.SimpleVector;
 

@@ -1,4 +1,4 @@
-package com.vitco.frames.engine;
+package com.vitco.util;
 
 import com.threed.jpct.*;
 import com.threed.jpct.util.Light;
@@ -19,7 +19,7 @@ public class WorldUtil {
     }
 
     // add a box to the world
-    public static void addBox (World world, SimpleVector pos, float size, Color color) {
+    public static int addBox (World world, SimpleVector pos, float size, Color color) {
         Object3D box = Primitives.getCube(size);
         box.setAdditionalColor(color);
         box.setEnvmapped(Object3D.ENVMAP_ENABLED);
@@ -31,5 +31,6 @@ public class WorldUtil {
         box.rotateY((float) Math.PI / 4); // align correctly
         box.build();
         world.addObject(box);
+        return box.getID();
     }
 }
