@@ -1,6 +1,6 @@
 package com.vitco.frames.engine.sideview;
 
-import com.threed.jpct.Camera;
+import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.SimpleVector;
 import com.vitco.frames.engine.EngineInteractionPrototype;
 import com.vitco.frames.engine.data.listener.DataChangeListener;
@@ -14,16 +14,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 8/21/12
- * Time: 2:29 PM
- * To change this template use File | Settings | File Templates.
+ * Creates one side view instance (one perspective) and the specific user interaction.
  */
 public class SideView extends EngineInteractionPrototype implements SideViewInterface {
 
     private final int side;
 
+    // resets the view for this side
     private void resetView() {
         switch (side) {
             case 0:
@@ -40,18 +37,17 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         camera.setFOV(VitcoSettings.SIDE_VIEW_ZOOM_FOV);
     }
 
+    // constructor
     public SideView(int side) {
         this.side = side;
         resetView();
     }
 
     @Override
-    public JPanel build() {
+    public final JPanel build() {
+
         // no need to draw the openGL content
         container.setDrawWorld(false);
-
-        container.addMouseMotionListener(animationAdapter);
-        container.addMouseListener(animationAdapter);
 
         // register zoom buttons
         actionManager.registerAction("sideview_zoom_in_tb" + (side + 1), new AbstractAction() {
@@ -151,7 +147,23 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             }
         });
 
+        // holds the menu and the draw panel (container)
+        final JPanel wrapper = new JPanel();
+        wrapper.setLayout(new BorderLayout());
 
-        return container;
+        // create menu
+        CommandMenuBar menuPanel = new CommandMenuBar();
+        menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/frames/engine/sideview/toolbar" + (side + 1) + ".xml");
+        menuPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        menuPanel.setBorder(
+                // the last menu gets a bottom border
+                BorderFactory.createMatteBorder(0, 1, side == 2 ? 1 : 0, 1, VitcoSettings.DEFAULT_BORDER_COLOR)
+        );
+
+        // add menu and container
+        wrapper.add(menuPanel, BorderLayout.SOUTH);
+        wrapper.add(container, BorderLayout.CENTER);
+
+        return wrapper;
     }
 }

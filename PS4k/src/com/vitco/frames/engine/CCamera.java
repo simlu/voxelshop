@@ -15,8 +15,8 @@ public class CCamera extends Camera {
     private final float[] amountShifted = new float[2];
 
     // the zoom limit
-    private float ZOOM_OUT_MAX;
-    private float ZOOM_IN_MAX;
+    private float ZOOM_OUT_MAX = -1;
+    private float ZOOM_IN_MAX = -1;
 
     public void setZoomLimits(float zoom_in_max, float zoom_out_max) {
         ZOOM_OUT_MAX = zoom_out_max;
@@ -41,7 +41,6 @@ public class CCamera extends Camera {
     }
     // notify all listeners
     private void notifyListener() {
-
         for (CameraChangeListener ccl : listener) {
             ccl.onCameraChange();
         }
@@ -54,7 +53,7 @@ public class CCamera extends Camera {
             this.moveCamera(Camera.CAMERA_MOVELEFT, -amountShifted[0]);
             this.moveCamera(Camera.CAMERA_MOVEUP, -amountShifted[1]);
             // check for zooming
-            if (this.getPosition().distance(SimpleVector.ORIGIN) > ZOOM_IN_MAX) {
+            if (this.getPosition().distance(SimpleVector.ORIGIN) > ZOOM_IN_MAX || ZOOM_IN_MAX == -1) {
                 this.moveCamera(Camera.CAMERA_MOVEIN, speed);
             }
             // shift the camera back (again)
@@ -71,7 +70,7 @@ public class CCamera extends Camera {
             this.moveCamera(Camera.CAMERA_MOVELEFT, -amountShifted[0]);
             this.moveCamera(Camera.CAMERA_MOVEUP, -amountShifted[1]);
             // check for zooming
-            if (this.getPosition().distance(new SimpleVector(0,0,0)) < ZOOM_OUT_MAX) {
+            if (this.getPosition().distance(new SimpleVector(0,0,0)) < ZOOM_OUT_MAX || ZOOM_OUT_MAX == -1) {
                 this.moveCamera(Camera.CAMERA_MOVEIN, -speed);
             }
             // shift the camera back (again)

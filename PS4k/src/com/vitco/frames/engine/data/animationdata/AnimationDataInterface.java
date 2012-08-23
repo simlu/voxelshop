@@ -10,6 +10,8 @@ package com.vitco.frames.engine.data.animationdata;
  */
 public interface AnimationDataInterface extends AnimationDataCoreInterface {
 
+    void removeHighlights();
+
     boolean highlightPoint(int id);
 
     boolean selectPoint(int id);

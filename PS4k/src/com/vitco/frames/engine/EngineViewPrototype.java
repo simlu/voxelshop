@@ -4,6 +4,7 @@ import com.threed.jpct.*;
 import com.vitco.frames.ViewPrototype;
 import com.vitco.frames.engine.data.animationdata.AnimationDataInterface;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.G2DUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PreDestroy;
@@ -11,14 +12,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Rendering functionality of this World (data + overlay)
  *
- * Can switch each of them on/off.
+ * Can switch each of them on/off. Defines the basic objects: data, world, buffer, camera.
  */
 public abstract class EngineViewPrototype extends ViewPrototype {
     // var & setter
@@ -34,7 +32,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected final CCamera camera;
 
     // conversion
-    public SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
+    public final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
         SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer, x*2, y*2).normalize();
         result.scalarMul(camera.getPosition().distance(referencePoint));
         result.add(camera.getPosition());
@@ -42,7 +40,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     }
 
     // conversion
-    public SimpleVector convert3D2D(float[] point) {
+    public final SimpleVector convert3D2D(float[] point) {
         SimpleVector result = Interact2D.project3D2D(camera, buffer,
                 new SimpleVector(point[0], point[1], point[2]));
         result.scalarMul(0.5f);
@@ -50,19 +48,29 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     }
 
     // the container that we draw on
-    protected MPanel container = new MPanel();
-    protected class MPanel extends JPanel {
+    protected final MPanel container = new MPanel();
+    protected final class MPanel extends JPanel {
 
+        // this draws opengl content if enabled
         private boolean drawWorld = true;
         public void setDrawWorld(boolean b) {
             drawWorld = b;
         }
 
+        // this enabled/disables all overlay
         private boolean drawOverlay = true;
         public void setDrawOverlay(boolean b) {
             drawOverlay = b;
         }
 
+        // enabled/ disables animation overlay
+        private boolean drawAnimationOverlay = true;
+        public void setDrawAnimationOverlay(boolean b) {
+            drawAnimationOverlay = b;
+        }
+
+        // for the next refresh do not update the
+        // world (OpenGL render)
         private boolean skipNextWorldRender = false;
         public void skipNextWorldRender() {
             skipNextWorldRender = true;
@@ -86,7 +94,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         // draw dynamic overlay on top of the openGL
-        private void drawOverlay(Graphics2D ig) {
+        private void drawAnimationOverlay(Graphics2D ig) {
             // Anti-alias
             ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
@@ -135,10 +143,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         // wrapper
-        private void drawAxe(SimpleVector unitVector, Graphics2D ig, Color innerColor, Color outerColor, float size) {
+        private void drawAxeHalf(SimpleVector unitVector, boolean invert, Graphics2D ig, Color innerColor, Color outerColor, float size) {
             G2DUtil.drawLine(
-                    new SimpleVector(Math.round(unitVector.x*15 + 25), Math.round(unitVector.y*15 + 25), 0),
-                    new SimpleVector(Math.round(unitVector.x*3 + 25), Math.round(unitVector.y*3 + 25), 0),
+                    new SimpleVector(Math.round((invert?-1:1)*unitVector.x*15 + 25), Math.round((invert?-1:1)*unitVector.y*15 + 25), 0),
+                    new SimpleVector(Math.round((invert?-1:1)*unitVector.x*3 + 25), Math.round((invert?-1:1)*unitVector.y*3 + 25), 0),
                     ig,
                     innerColor,
                     outerColor,
@@ -147,12 +155,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         // called for content that only changes when the opengl content changes
-        private void drawStatic(Graphics2D ig) {
+        private void drawLinkedOverlay(Graphics2D ig) {
             // Anti-alias
             ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // draw axies into corner
+            // draw axis into corner (top left)
             Matrix matrix = camera.getDirection().getRotationMatrix().invert();
             SimpleVector vec1 = new SimpleVector(1,0,0);
             vec1.matMul(matrix);
@@ -160,33 +168,23 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             vec2.matMul(matrix);
             SimpleVector vec3 = new SimpleVector(0,0,1);
             vec3.matMul(matrix);
-            // sort values
-            class Holder extends SimpleVector {
-                public final Color col;
-                public Holder(SimpleVector vector, Color col) {
-                    super(vector);
-                    this.col = col;
-                }
+            // sort according to z value
+            if (vec1.z < 0) {
+                vec1.scalarMul(-1);
             }
-            ArrayList<Holder> list = new ArrayList<Holder>();
-            list.add(new Holder(vec1, VitcoSettings.ANIMATION_AXIS_COLOR_X));
-            list.add(new Holder(vec2, VitcoSettings.ANIMATION_AXIS_COLOR_Y));
-            list.add(new Holder(vec3, VitcoSettings.ANIMATION_AXIS_COLOR_Z));
-            vec1.scalarMul(-1);
-            vec2.scalarMul(-1);
-            vec3.scalarMul(-1);
-            list.add(new Holder(vec1, VitcoSettings.ANIMATION_AXIS_COLOR_X));
-            list.add(new Holder(vec2, VitcoSettings.ANIMATION_AXIS_COLOR_Y));
-            list.add(new Holder(vec3, VitcoSettings.ANIMATION_AXIS_COLOR_Z));
-            Collections.sort(list, new Comparator<SimpleVector>() {
-                @Override
-                public int compare(SimpleVector o1, SimpleVector o2) {
-                    return (int)Math.signum(o2.z - o1.z);
-                }
-            });
-            for (Holder vec : list) {
-                drawAxe(vec, ig, vec.col, VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
+            if (vec2.z < 0) {
+                vec2.scalarMul(-1);
             }
+            if (vec3.z < 0) {
+                vec3.scalarMul(-1);
+            }
+            // draw
+            drawAxeHalf(vec1, false, ig, VitcoSettings.ANIMATION_AXIS_COLOR_X, VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
+            drawAxeHalf(vec2, false, ig, VitcoSettings.ANIMATION_AXIS_COLOR_Y, VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
+            drawAxeHalf(vec3, false, ig, VitcoSettings.ANIMATION_AXIS_COLOR_Z, VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
+            drawAxeHalf(vec1, true, ig, VitcoSettings.ANIMATION_AXIS_COLOR_X, VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
+            drawAxeHalf(vec2, true, ig, VitcoSettings.ANIMATION_AXIS_COLOR_Y, VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
+            drawAxeHalf(vec3, true, ig, VitcoSettings.ANIMATION_AXIS_COLOR_Z, VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
 
             // draw center cross
             ig.setColor(VitcoSettings.ANIMATION_CENTER_CROSS_COLOR);
@@ -199,7 +197,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // handle the redrawing of this component
         @Override
-        protected void paintComponent(Graphics g1) {
+        protected final void paintComponent(Graphics g1) {
             if (skipNextWorldRender) {
                 skipNextWorldRender = false;
             } else {
@@ -210,18 +208,18 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 }
                 buffer.update();
                 if (drawOverlay) { // overlay part 1
-                    drawStatic((Graphics2D)buffer.getGraphics()); // refreshes with OpenGL
+                    drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
                 }
             }
             buffer.display(g1);
-            if (drawOverlay) { // overlay part 2
-                drawOverlay((Graphics2D) g1); // refreshes with animation data
+            if (drawOverlay && drawAnimationOverlay) { // overlay part 2
+                drawAnimationOverlay((Graphics2D) g1); // refreshes with animation data
             }
         }
     }
 
     @PreDestroy
-    public void finish() {
+    public final void cleanup() {
         buffer.disableRenderer(IRenderer.RENDERER_OPENGL);
         buffer.dispose();
     }
@@ -232,7 +230,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         camera = new CCamera();
         world.setCameraTo(camera);
 
-        // register size change of parent, update container
+        // add a border to our view
+        container.setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR));
+
+        // register size change of container and change buffer size accordingly
         container.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -240,6 +241,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     buffer.dispose();
                     buffer = new FrameBuffer(container.getWidth(), container.getHeight(),
                             FrameBuffer.SAMPLINGMODE_OGSS);
+                    buffer.clear(VitcoSettings.ANIMATION_BG_COLOR); // init the buffer
                     container.repaint();
                 }
             }

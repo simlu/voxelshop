@@ -5,6 +5,7 @@ import com.threed.jpct.*;
 import com.vitco.frames.engine.*;
 import com.vitco.frames.engine.data.listener.DataChangeListener;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.WorldUtil;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.annotation.PreDestroy;
@@ -14,30 +15,12 @@ import java.awt.event.*;
 import java.util.Random;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 8/20/12
- * Time: 12:13 AM
- * To change this template use File | Settings | File Templates.
+ * Creates the mian view instance and attaches the specific user interation.
  */
 public class MainView extends EngineInteractionPrototype implements MainViewInterface {
 
     @Override
-    public JPanel build() {
-
-        final JPanel wrapper = new JPanel();
-        wrapper.setLayout(new BorderLayout());
-
-        CommandMenuBar menuPanel = new CommandMenuBar();
-        menuPanel.setOrientation(1); // top down orientation
-        menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/frames/engine/mainview/toolbar.xml");
-        wrapper.add(menuPanel, BorderLayout.EAST);
-        wrapper.add(container, BorderLayout.CENTER);
-        wrapper.setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR));
-        menuPanel.setBorder(BorderFactory.createMatteBorder(0,1,0,0,VitcoSettings.DEFAULT_BORDER_COLOR));
-
-        container.addMouseMotionListener(animationAdapter);
-        container.addMouseListener(animationAdapter);
+    public final JPanel build() {
 
         // enable snap
         animationAdapter.setVoxelSnap(true);
@@ -64,18 +47,18 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
         }
 
-//        // for testing
-//        //Random rand = new Random();
-//        for (int i = -30; i <= 30; i+=1) {
-//            for (int j = -30; j <= 30; j+=1) {
-//                for (int k = -30; k <= 30; k+=1) {
-//                    if (rand.nextInt(5000) == 0) {
-//                        Color col = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-//                        WorldUtil.addBox(world, new SimpleVector(i * 1, k * 1 , j * 1), 0.5f, col);
-//                    }
-//                }
-//            }
-//        }
+        // for testing
+        //Random rand = new Random();
+        for (int i = -30; i <= 30; i+=1) {
+            for (int j = -30; j <= 30; j+=1) {
+                for (int k = -30; k <= 30; k+=1) {
+                    if (rand.nextInt(500) == 0) {
+                        Color col = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+                        WorldUtil.addBox(world, new SimpleVector(i * 4, k * 4 , j * 4), 2f, col);
+                    }
+                }
+            }
+        }
 
         // add the world plane (ground)
         Object3D plane = Primitives.getPlane(1, 200f);
@@ -164,7 +147,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
             @Override
             public boolean getStatus() {
-                return animationAdapter.getVoxelSnap();  //To change body of implemented methods use File | Settings | File Templates.
+                return animationAdapter.getVoxelSnap();
             }
         });
 
@@ -203,14 +186,26 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
         });
 
-        // refresh the container
-        container.repaint();
+        // holds menu and render area (container)
+        final JPanel wrapper = new JPanel();
+        wrapper.setLayout(new BorderLayout());
+
+        // create menu
+        CommandMenuBar menuPanel = new CommandMenuBar();
+        menuPanel.setOrientation(1); // top down orientation
+        menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/frames/engine/mainview/toolbar.xml");
+        menuPanel.setBorder(BorderFactory.createMatteBorder(1,0,1,1,VitcoSettings.DEFAULT_BORDER_COLOR));
+
+        // add to wrapper
+        wrapper.add(menuPanel, BorderLayout.EAST);
+        wrapper.add(container, BorderLayout.CENTER);
 
         return wrapper;
     }
 
     @PreDestroy
-    public void finish() {
+    public final void savePref() {
+        // store "point snap on voxels" setting
         preferences.storeBoolean("mainview_voxel_snap_enabled", animationAdapter.getVoxelSnap());
     }
 

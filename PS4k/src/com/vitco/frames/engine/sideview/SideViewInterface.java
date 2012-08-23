@@ -3,11 +3,7 @@ package com.vitco.frames.engine.sideview;
 import javax.swing.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 8/21/12
- * Time: 2:38 PM
- * To change this template use File | Settings | File Templates.
+ * Creates one side view instance (one perspective) and the specific user interaction.
  */
 public interface SideViewInterface {
     JPanel build();

@@ -1,11 +1,9 @@
 package com.vitco.frames.engine.data.animationdata;
 
 import com.vitco.frames.engine.data.listener.DataChangeListener;
-import com.vitco.util.Indexer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,27 +24,15 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
 
     private static final long serialVersionUID = -6244506065643584549L;
 
-    private static final float[] ZEROS = new float[] {0, 0, 0};
-
     protected final ArrayList<DataChangeListener> listeners = new ArrayList<DataChangeListener>();
 
     private final Map<Integer, float[]> points = new HashMap<Integer, float[]>();
     private final Map<String, int[]> lines = new HashMap<String, int[]>();
 
     // indexes (helper)
-    private final Indexer indexedPoints = new Indexer();
     private final Map<Integer, ArrayList<String>> pointToLine = new HashMap<Integer, ArrayList<String>>();
 
     private int lastAddedId = -1; // the last id that was added ("to get free id")
-
-    // internal - rebuild the r tree index for "near" point access
-    private void rebuildIndex() {
-        indexedPoints.clear();
-        for (Map.Entry<Integer, float[]> entry : points.entrySet()) {
-            float[] point = entry.getValue();
-            indexedPoints.insert(new float[]{point[0], point[1], point[2]}, ZEROS, entry.getKey());
-        }
-    }
 
     // internal - to notify the listeners
     private void notifyAnimationDataChangeListener() {
@@ -73,28 +59,11 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
         return lastAddedId;
     }
 
-    // returns a nearest point if there are any in the radius (Voxel!)
-    @Override
-    public int getNearPoint(float x, float y, float z, float[] radius) {
-      // todo create test
-      List<Integer> search =
-              indexedPoints.search(
-                      new float[] {x - radius[0], y - radius[1], z - radius[2]},
-                      new float[] {radius[0]*2, radius[1]*2, radius[2]*2}
-              );
-      if (search.size() == 0) {
-          return -1;
-      } else {
-          return search.get(0);
-      }
-    }
-
     @Override
     public int addPoint(float x, float y, float z) {
         int id = getFreeId();
         pointToLine.put(id, new ArrayList<String>()); // this point is connected with zero lines
         points.put(id, new float[]{x, y, z});
-        indexedPoints.insert(new float[] {x, y, z}, ZEROS, id); // index
         notifyAnimationDataChangeListener();
         return id;
     }
@@ -122,11 +91,8 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
                     }
                 }
             }
-            float[][] p = getPoint(id);
             if (points.remove(id) != null) {
-                if (indexedPoints.delete(new float[] {p[0][0], p[0][1], p[0][2]}, ZEROS, id)) { // index
-                    notifyAnimationDataChangeListener();
-                }
+                notifyAnimationDataChangeListener();
             }
             return true;
         }
@@ -137,13 +103,9 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
     public boolean movePoint(int id, float x, float y, float z) {
         boolean result = false;
         if (isValid(id)) {
-            float[][] p = getPoint(id);
-            if (indexedPoints.delete(new float[] {p[0][0], p[0][1], p[0][2]}, ZEROS, id)) { // delete old index
-                points.put(id, new float[]{x, y, z});
-                indexedPoints.insert(new float[] {x, y, z}, ZEROS, id); // index
-                notifyAnimationDataChangeListener();
-                result = true;
-            }
+            points.put(id, new float[]{x, y, z});
+            notifyAnimationDataChangeListener();
+            result = true;
         }
         return result;
     }
@@ -176,7 +138,6 @@ public class AnimationDataCore implements AnimationDataCoreInterface {
     public void clear() {
         points.clear();
         lines.clear();
-        indexedPoints.clear();
         pointToLine.clear();
         notifyAnimationDataChangeListener();
     }

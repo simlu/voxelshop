@@ -92,7 +92,6 @@
     <bean id="AnimationData" class="com.vitco.frames.engine.data.animationdata.AnimationData"/>
     <!-- side view -->
     <bean id="SideView" class="com.vitco.frames.engine.sideview.SideViews">
-        <property name="animationData" ref="AnimationData"/>
         <property name="sideViews">
             <array value-type="com.vitco.frames.engine.sideview.SideView">
                 <bean class="com.vitco.frames.engine.sideview.SideView">

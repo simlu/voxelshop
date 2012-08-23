@@ -1,12 +1,9 @@
 package com.vitco.frames.engine;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 8/21/12
- * Time: 7:56 PM
- * To change this template use File | Settings | File Templates.
+ * A Camera event listener
  */
 public interface CameraChangeListener {
+    //Called when the camera angle/zoom/fov/shift changes
     public void onCameraChange();
 }

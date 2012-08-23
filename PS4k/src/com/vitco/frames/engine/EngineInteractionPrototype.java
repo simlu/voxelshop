@@ -5,7 +5,10 @@ import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.Indexer;
+import com.vitco.util.action.ChangeListener;
+import com.vitco.util.action.types.StateActionPrototype;
 
+import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,20 +17,17 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 8/21/12
- * Time: 6:45 PM
- * To change this template use File | Settings | File Templates.
+ * Defines general (common) interactions available for this engine view and sets them up.
  */
 public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
+    protected transient final AnimationMouseAdapter animationAdapter = new AnimationMouseAdapter();
     protected class AnimationMouseAdapter extends MouseAdapter {
         private int dragPoint = -1; // the point that is dragged
         private long wasDragged = -1; // -1 if not dragged or the time in ms of first drag event
 
         // rebuild 2d index to do hit test when mouse is moving
-        private Indexer points2D = new Indexer(); //2D Rtree
+        private final Indexer points2D = new Indexer(); //2D Rtree
         private boolean needToRebuild = true;
         private void rebuild2DIndex() {
             if (needToRebuild) {
@@ -38,6 +38,24 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 }
                 needToRebuild = false;
             }
+        }
+
+        // get the 3D point for the mouse event in the same distance as the refPoint (from camera)
+        private SimpleVector getPoint(MouseEvent e, SimpleVector refPoint) {
+            SimpleVector result;
+            if (voxelSnap) {
+                SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX()*2, e.getY()*2).normalize();
+                Object[] res= world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
+                if (res[1] != null) {
+                    Object3D obj3D = ((Object3D)res[1]);
+                    result = obj3D.getOrigin();
+                } else {
+                    result = convert2D3D(e.getX(), e.getY(), refPoint);
+                }
+            } else {
+                result = convert2D3D(e.getX(), e.getY(), refPoint);
+            }
+            return result;
         }
 
         // set the snap functionality for animations dots (they "snap" to voxels)
@@ -66,21 +84,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     // move the point to the correct position
                     float[] tmp = animationData.getPoint(dragPoint)[0];
 
-                    SimpleVector point;
-                    if (voxelSnap) {
-                        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX()*2, e.getY()*2).normalize();
-                        Object[] res= world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
-                        if (res[1] != null) {
-                            Object3D obj3D = ((Object3D)res[1]);
-                            point = obj3D.getOrigin();
-                        } else {
-                            point = convert2D3D(e.getX(), e.getY(), new SimpleVector(tmp[0], tmp[1], tmp[2]));
-                        }
-                    } else {
-                        point = convert2D3D(e.getX(), e.getY(), new SimpleVector(tmp[0], tmp[1], tmp[2]));
-                    }
-
-                    //SimpleVector point = convert2D3D(e.getX(), e.getY(), new SimpleVector(tmp[0], tmp[1], tmp[2]));
+                    SimpleVector point = getPoint(e, new SimpleVector(tmp[0], tmp[1], tmp[2]));
                     animationData.movePoint(dragPoint, point.x, point.y, point.z);
                 }
             }
@@ -183,20 +187,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else if (e.getClickCount() == 2) {
                         // not highlighted and double-click -> add a point
                         // check if we hit something
-                        SimpleVector point;
-                        if (voxelSnap) {
-                            SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX()*2, e.getY()*2).normalize();
-                            Object[] res= world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
-
-                            if (res[1] != null) {
-                                Object3D obj3D = ((Object3D)res[1]);
-                                point = obj3D.getOrigin();
-                            } else {
-                                point = convert2D3D(e.getX(), e.getY(), SimpleVector.ORIGIN);
-                            }
-                        } else {
-                            point = convert2D3D(e.getX(), e.getY(), SimpleVector.ORIGIN);
-                        }
+                        SimpleVector point = getPoint(e, SimpleVector.ORIGIN);
                         int added = animationData.addPoint(point.x, point.y, point.z);
                         if (selected_point != -1) { // connect if possible
                             animationData.connect(added, selected_point);
@@ -208,8 +199,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
     }
 
-    protected transient final AnimationMouseAdapter animationAdapter = new AnimationMouseAdapter();
-
+    // constructor
     protected EngineInteractionPrototype() {
         super();
         // refresh the 2D index when the camera changes
@@ -217,6 +207,31 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             @Override
             public void onCameraChange() {
                 animationAdapter.refresh2DIndex();
+            }
+        });
+    }
+
+    @PostConstruct
+    protected final void init() {
+        // change what is drawn/what user can do when the mode changes
+        actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
+            @Override
+            public void run() {
+                ((StateActionPrototype)actionManager.getAction("toggle_animation_mode")).addChangeListener(new ChangeListener() {
+                    @Override
+                    public void actionFired(boolean b) { // this is fired once on setup
+                        if (b) {
+                            container.addMouseMotionListener(animationAdapter);
+                            container.addMouseListener(animationAdapter);
+                        } else {
+                            animationData.removeHighlights();
+                            container.removeMouseMotionListener(animationAdapter);
+                            container.removeMouseListener(animationAdapter);
+                        }
+                        container.setDrawAnimationOverlay(b);
+                        container.repaint();
+                    }
+                });
             }
         });
     }

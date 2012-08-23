@@ -3,7 +3,7 @@ package com.vitco.frames.engine.sideview;
 import javax.swing.*;
 
 /**
- * Can mainview an AnimationData and provides means to alter the data.
+ * Helper to sets up and arranges the different Side Views in the Side View Panel
  */
 public interface SideViewsInterface {
     JPanel buildSides(JPanel pane);

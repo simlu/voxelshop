@@ -56,6 +56,13 @@ public class AnimationData extends AnimationDataCore implements AnimationDataInt
     }
 
     @Override
+    public void removeHighlights() {
+        highlightPoint(-1);
+        selectPoint(-1);
+        setPreviewLine(-1, -1);
+    }
+
+    @Override
     public boolean highlightPoint(int id) {
         if (isValid(id) || id == -1) {
             if (highlightedPoint != id) {

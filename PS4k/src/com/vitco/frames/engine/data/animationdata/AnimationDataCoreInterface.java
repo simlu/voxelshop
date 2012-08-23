@@ -35,7 +35,6 @@ public interface AnimationDataCoreInterface extends Serializable {
     void removeDataChangeListener(DataChangeListener dcl);
     // returns the formatted point for a key (key, x, y, z)
     float[][] getPoint(int id);
-    // returns a nearest point if there are any in the radius
-    int getNearPoint(float x, float y, float z, float[] radius);
+    // true iff the two points are connected by a line
     boolean areConnected(int id1, int id2);
 }

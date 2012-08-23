@@ -13,7 +13,7 @@ import java.util.Map;
 public class Indexer {
 
     // a data object
-    private class DataObject {
+    private static final class DataObject {
         public final float[] values;
         public final float[] dim;
 
