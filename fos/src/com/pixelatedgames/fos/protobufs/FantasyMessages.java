@@ -8,7 +8,7 @@ public final class FantasyMessages {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
-  public enum FantasyMessageType
+  public enum fantasy_message_type
       implements com.google.protobuf.ProtocolMessageEnum {
     LOGIN(0, 1),
     POSITION(1, 2),
@@ -20,7 +20,7 @@ public final class FantasyMessages {
     
     public final int getNumber() { return value; }
     
-    public static FantasyMessageType valueOf(int value) {
+    public static fantasy_message_type valueOf(int value) {
       switch (value) {
         case 1: return LOGIN;
         case 2: return POSITION;
@@ -28,15 +28,15 @@ public final class FantasyMessages {
       }
     }
     
-    public static com.google.protobuf.Internal.EnumLiteMap<FantasyMessageType>
+    public static com.google.protobuf.Internal.EnumLiteMap<fantasy_message_type>
         internalGetValueMap() {
       return internalValueMap;
     }
-    private static com.google.protobuf.Internal.EnumLiteMap<FantasyMessageType>
+    private static com.google.protobuf.Internal.EnumLiteMap<fantasy_message_type>
         internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<FantasyMessageType>() {
-            public FantasyMessageType findValueByNumber(int number) {
-              return FantasyMessageType.valueOf(number);
+          new com.google.protobuf.Internal.EnumLiteMap<fantasy_message_type>() {
+            public fantasy_message_type findValueByNumber(int number) {
+              return fantasy_message_type.valueOf(number);
             }
           };
     
@@ -53,11 +53,11 @@ public final class FantasyMessages {
       return com.pixelatedgames.fos.protobufs.FantasyMessages.getDescriptor().getEnumTypes().get(0);
     }
     
-    private static final FantasyMessageType[] VALUES = {
+    private static final fantasy_message_type[] VALUES = {
       LOGIN, POSITION, 
     };
     
-    public static FantasyMessageType valueOf(
+    public static fantasy_message_type valueOf(
         com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
       if (desc.getType() != getDescriptor()) {
         throw new java.lang.IllegalArgumentException(
@@ -69,20 +69,20 @@ public final class FantasyMessages {
     private final int index;
     private final int value;
     
-    private FantasyMessageType(int index, int value) {
+    private fantasy_message_type(int index, int value) {
       this.index = index;
       this.value = value;
     }
     
-    // @@protoc_insertion_point(enum_scope:com.pixelatedgames.fos.protobufs.FantasyMessageType)
+    // @@protoc_insertion_point(enum_scope:com.pixelatedgames.fos.protobufs.fantasy_message_type)
   }
   
-  public interface FantasyMessageOrBuilder
+  public interface fantasy_messageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1;
+    // required .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1;
     boolean hasType();
-    com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType();
+    com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType();
     
     // optional .com.pixelatedgames.fos.protobufs.Login login = 2;
     boolean hasLogin();
@@ -94,42 +94,42 @@ public final class FantasyMessages {
     com.pixelatedgames.fos.protobufs.FantasyMessages.Position getPosition();
     com.pixelatedgames.fos.protobufs.FantasyMessages.PositionOrBuilder getPositionOrBuilder();
   }
-  public static final class FantasyMessage extends
+  public static final class fantasy_message extends
       com.google.protobuf.GeneratedMessage
-      implements FantasyMessageOrBuilder {
-    // Use FantasyMessage.newBuilder() to construct.
-    private FantasyMessage(Builder builder) {
+      implements fantasy_messageOrBuilder {
+    // Use fantasy_message.newBuilder() to construct.
+    private fantasy_message(Builder builder) {
       super(builder);
     }
-    private FantasyMessage(boolean noInit) {}
+    private fantasy_message(boolean noInit) {}
     
-    private static final FantasyMessage defaultInstance;
-    public static FantasyMessage getDefaultInstance() {
+    private static final fantasy_message defaultInstance;
+    public static fantasy_message getDefaultInstance() {
       return defaultInstance;
     }
     
-    public FantasyMessage getDefaultInstanceForType() {
+    public fantasy_message getDefaultInstanceForType() {
       return defaultInstance;
     }
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_descriptor;
+      return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_fieldAccessorTable;
+      return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_fieldAccessorTable;
     }
     
     private int bitField0_;
-    // required .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1;
+    // required .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1;
     public static final int TYPE_FIELD_NUMBER = 1;
-    private com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType type_;
+    private com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type type_;
     public boolean hasType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType() {
+    public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType() {
       return type_;
     }
     
@@ -160,7 +160,7 @@ public final class FantasyMessages {
     }
     
     private void initFields() {
-      type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+      type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
       login_ = com.pixelatedgames.fos.protobufs.FantasyMessages.Login.getDefaultInstance();
       position_ = com.pixelatedgames.fos.protobufs.FantasyMessages.Position.getDefaultInstance();
     }
@@ -234,41 +234,41 @@ public final class FantasyMessages {
       return super.writeReplace();
     }
     
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(byte[] data)
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(java.io.InputStream input)
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseDelimitedFrom(java.io.InputStream input)
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       Builder builder = newBuilder();
       if (builder.mergeDelimitedFrom(input)) {
@@ -277,7 +277,7 @@ public final class FantasyMessages {
         return null;
       }
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseDelimitedFrom(
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -288,12 +288,12 @@ public final class FantasyMessages {
         return null;
       }
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage parseFrom(
+    public static com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -303,7 +303,7 @@ public final class FantasyMessages {
     
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage prototype) {
+    public static Builder newBuilder(com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -316,18 +316,18 @@ public final class FantasyMessages {
     }
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageOrBuilder {
+       implements com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_messageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_descriptor;
+        return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_descriptor;
       }
       
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_fieldAccessorTable;
+        return com.pixelatedgames.fos.protobufs.FantasyMessages.internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_fieldAccessorTable;
       }
       
-      // Construct using com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage.newBuilder()
+      // Construct using com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -348,7 +348,7 @@ public final class FantasyMessages {
       
       public Builder clear() {
         super.clear();
-        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
         bitField0_ = (bitField0_ & ~0x00000001);
         if (loginBuilder_ == null) {
           login_ = com.pixelatedgames.fos.protobufs.FantasyMessages.Login.getDefaultInstance();
@@ -371,24 +371,24 @@ public final class FantasyMessages {
       
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage.getDescriptor();
+        return com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message.getDescriptor();
       }
       
-      public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage getDefaultInstanceForType() {
-        return com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage.getDefaultInstance();
+      public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message getDefaultInstanceForType() {
+        return com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message.getDefaultInstance();
       }
       
-      public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage build() {
-        com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage result = buildPartial();
+      public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message build() {
+        com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
       
-      private com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage buildParsed()
+      private com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
-        com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage result = buildPartial();
+        com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(
             result).asInvalidProtocolBufferException();
@@ -396,8 +396,8 @@ public final class FantasyMessages {
         return result;
       }
       
-      public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage buildPartial() {
-        com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage result = new com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage(this);
+      public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message buildPartial() {
+        com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message result = new com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -426,16 +426,16 @@ public final class FantasyMessages {
       }
       
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage) {
-          return mergeFrom((com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage)other);
+        if (other instanceof com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message) {
+          return mergeFrom((com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage other) {
-        if (other == com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage.getDefaultInstance()) return this;
+      public Builder mergeFrom(com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message other) {
+        if (other == com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message.getDefaultInstance()) return this;
         if (other.hasType()) {
           setType(other.getType());
         }
@@ -494,7 +494,7 @@ public final class FantasyMessages {
             }
             case 8: {
               int rawValue = input.readEnum();
-              com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType value = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.valueOf(rawValue);
+              com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type value = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
@@ -527,15 +527,15 @@ public final class FantasyMessages {
       
       private int bitField0_;
       
-      // required .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1;
-      private com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+      // required .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1;
+      private com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
       public boolean hasType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType() {
+      public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType() {
         return type_;
       }
-      public Builder setType(com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType value) {
+      public Builder setType(com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -546,7 +546,7 @@ public final class FantasyMessages {
       }
       public Builder clearType() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
         onChanged();
         return this;
       }
@@ -731,23 +731,23 @@ public final class FantasyMessages {
         return positionBuilder_;
       }
       
-      // @@protoc_insertion_point(builder_scope:com.pixelatedgames.fos.protobufs.FantasyMessage)
+      // @@protoc_insertion_point(builder_scope:com.pixelatedgames.fos.protobufs.fantasy_message)
     }
     
     static {
-      defaultInstance = new FantasyMessage(true);
+      defaultInstance = new fantasy_message(true);
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:com.pixelatedgames.fos.protobufs.FantasyMessage)
+    // @@protoc_insertion_point(class_scope:com.pixelatedgames.fos.protobufs.fantasy_message)
   }
   
   public interface LoginOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // optional .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1 [default = LOGIN];
+    // optional .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1 [default = LOGIN];
     boolean hasType();
-    com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType();
+    com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType();
     
     // required string username = 2;
     boolean hasUsername();
@@ -782,13 +782,13 @@ public final class FantasyMessages {
     }
     
     private int bitField0_;
-    // optional .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1 [default = LOGIN];
+    // optional .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1 [default = LOGIN];
     public static final int TYPE_FIELD_NUMBER = 1;
-    private com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType type_;
+    private com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type type_;
     public boolean hasType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType() {
+    public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType() {
       return type_;
     }
     
@@ -825,7 +825,7 @@ public final class FantasyMessages {
     }
     
     private void initFields() {
-      type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+      type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
       username_ = "";
     }
     private byte memoizedIsInitialized = -1;
@@ -991,7 +991,7 @@ public final class FantasyMessages {
       
       public Builder clear() {
         super.clear();
-        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
         bitField0_ = (bitField0_ & ~0x00000001);
         username_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -1100,7 +1100,7 @@ public final class FantasyMessages {
             }
             case 8: {
               int rawValue = input.readEnum();
-              com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType value = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.valueOf(rawValue);
+              com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type value = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
@@ -1120,15 +1120,15 @@ public final class FantasyMessages {
       
       private int bitField0_;
       
-      // optional .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1 [default = LOGIN];
-      private com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+      // optional .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1 [default = LOGIN];
+      private com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
       public boolean hasType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType() {
+      public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType() {
         return type_;
       }
-      public Builder setType(com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType value) {
+      public Builder setType(com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1139,7 +1139,7 @@ public final class FantasyMessages {
       }
       public Builder clearType() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.LOGIN;
+        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.LOGIN;
         onChanged();
         return this;
       }
@@ -1194,9 +1194,9 @@ public final class FantasyMessages {
   public interface PositionOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // optional .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1 [default = POSITION];
+    // optional .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1 [default = POSITION];
     boolean hasType();
-    com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType();
+    com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType();
     
     // required int64 x = 2;
     boolean hasX();
@@ -1235,13 +1235,13 @@ public final class FantasyMessages {
     }
     
     private int bitField0_;
-    // optional .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1 [default = POSITION];
+    // optional .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1 [default = POSITION];
     public static final int TYPE_FIELD_NUMBER = 1;
-    private com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType type_;
+    private com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type type_;
     public boolean hasType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType() {
+    public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType() {
       return type_;
     }
     
@@ -1266,7 +1266,7 @@ public final class FantasyMessages {
     }
     
     private void initFields() {
-      type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.POSITION;
+      type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.POSITION;
       x_ = 0L;
       y_ = 0L;
     }
@@ -1444,7 +1444,7 @@ public final class FantasyMessages {
       
       public Builder clear() {
         super.clear();
-        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.POSITION;
+        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.POSITION;
         bitField0_ = (bitField0_ & ~0x00000001);
         x_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -1566,7 +1566,7 @@ public final class FantasyMessages {
             }
             case 8: {
               int rawValue = input.readEnum();
-              com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType value = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.valueOf(rawValue);
+              com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type value = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
@@ -1591,15 +1591,15 @@ public final class FantasyMessages {
       
       private int bitField0_;
       
-      // optional .com.pixelatedgames.fos.protobufs.FantasyMessageType type = 1 [default = POSITION];
-      private com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.POSITION;
+      // optional .com.pixelatedgames.fos.protobufs.fantasy_message_type type = 1 [default = POSITION];
+      private com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.POSITION;
       public boolean hasType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType getType() {
+      public com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type getType() {
         return type_;
       }
-      public Builder setType(com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType value) {
+      public Builder setType(com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1610,7 +1610,7 @@ public final class FantasyMessages {
       }
       public Builder clearType() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessageType.POSITION;
+        type_ = com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message_type.POSITION;
         onChanged();
         return this;
       }
@@ -1669,10 +1669,10 @@ public final class FantasyMessages {
   }
   
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_descriptor;
+    internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_fieldAccessorTable;
+      internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_com_pixelatedgames_fos_protobufs_Login_descriptor;
   private static
@@ -1693,33 +1693,33 @@ public final class FantasyMessages {
   static {
     java.lang.String[] descriptorData = {
       "\n\026fantasy_messages.proto\022 com.pixelatedg" +
-      "ames.fos.protobufs\"\312\001\n\016FantasyMessage\022B\n" +
-      "\004type\030\001 \002(\01624.com.pixelatedgames.fos.pro" +
-      "tobufs.FantasyMessageType\0226\n\005login\030\002 \001(\013" +
-      "2\'.com.pixelatedgames.fos.protobufs.Logi" +
-      "n\022<\n\010position\030\003 \001(\0132*.com.pixelatedgames" +
-      ".fos.protobufs.Position\"d\n\005Login\022I\n\004type" +
-      "\030\001 \001(\01624.com.pixelatedgames.fos.protobuf" +
-      "s.FantasyMessageType:\005LOGIN\022\020\n\010username\030" +
-      "\002 \002(\t\"n\n\010Position\022L\n\004type\030\001 \001(\01624.com.pi",
-      "xelatedgames.fos.protobufs.FantasyMessag" +
-      "eType:\010POSITION\022\t\n\001x\030\002 \002(\003\022\t\n\001y\030\003 \002(\003*-\n" +
-      "\022FantasyMessageType\022\t\n\005LOGIN\020\001\022\014\n\010POSITI" +
-      "ON\020\002"
+      "ames.fos.protobufs\"\315\001\n\017fantasy_message\022D" +
+      "\n\004type\030\001 \002(\01626.com.pixelatedgames.fos.pr" +
+      "otobufs.fantasy_message_type\0226\n\005login\030\002 " +
+      "\001(\0132\'.com.pixelatedgames.fos.protobufs.L" +
+      "ogin\022<\n\010position\030\003 \001(\0132*.com.pixelatedga" +
+      "mes.fos.protobufs.Position\"f\n\005Login\022K\n\004t" +
+      "ype\030\001 \001(\01626.com.pixelatedgames.fos.proto" +
+      "bufs.fantasy_message_type:\005LOGIN\022\020\n\010user" +
+      "name\030\002 \002(\t\"p\n\010Position\022N\n\004type\030\001 \001(\01626.c",
+      "om.pixelatedgames.fos.protobufs.fantasy_" +
+      "message_type:\010POSITION\022\t\n\001x\030\002 \002(\003\022\t\n\001y\030\003" +
+      " \002(\003*/\n\024fantasy_message_type\022\t\n\005LOGIN\020\001\022" +
+      "\014\n\010POSITION\020\002"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
-          internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_descriptor =
+          internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_descriptor =
             getDescriptor().getMessageTypes().get(0);
-          internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_fieldAccessorTable = new
+          internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_com_pixelatedgames_fos_protobufs_FantasyMessage_descriptor,
+              internal_static_com_pixelatedgames_fos_protobufs_fantasy_message_descriptor,
               new java.lang.String[] { "Type", "Login", "Position", },
-              com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage.class,
-              com.pixelatedgames.fos.protobufs.FantasyMessages.FantasyMessage.Builder.class);
+              com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message.class,
+              com.pixelatedgames.fos.protobufs.FantasyMessages.fantasy_message.Builder.class);
           internal_static_com_pixelatedgames_fos_protobufs_Login_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_com_pixelatedgames_fos_protobufs_Login_fieldAccessorTable = new

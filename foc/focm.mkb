@@ -1,0 +1,28 @@
+#!/usr/bin/env mkb
+
+includepath src
+includepath boost
+
+files
+{
+    [src/game]
+    (src/game)
+    game.h
+    game.cpp
+
+    [src/network]
+    (src/network)
+    fos_socket.h
+    fos_socket.cpp
+
+    [src/main]
+    (src/main)
+    main.cpp
+}
+
+subprojects
+{
+    iwgx
+    (boost/boost)
+    boost
+}

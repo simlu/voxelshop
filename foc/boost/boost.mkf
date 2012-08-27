@@ -1,0 +1,25 @@
+defines
+{
+    BOOST_NO_SWPRINTF
+    BOOST_HAS_THREADS
+    BOOST_ALL_NO_LIB
+    IGNORE_TICKET_2098
+    _BIG_ENDIAN
+}
+
+includepaths
+{
+    ./
+}
+
+options
+{
+    enable-exceptions
+}
+
+subprojects
+{
+    (boost)
+    boost.mkf
+}
+
