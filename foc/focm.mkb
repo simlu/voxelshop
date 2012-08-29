@@ -9,6 +9,9 @@ files
     (src/game)
     game.h
     game.cpp
+    [src/game/states]
+    (src/game/states)
+    init_state.h
 
     [src/network]
     (src/network)
@@ -18,6 +21,11 @@ files
     [src/main]
     (src/main)
     main.cpp
+
+    [src/utils]
+    (src/utils)
+    ssm.h
+    ssm.cpp
 }
 
 subprojects
