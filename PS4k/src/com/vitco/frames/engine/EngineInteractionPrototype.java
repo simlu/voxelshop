@@ -4,7 +4,7 @@ import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.Indexer;
+import com.vitco.util.RTree;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 
@@ -26,8 +26,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private int dragPoint = -1; // the point that is dragged
         private long wasDragged = -1; // -1 if not dragged or the time in ms of first drag event
 
-        // rebuild 2d index to do hit test when mouse is moving
-        private final Indexer points2D = new Indexer(); //2D Rtree
+        // rebuild 2d index to do hit test when mouse is moving    // todo change to 50
+        private final RTree<Integer> points2D = new RTree<Integer>(10, 2, 2); //2D Rtree
         private boolean needToRebuild = true;
         private void rebuild2DIndex() {
             if (needToRebuild) {
