@@ -3,15 +3,22 @@
 #include <string.h>
 
 fos_socket::fos_socket() {
+	_socket = NULL;
 	_is_connected = false;
+	_errors = S3E_SOCKET_ERR_NONE;
 }
 
-void fos_socket::connect(string ip, uint16 port) {
+void fos_socket::connect(std::string ip, uint16 port) {
 	// create a socket
 	_socket = s3eSocketCreate(S3E_SOCKET_TCP, 0);
 	if(_socket == NULL) {
-		// um wtf do we do now?
+		_errors = s3eSocketGetError();
+		return;
 	}
+
+	// set options
+	int on = 1;
+	s3eSocketSetOpt(_socket, S3E_SOCKET_NODELAY, &on, sizeof(on));
 
 	// setup the connection
     s3eInetAddress addr;
@@ -21,20 +28,38 @@ void fos_socket::connect(string ip, uint16 port) {
 	addr.m_Port = s3eInetHtons(port);
 
 	// attempt connection
-	s3eSocketConnect(_socket, &addr, connect_callback, this);
+	if(s3eSocketConnect(_socket, &addr, connect_callback, this) != S3E_RESULT_SUCCESS) {
+		s3eSocketError errors = s3eSocketGetError();
+		switch (errors) {
+            // These errors are 'OK', because they mean,
+            // that a connect is in progress
+            case S3E_SOCKET_ERR_INPROGRESS:
+            case S3E_SOCKET_ERR_ALREADY:
+            case S3E_SOCKET_ERR_WOULDBLOCK:
+				break;
+			default:
+				// A 'real' error happened
+				_errors = errors;
+				return;
+		}
+	}
 }
 
 void fos_socket::connection_succeeded() {
-	// NEED TO TRIGGER STATE CHANGE
+	// change flag
 	_is_connected = true;
 }
 
 void fos_socket::connection_failed() {
-	// NEED TO TRIGGER STATE CHANGE
+	// change flag
 	_is_connected = false;
+
+	// save errors
+	_errors = s3eSocketGetError();
 	
-	// HOW DO WE STOP AND CLEANUP?
-	//s3eSocketClose(_socket);
+	// kill it
+	s3eSocketClose(_socket);
+	_socket = NULL;
 }
 
 int32 connect_callback(s3eSocket *s, void *systemData, void *userData) {
@@ -48,4 +73,11 @@ int32 connect_callback(s3eSocket *s, void *systemData, void *userData) {
 	}
 
 	return 0;
+}
+
+fos_socket::~fos_socket() {
+	if(_socket != NULL) {
+		s3eSocketClose(_socket);
+		_socket = NULL;
+	}
 }

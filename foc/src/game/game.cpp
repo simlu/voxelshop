@@ -3,9 +3,6 @@
 #include "states/init_state.h"
 #include <utils/ssm.h>
 #include <sstream>
-//#include <network\fos_socket.h>
-//fos_socket sock;
-//sock.connect("10.0.1.10", 8080);
 
 game::game()
 :timePerFrame(1000 / 60) // 1000 / 60 = 60 fps
@@ -16,10 +13,13 @@ game::game()
 
 void game::run() {
 	// Initialise the IwGx drawing module
-	IwGxInit();
+	IwGxInit();	
 
-	sm.switch_state(shared_simple_state(new init_state(sm)));
-	sm.switch_state(shared_simple_state(new init_state(sm)));
+	// tell all states about us
+	_sm.set_parent(this);
+
+	// enter the intial state
+	_sm.switch_state(new init_state());
 
 	while(1) {
 		this->update();
@@ -46,7 +46,7 @@ void game::update() {
 	// execute frames of length dt
 	while(fixedTimestepAccumulator >= dt) {
 		// ALL UPDATE CODE GOES HERE 
-		sm.update(dt);
+		_sm.update(dt);
 		// move on to next one
 		fixedTimestepAccumulator -= dt;
 	}
@@ -73,4 +73,8 @@ void game::draw() {
 
 	// Standard EGL-style flipping of double-buffers
 	IwGxSwapBuffers();
+}
+
+game::~game() {
+
 }

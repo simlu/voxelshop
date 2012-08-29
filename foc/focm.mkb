@@ -12,6 +12,9 @@ files
     [src/game/states]
     (src/game/states)
     init_state.h
+    connecting_state.h
+    disconnected_state.h
+    connected_state.h
 
     [src/network]
     (src/network)
