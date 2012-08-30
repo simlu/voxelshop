@@ -1,0 +1,36 @@
+includepaths
+{
+    ../
+}
+
+files
+{
+
+    protobuf\io\coded_stream.h
+    protobuf\io\coded_stream_inl.h
+    protobuf\stubs\common.h
+    config.h
+    protobuf\extension_set.h
+    protobuf\generated_message_util.h
+    protobuf\stubs\hash.h
+    protobuf\stubs\map-util.h
+    protobuf\message_lite.h
+    protobuf\stubs\once.h
+    protobuf\repeated_field.h
+    protobuf\stubs\stl_util-inl.h
+    protobuf\wire_format_lite.h
+    protobuf\wire_format_lite_inl.h
+    protobuf\io\zero_copy_stream.h
+    protobuf\io\zero_copy_stream_impl_lite.h
+  
+    protobuf\io\coded_stream.cpp
+    protobuf\stubs\common.cpp
+    protobuf\extension_set.cpp
+    protobuf\generated_message_util.cpp
+    protobuf\message_lite.cpp
+    protobuf\stubs\once.cpp
+    protobuf\repeated_field.cpp
+    protobuf\wire_format_lite.cpp
+    protobuf\io\zero_copy_stream.cpp
+    protobuf\io\zero_copy_stream_impl_lite.cpp	
+}

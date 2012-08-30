@@ -1,32 +1,26 @@
 package {
-	import flash.display.Sprite;
-	import com.pixelatedgames.es.*;
-	import com.pixelatedgames.es.components.*;
-	import com.pixelatedgames.fos.*;
+	import com.pixelatedgames.Game;
 	
 	import flash.display.Sprite;
-	import flash.events.Event;	
+	import flash.events.*;
 	
+	[SWF(width='960',height='544',backgroundColor='#FFFFFF',frameRate='60')]
 	public class FantasyFB extends Sprite {
-		
-		public var em:EntityManager = new EntityManager();
-		
-		public var fc:FantasyClient;		
+		private var _game:Game;
 		
 		public function FantasyFB() {
-			fc = new FantasyClient();
-			fc.connect("127.0.0.1", 443);
-			fc.addEventListener(FCEvent.CONNECTED, handleConnected, false, 0, true);
-			
-			/*var e:Entity = em.createEntity();
-			em.addComponent(e, new Position(10,10));
-			em.addComponent(e, new Velocity(-3,7));
-			
-			em.updateSystems(e);*/
+			if (stage != null)
+				init();
+			else
+				addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
-		private function handleConnected(e:Event):void {
-			fc.login("Gamer");			
+		private function init(e:Event = null):void {
+			if (hasEventListener(Event.ADDED_TO_STAGE))
+				removeEventListener(Event.ADDED_TO_STAGE, init);
+			
+			_game = new Game(stage);
+			
 		}
 	}
 }
