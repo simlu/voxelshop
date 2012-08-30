@@ -1,6 +1,6 @@
-package com.vitco.frames.engine.data2;
+package com.vitco.frames.engine.data;
 
-import com.vitco.frames.engine.data2.listener.DataChangeListener;
+import com.vitco.frames.engine.data.listener.DataChangeListener;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,7 @@ public abstract class ListenerData implements ListenerDataInterface {
 
     private final ArrayList<DataChangeListener> listeners = new ArrayList<DataChangeListener>();
 
-    // todo add these methods to the correct places (do last)
+    // todo add these method calls to the correct places (do last)
     protected final NotificationService notifier = new NotificationService();
     protected final class NotificationService implements DataChangeListener {
 

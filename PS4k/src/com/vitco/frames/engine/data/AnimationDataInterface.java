@@ -1,7 +1,7 @@
-package com.vitco.frames.engine.data2;
+package com.vitco.frames.engine.data;
 
 import com.threed.jpct.SimpleVector;
-import com.vitco.frames.engine.data2.container.ExtendedVector;
+import com.vitco.frames.engine.data.container.ExtendedVector;
 
 /**
  * Interface for Animation Data and Frame interaction.
@@ -14,7 +14,7 @@ public interface AnimationDataInterface {
     // removes a points, returns true iff the point was successfully removed
     boolean removePoint(int pointId); // all frames
     // move point in the current frame to new position
-    boolean movePoint(SimpleVector pos, int pointId); // current frame
+    boolean movePoint(int pointId, SimpleVector pos); // current frame
     // returns true iff two points are connected by a line
     boolean areConnected(int id1, int id2);
     // connects two points by a line, returns true iff successful

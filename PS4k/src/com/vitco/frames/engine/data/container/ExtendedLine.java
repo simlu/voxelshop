@@ -1,11 +1,9 @@
-package com.vitco.frames.engine.data2.container;
+package com.vitco.frames.engine.data.container;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 8/27/12
- * Time: 11:18 AM
- * To change this template use File | Settings | File Templates.
+ * A line that connects two ExtendedVectors (points).
+ *
+ * Reference to the points is by id.
  */
 public class ExtendedLine {
     public final int point1;

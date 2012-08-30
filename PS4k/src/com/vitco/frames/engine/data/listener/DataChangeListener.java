@@ -6,6 +6,6 @@ package com.vitco.frames.engine.data.listener;
 public interface DataChangeListener {
     void onAnimationDataChanged();
     void onAnimationSelectionChanged();
-    void onFrameDataChanged();
     void onVoxelDataChanged();
+    void onLayerDataChanged();
 }

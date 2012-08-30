@@ -1,7 +1,7 @@
-package com.vitco.frames.engine.data2;
+package com.vitco.frames.engine.data;
 
 import com.threed.jpct.SimpleVector;
-import com.vitco.frames.engine.data2.container.ExtendedVector;
+import com.vitco.frames.engine.data.container.ExtendedVector;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -13,15 +13,16 @@ import java.util.Random;
 /**
  * Extensive testing of the functions implemented in AnimationData
  */
-public class AnimationDataTest {
+@SuppressWarnings({"AssertWithSideEffects", "ConstantConditions"})
+public final class AnimationDataTest {
 
-    class AnimationDataClass extends AnimationData {}
-    AnimationDataClass data = new AnimationDataClass();
+    private final Data data = new Data();
 
     // ************ helper functions
 
     private int addRandomPoint() {
-       return data.addPoint(new SimpleVector(new Random().nextFloat(), new Random().nextFloat(), new Random().nextFloat()));
+       Random rand = new Random();
+       return data.addPoint(new SimpleVector(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
     }
 
     // ************ basic tests
@@ -34,11 +35,11 @@ public class AnimationDataTest {
         int id2 = data.addPoint(new SimpleVector(3,2,1));
         assert data.isValid(id2);
         data.undoA();
-        assert data.isValid(id2) == false;
+        assert !data.isValid(id2);
         data.redoA();
         int frameId1 = data.createFrame("Frame1");
         data.selectFrame(frameId1);
-        data.movePoint(new SimpleVector(5, 6, 3), id1);
+        data.movePoint(id1, new SimpleVector(5, 6, 3));
         data.selectFrame(-1);
         data.removePoint(id1);
         assert !data.isValid(id1);
@@ -54,7 +55,7 @@ public class AnimationDataTest {
         data.clearA();
         assert !data.isValid(id1);
         data.undoA();
-        assert data.isValid(id1) == true;
+        assert data.isValid(id1);
         data.undoA();
         assert data.selectFrame(frameId1);
         assert data.getPoint(id1).x == 5;
@@ -69,7 +70,7 @@ public class AnimationDataTest {
         int[] ids = new int[20];
         int i = 0;
         for(int t : ids) {
-            ids[i] = data.addPoint(new SimpleVector(i*1, i*2, i*3));
+            ids[i] = data.addPoint(new SimpleVector(i, i*2, i*3));
             i++;
         }
         int frameId = data.createFrame("Frame1");
@@ -131,7 +132,7 @@ public class AnimationDataTest {
         }
         int[] move = new int[]{20,40,21,3,10,33,21,5,23,9,19};
         for (int t : move) {
-            data.movePoint(new Util().getPointV2(t), ids[t]);
+            data.movePoint(ids[t], new Util().getPointV2(t));
         }
         for (int t: ids) {
             boolean contains = false;
@@ -144,7 +145,7 @@ public class AnimationDataTest {
                     ? data.getPoint(ids[t]).x == new Util().getPointV2(t).x
                     : data.getPoint(ids[t]).x == new Util().getPointV1(t).x);
         }
-        for (int j = 0; j < move.length; j++) {
+        for (int aMove : move) {
             data.undoA();
         }
         for (int t: ids) {
@@ -197,7 +198,7 @@ public class AnimationDataTest {
         data.connect(id1, id2);
         int fid1 = data.createFrame("Frame1");
         data.selectFrame(fid1);
-        data.movePoint(new SimpleVector(2,5,6), id1);
+        data.movePoint(id1, new SimpleVector(2,5,6));
         data.clearA();
         assert !data.isValid(id1);
         assert !data.isValid(id2);
@@ -266,7 +267,7 @@ public class AnimationDataTest {
         int id1 = addRandomPoint();
         int id2 = addRandomPoint();
         assert data.getPoints().length == 2;
-        int id3 = addRandomPoint();
+        addRandomPoint();
         assert data.getPoints().length == 3;
         data.connect(id1, id2);
         assert data.getPoints().length == 3;
@@ -309,28 +310,28 @@ public class AnimationDataTest {
 
     @Test
     public void testCanUndoACanRedoA() throws Exception {
-        assert data.canRedoA() == false;
-        assert data.canUndoA() == false;
+        assert !data.canRedoA();
+        assert !data.canUndoA();
         addRandomPoint();
-        assert data.canUndoA() == true;
-        assert data.canRedoA() == false;
+        assert data.canUndoA();
+        assert !data.canRedoA();
         data.undoA();
-        assert data.canUndoA() == false;
-        assert data.canRedoA() == true;
+        assert !data.canUndoA();
+        assert data.canRedoA();
     }
 
     @Test
     public void testSetFrame() throws Exception {
-        int id1 = data.addPoint(new SimpleVector(1,2,3));
+        data.addPoint(new SimpleVector(1,2,3));
         int fid1 = data.createFrame("Frame1");
         data.selectFrame(fid1);
         int id2 = data.addPoint(new SimpleVector(3,4,5));
         data.selectFrame(-1);
-        int id3 = data.addPoint(new SimpleVector(7,8,9));
+        data.addPoint(new SimpleVector(7,8,9));
         int fid2 = data.createFrame("Frame2");
         data.selectFrame(fid2);
         assert data.getFrames().length == 2;
-        data.movePoint(new SimpleVector(5,6,7), id2);
+        data.movePoint(id2, new SimpleVector(5,6,7));
         data.selectFrame(-1);
         assert data.getPoints().length == 3;
         assert data.getPoint(id2).x == 3;
@@ -347,7 +348,7 @@ public class AnimationDataTest {
         }
         assert data.getPoint(id2).x == 5;
         data.selectFrame(-1);
-        data.movePoint(new SimpleVector(10,10,10), id2);
+        data.movePoint(id2, new SimpleVector(10,10,10));
         data.selectFrame(fid1);
         assert data.getPoint(id2).x == 10;
         data.selectFrame(fid2);
@@ -373,7 +374,7 @@ public class AnimationDataTest {
             data.selectFrame(frameIds[i]);
             pointIds[i] = data.addPoint(new SimpleVector(i,i*2,i*3));
             if (i > 0) {
-                data.movePoint(new SimpleVector(i*3, i*4, i*5), pointIds[i-1]);
+                data.movePoint(pointIds[i-1], new SimpleVector(i*3, i*4, i*5));
             }
         }
         for (int i = 0; i < frameIds.length - 1; i++) {
@@ -386,7 +387,7 @@ public class AnimationDataTest {
             assert data.getPoint(pointIds[i]).x == i;
         }
         ArrayList<Integer> remove = new ArrayList<Integer>();
-        remove.addAll(Arrays.asList(new Integer[]{3,5,6,8,10,2,16,17}));
+        remove.addAll(Arrays.asList(3,5,6,8,10,2,16,17));
         for (int rem : remove) {
             data.deleteFrame(frameIds[rem]);
         }
@@ -434,9 +435,9 @@ public class AnimationDataTest {
     @Test
     public void testGetFrames() throws Exception {
         assert data.getFrames().length == 0;
-        int fid1 = data.createFrame("Frame1");
+        data.createFrame("Frame1");
         assert data.getFrames().length == 1;
-        int fid2 = data.createFrame("Frame2");
+        data.createFrame("Frame2");
         assert data.getFrames().length == 2;
         data.undoA();
         assert data.getFrames().length == 1;
@@ -453,15 +454,15 @@ public class AnimationDataTest {
     public void testResetFrame() throws Exception {
         int id1 = addRandomPoint();
         int id2 = addRandomPoint();
-        int id3 = addRandomPoint();
+        addRandomPoint();
         int fid1 = data.createFrame("Frame1");
-        data.movePoint(new SimpleVector(4,5,6), id1);
+        data.movePoint(id1, new SimpleVector(4,5,6));
         int id4  = addRandomPoint();
         int fid2 = data.createFrame("Frame2");
-        data.movePoint(new SimpleVector(1,2,3), id4);
-        data.movePoint(new SimpleVector(10,20,30), id2);
+        data.movePoint(id4, new SimpleVector(1,2,3));
+        data.movePoint(id2, new SimpleVector(10,20,30));
         data.selectFrame(fid2);
-        data.movePoint(new SimpleVector(0,0,0), id1);
+        data.movePoint(id1, new SimpleVector(0,0,0));
         assert data.getPoint(id1).x == 0;
         data.undoA();
         assert data.getPoint(id1).x == 4;
@@ -563,7 +564,7 @@ public class AnimationDataTest {
                 ExtendedVector[] points = data.getPoints();
                 if (points.length > 0) {
                     int rem = rand.nextInt(points.length);
-                    data.movePoint(new SimpleVector(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()), points[rem].id);
+                    data.movePoint(points[rem].id, new SimpleVector(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
                 }
             }
 
@@ -608,20 +609,18 @@ public class AnimationDataTest {
             }
 
             public void debug(String text, int k, int l) {
-                if (false) {
-                    if (k > 99900 && l == 38635) {
-                        System.out.println(text);
-                        ExtendedVector[] points = data.getPoints();
-                        for (int i = 0; i < points.length; i++){
-                            System.out.println(points[i]);
-                        }
-                    }
-                }
+//                if (k > 99900 && l == 38635) {
+//                    System.out.println(text);
+//                    ExtendedVector[] points = data.getPoints();
+//                    for (int i = 0; i < points.length; i++){
+//                        System.out.println(points[i]);
+//                    }
+//                }
             }
         }
 
         // do the test
-        for (int seed = 41000; seed < 41001; seed ++) {
+        for (int seed = 42000; seed < 42001; seed ++) {
             Util util = new Util(seed);
             float[] prob = new float[13];
             for (int k = 0; k < prob.length; k++) {
@@ -640,6 +639,7 @@ public class AnimationDataTest {
                             util.removePoint();
                             util.debug("rem", k, seed);
                         }
+                        break;
                     case 3:
                         if (util.getFloat() < prob[2]) {
                             util.undo();
@@ -827,7 +827,7 @@ public class AnimationDataTest {
         int frameId1 = data.createFrame("Frame1");
         assert data.getFrames().length == 1;
         data.selectFrame(frameId1);
-        data.movePoint(new SimpleVector(2,4,2), id1);
+        data.movePoint(id1, new SimpleVector(2,4,2));
         data.selectFrame(-1);
         assert data.getPoint(id1).x == 1;
         data.selectFrame(frameId1);
@@ -844,7 +844,7 @@ public class AnimationDataTest {
         int id4 = data.addPoint(new SimpleVector(6,5,4));
         data.removePoint(id1);
         data.removePoint(id3);
-        assert data.connect(id1, id4) == false;
+        assert !data.connect(id1, id4);
         data.connect(id2, id4);
         data.clearA();
         data.undoA();
@@ -865,7 +865,7 @@ public class AnimationDataTest {
         assert data.areConnected(id2, id4);
         assert !data.isValid(id1);
         data.redoA();
-        assert data.canRedoA() == false;
+        assert !data.canRedoA();
         assert !data.areConnected(id2, id4);
     }
 
@@ -880,37 +880,37 @@ public class AnimationDataTest {
         data.connect(id3, id4);
         data.removePoint(id2);
         int id5 = data.addPoint(new SimpleVector(4,5,6));
-        assert data.areConnected(id1, id2) == false;
-        assert data.areConnected(id3, id4) == true;
-        assert data.isValid(id5) == true;
+        assert !data.areConnected(id1, id2);
+        assert data.areConnected(id3, id4);
+        assert data.isValid(id5);
         data.undoA();
-        assert data.areConnected(id1, id2) == false;
-        assert data.areConnected(id3, id4) == true;
+        assert !data.areConnected(id1, id2);
+        assert data.areConnected(id3, id4);
         data.undoA();
-        assert data.areConnected(id1, id2) == true;
-        assert data.areConnected(id3, id4) == true;
+        assert data.areConnected(id1, id2);
+        assert data.areConnected(id3, id4);
         data.undoA();
-        assert data.areConnected(id1, id2) == true;
-        assert data.areConnected(id3, id4) == false;
+        assert data.areConnected(id1, id2);
+        assert !data.areConnected(id3, id4);
         data.undoA();
-        assert data.areConnected(id1, id2) == true;
-        assert data.areConnected(id3, id4) == false;
+        assert data.areConnected(id1, id2);
+        assert !data.areConnected(id3, id4);
         data.undoA();
-        assert data.areConnected(id1, id2) == false;
-        assert data.areConnected(id3, id4) == false;
+        assert !data.areConnected(id1, id2);
+        assert !data.areConnected(id3, id4);
         data.undoA();
-        assert data.isValid(id4) == false;
+        assert !data.isValid(id4);
         data.redoA();
         data.redoA();
         data.redoA();
         data.redoA();
         data.redoA();
-        assert data.areConnected(id1, id2) == false;
-        assert data.areConnected(id3, id4) == true;
-        assert data.canRedoA() == true;
-        assert data.isValid(id5) == false;
+        assert !data.areConnected(id1, id2);
+        assert data.areConnected(id3, id4);
+        assert data.canRedoA();
+        assert !data.isValid(id5);
         data.redoA();
-        assert data.isValid(id5) == true;
+        assert data.isValid(id5);
         data.clearA();
     }
 
@@ -920,13 +920,13 @@ public class AnimationDataTest {
         int id2 = data.addPoint(new SimpleVector(6,5,4));
         data.connect(id1, id2);
         data.removePoint(id1);
-        assert data.areConnected(id1, id2) == false;
+        assert !data.areConnected(id1, id2);
         assert data.getPoint(id1) == null;
         data.undoA();
         assert data.getPoint(id1) != null;
         assert data.areConnected(id1, id2);
         data.redoA();
-        assert data.areConnected(id1, id2) == false;
+        assert !data.areConnected(id1, id2);
         assert data.getPoint(id1) == null;
         data.clearA();
     }
@@ -935,16 +935,16 @@ public class AnimationDataTest {
     public void testPointInteractions() throws Exception {
         // test adding of point
         int id = data.addPoint(new SimpleVector(3,2,1));
-        assert data.canRedoA() == false;
-        assert data.canUndoA() == true;
+        assert !data.canRedoA();
+        assert data.canUndoA();
         assert data.getPoint(id) != null;
         data.undoA();
-        assert data.canRedoA() == true;
-        assert data.canUndoA() == false;
+        assert data.canRedoA();
+        assert !data.canUndoA();
         assert data.getPoint(id) == null;
         data.redoA();
-        assert data.canRedoA() == false;
-        assert data.canUndoA() == true;
+        assert !data.canRedoA();
+        assert data.canUndoA();
         assert data.getPoint(id) != null;
         assert data.getPoint(id).x == 3;
         assert data.getPoint(id).y == 2;
@@ -952,50 +952,53 @@ public class AnimationDataTest {
         // test removal of point
         data.removePoint(id);
         assert data.getPoint(id) == null;
-        assert data.canRedoA() == false;
-        assert data.canUndoA() == true;
+        assert !data.canRedoA();
+        assert data.canUndoA();
         data.redoA();
         assert data.getPoint(id) == null;
-        assert data.canRedoA() == false;
-        assert data.canUndoA() == true;
+        assert !data.canRedoA();
+        assert data.canUndoA();
         int id2 = data.addPoint(new SimpleVector(6,5,4));
         data.undoA();
         data.undoA();
         assert data.getPoint(id) != null;
         data.undoA();
         assert data.getPoint(id) == null;
-        assert data.canUndoA() == false;
-        assert data.canRedoA() == true;
+        assert !data.canUndoA();
+        assert data.canRedoA();
         data.redoA();
         data.redoA();
         assert data.getPoint(id2) == null;
-        assert data.canRedoA() == true;
-        assert data.canUndoA() == true;
+        assert data.canRedoA();
+        assert data.canUndoA();
         data.redoA();
         assert data.getPoint(id2) != null;
-        assert data.canRedoA() == false;
+        assert !data.canRedoA();
         // test moving of point
-        data.movePoint(new SimpleVector(9,8,7), id2);
+        data.movePoint(id2, new SimpleVector(9,8,7));
         assert data.getPoint(id2).x == 9;
         data.undoA();
         assert data.getPoint(id2).x == 6;
         data.redoA();
         assert data.getPoint(id2).x == 9;
         // test move replace of point
-        data.movePoint(new SimpleVector(12,11,10), id2);
+        data.movePoint(id2, new SimpleVector(12,11,10));
         assert data.getPoint(id2).x == 12;
         data.undoA();
-        assert data.getPoint(id2).x == 6;
+        assert data.getPoint(id2).x == 9;
         data.undoA();
         data.undoA();
         data.undoA();
-        assert data.canUndoA() == false;
+        data.undoA();
+        assert !data.canUndoA();
         // try clearing redos
         id = data.addPoint(new SimpleVector(1,2,3));
-        data.movePoint(new SimpleVector(3,4,5), id);
-        data.movePoint(new SimpleVector(4,5,6), id);
+        data.movePoint(id, new SimpleVector(3,4,5));
+        data.movePoint(id, new SimpleVector(4,5,6));
         assert data.getPoint(id).x == 4;
-        assert data.canRedoA() == false;
+        assert !data.canRedoA();
+        data.undoA();
+        assert data.getPoint(id).x == 3;
         data.undoA();
         assert data.getPoint(id).x == 1;
         data.undoA();

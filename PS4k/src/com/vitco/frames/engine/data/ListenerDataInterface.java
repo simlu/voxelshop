@@ -1,6 +1,6 @@
-package com.vitco.frames.engine.data2;
+package com.vitco.frames.engine.data;
 
-import com.vitco.frames.engine.data2.listener.DataChangeListener;
+import com.vitco.frames.engine.data.listener.DataChangeListener;
 
 /**
  * Data Listener interface.

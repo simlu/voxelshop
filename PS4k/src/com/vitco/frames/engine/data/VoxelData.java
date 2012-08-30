@@ -1,11 +1,8 @@
 package com.vitco.frames.engine.data;
 
 /**
- * Created with IntelliJ IDEA.
- * User: VM Win 7
- * Date: 8/17/12
- * Time: 8:29 AM
- * To change this template use File | Settings | File Templates.
+ * Defines the voxel data interaction (layer, undo, etc)
  */
-public class VoxelData extends FrameData implements VoxelDataInterface {
+public abstract class VoxelData extends AnimationHighlight /*implements VoxelDataInterface*/ {
+
 }

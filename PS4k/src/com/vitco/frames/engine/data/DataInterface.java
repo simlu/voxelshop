@@ -1,4 +1,4 @@
-package com.vitco.frames.engine.data2;
+package com.vitco.frames.engine.data;
 
 import java.io.File;
 
