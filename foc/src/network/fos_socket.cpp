@@ -1,6 +1,11 @@
-#include "s3eSocket.h"
 #include "fos_socket.h"
+#include "fantasy_messages.pb.h"
 #include <string.h>
+#include <IwDebug.h>
+#include <s3eDevice.h>
+#include <google/protobuf/io/coded_stream.h>
+
+using namespace google::protobuf::io;
 
 fos_socket::fos_socket() {
 	_socket = NULL;
@@ -73,6 +78,55 @@ int32 connect_callback(s3eSocket *s, void *systemData, void *userData) {
 	}
 
 	return 0;
+}
+
+void fos_socket::receive() {
+	// make sure we're connected
+	if(_is_connected) {
+		//int32 ret = s3eSocketRecv(_socket, _read_buf, _read_buf_len, 0);
+	}
+}
+
+void fos_socket::send(fantasy_message fm) {
+	// prepend the length as a varint32
+	int32 totalMsgLen = fm.ByteSize();
+	uint8* _send_buf_end = CodedOutputStream::WriteVarint32ToArray(totalMsgLen, _send_buf);
+	int32 len_change = _send_buf_end - _send_buf;
+	totalMsgLen += len_change;
+
+	// try to serialize to our byte buffer
+	if(fm.SerializePartialToArray(_send_buf_end, _send_buf_len - len_change)) {
+
+		int32 msgLen		= totalMsgLen;
+		int32 msgSent		= 0;
+
+		// loop until all is sent
+		do {
+			int32 ret = s3eSocketSend(_socket, (char*)(_send_buf + msgSent), totalMsgLen - msgSent, 0);
+
+			IwAssert(DEFAULT, ret != 0);
+
+			// success!
+			if (ret > 0) {
+				msgSent += ret;
+			}
+
+			// oh noes!
+			if(ret < 0) {
+				// This error is OK, since S3E_SOCKET_ERR_AGAIN means, that
+				// a function is in process right now
+				s3eSocketError errors = s3eSocketGetError();
+				if (errors == S3E_SOCKET_ERR_AGAIN) {
+					// REALLY DON'T WANT TO DO THIS!
+					s3eDeviceYield(50);
+					// ALERT ALERT BAD BAD BAD
+					continue;
+				}
+			}
+		} while(msgSent < msgLen);
+	} else {
+		// FAIL WHAT TO DO!?
+	}
 }
 
 fos_socket::~fos_socket() {

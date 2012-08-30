@@ -1,4 +1,5 @@
 #include "ssm.h"
+#include "IwDebug.h"
 
 ssm::ssm() 
 :_parent(NULL),_cur_state(NULL),_next_state(NULL)
@@ -6,6 +7,8 @@ ssm::ssm()
 }
 
 void ssm::switch_state(simple_state *new_state) {
+	IwAssert(DEFAULT, _next_state == NULL);
+
 	_next_state = new_state;
 }
 

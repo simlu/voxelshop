@@ -1,3 +1,8 @@
+options
+{
+    enable-exceptions
+}
+
 files
 {
     aligned_storage.hpp

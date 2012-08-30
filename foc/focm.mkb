@@ -15,11 +15,14 @@ files
     connecting_state.h
     disconnected_state.h
     connected_state.h
+    server_init_state.h
 
     [src/network]
     (src/network)
     fos_socket.h
     fos_socket.cpp
+    fantasy_messages.pb.h
+    fantasy_messages.pb.cpp
 
     [src/main]
     (src/main)
@@ -34,6 +37,8 @@ files
 subprojects
 {
     iwgx
-    (boost/boost)
+    (boost\boost)
     boost
+    (google)
+    google.mkf
 }
