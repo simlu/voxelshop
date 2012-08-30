@@ -12,6 +12,10 @@ public interface VoxelDataInterface {
     boolean removeVoxel(int voxelId);
     // move a voxel
     boolean moveVoxel(int voxelId, int[] newPos);
+    // set the voxel identifier
+    boolean setVoxelLinkId(int voxelId, int linkId);
+    // retrieve the voxel identifier
+    int getVoxelLinkId(int voxelId);
     // set the color of a voxel
     boolean setColor(int voxelId, Color color);
     // get the color of a voxel
@@ -58,14 +62,20 @@ public interface VoxelDataInterface {
     boolean deleteLayer(int layerId);
     // rename a layer
     boolean renameLayer(int layerId, String newName);
+    // get the name of a layer
+    String getLayerName(int layerId);
+    // get the names of all layers
+    String[] getLayerNames();
     // select a layer
     boolean selectLayer(int layerId);
     // retrieve selected layer
     int getSelectedLayer();
     // retrieve all layers
-    int[] getLayers();
+    Integer[] getLayers();
     // set a layer visible/ invisible
     boolean setVisible(int layerId, boolean b);
+    // return true iff layer is visible
+    boolean getLayerVisible(int layerId);
     // move layer up
     boolean moveLayerUp(int layerId);
     // move layer down

@@ -4,8 +4,18 @@
           <!--tool-tip="draw_tooltip"-->
           <!--action="toggle_animation_mode"-->
           <!--checkable="true"/>-->
-    <icon-item src="resource/img/icons/tools/animate.png"
-          tool-tip="animate_tooltip"
-          checkable="true"
-          action="toggle_animation_mode"/>
+    <icon-item src="resource/img/bars/tool_bar/animate.png"
+               tool-tip="animate_tooltip"
+               checkable="true"
+               action="toggle_animation_mode"/>
+    <icon-item src="resource/img/bars/tool_bar/undo.png"
+               src-gray="resource/img/bars/tool_bar/undo_disabled.png"
+               tool-tip="global_undo_tooltip"
+               grayable="true"
+               action="global_action_undo"/>
+    <icon-item src="resource/img/bars/tool_bar/redo.png"
+               src-gray="resource/img/bars/tool_bar/redo_disabled.png"
+               tool-tip="global_redo_tooltip"
+               grayable="true"
+               action="global_action_redo"/>
 </head>

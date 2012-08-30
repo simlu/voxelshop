@@ -118,6 +118,8 @@ public class MenuGenerator implements MenuGeneratorInterface {
                 Element e = (Element) node;
                 if (e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true")) {
                     addCheckIconItem(component, e);
+                } else if (e.hasAttribute("grayable") && e.getAttribute("grayable").equals("true")) {
+                    addGrayIconItem(component, e);
                 } else {
                     addIconItem(component, e);
                 }
@@ -268,6 +270,47 @@ public class MenuGenerator implements MenuGeneratorInterface {
                         jideButton.setSelected(b);
                         if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
                             jideButton.setSelected(!jideButton.isSelected());
+                        }
+                    }
+                });
+            }
+        });
+        component.add(jideButton);
+    }
+
+    // adds an item that has an icon and a tooltip and is grayable
+    private void addGrayIconItem(JComponent component, final Element e) {
+        final JideButton jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource(e.getAttribute("src"))
+        )));
+        // to perform validity check we need to register this name
+        actionManager.registerActionName(e.getAttribute("action"));
+        // lazy action linking (the action might not be ready!)
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
+            @Override
+            public void run() {
+                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
+            }
+        });
+        jideButton.setFocusable(false);
+        if (e.hasAttribute("src-gray")) {
+            jideButton.setDisabledIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                    ClassLoader.getSystemResource(e.getAttribute("src-gray"))
+            )));
+        }
+        handleButtonShortcutAndTooltip(jideButton, e);
+        // make sure the action is ready
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
+            @Override
+            public void run() {
+                StateActionPrototype stateActionPrototype =
+                        ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
+                stateActionPrototype.addChangeListener(new ChangeListener() {
+                    @Override
+                    public void actionFired(boolean b) {
+                        jideButton.setEnabled(b);
+                        if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
+                            jideButton.setEnabled(!jideButton.isEnabled());
                         }
                     }
                 });

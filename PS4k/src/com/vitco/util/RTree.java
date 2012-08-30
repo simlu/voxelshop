@@ -19,6 +19,7 @@ import java.util.Set;
  * @param <T>
  *          the type of entry to store in this RTree.
  */
+@SuppressWarnings("ConstantConditions")
 public class RTree<T>
 {
 
@@ -136,7 +137,8 @@ public class RTree<T>
       {
         if (isOverlap(coords, dimensions, e.coords, e.dimensions))
         {
-          results.add(((Entry) e).entry);
+            //noinspection unchecked
+            results.add(((Entry) e).entry);
         }
       }
     }
@@ -206,7 +208,8 @@ public class RTree<T>
     {
       for (Node c : n.children)
       {
-        if (((Entry) c).entry.equals(entry))
+          //noinspection unchecked
+          if (((Entry) c).entry.equals(entry))
         {
           return n;
         }
@@ -481,7 +484,8 @@ public class RTree<T>
                   Math.abs((dimMinUb - dimMaxLb) / (dimUb - dimLb));
       if (sep >= bestSep)
       {
-        bestPair = new RTree.Node[]
+          //noinspection unchecked
+          bestPair = new RTree.Node[]
         { nMaxLb, nMinUb };
         bestSep = sep;
       }
@@ -491,7 +495,8 @@ public class RTree<T>
     // children.
     if ( bestPair == null )
     {
-      bestPair = new RTree.Node[] { nn.get(0), nn.get(1) };
+        //noinspection unchecked
+        bestPair = new RTree.Node[] { nn.get(0), nn.get(1) };
     }
     nn.remove(bestPair[0]);
     nn.remove(bestPair[1]);
@@ -555,7 +560,8 @@ public class RTree<T>
         float thisArea = 1.0f;
         for (int i = 0; i < c.dimensions.length; i++)
         {
-          curArea *= next.dimensions[i];
+            assert next != null;
+            curArea *= next.dimensions[i];
           thisArea *= c.dimensions[i];
         }
         if (thisArea < curArea)

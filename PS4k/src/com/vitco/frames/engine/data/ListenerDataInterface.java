@@ -1,6 +1,6 @@
 package com.vitco.frames.engine.data;
 
-import com.vitco.frames.engine.data.listener.DataChangeListener;
+import com.vitco.frames.engine.data.notification.DataChangeListener;
 
 /**
  * Data Listener interface.

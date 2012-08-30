@@ -533,6 +533,14 @@ public class ShortcutManager implements ShortcutManagerInterface {
         }
     }
 
+    // register all actions of global shortcuts, to perform validity check
+    @Override
+    public void registerGlobalShortcutActions() {
+        for (ShortcutObject shortcutObject : global) {
+            actionManager.registerActionName(shortcutObject.actionName);
+        }
+    }
+
     // activate global shortcuts
     @Override
     public void activateGlobalShortcuts() {

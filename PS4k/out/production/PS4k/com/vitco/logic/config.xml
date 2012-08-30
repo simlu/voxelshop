@@ -89,7 +89,7 @@
 
     <!--ENGINE STUFF-->
     <!-- animation data -->
-    <bean id="AnimationData" class="com.vitco.frames.engine.data.animationdata.AnimationData"/>
+    <bean id="Data" class="com.vitco.frames.engine.data.Data"/>
     <!-- side view -->
     <bean id="SideView" class="com.vitco.frames.engine.sideview.SideViews">
         <property name="sideViews">

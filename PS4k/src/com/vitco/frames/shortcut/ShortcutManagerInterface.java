@@ -34,4 +34,7 @@ public interface ShortcutManagerInterface {
     void addGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
 
     void removeGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
+
+    // register all actions of global shortcuts, to perform validity check
+    void registerGlobalShortcutActions();
 }

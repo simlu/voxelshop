@@ -2,7 +2,8 @@ package com.vitco.frames.engine;
 
 import com.threed.jpct.*;
 import com.vitco.frames.ViewPrototype;
-import com.vitco.frames.engine.data.animationdata.AnimationDataInterface;
+import com.vitco.frames.engine.data.Data;
+import com.vitco.frames.engine.data.container.ExtendedVector;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,10 @@ import java.awt.event.ComponentEvent;
  */
 public abstract class EngineViewPrototype extends ViewPrototype {
     // var & setter
-    protected AnimationDataInterface animationData;
+    protected Data data;
     @Autowired
-    public void setAnimationData(AnimationDataInterface animationData) {
-        this.animationData = animationData;
+    public void setData(Data data) {
+        this.data = data;
     }
 
     // the world-required objects
@@ -32,7 +33,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected final CCamera camera;
 
     // conversion
-    public final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
+    protected final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
         SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer, x*2, y*2).normalize();
         result.scalarMul(camera.getPosition().distance(referencePoint));
         result.add(camera.getPosition());
@@ -40,9 +41,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     }
 
     // conversion
-    public final SimpleVector convert3D2D(float[] point) {
-        SimpleVector result = Interact2D.project3D2D(camera, buffer,
-                new SimpleVector(point[0], point[1], point[2]));
+    protected final SimpleVector convert3D2D(SimpleVector point) {
+        SimpleVector result = Interact2D.project3D2D(camera, buffer, point);
         result.scalarMul(0.5f);
         return result;
     }
@@ -77,16 +77,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         // wrapper
-        private void drawLine(float[][] p1, float[][] p2, Graphics2D ig, Color innerColor, Color outerColor, float size) {
-            SimpleVector point1 = convert3D2D(p1[0]);
-            SimpleVector point2 = convert3D2D(p2[0]);
-            if (point1 != null && point2 != null) {
-                G2DUtil.drawLine(point1, point2, ig, innerColor, outerColor, size);
-            }
+        private void drawLine(ExtendedVector p1, ExtendedVector p2, Graphics2D ig, Color innerColor, Color outerColor, float size) {
+            G2DUtil.drawLine(convert3D2D(p1), convert3D2D(p2), ig, innerColor, outerColor, size);
         }
 
         // wrapper
-        private void drawPoint(float[] point, Graphics2D ig, Color innerColor, Color outerColor, float radius, float borderSize) {
+        private void drawPoint(ExtendedVector point, Graphics2D ig, Color innerColor, Color outerColor, float radius, float borderSize) {
             SimpleVector point2d = convert3D2D(point);
             if (point2d != null) {
                 G2DUtil.drawPoint(point2d, ig, innerColor, outerColor, radius, borderSize);
@@ -99,16 +95,16 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
             // draw all lines
-            for (float[][][] line : animationData.getLines()) { // note: lines and points are buffered internally by AnimationDataCore(!)
+            for (ExtendedVector[] line : data.getLines()) { // note: lines and points are buffered internally by AnimationDataCore(!)
                 drawLine(line[0], line[1], ig,
                         VitcoSettings.ANIMATION_LINE_INNER_COLOR, VitcoSettings.ANIMATION_LINE_OUTER_COLOR,
                         VitcoSettings.ANIMATION_LINE_SIZE);
             }
 
             // draw preview line
-            float[][][] preview_line = animationData.getPreviewLine();
+            ExtendedVector[] preview_line = data.getPreviewLine();
             if (preview_line != null) {
-                boolean connected = animationData.areConnected((int)preview_line[0][1][0], (int)preview_line[1][1][0]);
+                boolean connected = data.areConnected(preview_line[0].id, preview_line[1].id);
                 drawLine(preview_line[0], preview_line[1], ig,
                         connected ? VitcoSettings.ANIMATION_LINE_PREVIEW_REMOVE_COLOR : VitcoSettings.ANIMATION_LINE_PREVIEW_ADD_COLOR,
                         VitcoSettings.ANIMATION_LINE_OUTER_COLOR,
@@ -116,23 +112,23 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
 
             // draw all points
-            int selected_point = animationData.getSelectedPoint();
-            int highlighted_point = animationData.getHighlightedPoint();
-            for (float[][] point : animationData.getPoints()) {
-                if (point[1][0] == selected_point) { // selected
-                    drawPoint(point[0], ig,
+            int selected_point = data.getSelectedPoint();
+            int highlighted_point = data.getHighlightedPoint();
+            for (ExtendedVector point : data.getPoints()) {
+                if (point.id == selected_point) { // selected
+                    drawPoint(point, ig,
                             VitcoSettings.ANIMATION_DOT_SEL_INNER_COLOR,
                             VitcoSettings.ANIMATION_DOT_SEL_OUTER_COLOR,
                             VitcoSettings.ANIMATION_CIRCLE_RADIUS,
                             VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
-                } else if (point[1][0] == highlighted_point) { // highlighted
-                    drawPoint(point[0], ig,
+                } else if (point.id == highlighted_point) { // highlighted
+                    drawPoint(point, ig,
                             VitcoSettings.ANIMATION_DOT_HL_INNER_COLOR,
                             VitcoSettings.ANIMATION_DOT_HL_OUTER_COLOR,
                             VitcoSettings.ANIMATION_CIRCLE_RADIUS,
                             VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
                 } else { // default
-                    drawPoint(point[0], ig,
+                    drawPoint(point, ig,
                             VitcoSettings.ANIMATION_DOT_INNER_COLOR,
                             VitcoSettings.ANIMATION_DOT_OUTER_COLOR,
                             VitcoSettings.ANIMATION_CIRCLE_RADIUS,
@@ -189,7 +185,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             // draw center cross
             ig.setColor(VitcoSettings.ANIMATION_CENTER_CROSS_COLOR);
             ig.setStroke(new BasicStroke(1.0f));
-            SimpleVector center = convert3D2D(new float[] {0, 0, 0});
+            SimpleVector center = convert3D2D(new SimpleVector(0,0,0));
             ig.drawLine(Math.round(center.x - 5), Math.round(center.y), Math.round(center.x + 5), Math.round(center.y));
             ig.drawLine(Math.round(center.x), Math.round(center.y - 5), Math.round(center.x), Math.round(center.y + 5));
         }

@@ -3,7 +3,7 @@ package com.vitco.frames.engine.mainview;
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.*;
 import com.vitco.frames.engine.*;
-import com.vitco.frames.engine.data.listener.DataChangeListener;
+import com.vitco.frames.engine.data.notification.DataChangeListener;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.types.StateActionPrototype;
@@ -15,7 +15,7 @@ import java.awt.event.*;
 import java.util.Random;
 
 /**
- * Creates the mian view instance and attaches the specific user interation.
+ * Creates the mian view instance and attaches the specific user interaction.
  */
 public class MainView extends EngineInteractionPrototype implements MainViewInterface {
 
@@ -161,7 +161,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         });
 
         // register redraw on animation data change
-        animationData.addDataChangeListener(new DataChangeListener() {
+        data.addDataChangeListener(new DataChangeListener() {
             @Override
             public void onAnimationDataChanged() {
                 container.skipNextWorldRender(); // no need to re-render scene
@@ -176,12 +176,12 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
 
             @Override
-            public void onFrameDataChanged() {
+            public void onVoxelDataChanged() {
                 //...
             }
 
             @Override
-            public void onVoxelDataChanged() {
+            public void onLayerDataChanged() {
                 //...
             }
         });

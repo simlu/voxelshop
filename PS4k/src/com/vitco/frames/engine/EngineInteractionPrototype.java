@@ -3,6 +3,8 @@ package com.vitco.frames.engine;
 import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
+import com.vitco.frames.engine.data.container.ExtendedVector;
+import com.vitco.frames.engine.data.notification.DataChangeListener;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.RTree;
 import com.vitco.util.action.ChangeListener;
@@ -32,9 +34,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private void rebuild2DIndex() {
             if (needToRebuild) {
                 points2D.clear();
-                for (float[][] point : animationData.getPoints()) {
-                    SimpleVector tmp = convert3D2D(point[0]);
-                    points2D.insert(new float[]{tmp.x, tmp.y}, new float[] {0,0}, (int)point[1][0]);
+                for (ExtendedVector point : data.getPoints()) {
+                    SimpleVector tmp = convert3D2D(point);
+                    points2D.insert(new float[]{tmp.x, tmp.y}, new float[] {0,0}, point.id);
                 }
                 needToRebuild = false;
             }
@@ -79,13 +81,15 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 if (buffer.getOutputWidth() > e.getX() && buffer.getOutputHeight() > e.getY() && e.getX() > 0 && e.getY() > 0) {
                     if (wasDragged == -1) { // remember that this point was dragged
                         wasDragged = System.currentTimeMillis();
+                    } else {
+                        data.undoA();
                     }
-                    animationData.setPreviewLine(-1, -1); // reset the preview line
+                    data.setPreviewLine(-1, -1); // reset the preview line
                     // move the point to the correct position
-                    float[] tmp = animationData.getPoint(dragPoint)[0];
+                    ExtendedVector tmp = data.getPoint(dragPoint);
 
-                    SimpleVector point = getPoint(e, new SimpleVector(tmp[0], tmp[1], tmp[2]));
-                    animationData.movePoint(dragPoint, point.x, point.y, point.z);
+                    SimpleVector point = getPoint(e, tmp);
+                    data.movePoint(dragPoint, point);
                 }
             }
         }
@@ -93,8 +97,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         @Override
         public void mouseMoved(MouseEvent e) {
             rebuild2DIndex();
-            final int highlighted_point = animationData.getHighlightedPoint();
-            final int selected_point = animationData.getSelectedPoint();
+            final int highlighted_point = data.getHighlightedPoint();
+            final int selected_point = data.getSelectedPoint();
             //SimpleVector realPoint = convert2D3D(e.getX(), e.getY());
             // find if there is a point nearby
             List<Integer> search = points2D.search(new float[]{e.getX() - VitcoSettings.ANIMATION_CIRCLE_RADIUS,e.getY() - VitcoSettings.ANIMATION_CIRCLE_RADIUS},
@@ -104,13 +108,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 tmp = search.get(0);
             }
 
-            animationData.highlightPoint((int)tmp); // highlight that point
+            data.highlightPoint((int)tmp); // highlight that point
 
             // set the preview line iff highlighted and selected point exist and are different
             if (selected_point != -1 && highlighted_point != selected_point && highlighted_point != -1) {
-                animationData.setPreviewLine(selected_point, highlighted_point);
+                data.setPreviewLine(selected_point, highlighted_point);
             } else {
-                animationData.setPreviewLine(-1, -1);
+                data.setPreviewLine(-1, -1);
             }
         }
 
@@ -119,33 +123,42 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             camera.setEnabled(true);
             needToRebuild = true;
             if (e.getButton() == 1) { // left mb
+                if (dragPoint != -1 && wasDragged != -1) {
+                    // do not save this move action if the point position did not change
+                    ExtendedVector point = data.getPoint(dragPoint);
+                    data.undoA();
+                    ExtendedVector point2 = data.getPoint(dragPoint);
+                    if (!point.equals(point2)) {
+                        data.redoA();
+                    }
+                }
                 dragPoint = -1; // stop dragging
-                final int highlighted_point = animationData.getHighlightedPoint();
-                final int selected_point = animationData.getSelectedPoint();
+                final int highlighted_point = data.getHighlightedPoint();
+                final int selected_point = data.getSelectedPoint();
                 if (highlighted_point != -1) { // there is a highlighted point
                     // if it was not at all or only for a short time dragged
                     if (wasDragged == -1 || (System.currentTimeMillis() - wasDragged < 75) ) {
                         if (selected_point == highlighted_point) { // click on selected point
-                            animationData.selectPoint(-1); // deselect
+                            data.selectPoint(-1); // deselect
                         } else {
                             if (selected_point == -1) { // click on new point
-                                animationData.selectPoint(highlighted_point); // select
+                                data.selectPoint(highlighted_point); // select
                             } else {
                                 // click on different point -> connect/disconnect line
-                                if (animationData.areConnected(selected_point, highlighted_point)) {
-                                    animationData.disconnect(selected_point, highlighted_point);
+                                if (data.areConnected(selected_point, highlighted_point)) {
+                                    data.disconnect(selected_point, highlighted_point);
                                     //animationData.selectPoint(-1); // unselect after disconnect
                                 } else {
-                                    animationData.connect(selected_point, highlighted_point);
+                                    data.connect(selected_point, highlighted_point);
                                     //animationData.selectPoint(highlighted_point); // select after connect
                                 }
-                                animationData.selectPoint(-1); // unselect
+                                data.selectPoint(-1); // unselect
                                 // reset "highlighting"
-                                animationData.setPreviewLine(-1, -1);
+                                data.setPreviewLine(-1, -1);
                             }
                         }
                     } else {
-                        animationData.selectPoint(-1);
+                        data.selectPoint(-1);
                     }
                 }
             }
@@ -154,8 +167,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public void mousePressed(final MouseEvent e) {
-            final int highlighted_point = animationData.getHighlightedPoint();
-            final int selected_point = animationData.getSelectedPoint();
+            final int highlighted_point = data.getHighlightedPoint();
+            final int selected_point = data.getSelectedPoint();
             if (highlighted_point != -1) {
                 camera.setEnabled(false);
             }
@@ -169,15 +182,15 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             @Override
                             public void actionPerformed(ActionEvent evt) {
                                 // add a point
-                                animationData.removePoint(tmp_point);
-                                animationData.highlightPoint(-1);
+                                data.removePoint(tmp_point);
+                                data.highlightPoint(-1);
                             }
                         });
                         popup.add(remove);
                         popup.show(e.getComponent(), e.getX(), e.getY());
                     } else {
                         // right click on background -> deselect
-                        animationData.selectPoint(-1);
+                        data.selectPoint(-1);
                     }
                     break;
                 case 1: // if left mouse
@@ -188,11 +201,11 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         // not highlighted and double-click -> add a point
                         // check if we hit something
                         SimpleVector point = getPoint(e, SimpleVector.ORIGIN);
-                        int added = animationData.addPoint(point.x, point.y, point.z);
+                        int added = data.addPoint(point);
                         if (selected_point != -1) { // connect if possible
-                            animationData.connect(added, selected_point);
+                            data.connect(added, selected_point);
                         }
-                        animationData.selectPoint(added); // and select
+                        data.selectPoint(added); // and select
                     }
                     break;
             }
@@ -211,8 +224,11 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         });
     }
 
+    private static boolean initialized = false;
+    private static boolean animationMode = true;
     @PostConstruct
     protected final void init() {
+
         // change what is drawn/what user can do when the mode changes
         actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
             @Override
@@ -224,7 +240,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             container.addMouseMotionListener(animationAdapter);
                             container.addMouseListener(animationAdapter);
                         } else {
-                            animationData.removeHighlights();
+                            data.removeHighlights();
                             container.removeMouseMotionListener(animationAdapter);
                             container.removeMouseListener(animationAdapter);
                         }
@@ -234,5 +250,111 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 });
             }
         });
+
+        // only perform these actions once (even if the class is instantiated several times)
+        if (!initialized) {
+            initialized = true;
+
+            // action to refresh the status of the history buttons
+            final Runnable refreshHistoryButton = new Runnable() {
+                @Override
+                public void run() {
+                    actionManager.performWhenActionIsReady("global_action_undo", new Runnable() {
+                        @Override
+                        public void run() {
+                            ((StateActionPrototype)actionManager.getAction("global_action_undo")).refresh();
+                        }
+                    });
+                    actionManager.performWhenActionIsReady("global_action_redo", new Runnable() {
+                        @Override
+                        public void run() {
+                            ((StateActionPrototype)actionManager.getAction("global_action_redo")).refresh();
+                        }
+                    });
+                }
+            };
+
+            // know the mode at all times
+            actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
+                @Override
+                public void run() {
+                    ((StateActionPrototype) actionManager.getAction("toggle_animation_mode")).addChangeListener(new ChangeListener() {
+                        @Override
+                        public void actionFired(boolean b) {
+                            animationMode = b;
+                            refreshHistoryButton.run();
+                        }
+                    });
+                }
+            });
+
+            // register action status change events
+            data.addDataChangeListener(new DataChangeListener() {
+                @Override
+                public void onAnimationDataChanged() {
+                    refreshHistoryButton.run();
+                }
+
+                @Override
+                public void onAnimationSelectionChanged() {}
+
+                @Override
+                public void onVoxelDataChanged() {
+                    // todo
+                }
+
+                @Override
+                public void onLayerDataChanged() {}
+            });
+
+            // register global shortcuts for data interaction
+            // register undo action
+            actionManager.registerAction("global_action_undo", new StateActionPrototype() {
+                @Override
+                public void action(ActionEvent actionEvent) {
+                    if (getStatus()) {
+                        if (animationMode) {
+                            data.removeHighlights();
+                            data.undoA();
+                        } else {
+                            // todo
+                        }
+                    }
+                }
+
+                @Override
+                public boolean getStatus() {
+                    if (animationMode) {
+                        return data.canUndoA();
+                    } else {
+                        return false; // todo
+                    }
+                }
+            });
+
+            // register redo action
+            actionManager.registerAction("global_action_redo", new StateActionPrototype() {
+                @Override
+                public void action(ActionEvent actionEvent) {
+                    if (getStatus()) {
+                        if (animationMode) {
+                            data.removeHighlights();
+                            data.redoA();
+                        } else {
+                            // todo
+                        }
+                    }
+                }
+
+                @Override
+                public boolean getStatus() {
+                    if (animationMode) {
+                        return data.canRedoA();
+                    } else {
+                        return false; // todo
+                    }
+                }
+            });
+        }
     }
 }

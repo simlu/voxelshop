@@ -3,7 +3,7 @@ package com.vitco.frames.engine.sideview;
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.SimpleVector;
 import com.vitco.frames.engine.EngineInteractionPrototype;
-import com.vitco.frames.engine.data.listener.DataChangeListener;
+import com.vitco.frames.engine.data.notification.DataChangeListener;
 import com.vitco.res.VitcoSettings;
 
 import javax.swing.*;
@@ -122,7 +122,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         container.addMouseListener(shiftingMouseAdapter);
 
         // register redraw on animation data change
-        animationData.addDataChangeListener(new DataChangeListener() {
+        data.addDataChangeListener(new DataChangeListener() {
             @Override
             public void onAnimationDataChanged() {
                 container.skipNextWorldRender(); // no need to re-render scene
@@ -137,12 +137,12 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             }
 
             @Override
-            public void onFrameDataChanged() {
+            public void onVoxelDataChanged() {
                 //...
             }
 
             @Override
-            public void onVoxelDataChanged() {
+            public void onLayerDataChanged() {
                 //...
             }
         });

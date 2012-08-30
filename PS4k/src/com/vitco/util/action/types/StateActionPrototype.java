@@ -12,19 +12,23 @@ import java.util.ArrayList;
 public abstract class StateActionPrototype extends AbstractAction {
     // listener
     protected final ArrayList<ChangeListener> listener = new ArrayList<ChangeListener>();
-    public void addChangeListener(ChangeListener changeListener) {
+    public final void addChangeListener(ChangeListener changeListener) {
         listener.add(changeListener); // add
         changeListener.actionFired(getStatus()); // update already directly
     }
 
-    @Override
-    public final void actionPerformed(ActionEvent e) {
-        action(e); // first the custom action is executed
+    public final void refresh() {
         // now we notify all listeners
         boolean status = getStatus();
         for (ChangeListener actionListener : listener) {
             actionListener.actionFired(status);
         }
+    }
+
+    @Override
+    public final void actionPerformed(ActionEvent e) {
+        action(e); // first the custom action is executed
+        refresh();
     }
 
     public abstract void action(ActionEvent e);

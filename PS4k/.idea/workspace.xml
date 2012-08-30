@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AnalysisUIOptions">
-    <option name="SCOPE_TYPE" value="3" />
     <option name="ANALYSIS_IN_BACKGROUND" value="true" />
   </component>
   <component name="ArtifactsWorkspaceSettings">
@@ -11,29 +10,117 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3775d788-1cb3-4d79-83c9-f6bf480db621" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationData.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/Data.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/DataInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/ListenerData.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/ListenerDataInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/VoxelData.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/VoxelDataInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedLine.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedVector.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/Frame.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/listener/DataChangeListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/Voxel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/VoxelLayer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/history/HistoryChangeListener.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/history/HistoryManager.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/notification/NotificationService.java" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationData$1.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationData$2.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationData$ATYPE.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationData$AnimationIntent.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationData.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$1.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$1Util.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$2.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$2Util.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$3.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$4.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$5.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$6.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest$AnimationDataClass.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\AnimationDataTest.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\Data.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\DataInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\ListenerData$NotificationService.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\ListenerData.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\ListenerDataInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\VoxelData.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\VoxelDataInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\container\ExtendedLine.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\container\ExtendedVector.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\container\Frame.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data2\listener\DataChangeListener.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\FrameData.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\FrameDataInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationData.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataCore.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataCoreInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataHistoryWrapper.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataHistoryWrapperInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataTest.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\listener\DataChangeListener.class" afterPath="" />
+      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\frames\engine\data\listener\DataChangeListener.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/notification/DataChangeListener.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$2$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$2$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$AnimationMouseAdapter$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$AnimationMouseAdapter$1.class" />
       <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$AnimationMouseAdapter.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype$AnimationMouseAdapter.class" />
-      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataCore.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\animationdata\AnimationDataCore.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\EngineInteractionPrototype.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/engine/EngineViewPrototype$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/engine/EngineViewPrototype$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/engine/EngineViewPrototype$MPanel.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/engine/EngineViewPrototype$MPanel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/engine/EngineViewPrototype.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/engine/EngineViewPrototype.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\VoxelData.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\VoxelData.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\VoxelDataInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\data\VoxelDataInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\mainview\MainView$6.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\mainview\MainView$6.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\mainview\MainView.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\mainview\MainView.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\sideview\SideView$6.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\sideview\SideView$6.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\sideview\SideView.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\frames\engine\sideview\SideView.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/shortcut/ShortcutManager$3.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/shortcut/ShortcutManager$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/shortcut/ShortcutManager.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/shortcut/ShortcutManager.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/shortcut/ShortcutManagerInterface.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/frames/shortcut/ShortcutManagerInterface.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/WindowManager.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/WindowManager.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/RTree$Entry.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/RTree$Entry.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/RTree$Node.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/RTree$Node.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/RTree.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/RTree.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/action/types/StateActionPrototype.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/action/types/StateActionPrototype.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$10.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$10.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$2.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$3.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$4.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$5.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$6.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$6.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$7.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$7.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$8$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$8$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$8.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$8.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$9.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator$9.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/menu/MenuGenerator.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings/pref.ser" afterPath="$PROJECT_DIR$/settings/pref.ser" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/bars/tool_bar.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/bars/tool_bar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/logic/config.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/logic/config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/logic/shortcuts.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/logic/shortcuts.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/res/namespace/vitco-menu-1.0.xsd" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/res/namespace/vitco-menu-1.0.xsd" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" afterPath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/EngineInteractionPrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/EngineInteractionPrototype.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataCore.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataCore.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/EngineViewPrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/EngineViewPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationData.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationData.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/Data.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/Data.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/ListenerData.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/ListenerData.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/ListenerDataInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/ListenerDataInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelData.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelData.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/mainview/MainView.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/mainview/MainView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/mainview/MainViewInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/mainview/MainViewInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/engine/sideview/SideView.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/engine/sideview/SideView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/shortcut/ShortcutManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/shortcut/ShortcutManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/frames/shortcut/ShortcutManagerInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/frames/shortcut/ShortcutManagerInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/WindowManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/WindowManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/bars/tool_bar.xml" afterPath="$PROJECT_DIR$/src/com/vitco/layout/bars/tool_bar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/config.xml" afterPath="$PROJECT_DIR$/src/com/vitco/logic/config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/shortcuts.xml" afterPath="$PROJECT_DIR$/src/com/vitco/logic/shortcuts.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/res/namespace/vitco-menu-1.0.xsd" afterPath="$PROJECT_DIR$/src/com/vitco/res/namespace/vitco-menu-1.0.xsd" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/RTree.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/action/types/StateActionPrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/action/types/StateActionPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGenerator.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/menu/MenuGenerator.java" />
     </list>
     <ignored path="PS3k 2.0.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -96,59 +183,60 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file leaf-file-name="AnimationDataInterface.java" pinned="false" current="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataInterface.java">
+            <file leaf-file-name="VoxelDataTest.java" pinned="false" current="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataTest.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="54" column="35" selection-start="2147" selection-end="2147" vertical-scroll-proportion="0.0">
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="AnimationData.java" pinned="false" current="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationData.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state line="56" column="56" selection-start="2190" selection-end="2190" vertical-scroll-proportion="0.78602153">
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="AnimationDataTest.java" pinned="false" current="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataTest.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state line="497" column="19" selection-start="16427" selection-end="16427" vertical-scroll-proportion="0.0">
+                  <state line="409" column="26" selection-start="14257" selection-end="14257" vertical-scroll-proportion="0.79892474">
                     <folding>
-                      <element signature="method#testIsValid#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testAddRemovePoint#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testMovePoint#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testConnectAndAreConnected#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testClearA#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testDisconnect#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testGetPoint#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testGetPoints#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testGetLines#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testCanUndoACanRedoA#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testSetFrame#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testCreateDeleteFrame#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testRenameFrame#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testGetFrames#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testResetFrame#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#randomMess#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testSimpleFrameInteraction#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testUndoRedo#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testRemoveConnectedPointIntense#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testRemoveConnectedPoint#0;class#AnimationDataTest#0" expanded="false" />
-                      <element signature="method#testPointInteractions#0;class#AnimationDataTest#0" expanded="false" />
+                      <element signature="imports" expanded="true" />
+                      <element signature="method#testRenameLayer#0;class#VoxelDataTest#0" expanded="false" />
+                      <element signature="method#testSelectLayer#0;class#VoxelDataTest#0" expanded="false" />
+                      <element signature="method#canUndoRedo#0;class#VoxelDataTest#0" expanded="false" />
+                      <element signature="method#testGetLayers#0;class#VoxelDataTest#0" expanded="false" />
+                      <element signature="method#testSetVisible#0;class#VoxelDataTest#0" expanded="false" />
+                      <element signature="method#testMoveLayerUpDownAndCanMoveLayerUpDown#0;class#VoxelDataTest#0" expanded="false" />
                     </folding>
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="VoxelDataInterface.java" pinned="false" current="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/VoxelDataInterface.java">
+            <file leaf-file-name="VoxelData.java" pinned="false" current="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelData.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="56" column="1" selection-start="1764" selection-end="1764" vertical-scroll-proportion="0.0">
+                  <state line="399" column="60" selection-start="12595" selection-end="12595" vertical-scroll-proportion="-29.846153">
+                    <folding>
+                      <element signature="imports" expanded="true" />
+                      <element signature="e#748#1062#0" expanded="true" />
+                      <element signature="e#1051#1052#0" expanded="true" />
+                      <element signature="e#1371#1392#0" expanded="true" />
+                      <element signature="e#1488#1497#0" expanded="true" />
+                      <element signature="e#1607#1623#0" expanded="true" />
+                      <element signature="class#RenameLayerIntent#0;class#VoxelData#0" expanded="false" />
+                      <element signature="class#SelectLayerIntent#0;class#VoxelData#0" expanded="false" />
+                      <element signature="method#getFreeVoxelId#0;class#VoxelData#0" expanded="false" />
+                      <element signature="method#getFreeLayerId#0;class#VoxelData#0" expanded="false" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="VoxelLayer.java" pinned="false" current="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/VoxelLayer.java">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state line="71" column="34" selection-start="2075" selection-end="2075" vertical-scroll-proportion="0.0">
+                    <folding>
+                      <element signature="imports" expanded="true" />
+                      <element signature="e#392#399#0" expanded="true" />
+                      <element signature="e#497#504#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="Voxel.java" pinned="false" current="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/Voxel.java">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state line="38" column="36" selection-start="926" selection-end="926" vertical-scroll-proportion="0.0">
                     <folding />
                   </state>
                 </provider>
@@ -164,55 +252,97 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ExtendedLine.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedLine.java">
+      <file leaf-file-name="Data.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/Data.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="54" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0">
+            <state line="5" column="12" selection-start="157" selection-end="157" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AnimationDataCoreInterface.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataCoreInterface.java">
+      <file leaf-file-name="HistoryManager.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/history/HistoryManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="17" selection-start="429" selection-end="429" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="33" column="8" selection-start="1025" selection-end="1025" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#353#372#0" expanded="true" />
+                <element signature="e#2133#2156#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AnimationDataInterface.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataInterface.java">
+      <file leaf-file-name="AnimationData.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="17" selection-start="333" selection-end="333" vertical-scroll-proportion="0.3119266">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ListenerData.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/ListenerData.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="24" selection-start="1255" selection-end="1255" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="20" column="24" selection-start="797" selection-end="797" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#929#1223#0" expanded="true" />
+                <element signature="e#1212#1213#0" expanded="true" />
+                <element signature="method#getFreePointId#0;class#AnimationData#0" expanded="false" />
+                <element signature="method#getFreeFrameId#0;class#AnimationData#0" expanded="false" />
+                <element signature="method#isValid#0;class#AnimationData#0" expanded="false" />
+                <element signature="method#areConnected#0;class#AnimationData#0" expanded="false" />
+                <element signature="method#getPoint#0;class#AnimationData#0" expanded="false" />
+                <element signature="method#getLines#0;class#AnimationData#0" expanded="false" />
+                <element signature="method#getSelectedFrame#0;class#AnimationData#0" expanded="false" />
+                <element signature="method#getFrameName#0;class#AnimationData#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="DataChangeListener.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/listener/DataChangeListener.java">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/notification/DataChangeListener.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="39" selection-start="195" selection-end="195" vertical-scroll-proportion="0.0">
+            <state line="9" column="0" selection-start="230" selection-end="260" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExtendedVector.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedVector.java">
+      <file leaf-file-name="EngineInteractionPrototype.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/EngineInteractionPrototype.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="31" selection-start="865" selection-end="865" vertical-scroll-proportion="0.0">
+            <state line="257" column="58" selection-start="11793" selection-end="11793" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1317#1326#0" expanded="true" />
+                <element signature="class#13345:13819" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AnimationDataTest.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationDataTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="790" column="62" selection-start="27377" selection-end="27377" vertical-scroll-proportion="0.7255639">
+              <folding>
+                <element signature="method#testIsValid#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testConnectAndAreConnected#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testClearA#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testDisconnect#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testGetPoint#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testGetLines#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testCanUndoACanRedoA#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testRenameFrame#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testSimpleFrameInteraction#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testUndoRedo#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testRemoveConnectedPointIntense#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testRemoveConnectedPoint#0;class#AnimationDataTest#0" expanded="false" />
+                <element signature="method#testPointInteractions#0;class#AnimationDataTest#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VoxelDataInterface.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataInterface.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="83" column="18" selection-start="2737" selection-end="2737" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -242,22 +372,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/ListenerDataInterface.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/DataInterface.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/Data.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataCore.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/sideview/SideView.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/WorldUtil.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/EngineInteractionPrototype.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/VoxelDataInterface.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedLine.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/Frame.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/listener/DataChangeListener.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/ListenerData.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataTest2.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedVector.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataInterface.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationData.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataTest.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/Voxel.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/listener/NotificationService.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/ListenerData.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/history/HistoryChangeListener.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/notification/DataChangeListener.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/history/HistoryManager.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationData.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/Data.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataInterface.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/VoxelLayer.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelData.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationDataTest.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataTest.java" />
       </list>
     </option>
   </component>
@@ -280,7 +410,7 @@
         </expanded-state>
         <selected-state>
           <State>
-            <id>Abstraction issues</id>
+            <id>Visibility issues</id>
           </State>
         </selected-state>
       </profile-state>
@@ -477,7 +607,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="data2" />
+              <option name="myItemId" value="sideview" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -541,7 +671,75 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="animationdata" />
+              <option name="myItemId" value="notification" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vitco" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frames" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="engine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="data" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="history" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vitco" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frames" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="engine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="data" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="container" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -593,6 +791,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="com.vitco.frames.engine.data" />
       <recent name="com.vitco.frames.engine.data2" />
       <recent name="com.vitco.engine.controller" />
     </key>
@@ -602,11 +801,11 @@
       <recent name="com.vitco.layout" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\util" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\mainview" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\sideview" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\console" />
-      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\frames\engine\mainview" />
     </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.vitco.frames.engine.controller" />
@@ -614,102 +813,48 @@
       <recent name="com.vitco.actions" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\lib\render" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\layout\bars" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource" />
-      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\console" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.AnimationDataTest">
-    <configuration default="false" name="RTree" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="com.vitco.util.RTree" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="PS4k" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TestRTree.testVisualize" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="PS4k" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.vitco" />
-      <option name="MAIN_CLASS_NAME" value="com.vitco.TestRTree" />
-      <option name="METHOD_NAME" value="testVisualize" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TestRTree" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="PS4k" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.vitco" />
-      <option name="MAIN_CLASS_NAME" value="com.vitco.TestRTree" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="AnimationDataTest.testPointInteractions" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="PS4k" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.vitco.frames.engine.data2" />
-      <option name="MAIN_CLASS_NAME" value="com.vitco.frames.engine.data2.AnimationDataTest" />
-      <option name="METHOD_NAME" value="testPointInteractions" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="JUnit.VoxelDataTest">
     <configuration default="false" name="AnimationDataTest" type="JUnit" factoryName="JUnit" temporary="true">
       <module name="PS4k" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="PACKAGE_NAME" value="com.vitco.frames.engine.data" />
+      <option name="MAIN_CLASS_NAME" value="com.vitco.frames.engine.data.AnimationDataTest" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="VoxelDataTest" type="JUnit" factoryName="JUnit" temporary="true">
+      <module name="PS4k" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.vitco.frames.engine.data2" />
-      <option name="MAIN_CLASS_NAME" value="com.vitco.frames.engine.data2.AnimationDataTest" />
+      <option name="PACKAGE_NAME" value="com.vitco.frames.engine.data" />
+      <option name="MAIN_CLASS_NAME" value="com.vitco.frames.engine.data.VoxelDataTest" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -865,13 +1010,10 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <list size="6">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="Application.Main" />
-      <item index="1" class="java.lang.String" itemvalue="Application.RTree" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.TestRTree.testVisualize" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.TestRTree" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.AnimationDataTest.testPointInteractions" />
-      <item index="5" class="java.lang.String" itemvalue="JUnit.AnimationDataTest" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.AnimationDataTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.VoxelDataTest" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -935,9 +1077,11 @@
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="-140" y="-932" width="1096" height="840" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.49468893" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32801822" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32473445" sideWeight="0.64309764" order="5" side_tool="false" content_ui="tabs" x="466" y="150" width="433" height="438" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45791245" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3922559" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22053872" sideWeight="0.50040615" order="7" side_tool="true" content_ui="tabs" />
@@ -950,16 +1094,14 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33788913" sideWeight="0.3855219" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852808" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39939255" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2634776" sideWeight="0.6111111" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.43434343" sideWeight="0.4851936" order="13" side_tool="false" content_ui="tabs" x="184" y="54" width="1099" height="621" />
-      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="-140" y="-932" width="1096" height="840" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26327768" sideWeight="0.6111111" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45791245" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.43434343" sideWeight="0.4851936" order="13" side_tool="false" content_ui="tabs" x="198" y="87" width="1099" height="621" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3262519" sideWeight="0.64309764" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27441078" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3855219" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -1035,119 +1177,164 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/RTree.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/WorldUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="8" selection-start="268" selection-end="273" vertical-scroll-proportion="-3.9230769" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/render/jpct.jar!/com/threed/jpct/SimpleVector.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="10" selection-start="701" selection-end="701" vertical-scroll-proportion="-1.730539" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/EngineInteractionPrototype.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="74" selection-start="1115" selection-end="1115" vertical-scroll-proportion="0.5498721" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataCore.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="77" selection-start="1281" selection-end="1281" vertical-scroll-proportion="0.33245382" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/lang/StringCoding.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="231" column="0" selection-start="6714" selection-end="6714" vertical-scroll-proportion="6.2363315" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/listener/DataChangeListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="39" selection-start="195" selection-end="195" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedVector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="31" selection-start="865" selection-end="865" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="35" selection-start="2147" selection-end="2147" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/VoxelDataInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="1" selection-start="1764" selection-end="1764" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/ListenerData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="24" selection-start="1255" selection-end="1255" vertical-scroll-proportion="0.0">
+        <state line="32" column="29" selection-start="1156" selection-end="1156" vertical-scroll-proportion="0.86948854">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationDataTest.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/notification/NotificationService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="497" column="19" selection-start="16427" selection-end="16427" vertical-scroll-proportion="0.0">
+        <state line="15" column="24" selection-start="426" selection-end="426" vertical-scroll-proportion="0.44973546">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/ListenerData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="42" selection-start="225" selection-end="225" vertical-scroll-proportion="0.14991182">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/EngineInteractionPrototype.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="257" column="58" selection-start="11793" selection-end="11793" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1317#1326#0" expanded="true" />
+            <element signature="class#13345:13819" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/history/HistoryChangeListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="38" selection-start="103" selection-end="124" vertical-scroll-proportion="0.14991182">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/notification/DataChangeListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="0" selection-start="230" selection-end="260" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/history/HistoryManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="8" selection-start="1025" selection-end="1025" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#353#372#0" expanded="true" />
+            <element signature="e#2133#2156#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="24" selection-start="797" selection-end="797" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#929#1223#0" expanded="true" />
+            <element signature="e#1212#1213#0" expanded="true" />
+            <element signature="method#getFreePointId#0;class#AnimationData#0" expanded="false" />
+            <element signature="method#getFreeFrameId#0;class#AnimationData#0" expanded="false" />
+            <element signature="method#isValid#0;class#AnimationData#0" expanded="false" />
+            <element signature="method#areConnected#0;class#AnimationData#0" expanded="false" />
+            <element signature="method#getPoint#0;class#AnimationData#0" expanded="false" />
+            <element signature="method#getLines#0;class#AnimationData#0" expanded="false" />
+            <element signature="method#getSelectedFrame#0;class#AnimationData#0" expanded="false" />
+            <element signature="method#getFrameName#0;class#AnimationData#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/Voxel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="36" selection-start="926" selection-end="926" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/container/VoxelLayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="71" column="34" selection-start="2075" selection-end="2075" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#392#399#0" expanded="true" />
+            <element signature="e#497#504#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="399" column="60" selection-start="12595" selection-end="12595" vertical-scroll-proportion="-29.846153">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#748#1062#0" expanded="true" />
+            <element signature="e#1051#1052#0" expanded="true" />
+            <element signature="e#1371#1392#0" expanded="true" />
+            <element signature="e#1488#1497#0" expanded="true" />
+            <element signature="e#1607#1623#0" expanded="true" />
+            <element signature="class#RenameLayerIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#SelectLayerIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="method#getFreeVoxelId#0;class#VoxelData#0" expanded="false" />
+            <element signature="method#getFreeLayerId#0;class#VoxelData#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/Data.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="12" selection-start="157" selection-end="157" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="83" column="18" selection-start="2737" selection-end="2737" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/VoxelDataTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="409" column="26" selection-start="14257" selection-end="14257" vertical-scroll-proportion="0.79892474">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#testRenameLayer#0;class#VoxelDataTest#0" expanded="false" />
+            <element signature="method#testSelectLayer#0;class#VoxelDataTest#0" expanded="false" />
+            <element signature="method#canUndoRedo#0;class#VoxelDataTest#0" expanded="false" />
+            <element signature="method#testGetLayers#0;class#VoxelDataTest#0" expanded="false" />
+            <element signature="method#testSetVisible#0;class#VoxelDataTest#0" expanded="false" />
+            <element signature="method#testMoveLayerUpDownAndCanMoveLayerUpDown#0;class#VoxelDataTest#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/AnimationDataTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="790" column="62" selection-start="27377" selection-end="27377" vertical-scroll-proportion="0.7255639">
           <folding>
             <element signature="method#testIsValid#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#testAddRemovePoint#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#testMovePoint#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testConnectAndAreConnected#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testClearA#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testDisconnect#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testGetPoint#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#testGetPoints#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testGetLines#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testCanUndoACanRedoA#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#testSetFrame#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#testCreateDeleteFrame#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testRenameFrame#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#testGetFrames#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#testResetFrame#0;class#AnimationDataTest#0" expanded="false" />
-            <element signature="method#randomMess#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testSimpleFrameInteraction#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testUndoRedo#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testRemoveConnectedPointIntense#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testRemoveConnectedPoint#0;class#AnimationDataTest#0" expanded="false" />
             <element signature="method#testPointInteractions#0;class#AnimationDataTest#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/AnimationData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="56" selection-start="2190" selection-end="2190" vertical-scroll-proportion="0.78602153">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/Frame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="17" selection-start="164" selection-end="164" vertical-scroll-proportion="0.23985891">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data2/container/ExtendedLine.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="54" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataCoreInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="17" selection-start="429" selection-end="429" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/frames/engine/data/animationdata/AnimationDataInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="17" selection-start="333" selection-end="333" vertical-scroll-proportion="0.3119266">
-          <folding />
         </state>
       </provider>
     </entry>

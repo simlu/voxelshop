@@ -5,7 +5,10 @@ import com.vitco.frames.engine.data.container.ExtendedLine;
 import com.vitco.frames.engine.data.container.ExtendedVector;
 import com.vitco.frames.engine.data.container.Frame;
 import com.vitco.frames.engine.data.history.BasicActionIntent;
-import com.vitco.frames.engine.data.listener.DataChangeListener;
+import com.vitco.frames.engine.data.history.HistoryChangeListener;
+import com.vitco.frames.engine.data.history.HistoryManager;
+import com.vitco.frames.engine.data.notification.DataChangeListener;
+import com.vitco.util.action.ChangeListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,30 +21,21 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     // constructor
     protected AnimationData() {
         super();
-        // make sure we know when we need to rebuild the buffers
-        addDataChangeListener(new DataChangeListener() {
+        // notify when the data changes
+        historyManagerA.addChangeListener(new HistoryChangeListener() {
             @Override
-            public void onAnimationDataChanged() {
+            public final void onChange() {
                 lineBufferValid = false;
                 pointBufferValid = false;
                 frameBufferValid = false;
+                notifier.onAnimationDataChanged();
             }
-
-            @Override
-            public void onAnimationSelectionChanged() {}
-
-            @Override
-            public void onVoxelDataChanged() {}
-
-            @Override
-            public void onLayerDataChanged() {}
         });
     }
 
     // ####################### DATA
-    // holds the history data
-    protected int historyPosition = -1;
-    protected final ArrayList<BasicActionIntent> history = new ArrayList<BasicActionIntent>();
+    // history manager
+    protected final HistoryManager historyManagerA = new HistoryManager();
     // holds the points
     protected final HashMap<Integer, ExtendedVector> points = new HashMap<Integer, ExtendedVector>();
     // holds the lines
@@ -95,13 +89,13 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
                     ExtendedLine[] lines = new ExtendedLine[pointsToLines.get(pointId).size()];
                     pointsToLines.get(pointId).toArray(lines);
                     for (ExtendedLine line : lines) {
-                        applyIntent(new DisconnectIntent(line.point1, line.point2, true));
+                        historyManagerA.applyIntent(new DisconnectIntent(line.point1, line.point2, true));
                     }
                 }
                 // delete this points in all frames
                 for (Integer frameId : frames.keySet()) {
                     if (frames.get(frameId).getPoint(pointId) != null) {
-                        applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
+                        historyManagerA.applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
                     }
                 }
                 // store point
@@ -248,7 +242,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
                 Integer[] pointIds = new Integer[points.size()];
                 points.keySet().toArray(pointIds);
                 for (Integer pointId : pointIds) {
-                    applyIntent(new RemovePointIntent(pointId, true));
+                    historyManagerA.applyIntent(new RemovePointIntent(pointId, true));
                 }
             }
         }
@@ -299,10 +293,10 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
                 // delete all points of this frame
                 Frame frameRef = frames.get(frameId);
                 for (Integer pointId : frameRef.getPoints()) {
-                    applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
+                    historyManagerA.applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
                 }
                 if (activeFrame == frameId) { // make sure the frameId is still valid
-                    applyIntent(new SetActiveFrameIntent(-1, true));
+                    historyManagerA.applyIntent(new SetActiveFrameIntent(-1, true));
                 }
                 // get the frame name
                 frameName = frameRef.getName();
@@ -320,6 +314,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     private class ResetFrameIntent extends BasicActionIntent {
         private final Integer frameId;
 
+        // constructor
         public ResetFrameIntent(Integer frameId, boolean attach) {
             super(attach);
             this.frameId = frameId;
@@ -330,7 +325,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
             if (isFirstCall()) {
                 Frame frameRef = frames.get(frameId);
                 for (Integer pointId : frameRef.getPoints()) {
-                    applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
+                    historyManagerA.applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
                 }
             }
         }
@@ -347,6 +342,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         private final String frameName;
         private String oldFrameName;
 
+        // constructor
         public RenameFrameIntent(Integer frameId, String frameName, boolean attach) {
             super(attach);
             this.frameId = frameId;
@@ -373,6 +369,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         private final Integer frameId;
         private ExtendedVector oldPoint;
 
+        // constructor
         public PlaceFramePointIntent(Integer pointId, SimpleVector pos, Integer frameId, boolean attach) {
             super(attach);
             this.point = new ExtendedVector(pos, pointId);
@@ -404,6 +401,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         private final Integer frameId;
         private ExtendedVector oldPoint;
 
+        // constructor
         public RemoveFramePointIntent(Integer pointId, Integer frameId, boolean attach) {
             super(attach);
             this.pointId = pointId;
@@ -430,6 +428,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         private final Integer frameId;
         private Integer oldFrameId;
 
+        // constructor
         public SetActiveFrameIntent(Integer frameId, boolean attach) {
             super(attach);
             this.frameId = frameId;
@@ -469,95 +468,43 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         return lastFrame;
     }
 
-    // adds a new intent to the history and executes it
-    private void applyIntent(BasicActionIntent actionIntent) {
-        // delete all "re-dos"
-        while (history.size() > historyPosition + 1) {
-            history.remove(historyPosition + 1);
-        }
-        // apply the intent
-        actionIntent.apply();
-        historyPosition++;
-        // and add it to the history
-        history.add(actionIntent);
-        // invalidate the cache
-        notifier.onAnimationDataChanged();
-    }
 
-    // apply the next history intent
-    private void applyNextHistory() {
-        if (history.size() > historyPosition + 1) { // we can still "redo"
-            historyPosition++; // move one "up"
-            history.get(historyPosition).apply(); // redo action
-            // make sure the attached histories are applied
-            if (history.size() > historyPosition + 1 && history.get(historyPosition).attach) {
-                applyNextHistory();
-            } else {
-                notifier.onAnimationDataChanged();
-            }
-        }
-
-    }
-
-    // apply the last history intent
-    private void applyPreviousHistory() {
-        if (historyPosition > -1) { // we can still undo
-            history.get(historyPosition).unapply(); // undo action
-            historyPosition--; // move one "down"
-            // make sure the attached histories are applied
-            if (historyPosition > -1 && history.get(historyPosition).attach) {
-                applyPreviousHistory();
-            } else {
-                notifier.onAnimationDataChanged();
-            }
-        }
-    }
-
-    // displays current history information
-    public final void debug() {
-        int i = -1;
-        for (BasicActionIntent ai : history) {
-            i++;
-            System.out.println(ai + " @ " + ai.attach + (i == historyPosition ? " XXX " : ""));
-        }
-        System.out.println("=================");
-    }
 
     // =========================
     // === interface methods ===
     // =========================
 
     @Override
-    public boolean isValid(int pointId) {
+    public final boolean isValid(int pointId) {
         return points.containsKey(pointId);
     }
 
     @Override
-    public int addPoint(SimpleVector position) {
+    public final int addPoint(SimpleVector position) {
         int pointId = getFreePointId();
         ExtendedVector point = new ExtendedVector(position.x, position.y, position.z, pointId);
-        applyIntent(new AddPointIntent(point, false));
+        historyManagerA.applyIntent(new AddPointIntent(point, false));
         return pointId;
     }
 
     @Override
-    public boolean removePoint(int pointId) {
+    public final boolean removePoint(int pointId) {
         boolean result = false;
         if (isValid(pointId)) {
-            applyIntent(new RemovePointIntent(pointId, false));
+            historyManagerA.applyIntent(new RemovePointIntent(pointId, false));
             result = true;
         }
         return result;
     }
 
     @Override
-    public boolean movePoint(int pointId, SimpleVector pos) {
+    public final boolean movePoint(int pointId, SimpleVector pos) {
         boolean result = false;
         if (isValid(pointId)) {
             if (activeFrame == -1) { // move real point
-                applyIntent(new MovePointIntent(pointId, pos, false));
+                historyManagerA.applyIntent(new MovePointIntent(pointId, pos, false));
             } else { // move frame point
-                applyIntent(new PlaceFramePointIntent(pointId, pos, activeFrame, false));
+                historyManagerA.applyIntent(new PlaceFramePointIntent(pointId, pos, activeFrame, false));
             }
             result = true;
         }
@@ -565,42 +512,42 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     }
 
     @Override
-    public boolean areConnected(int id1, int id2) {
+    public final boolean areConnected(int id1, int id2) {
         return lines.containsKey(Math.min(id1, id2) + "_" + Math.max(id1, id2));
     }
 
     @Override
-    public boolean connect(int id1, int id2) {
+    public final boolean connect(int id1, int id2) {
         boolean result = false;
         if (isValid(id1) && isValid(id2) && !areConnected(id1, id2)) {
-            applyIntent(new ConnectIntent(id1, id2, false));
+            historyManagerA.applyIntent(new ConnectIntent(id1, id2, false));
             result = true;
         }
         return result;
     }
 
     @Override
-    public boolean clearA() {
+    public final boolean clearA() {
         boolean result = false;
         if (points.size() > 0) {
-            applyIntent(new ClearAIntent(false));
+            historyManagerA.applyIntent(new ClearAIntent(false));
             result = true;
         }
         return result;
     }
 
     @Override
-    public boolean disconnect(int id1, int id2) {
+    public final boolean disconnect(int id1, int id2) {
         boolean result = false;
         if (isValid(id1) && isValid(id2) && areConnected(id1, id2)) {
-            applyIntent(new DisconnectIntent(id1, id2, false));
+            historyManagerA.applyIntent(new DisconnectIntent(id1, id2, false));
             result = true;
         }
         return result;
     }
 
     @Override
-    public ExtendedVector getPoint(int pointId) {
+    public final ExtendedVector getPoint(int pointId) {
         if (activeFrame != -1) { // return frame point if defined
             ExtendedVector point = frames.get(activeFrame).getPoint(pointId);
             if (point != null) {
@@ -610,10 +557,10 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         return points.get(pointId);
     }
 
-    ExtendedVector[] pointBuffer = new ExtendedVector[]{};
-    boolean pointBufferValid = false;
+    private ExtendedVector[] pointBuffer = new ExtendedVector[]{};
+    private boolean pointBufferValid = false;
     @Override
-    public ExtendedVector[] getPoints() {
+    public final ExtendedVector[] getPoints() {
         if (!pointBufferValid) {
             if (pointBuffer.length != points.size()) {
                 pointBuffer = new ExtendedVector[points.size()];
@@ -627,10 +574,10 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         return pointBuffer.clone();
     }
 
-    ExtendedVector[][] lineBuffer = new ExtendedVector[][]{};
-    boolean lineBufferValid = false;
+    private ExtendedVector[][] lineBuffer = new ExtendedVector[][]{};
+    private boolean lineBufferValid = false;
     @Override
-    public ExtendedVector[][] getLines() {
+    public final ExtendedVector[][] getLines() {
         if (!lineBufferValid) {
             if (lineBuffer.length != lines.size()) {
                 lineBuffer = new ExtendedVector[lines.size()][2];
@@ -647,71 +594,71 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     }
 
     @Override
-    public void undoA() {
-        applyPreviousHistory();
+    public final void undoA() {
+        historyManagerA.unapply();
     }
 
     @Override
-    public void redoA() {
-        applyNextHistory();
+    public final void redoA() {
+        historyManagerA.apply();
     }
 
     @Override
-    public boolean canUndoA() {
-        return (historyPosition > -1);
+    public final boolean canUndoA() {
+        return historyManagerA.canUndo();
     }
 
     @Override
-    public boolean canRedoA() {
-        return (history.size() > historyPosition + 1);
+    public final boolean canRedoA() {
+        return historyManagerA.canRedo();
     }
 
     @Override
-    public boolean selectFrame(int frameId) {
+    public final boolean selectFrame(int frameId) {
         boolean result = false;
         if (frames.containsKey(frameId) || frameId == -1) {
-            applyIntent(new SetActiveFrameIntent(frameId, false));
+            historyManagerA.applyIntent(new SetActiveFrameIntent(frameId, false));
             result = true;
         }
         return result;
     }
 
     @Override
-    public int getSelectedFrame() {
+    public final int getSelectedFrame() {
         return activeFrame;
     }
 
     @Override
-    public int createFrame(String frameName) {
+    public final int createFrame(String frameName) {
         int frameId = getFreeFrameId();
-        applyIntent(new CreateFrameIntent(frameId, frameName, false));
+        historyManagerA.applyIntent(new CreateFrameIntent(frameId, frameName, false));
         return frameId;
     }
 
     @Override
-    public boolean deleteFrame(int frameId) {
+    public final boolean deleteFrame(int frameId) {
         boolean result = false;
         if (frames.containsKey(frameId)) {
-            applyIntent(new DeleteFrameIntent(frameId, false));
+            historyManagerA.applyIntent(new DeleteFrameIntent(frameId, false));
             result = true;
         }
         return result;
     }
 
     @Override
-    public boolean renameFrame(int frameId, String newName) {
+    public final boolean renameFrame(int frameId, String newName) {
         boolean result = false;
         if (frames.containsKey(frameId)) {
-            applyIntent(new RenameFrameIntent(frameId, newName, false));
+            historyManagerA.applyIntent(new RenameFrameIntent(frameId, newName, false));
             result = true;
         }
         return result;
     }
 
-    Integer[] frameBuffer = new Integer[]{};
-    boolean frameBufferValid = false;
+    private Integer[] frameBuffer = new Integer[]{};
+    private boolean frameBufferValid = false;
     @Override
-    public Integer[] getFrames() {
+    public final Integer[] getFrames() {
         if (!frameBufferValid) {
             if (frameBuffer.length != frames.size()) {
                 frameBuffer = new Integer[frames.size()];
@@ -723,17 +670,17 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     }
 
     @Override
-    public boolean resetFrame(int frameId) {
+    public final boolean resetFrame(int frameId) {
         boolean result = false;
         if (frames.containsKey(frameId)) {
-            applyIntent(new ResetFrameIntent(frameId, false));
+            historyManagerA.applyIntent(new ResetFrameIntent(frameId, false));
             result = true;
         }
         return result;
     }
 
     @Override
-    public String getFrameName(int frameId) {
+    public final String getFrameName(int frameId) {
         if (frames.containsKey(frameId)) {
             return frames.get(frameId).getName();
         }

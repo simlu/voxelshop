@@ -165,7 +165,10 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             getDockingManager().loadInitialLayout(document);
             ////////////////////
 
-            // gload the global hotkeys
+            // register the shortcut action names
+            shortcutManager.registerGlobalShortcutActions();
+
+            // load the global hotkeys
             shortcutManager.activateGlobalShortcuts();
 
             // try to load the saved layout
