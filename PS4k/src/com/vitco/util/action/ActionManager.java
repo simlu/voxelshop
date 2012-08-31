@@ -2,6 +2,7 @@ package com.vitco.util.action;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,9 @@ import java.util.Map;
 /**
  * maps strings to actions, allows for checks (unused actions, undeclared actions)
  */
-public class ActionManager implements ActionManagerInterface {
+public class ActionManager implements ActionManagerInterface, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // maps strings to action
     private final Map<String, AbstractAction> map = new HashMap<String, AbstractAction>();

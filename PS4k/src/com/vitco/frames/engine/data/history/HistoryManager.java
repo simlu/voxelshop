@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * Manages BasicActionIntents. History manager.
  */
 public class HistoryManager implements Serializable {
+    private static final long serialVersionUID = 1L;
     // holds the history data
     private int historyPosition = -1;
     private final ArrayList<BasicActionIntent> history = new ArrayList<BasicActionIntent>();
@@ -63,7 +64,7 @@ public class HistoryManager implements Serializable {
         }
     }
 
-    ArrayList<HistoryChangeListener> listeners = new ArrayList<HistoryChangeListener>();
+    private final ArrayList<HistoryChangeListener> listeners = new ArrayList<HistoryChangeListener>();
     public final void addChangeListener(HistoryChangeListener hcl) {
         listeners.add(hcl);
     }
@@ -78,10 +79,8 @@ public class HistoryManager implements Serializable {
 
 //    // displays current historyA information
 //    public final void debug() {
-//        int i = -1;
-//        for (BasicActionIntent ai : history) {
-//            i++;
-//            System.out.println(ai + " @ " + ai.attach + (i == historyPosition ? " XXX " : ""));
+//        for (int c = Math.max(history.size()-10,0), len = history.size()-1; c < len; c++) {
+//            System.out.println(history.get(c) + " @ " + history.get(c).attach + (c == historyPosition-1 ? " XXX " : ""));
 //        }
 //        System.out.println("=================");
 //    }

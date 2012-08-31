@@ -3,7 +3,7 @@ package com.vitco.frames.engine.data.notification;
 import java.util.ArrayList;
 
 /**
- * Notification Service, notifies listeners.
+ * Notification Service, deals with and notifies listeners.
  */
 public final class NotificationService implements DataChangeListener {
     private final ArrayList<DataChangeListener> listeners = new ArrayList<DataChangeListener>();

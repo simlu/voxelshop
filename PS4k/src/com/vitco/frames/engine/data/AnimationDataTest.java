@@ -500,6 +500,7 @@ public final class AnimationDataTest {
 
     @Test
     public void randomMess() {
+        @SuppressWarnings({"EmptyMethod", "UnusedParameters"})
         class Util {
             private final Random rand;
             public Util(int seed) {

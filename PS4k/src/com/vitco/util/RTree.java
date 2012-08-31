@@ -1,11 +1,7 @@
 package com.vitco.util;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Implementation of an arbitrary-dimension RTree. Based on R-Trees: A Dynamic
@@ -20,8 +16,9 @@ import java.util.Set;
  *          the type of entry to store in this RTree.
  */
 @SuppressWarnings("ConstantConditions")
-public class RTree<T>
+public class RTree<T> implements Serializable
 {
+  private static final long serialVersionUID = 1L;
 
   private final int maxEntries;
   private final int minEntries;
@@ -117,10 +114,10 @@ public class RTree<T>
    */
   public List<T> search(float[] coords, float[] dimensions)
   {
-      if (coords.length == 3) {
-          System.out.println("tree.search(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
-                  "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f});");
-      }
+//      if (coords.length == 3) {
+//          System.out.println("tree.search(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
+//                  "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f});");
+//      }
     assert (coords.length == numDims);
     assert (dimensions.length == numDims);
     LinkedList<T> results = new LinkedList<T>();
@@ -168,10 +165,10 @@ public class RTree<T>
    */
   public boolean delete(float[] coords, float[] dimensions, T entry)
   {
-      if (coords.length == 3) {
-          System.out.println("tree.delete(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
-                  "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f},"  + " " + entry + ");");
-      }
+//      if (coords.length == 3) {
+//          System.out.println("tree.delete(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
+//                  "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f},"  + " " + entry + ");");
+//      }
     assert (coords.length == numDims);
     assert (dimensions.length == numDims);
     Node l = findLeaf(root, coords, dimensions, entry);
@@ -312,10 +309,10 @@ public class RTree<T>
    */
   public void insert(float[] coords, float[] dimensions, T entry)
   {
-    if (coords.length == 3) {
-        System.out.println("tree.insert(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
-                "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f},"  + " " + entry + ");");
-    }
+//    if (coords.length == 3) {
+//        System.out.println("tree.insert(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
+//                "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f},"  + " " + entry + ");");
+//    }
     assert (coords.length == numDims);
     assert (dimensions.length == numDims);
     Entry e = new Entry(coords, dimensions, entry);
@@ -643,8 +640,9 @@ public class RTree<T>
     }
 
  
-  private class Node
+  private static class Node implements Serializable
   {
+    private static final long serialVersionUID = 1L;
     final float[] coords;
     final float[] dimensions;
     final LinkedList<Node> children;

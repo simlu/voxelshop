@@ -10,7 +10,6 @@ import java.util.ArrayList;
  * Basic camera interaction.
  */
 public class CCamera extends Camera {
-
     // remembers how much the camera has been shifted already
     private final float[] amountShifted = new float[2];
 

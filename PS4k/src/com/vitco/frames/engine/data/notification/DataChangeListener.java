@@ -1,7 +1,7 @@
 package com.vitco.frames.engine.data.notification;
 
 /**
- * A data change listener
+ * A data change listener interface for the whole data container.
  */
 public interface DataChangeListener {
     void onAnimationDataChanged();

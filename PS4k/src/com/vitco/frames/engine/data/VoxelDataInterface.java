@@ -1,5 +1,7 @@
 package com.vitco.frames.engine.data;
 
+import com.vitco.frames.engine.data.container.Voxel;
+
 import java.awt.*;
 
 /**
@@ -12,10 +14,8 @@ public interface VoxelDataInterface {
     boolean removeVoxel(int voxelId);
     // move a voxel
     boolean moveVoxel(int voxelId, int[] newPos);
-    // set the voxel identifier
-    boolean setVoxelLinkId(int voxelId, int linkId);
-    // retrieve the voxel identifier
-    int getVoxelLinkId(int voxelId);
+    // retrieve a voxel by id
+    Voxel getVoxel(int voxelId);
     // set the color of a voxel
     boolean setColor(int voxelId, Color color);
     // get the color of a voxel
@@ -30,20 +30,16 @@ public interface VoxelDataInterface {
     boolean clearRange(int[] center, int rad);
     // set all voxels in an area for current layer (overwrite)
     boolean fillRange(int[] center, int rad, Color color);
-    // delete all voxels in current layer
-    void clearV();
-    // retrieves all voxels of visible layers
-    int getAllVoxels();
+    // delete all voxels in layer
+    boolean clearV(int layerId);
     // get all voxels in current layer
-    int getLayerVoxels();
+    Voxel[] getLayerVoxels(int layerId);
+    // get all visible layer voxels
+    Voxel[] getVisibleLayerVoxel();
     // get voxel range (plane) of current layer
-    int getVoxelsXY(int z);
-    int getVoxelsXZ(int y);
-    int getVoxelsYZ(int x);
-    // get voxel range for all visible layers (plane)
-    int getAllVoxelsXY(int z);
-    int getAllVoxelsXZ(int y);
-    int getAllVoxelsYZ(int x);
+    Voxel[] getVoxelsXY(int z);
+    Voxel[] getVoxelsXZ(int y);
+    Voxel[] getVoxelsYZ(int x);
 
 
     // undo last action (animation)
