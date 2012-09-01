@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.frames.engine.sideview.SideViewsInterface;
+import com.vitco.logic.sideview.SideViewsInterface;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;

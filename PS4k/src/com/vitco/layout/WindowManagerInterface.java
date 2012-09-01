@@ -4,7 +4,7 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
-import com.vitco.frames.shortcut.ShortcutManagerInterface;
+import com.vitco.logic.shortcut.ShortcutManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 
 import javax.annotation.PostConstruct;

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:annotation-config />
+
+    <!-- error handle -->
+    <bean id="ErrorHandler" class="com.vitco.util.error.ErrorHandler">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="debugReportUrl" value="http://www.fantasy-mmorpg.com/tools/ps4k/debug/upload.php"/>
+        <property name="console" ref="Console"/>
+    </bean>
+
+    <!-- set the default error handler -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>java.lang.Thread</value></property>
+        <property name="targetMethod"><value>setDefaultUncaughtExceptionHandler</value></property>
+        <property name="arguments">
+            <list>
+                <ref local="ErrorHandler"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- invoke default look and feel (jide) -->
+    <!-- needs to go first !! -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>com.jidesoft.plaf.LookAndFeelFactory</value></property>
+        <property name="targetMethod"><value>installDefaultLookAndFeelAndExtension</value></property>
+    </bean>
+
+    <!-- manages the console data -->
+    <bean id="Console" class="com.vitco.logic.console.Console"/>
+    <!-- manages the console data display -->
+    <bean id="ConsoleView" class="com.vitco.logic.console.ConsoleView">
+        <property name="console" ref="Console"/>
+    </bean>
+
+    <!-- holds general preferenes -->
+    <bean id="Preferences" class="com.vitco.util.pref.Preferences" init-method="load">
+        <property name="storageFile" value="settings/pref.ser"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+    </bean>
+
+    <!-- create the language selector (localization) -->
+    <bean id="LangSelector" class="com.vitco.util.lang.LangSelector">
+        <!-- set language bundle -->
+        <property name="languageBundle" value="resource/bundle/LangBundle"/>
+        <!-- select language and country -->
+        <property name="language" value="en"/>
+        <property name="country" value="US"/>
+    </bean>
+
+    <!-- create ActionManager -->
+    <!-- this allows to register and execute action -->
+    <bean id="ActionManager" class="com.vitco.util.action.ActionManager"/>
+
+    <!-- create ShortcutManager -->
+    <!-- allow registering the windows with the shortcuts -->
+    <bean id="ShortcutManager" class="com.vitco.logic.shortcut.ShortcutManager">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="configFile" value="com/vitco/glue/shortcuts.xml"/>
+        <property name="actionManager" ref="ActionManager"/>
+        <property name="preferences" ref="Preferences"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+    </bean>
+
+    <!--handles displaying of shortcut manager-->
+    <bean id="ShortcutManagerView" class="com.vitco.logic.shortcut.ShortcutManagerView">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="shortcutManager" ref="ShortcutManager"/>
+        <property name="preferences" ref="Preferences"/>
+    </bean>
+
+    <!-- handles display of layers -->
+    <bean id="LayerView" class="com.vitco.logic.layer.LayerView">
+
+    </bean>
+
+    <!-- create MenuGenerator -->
+    <!-- handles the menu generation (from xml) -->
+    <bean id="MenuGenerator" class="com.vitco.util.menu.MenuGenerator">
+        <property name="shortcutManager" ref="ShortcutManager"/>
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="actionManager" ref="ActionManager"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+    </bean>
+
+
+    <!--ENGINE STUFF-->
+    <!-- animation data -->
+    <bean id="Data" class="com.vitco.engine.data.Data"/>
+    <!-- side view -->
+    <bean id="SideView" class="com.vitco.logic.sideview.SideViews">
+        <property name="sideViews">
+            <array value-type="com.vitco.logic.sideview.SideView">
+                <bean class="com.vitco.logic.sideview.SideView">
+                    <constructor-arg value="0"/>  <!--first view-->
+                </bean>
+                <bean class="com.vitco.logic.sideview.SideView">
+                    <constructor-arg value="1"/>  <!--second view-->
+                </bean>
+                <bean class="com.vitco.logic.sideview.SideView">
+                    <constructor-arg value="2"/> <!--third view-->
+                </bean>
+            </array>
+        </property>
+    </bean>
+    <!-- main view -->
+    <bean id="MainView" class="com.vitco.logic.mainview.MainView"/>
+
+
+    <!-- creates the main window -->
+    <bean id="WindowManager" class="com.vitco.layout.WindowManager">
+        <constructor-arg value="PS4k - Alpha Version"/>
+        <property name="preferences" ref="Preferences"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+        <!-- shortcut manager -->
+        <property name="shortcutManager" ref="ShortcutManager"/>
+        <!-- set the linkage map (bars) -->
+        <property name="barLinkageMap">
+            <map>
+                <entry>
+                    <key><value>mainMenu</value></key>
+                    <bean id="MainMenuLinkage" class="com.vitco.layout.bars.MainMenuLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>toolBar</value></key>
+                    <bean id="ToolBarLinkage" class="com.vitco.layout.bars.ToolBarLinkage"/>
+                </entry>
+            </map>
+        </property>
+        <!-- set the linkage map (frames) -->
+        <property name="frameLinkageMap">
+            <map>
+                <entry>
+                    <key><value>console</value></key>
+                    <bean id="ConsoleLinkage" class="com.vitco.layout.frames.ConsoleLinkage">
+                        <property name="consoleView" ref="ConsoleView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>mainView</value></key>
+                    <bean id="MainViewLinkage" class="com.vitco.layout.frames.MainViewLinkage">
+                        <property name="mainView" ref="MainView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>shortcutManager</value></key>
+                    <bean id="ShortcutManagerLinkage" class="com.vitco.layout.frames.ShortcutManagerLinkage">
+                        <property name="shortcutManagerView" ref="ShortcutManagerView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>sideView</value></key>
+                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage">
+                        <property name="sideView" ref="SideView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>snapshot</value></key>
+                    <bean id="SnapshotLinkage" class="com.vitco.layout.frames.SnapshotLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>personal</value></key>
+                    <bean id="PersonalLinkage" class="com.vitco.layout.frames.PersonalLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>layer</value></key>
+                    <bean id="LayerLinkage" class="com.vitco.layout.frames.LayerLinkage">
+                        <property name="layerView" ref="LayerView"/>
+
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

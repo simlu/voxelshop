@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.frames.engine.mainview.MainViewInterface;
+import com.vitco.logic.mainview.MainViewInterface;
 
 import java.awt.event.MouseListener;
 

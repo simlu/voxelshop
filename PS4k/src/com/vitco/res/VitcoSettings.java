@@ -2,6 +2,8 @@ package com.vitco.res;
 
 import com.threed.jpct.SimpleVector;
 
+import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 /**
@@ -64,5 +66,30 @@ public final class VitcoSettings {
 
     // general
     public static final Color DEFAULT_BORDER_COLOR = new Color(56, 56, 56);
+    public static final Color DEFAULT_BORDER_COLOR_LIGHT = new Color(130, 135, 144);
+
+    // layer
+    public static final Color VISIBLE_LAYER_BG = new Color(255, 255, 255);
+    public static final Color HIDDEN_LAYER_BG = new Color(255, 245, 245);
+    public static final Color VISIBLE_SELECTED_LAYER_BG = new Color(215, 255, 213);
+    public static final Color HIDDEN_SELECTED_LAYER_BG = new Color(255, 210, 193);
+
+    // general table
+    public static final Font TABLE_FONT = new Font(
+            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
+            UIManager.getDefaults().getFont("TabbedPane.font").getStyle(),
+            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
+    );
+    public static final Font TABLE_FONT_BOLD = new Font(
+            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
+            Font.BOLD,
+            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
+    );
+    public static final int DEFAULT_TABLE_INCREASE = 10;
+    public static final Border DEFAULT_BORDER =
+            BorderFactory.createEmptyBorder(0, 10, 0, 0);
+    public static final Border DEFAULT_BORDER_EDIT =
+            BorderFactory.createEmptyBorder(DEFAULT_TABLE_INCREASE/2, 10, 0, 0);
+
 
 }

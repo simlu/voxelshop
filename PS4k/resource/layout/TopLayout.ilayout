@@ -76,14 +76,14 @@
                 defaultEscapeAction="0" dockable="true" docked="true"
                 dockedHeight="200" dockedWidth="200" floatable="true"
                 floated="false" hidable="true" hidden="false"
-                initIndex="0" initMode="4" initSide="2" key="timeLine"
+                initIndex="0" initMode="4" initSide="2" key="snapshot"
                 maximizable="true" maximized="false"
                 preferredAutohideSide="-1" preferredSize="200; 200"
                 rearrangable="true" showContextMenu="false"
                 showGripper="false" showTitleBar="true"
-                sideDockAllowed="true" sideTitle="# Time Line"
+                sideDockAllowed="true" sideTitle="# Snapshot"
                 slidingAutohide="true" tabDockAllowed="true"
-                tabTitle="# Time Line" title="# Time Line" undockedBounds="4; 4; 200; 538"/>
+                tabTitle="# Snapshot" title="# Snapshot" undockedBounds="4; 4; 200; 538"/>
             <DockableFrame autohidable="true" autohide="false"
                 autohideHeight="200" autohideShowing="false"
                 autohideWhenActive="false" autohideWidth="311"
@@ -115,6 +115,21 @@
                 sideDockAllowed="true" sideTitle="# Personal"
                 slidingAutohide="true" tabDockAllowed="true"
                 tabTitle="# Personal" title="# Personal" undockedBounds="0; 0; 200; 279"/>
+            <DockableFrame autohidable="true" autohide="false"
+                autohideHeight="200" autohideShowing="false"
+                autohideWhenActive="false" autohideWidth="200"
+                availableButtons="15" defaultCloseAction="0"
+                defaultEscapeAction="0" dockable="true" docked="true"
+                dockedHeight="200" dockedWidth="200" floatable="true"
+                floated="false" hidable="true" hidden="false"
+                initIndex="0" initMode="4" initSide="4" key="layer"
+                maximizable="true" maximized="false"
+                preferredAutohideSide="-1" preferredSize="200; 200"
+                rearrangable="true" showContextMenu="true"
+                showGripper="false" showTitleBar="true"
+                sideDockAllowed="true" sideTitle="# Layer"
+                slidingAutohide="true" tabDockAllowed="true"
+                tabTitle="# Layer" title="# Layer" undockedBounds="866; 176; 200; 200"/>
         </DockableFrames>
     </DockingManager>
     <DockableBarManager floatable="true" hidable="false"

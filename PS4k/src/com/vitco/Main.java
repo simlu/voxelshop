@@ -25,7 +25,7 @@ public class Main {
         }
 
         // build the application
-        final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
+        final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("com/vitco/glue/config.xml");
 
         // for debugging
         ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
