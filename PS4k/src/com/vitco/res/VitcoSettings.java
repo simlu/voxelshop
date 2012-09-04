@@ -11,12 +11,13 @@ import java.awt.*;
  */
 public final class VitcoSettings {
     // e.g. for shortcut manager
-    public static final Color EDIT_BG_COLOR = new Color(83, 155, 173); // new Color(187, 209, 255);
-    public static final Color EDIT_TEXT_COLOR = new Color(255, 255, 255); // new Color(0, 0, 0);
-    public static final Color EDIT_ERROR_BG_COLOR = new Color(208,49,28); // new Color(255,200,200);
-    public static final Color DEFAULT_TEXT_COLOR = new Color(10,10,10);
-    public static final Color DEFAULT_BG_COLOR =  new Color(255, 255, 255);
-    public static final Color DEFAULT_HOVER_COLOR = new Color(235,241,251);
+    public static final Color EDIT_BG_COLOR = new Color(250, 250, 250); // new Color(187, 209, 255);
+    public static final Color EDIT_TEXT_COLOR = new Color(30, 30, 30); // new Color(0, 0, 0);
+    public static final Color EDIT_ERROR_BG_COLOR = new Color(255, 171, 161); // new Color(255,200,200);
+    public static final Color DEFAULT_TEXT_COLOR = new Color(233,233,233);
+    public static final Color DEFAULT_BG_COLOR =  new Color(85, 85, 85);
+    public static final Color DEFAULT_HOVER_COLOR = new Color(90,100,120);
+    public static final Color DEFAULT_DARK_BG_COLOR = new Color(40, 40, 40);
 
     // e.g. for side view
     public static final Color ANIMATION_LINE_INNER_COLOR = new Color(230, 20, 30, 200);
@@ -65,14 +66,14 @@ public final class VitcoSettings {
     public static final Color MAIN_VIEW_GROUND_PLANE_COLOR = new Color(181, 181, 181);
 
     // general
-    public static final Color DEFAULT_BORDER_COLOR = new Color(56, 56, 56);
+    public static final Color DEFAULT_BORDER_COLOR = new Color(90, 90, 90);
     public static final Color DEFAULT_BORDER_COLOR_LIGHT = new Color(130, 135, 144);
 
     // layer
-    public static final Color VISIBLE_LAYER_BG = new Color(255, 255, 255);
-    public static final Color HIDDEN_LAYER_BG = new Color(255, 245, 245);
-    public static final Color VISIBLE_SELECTED_LAYER_BG = new Color(215, 255, 213);
-    public static final Color HIDDEN_SELECTED_LAYER_BG = new Color(255, 210, 193);
+    public static final Color VISIBLE_LAYER_BG = new Color(85, 85, 85);
+    public static final Color HIDDEN_LAYER_BG = new Color(120, 85, 85);
+    public static final Color VISIBLE_SELECTED_LAYER_BG = new Color(56, 77, 115);
+    public static final Color HIDDEN_SELECTED_LAYER_BG = new Color(127, 48, 43);
 
     // general table
     public static final Font TABLE_FONT = new Font(
@@ -86,10 +87,16 @@ public final class VitcoSettings {
             UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
     );
     public static final int DEFAULT_TABLE_INCREASE = 10;
-    public static final Border DEFAULT_BORDER =
+    public static final Border DEFAULT_CELL_BORDER =
             BorderFactory.createEmptyBorder(0, 10, 0, 0);
-    public static final Border DEFAULT_BORDER_EDIT =
-            BorderFactory.createEmptyBorder(DEFAULT_TABLE_INCREASE/2, 10, 0, 0);
+    public static final Border DEFAULT_CELL_BORDER_EDIT =
+            BorderFactory.createEmptyBorder(DEFAULT_TABLE_INCREASE / 2, 10, 0, 0);
 
+    // general config
+    public static final Float VOXEL_SIZE = 10f;
+    public static final Float VOXEL_GROUND_DISTANCE = 10f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
+    public static final Float VOXEL_GROUND_PLANE_SIZE = 21 * VOXEL_SIZE;
+    public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
+    public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
 
 }

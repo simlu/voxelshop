@@ -41,12 +41,16 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     // 0-9
                     48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
                     // f1 - f12
-                    112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123
+                    112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
+                    // delete
+                    127
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
+                    // delete
+                    127
             }));
 
     // holds the mapping: frame -> (KeyStroke, actionName)
@@ -351,7 +355,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // store shortcuts in preferences
     @PreDestroy
     public void onDestruct() {
-        preferences.storeObject("all_frame_shortcuts_as_map", map);
+        preferences.storeObject("all_shortcuts_as_map", map);
         preferences.storeObject("global_shortcuts_as_map", global);
     }
 
@@ -433,16 +437,19 @@ public class ShortcutManager implements ShortcutManagerInterface {
         if (str.length() == 1) {
             result = str.toCharArray()[0];
         } else {
+            if (str.equals("DEL")) {
+                result = 127;
+            } else
             if (str.startsWith("F")) {
                 str = str.substring(1);
-            }
-            try {
-                int tmp = Integer.valueOf(str);
-                if ((tmp >= 1) && (tmp <= 12)) {
-                    result = 111 + tmp;
+                try {
+                    int tmp = Integer.valueOf(str);
+                    if ((tmp >= 1) && (tmp <= 12)) {
+                        result = 111 + tmp;
+                    }
+                } catch (NumberFormatException e) {
+                    errorHandler.handle(e);
                 }
-            } catch (NumberFormatException e) {
-                errorHandler.handle(e);
             }
         }
         return result;

@@ -16,8 +16,9 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="C" action="main-view_action_copy" caption="main-view_copy_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="V" action="main-view_action_paste" caption="main-view_paste_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="X" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="T" action="mainview_toggle_voxel_snap"
-                  caption="mainview_toggle_voxel_snap_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="T" action="mainview_toggle_voxel_snap" caption="mainview_toggle_voxel_snap_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="I" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
     </frame>
 
     <frame name="sideView">
@@ -39,5 +40,9 @@
     </frame>
 
     <frame name="layer">
+        <shortcut ctrl="no" alt="no" shift="no" key="DEL" action="layer-frame_remove-layer" caption="layer-frame_remove-layer_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="N" action="layer-frame_add-layer" caption="layer-frame_add-layer_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="U" action="layer-frame_move-layer-up" caption="layer-frame_move-layer-up_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="D" action="layer-frame_move-layer-down" caption="layer-frame_move-layer-down_caption" />
     </frame>
 </head>

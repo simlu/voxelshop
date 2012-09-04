@@ -6,6 +6,8 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
+import com.jidesoft.plaf.LookAndFeelFactory;
+import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
@@ -136,6 +138,11 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         ));
 
         try {
+
+            // custom style (would go here)
+            // UIManager.setLookAndFeel(WindowsLookAndFeel.class.getName());
+            // LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_XERTO);
+
             // init loading
             ////////////////
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

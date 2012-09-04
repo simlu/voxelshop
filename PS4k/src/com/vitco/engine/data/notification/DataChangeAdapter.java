@@ -15,5 +15,5 @@ public abstract class DataChangeAdapter implements DataChangeListener {
     public void onVoxelDataChanged() {}
 
     @Override
-    public void onLayerDataChanged() {}
+    public void onVoxelSelectionChanged() {}
 }

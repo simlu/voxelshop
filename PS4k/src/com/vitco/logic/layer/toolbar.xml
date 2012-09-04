@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <icon-item src="resource/img/framebars/layer/add.png"
+               tool-tip="layer-frame_add-layer_tooltip"
+               action="layer-frame_add-layer"/>
+    <icon-item src="resource/img/framebars/layer/remove.png"
+               tool-tip="layer-frame_remove-layer_tooltip"
+               action="layer-frame_remove-layer"/>
+    <icon-item src="resource/img/framebars/layer/move_up.png"
+               tool-tip="layer-frame_move-layer-up_tooltip"
+               action="layer-frame_move-layer-up"
+               grayable="true"/>
+    <icon-item src="resource/img/framebars/layer/move_down.png"
+               tool-tip="layer-frame_move-layer-down_tooltip"
+               action="layer-frame_move-layer-down"
+               grayable="true"/>
+    <icon-item src="resource/img/framebars/layer/merge.png"
+               tool-tip="layer-frame_layer-merge_tooltip"
+               action="layer-frame_layer-merge"
+               grayable="true"/>
+</head>

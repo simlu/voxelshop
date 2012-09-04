@@ -41,9 +41,9 @@ public final class NotificationService implements DataChangeListener {
     }
 
     @Override
-    public void onLayerDataChanged() {
+    public void onVoxelSelectionChanged() {
         for (DataChangeListener listener : listeners) {
-            listener.onLayerDataChanged();
+            listener.onVoxelSelectionChanged();
         }
     }
 }

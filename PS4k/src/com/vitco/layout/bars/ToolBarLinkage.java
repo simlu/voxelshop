@@ -17,7 +17,8 @@ public class ToolBarLinkage extends BarLinkagePrototype {
 
         // register the toggle animation mode action
         actionManager.registerAction("toggle_animation_mode", new StateActionPrototype() {
-            private boolean animationMode = true;
+            // default mode is not animationMode
+            private boolean animationMode = false;
 
             @Override
             public void action(ActionEvent actionEvent) {

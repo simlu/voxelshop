@@ -138,12 +138,13 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
 
             @Override
             public void onVoxelDataChanged() {
-                //...
+                container.repaint();
             }
 
             @Override
-            public void onLayerDataChanged() {
-                //...
+            public void onVoxelSelectionChanged() {
+                container.skipNextWorldRender();
+                container.repaint();
             }
         });
 

@@ -1,5 +1,6 @@
 package com.vitco.logic.shortcut;
 
+import com.jidesoft.swing.JideTabbedPane;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 
@@ -39,7 +40,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 setBackground(VitcoSettings.DEFAULT_BG_COLOR);
             }
             setFont(VitcoSettings.TABLE_FONT);
-            setBorder(VitcoSettings.DEFAULT_BORDER); // padding
+            setBorder(VitcoSettings.DEFAULT_CELL_BORDER); // padding
             setValue(value.toString()); // set the value
             return this;
         }
@@ -70,7 +71,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                                                      boolean isSelected, final int rowIndex, final int vColIndex) {
             component = new JTextArea();
             component.setText((String) value); // set initial text
-            component.setBorder(VitcoSettings.DEFAULT_BORDER_EDIT);
+            component.setBorder(VitcoSettings.DEFAULT_CELL_BORDER_EDIT);
             component.setFont(VitcoSettings.TABLE_FONT_BOLD);
             // add the listener
             component.addKeyListener(new KeyListener() {
@@ -194,9 +195,9 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             return shortcut_table;
     }
 
-    // return a JTabbedPane that is autonomous and manages shortcuts
+    // return a JideTabbedPane that is autonomous and manages shortcuts
     @Override
-    public JTabbedPane getEditTables() {
+    public JideTabbedPane getEditTables() {
         // create the content of this frame (Shortcut Manager)
         // default header
         String[] columnNames = {
@@ -204,7 +205,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 langSelector.getString("shortcut_mg_header_shortcut")
         };
         // the different frame shortcuts are in different tabs
-        final JTabbedPane tabbedPane = new JTabbedPane();
+        final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.BOTTOM,JideTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.setFocusable(false); // looks nicer
         // add the global shortcuts
         String[][] globalShortcuts = shortcutManager.getShortcuts(null);

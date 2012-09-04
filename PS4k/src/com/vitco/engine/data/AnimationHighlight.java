@@ -16,7 +16,7 @@ public abstract class AnimationHighlight extends AnimationData implements Animat
 
     // remove all highlights
     @Override
-    public void removeHighlights() {
+    public void removeAnimationHighlights() {
         highlightPoint(-1);
         selectPoint(-1);
         setPreviewLine(-1, -1);

@@ -28,8 +28,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private int dragPoint = -1; // the point that is dragged
         private long wasDragged = -1; // -1 if not dragged or the time in ms of first drag event
 
-        // rebuild 2d index to do hit test when mouse is moving    // todo change to 50
-        private final RTree<Integer> points2D = new RTree<Integer>(10, 2, 2); //2D Rtree
+        // rebuild 2d index to do hit test when mouse is moving
+        private final RTree<Integer> points2D = new RTree<Integer>(50, 2, 2); //2D Rtree
         private boolean needToRebuild = true;
         private void rebuild2DIndex() {
             if (needToRebuild) {
@@ -47,7 +47,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             SimpleVector result;
             if (voxelSnap) {
                 SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX()*2, e.getY()*2).normalize();
-                Object[] res= world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
+                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
                 if (res[1] != null) {
                     Object3D obj3D = ((Object3D)res[1]);
                     result = obj3D.getOrigin();
@@ -240,7 +240,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             container.addMouseMotionListener(animationAdapter);
                             container.addMouseListener(animationAdapter);
                         } else {
-                            data.removeHighlights();
+                            data.removeAnimationHighlights();
                             container.removeMouseMotionListener(animationAdapter);
                             container.removeMouseListener(animationAdapter);
                         }
@@ -297,7 +297,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
                 @Override
                 public void onVoxelDataChanged() {
-                    // todo
+                    refreshHistoryButton.run();
                 }
             });
 
@@ -308,10 +308,11 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 public void action(ActionEvent actionEvent) {
                     if (getStatus()) {
                         if (animationMode) {
-                            data.removeHighlights();
+                            data.removeAnimationHighlights();
                             data.undoA();
                         } else {
-                            // todo
+                            data.removeVoxelHighlights();
+                            data.undoV();
                         }
                     }
                 }
@@ -321,7 +322,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     if (animationMode) {
                         return data.canUndoA();
                     } else {
-                        return false; // todo
+                        return data.canUndoV();
                     }
                 }
             });
@@ -332,10 +333,11 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 public void action(ActionEvent actionEvent) {
                     if (getStatus()) {
                         if (animationMode) {
-                            data.removeHighlights();
+                            data.removeAnimationHighlights();
                             data.redoA();
                         } else {
-                            // todo
+                            data.removeVoxelHighlights();
+                            data.redoV();
                         }
                     }
                 }
@@ -345,7 +347,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     if (animationMode) {
                         return data.canRedoA();
                     } else {
-                        return false; // todo
+                        return data.canRedoV();
                     }
                 }
             });

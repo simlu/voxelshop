@@ -45,7 +45,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // conversion
     protected final SimpleVector convert3D2D(SimpleVector point) {
         SimpleVector result = Interact2D.project3D2D(camera, buffer, point);
-        result.scalarMul(0.5f);
+        if (result != null) {
+            result.scalarMul(0.5f);
+        }
         return result;
     }
 
@@ -71,11 +73,22 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             drawAnimationOverlay = b;
         }
 
+        // enabled/ disables animation overlay
+        private boolean drawVoxelOverlay = true;
+        public void setDrawVoxelOverlay(boolean b) {
+            drawVoxelOverlay = b;
+        }
+
         // for the next refresh do not update the
         // world (OpenGL render)
         private boolean skipNextWorldRender = false;
         public void skipNextWorldRender() {
             skipNextWorldRender = true;
+        }
+        // prevent skipping of next world view
+        private boolean doNotSkipNextWorldRender = false;
+        public void doNotSkipNextWorldRender() {
+            doNotSkipNextWorldRender = true;
         }
 
         // wrapper
@@ -88,6 +101,58 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             SimpleVector point2d = convert3D2D(point);
             if (point2d != null) {
                 G2DUtil.drawPoint(point2d, ig, innerColor, outerColor, radius, borderSize);
+            }
+        }
+
+        // draw overlay for voxels
+        private void drawVoxelOverlay(Graphics2D ig) {
+            // Anti-alias
+            ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            // draw selected voxel (ghost / preview voxel)
+            int[] voxel = data.getHighlightedVoxel();
+            if (voxel != null) {
+                SimpleVector v1 = new SimpleVector(voxel[0] + 0.5, voxel[1] + 0.5, voxel[2] + 0.5);
+                SimpleVector v2 = new SimpleVector(voxel[0] + 0.5, voxel[1] + 0.5, voxel[2] - 0.5);
+                SimpleVector v3 = new SimpleVector(voxel[0] + 0.5, voxel[1] - 0.5, voxel[2] - 0.5);
+                SimpleVector v4 = new SimpleVector(voxel[0] + 0.5, voxel[1] - 0.5, voxel[2] + 0.5);
+                SimpleVector v5 = new SimpleVector(voxel[0] - 0.5, voxel[1] + 0.5, voxel[2] + 0.5);
+                SimpleVector v6 = new SimpleVector(voxel[0] - 0.5, voxel[1] + 0.5, voxel[2] - 0.5);
+                SimpleVector v7 = new SimpleVector(voxel[0] - 0.5, voxel[1] - 0.5, voxel[2] - 0.5);
+                SimpleVector v8 = new SimpleVector(voxel[0] - 0.5, voxel[1] - 0.5, voxel[2] + 0.5);
+                v1.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v2.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v3.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v4.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v5.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v6.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v7.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v8.scalarMul(VitcoSettings.VOXEL_SIZE);
+                v1 = convert3D2D(v1);
+                v2 = convert3D2D(v2);
+                v3 = convert3D2D(v3);
+                v4 = convert3D2D(v4);
+                v5 = convert3D2D(v5);
+                v6 = convert3D2D(v6);
+                v7 = convert3D2D(v7);
+                v8 = convert3D2D(v8);
+
+                if (v1 != null && v2 != null && v3 != null && v4 != null && v5 != null && v6 != null && v7 != null && v8 != null) {
+                    ig.setColor(VitcoSettings.VOXEL_PREVIEW_LINE_COLOR); // line color
+                    ig.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                    ig.drawLine(Math.round(v1.x), Math.round(v1.y), Math.round(v2.x), Math.round(v2.y));
+                    ig.drawLine(Math.round(v2.x), Math.round(v2.y), Math.round(v3.x), Math.round(v3.y));
+                    ig.drawLine(Math.round(v3.x), Math.round(v3.y), Math.round(v4.x), Math.round(v4.y));
+                    ig.drawLine(Math.round(v4.x), Math.round(v4.y), Math.round(v1.x), Math.round(v1.y));
+                    ig.drawLine(Math.round(v5.x), Math.round(v5.y), Math.round(v6.x), Math.round(v6.y));
+                    ig.drawLine(Math.round(v6.x), Math.round(v6.y), Math.round(v7.x), Math.round(v7.y));
+                    ig.drawLine(Math.round(v7.x), Math.round(v7.y), Math.round(v8.x), Math.round(v8.y));
+                    ig.drawLine(Math.round(v8.x), Math.round(v8.y), Math.round(v5.x), Math.round(v5.y));
+                    ig.drawLine(Math.round(v1.x), Math.round(v1.y), Math.round(v5.x), Math.round(v5.y));
+                    ig.drawLine(Math.round(v2.x), Math.round(v2.y), Math.round(v6.x), Math.round(v6.y));
+                    ig.drawLine(Math.round(v3.x), Math.round(v3.y), Math.round(v7.x), Math.round(v7.y));
+                    ig.drawLine(Math.round(v4.x), Math.round(v4.y), Math.round(v8.x), Math.round(v8.y));
+                }
             }
         }
 
@@ -197,9 +262,13 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // handle the redrawing of this component
         @Override
         protected final void paintComponent(Graphics g1) {
-            if (skipNextWorldRender) {
+            if (skipNextWorldRender && !doNotSkipNextWorldRender) {
                 skipNextWorldRender = false;
             } else {
+                if (doNotSkipNextWorldRender) {
+                    doNotSkipNextWorldRender = false;
+                    skipNextWorldRender = false;
+                }
                 buffer.clear(VitcoSettings.ANIMATION_BG_COLOR);
                 if (drawWorld) {
                     world.renderScene(buffer);
@@ -213,6 +282,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             buffer.display(g1);
             if (drawOverlay && drawAnimationOverlay) { // overlay part 2
                 drawAnimationOverlay((Graphics2D) g1); // refreshes with animation data
+            }
+            if (drawOverlay && drawVoxelOverlay) {
+                drawVoxelOverlay((Graphics2D) g1);
             }
         }
     }

@@ -32,6 +32,8 @@ public interface VoxelDataInterface {
     boolean fillRange(int[] center, int rad, Color color);
     // delete all voxels in layer
     boolean clearV(int layerId);
+    // returns a voxel if the current layer has a voxel at the position
+    Voxel searchVoxel(int[] pos);
     // get all voxels in current layer
     Voxel[] getLayerVoxels(int layerId);
     // get all visible layer voxels
@@ -40,7 +42,8 @@ public interface VoxelDataInterface {
     Voxel[] getVoxelsXY(int z);
     Voxel[] getVoxelsXZ(int y);
     Voxel[] getVoxelsYZ(int x);
-
+    // get voxel number in layer
+    int getVoxelCount(int layerId);
 
     // undo last action (animation)
     void undoV();
@@ -81,5 +84,7 @@ public interface VoxelDataInterface {
     // true iff layer can be moved down
     boolean canMoveLayerDown(int layerId);
     // merge visible layers
-    boolean mergeLayers();
+    boolean mergeVisibleLayers();
+    // true iff vis layers can be merged
+    boolean canMergeVisibleLayers();
 }

@@ -177,7 +177,7 @@ public class VoxelDataTest {
         int id2 = data.addVoxel(Color.GREEN, new int[] {1,1,2});
         data.selectLayer(lid2);
         int id3 = data.addVoxel(Color.ORANGE, new int[] {1,1,1});
-        data.mergeLayers();
+        data.mergeVisibleLayers();
         assert data.getLayers().length == 1;
         assert data.getVoxel(id1) == null;
         assert data.getVoxel(id2) == null;
@@ -191,7 +191,7 @@ public class VoxelDataTest {
     public void testGetVoxelSlice() throws Exception {
         int lid1 = data.createLayer("layer1");
         data.selectLayer(lid1);
-        assert !data.mergeLayers();
+        assert !data.mergeVisibleLayers();
         data.addVoxel(Color.RED, new int[] {0,0,0});
         data.addVoxel(Color.RED, new int[] {5,2,0});
         data.addVoxel(Color.RED, new int[] {4,-10,0});
@@ -440,7 +440,6 @@ public class VoxelDataTest {
 
     @Test
     public void randomeMess() throws Exception {
-        // todo complete!
         class Util {
             private final Random rand;
             public Util(int seed) {

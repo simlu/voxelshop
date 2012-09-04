@@ -1,31 +1,232 @@
 package com.vitco.logic.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.Primitives;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
+import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.BiMap;
 import com.vitco.util.WorldUtil;
+import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.annotation.PreDestroy;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.util.Random;
+import java.awt.event.*;
+import java.util.*;
 
 /**
  * Creates the mian view instance and attaches the specific user interaction.
  */
 public class MainView extends EngineInteractionPrototype implements MainViewInterface {
 
+    // voxel draw adapter for main view
+    protected transient final DrawMouseAdapter drawAdapter = new DrawMouseAdapter();
+    protected class DrawMouseAdapter extends MouseAdapter implements KeyEventDispatcher {
+
+        // true means we're currently adding/removing voxels on drag
+        private boolean massVoxel = false;
+
+        // current alt/ctrl status (mouse modifiers)
+        private boolean altDown = false;
+        private boolean ctrlDown = false;
+
+        // last hover position
+        private Point lastMouseMoved = new Point(-1, -1);
+
+        // execute on mouse event
+        private void execute(MouseEvent e) {
+            if (data.getHighlightedVoxel() != null) { // something highlighted
+                if (ctrlDown) { // control = add voxel
+                    int[] highlightedVoxel = data.getHighlightedVoxel();
+                    data.highlightVoxel(null);
+                    Random rand = new Random();
+                    data.addVoxel(new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)), highlightedVoxel);
+                    massVoxel = true;
+                } else if (altDown) { // alt = remove voxel
+                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
+                    if (highlightedVoxel != null) {
+                        data.removeVoxel(highlightedVoxel.id);
+                    }
+                    massVoxel = true;
+                }
+            }
+        }
+
+        // hover on mouse event
+        private void hover(MouseEvent e) {
+            lastMouseMoved = e.getPoint();
+            // check if we hit something
+            SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
+            Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
+            if (res[1] != null) { // something hit
+                Object3D obj3D = ((Object3D)res[1]);
+                int[] voxelPos = data.getVoxel(voxelToObject.getKey(obj3D.getID())).getPosAsInt();
+                if (!altDown) { // alt = select voxel else select next to voxel
+                    // find collision point
+                    SimpleVector colPoint = camera.getPosition();
+                    dir.scalarMul((Float)res[0]);
+                    colPoint.add(dir);
+                    // find side that it hits
+                    ArrayList<float[]> planes = new ArrayList<float[]>();
+                    planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
+                    planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
+                    planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
+                    planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
+                    planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
+                    planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
+                    Collections.sort(planes, new Comparator<float[]>() {
+                        @Override
+                        public int compare(float[] o1, float[] o2) {
+                            return (int)Math.signum(o1[1] - o2[1]);
+                        }
+                    });
+                    switch ((int)planes.get(0)[0]) {
+                        case 1:  voxelPos[1] -= 1; break;
+                        case 2:  voxelPos[1] += 1; break;
+                        case 3:  voxelPos[0] -= 1; break;
+                        case 4:  voxelPos[0] += 1; break;
+                        case 5:  voxelPos[2] -= 1; break;
+                        case 6:  voxelPos[2] += 1; break;
+                    }
+                }
+                // highlight the voxel (position)
+                data.highlightVoxel(voxelPos);
+            } else { // hit nothing
+                if (!altDown) { // not trying to delete
+                    // hit nothing, draw preview on zero level
+                    if (dir.y > 0.05) { // angle big enough
+                        // calculate position
+                        float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - camera.getPosition().y) / dir.y;
+                        dir.scalarMul(t);
+                        SimpleVector pos = camera.getPosition();
+                        pos.add(dir);
+                        pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
+                        if (Math.abs(pos.x) < VitcoSettings.VOXEL_GROUND_MAX_RANGE && Math.abs(pos.z) < VitcoSettings.VOXEL_GROUND_MAX_RANGE) {
+                            // if we hit the ground plane
+                            data.highlightVoxel(new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)});
+                        } else {
+                            data.highlightVoxel(null);
+                        }
+                    } else { // angle too small
+                        data.highlightVoxel(null);
+                    }
+                } else { // trying to delete and hit nothing
+                    data.highlightVoxel(null);
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            camera.setEnabled(!altDown && !ctrlDown);
+            execute(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            hover(e);
+            massVoxel = false;
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            data.removeVoxelHighlights();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (massVoxel) {
+                hover(e);
+                execute(e);
+            } else {
+                data.removeVoxelHighlights();
+            }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            hover(e);
+        }
+
+        // handle change of ctrl and alt
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+            if (((e.isAltDown() && e.getKeyCode() == 18) != altDown || (e.isControlDown() && e.getKeyCode() == 17) != ctrlDown)) {
+                altDown = e.isAltDown() && e.getKeyCode() == 18;
+                ctrlDown = e.isControlDown() && e.getKeyCode() == 17;
+                mouseMoved(new MouseEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), lastMouseMoved.x, lastMouseMoved.y, 1, false));
+                e.consume();
+                return true;
+            }
+            return false;
+        }
+    }
+
+    // maps voxel ids to world ids
+    BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
+
+    // helper
+    private void updateWorldWithVoxels() {
+        // get the current voxels
+        Voxel[] voxels = data.getVisibleLayerVoxel();
+
+        // temporary to find unneeded objects
+        ArrayList<Integer> voxelIds = new ArrayList<Integer>();
+        voxelIds.addAll(voxelToObject.keySet());
+
+        // add all new voxels
+        for (Voxel voxel : voxels) {
+            voxelIds.remove((Integer)voxel.id);
+            if (!voxelToObject.containsKey(voxel.id)) {
+                int id = WorldUtil.addBox(world,
+                        new SimpleVector(
+                                voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
+                                voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
+                                voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
+                        VitcoSettings.VOXEL_SIZE/2,
+                        voxel.getColor());
+                voxelToObject.put(voxel.id, id);
+            }
+        }
+
+        // remove the objects that are no longer needed
+        for (int id : voxelIds) {
+            world.removeObject(voxelToObject.get(id));
+            voxelToObject.removeByKey(id);
+        }
+    }
+
     @Override
     public final JPanel build() {
+
+        // enable / disable voxel interaction
+        actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
+            @Override
+            public void run() {
+                ((StateActionPrototype)actionManager.getAction("toggle_animation_mode")).addChangeListener(new ChangeListener() {
+                    @Override
+                    public void actionFired(boolean b) { // this is fired once on setup
+                        if (b) {
+                            data.removeVoxelHighlights();
+                            container.removeMouseMotionListener(drawAdapter);
+                            container.removeMouseListener(drawAdapter);
+                            KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(drawAdapter);
+                        } else {
+                            container.addMouseMotionListener(drawAdapter);
+                            container.addMouseListener(drawAdapter);
+                            KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(drawAdapter);
+                        }
+                        container.repaint();
+                    }
+                });
+            }
+        });
 
         // enable snap
         animationAdapter.setVoxelSnap(true);
@@ -41,36 +242,12 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         WorldUtil.addLight(world, new SimpleVector(1300, 200, 200), 1);
         WorldUtil.addLight(world, new SimpleVector(-1300, -200, -200), 1);
 
-        // for testing
-        Random rand = new Random();
-        for (int i = -1; i < 2; i+=2) {
-            for (int j = -1; j < 2; j+=2) {
-                for (int k = -1; k < 2; k+=2) {
-                    Color col = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-                    WorldUtil.addBox(world, new SimpleVector(i * 50, k*50, j * 50), 10f, col);
-                }
-            }
-        }
-
-        // for testing
-        //Random rand = new Random();
-        for (int i = -30; i <= 30; i+=1) {
-            for (int j = -30; j <= 30; j+=1) {
-                for (int k = -30; k <= 30; k+=1) {
-                    if (rand.nextInt(500) == 0) {
-                        Color col = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-                        WorldUtil.addBox(world, new SimpleVector(i * 4, k * 4 , j * 4), 2f, col);
-                    }
-                }
-            }
-        }
-
         // add the world plane (ground)
-        Object3D plane = Primitives.getPlane(1, 200f);
+        Object3D plane = Primitives.getPlane(1, VitcoSettings.VOXEL_GROUND_PLANE_SIZE);
         plane.setCulling(false); //show from both sides
         plane.setTransparency(0);
         plane.setAdditionalColor(VitcoSettings.MAIN_VIEW_GROUND_PLANE_COLOR);
-        plane.setOrigin(new SimpleVector(0,100f,0));
+        plane.setOrigin(new SimpleVector(0, VitcoSettings.VOXEL_GROUND_DISTANCE, 0));
         plane.rotateX((float)Math.PI/2);
         world.addObject(plane);
 
@@ -182,12 +359,15 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
             @Override
             public void onVoxelDataChanged() {
-                //...
+                updateWorldWithVoxels();
+                container.doNotSkipNextWorldRender();
+                container.repaint();
             }
 
             @Override
-            public void onLayerDataChanged() {
-                //...
+            public void onVoxelSelectionChanged() {
+                container.skipNextWorldRender();
+                container.repaint();
             }
         });
 

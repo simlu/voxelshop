@@ -7,7 +7,7 @@ import com.vitco.engine.data.container.ExtendedVector;
  */
 public interface AnimationHighlightInterface {
     // remove all highlights
-    void removeHighlights();
+    void removeAnimationHighlights();
     // highlight a point
     boolean highlightPoint(int id);
     // select a point

@@ -46,6 +46,10 @@ public final class VoxelLayer implements Serializable {
         return result;
     }
 
+    public int getSize() {
+        return voxelList.size();
+    }
+
     // check if a position already contains a voxel
     public boolean containsVoxel(int[] pos) {
         return voxelIndex.search(new float[]{pos[0], pos[1], pos[2]}, ZEROS).size() > 0;

@@ -548,7 +548,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean setColor(int voxelId, Color color) {
         boolean result = false;
-        if (voxels.containsKey(voxelId)) {
+        if (voxels.containsKey(voxelId) && voxels.get(voxelId).getColor() != color) {
             historyManagerV.applyIntent(new ColorVoxelIntent(voxelId, color, false));
             result = true;
         }
@@ -567,7 +567,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean setAlpha(int voxelId, int alpha) {
         boolean result = false;
-        if (voxels.containsKey(voxelId)) {
+        if (voxels.containsKey(voxelId) && voxels.get(voxelId).getAlpha() != alpha) {
             historyManagerV.applyIntent(new AlphaVoxelIntent(voxelId, alpha, false));
             result = true;
         }
@@ -620,12 +620,25 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final boolean clearV(int layerId) {
         boolean result = false;
         if (layers.containsKey(layerId)) {
-            if (layers.get(layerId).getVoxels().length > 0) {
+            if (layers.get(layerId).getSize() > 0) {
                 historyManagerV.applyIntent(new ClearVoxelIntent(layerId, false));
                 result = true;
             }
         }
         return result;
+    }
+
+    @Override
+    public final Voxel searchVoxel(int[] pos) {
+        Voxel[] result = null;
+        VoxelLayer layer = layers.get(selectedLayer);
+        if (layer != null) {
+            result = layer.search(pos, 0);
+            if (result.length > 0) {
+                return result[0];
+            }
+        }
+        return null;
     }
 
     Voxel[] layerVoxelBuffer = new Voxel[0];
@@ -722,6 +735,15 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
+    public final int getVoxelCount(int layerId) {
+        int result = 0;
+        if (layers.containsKey(layerId)) {
+            result = layers.get(layerId).getSize();
+        }
+        return result;
+    }
+
+    @Override
     public final void undoV() {
         historyManagerV.unapply();
     }
@@ -761,7 +783,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean renameLayer(int layerId, String newName) {
         boolean result = false;
-        if (layers.containsKey(layerId)) {
+        if (layers.containsKey(layerId) && !newName.equals(layers.get(layerId).getName())) {
             historyManagerV.applyIntent(new RenameLayerIntent(layerId, newName, false));
             result = true;
         }
@@ -793,7 +815,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean selectLayer(int layerId) {
         boolean result = false;
-        if (layers.containsKey(layerId) || layerId == -1) {
+        if ((layers.containsKey(layerId) || layerId == -1) && selectedLayer != layerId) {
             historyManagerV.applyIntent(new SelectLayerIntent(layerId, false));
             result = true;
         }
@@ -860,22 +882,30 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     @Override
     public final boolean canMoveLayerUp(int layerId) {
-        return layerOrder.lastIndexOf(layerId) > 0;
+        return layers.containsKey(layerId) && layerOrder.lastIndexOf(layerId) > 0;
     }
 
     @Override
     public final boolean canMoveLayerDown(int layerId) {
-        return layerOrder.lastIndexOf(layerId) < layerOrder.size() - 1;
+        return layers.containsKey(layerId) && layerOrder.lastIndexOf(layerId) < layerOrder.size() - 1;
     }
 
     @Override
-    public final boolean mergeLayers() {
+    public final boolean mergeVisibleLayers() {
+        if (canMergeVisibleLayers()) {
+            historyManagerV.applyIntent(new MergeLayersIntent(false));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public final boolean canMergeVisibleLayers() {
         // if there are more than one visible layer
         int visibleLayers = 0;
         for (int layerId : layerOrder) {
             if (layers.get(layerId).isVisible()) {
                 if (visibleLayers > 0) {
-                    historyManagerV.applyIntent(new MergeLayersIntent(false));
                     return true;
                 }
                 visibleLayers++;
