@@ -30,6 +30,7 @@
                 <xs:element ref="menu" />
                 <xs:element ref="item" />
                 <xs:element ref="icon-item" />
+                <xs:element name="separator"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>

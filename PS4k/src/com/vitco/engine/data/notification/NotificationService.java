@@ -5,15 +5,18 @@ import java.util.ArrayList;
 /**
  * Notification Service, deals with and notifies listeners.
  */
-public final class NotificationService implements DataChangeListener {
+public final class NotificationService implements NotificationServiceInterface {
+
     private final ArrayList<DataChangeListener> listeners = new ArrayList<DataChangeListener>();
 
     // add a listener
+    @Override
     public void add(DataChangeListener dcl) {
         listeners.add(dcl);
     }
 
     // remove a listener
+    @Override
     public void remove(DataChangeListener dcl) {
         listeners.remove(dcl);
     }
@@ -41,9 +44,16 @@ public final class NotificationService implements DataChangeListener {
     }
 
     @Override
-    public void onVoxelSelectionChanged() {
+     public void onVoxelSelectionChanged() {
         for (DataChangeListener listener : listeners) {
             listener.onVoxelSelectionChanged();
+        }
+    }
+
+    @Override
+    public void onColorDataChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onColorDataChanged();
         }
     }
 }

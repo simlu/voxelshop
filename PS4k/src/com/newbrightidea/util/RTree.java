@@ -1,4 +1,4 @@
-package com.vitco.util;
+package com.newbrightidea.util;
 
 import java.io.Serializable;
 import java.util.*;

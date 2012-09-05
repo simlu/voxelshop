@@ -67,6 +67,8 @@ public interface VoxelDataInterface {
     String[] getLayerNames();
     // select a layer
     boolean selectLayer(int layerId);
+    // select a layer without producing a history entry
+    boolean selectLayerSoft(int layerId);
     // retrieve selected layer
     int getSelectedLayer();
     // retrieve all layers

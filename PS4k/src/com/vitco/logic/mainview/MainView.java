@@ -26,29 +26,28 @@ import java.util.*;
 public class MainView extends EngineInteractionPrototype implements MainViewInterface {
 
     // voxel draw adapter for main view
-    protected transient final DrawMouseAdapter drawAdapter = new DrawMouseAdapter();
+    protected final DrawMouseAdapter drawAdapter = new DrawMouseAdapter();
     protected class DrawMouseAdapter extends MouseAdapter implements KeyEventDispatcher {
 
         // true means we're currently adding/removing voxels on drag
         private boolean massVoxel = false;
 
         // current alt/ctrl status (mouse modifiers)
-        private boolean altDown = false;
+        private boolean shiftDown = false;
         private boolean ctrlDown = false;
 
         // last hover position
         private Point lastMouseMoved = new Point(-1, -1);
 
         // execute on mouse event
-        private void execute(MouseEvent e) {
+        private void execute() {
             if (data.getHighlightedVoxel() != null) { // something highlighted
                 if (ctrlDown) { // control = add voxel
                     int[] highlightedVoxel = data.getHighlightedVoxel();
                     data.highlightVoxel(null);
-                    Random rand = new Random();
-                    data.addVoxel(new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)), highlightedVoxel);
+                    data.addVoxel(data.getCurrentColor(), highlightedVoxel);
                     massVoxel = true;
-                } else if (altDown) { // alt = remove voxel
+                } else if (shiftDown) { // alt = remove voxel
                     Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
                     if (highlightedVoxel != null) {
                         data.removeVoxel(highlightedVoxel.id);
@@ -67,7 +66,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             if (res[1] != null) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
                 int[] voxelPos = data.getVoxel(voxelToObject.getKey(obj3D.getID())).getPosAsInt();
-                if (!altDown) { // alt = select voxel else select next to voxel
+                if (!shiftDown) { // alt = select voxel else select next to voxel
                     // find collision point
                     SimpleVector colPoint = camera.getPosition();
                     dir.scalarMul((Float)res[0]);
@@ -98,7 +97,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 // highlight the voxel (position)
                 data.highlightVoxel(voxelPos);
             } else { // hit nothing
-                if (!altDown) { // not trying to delete
+                if (!shiftDown) { // not trying to delete
                     // hit nothing, draw preview on zero level
                     if (dir.y > 0.05) { // angle big enough
                         // calculate position
@@ -124,14 +123,13 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
         @Override
         public void mousePressed(MouseEvent e) {
-            camera.setEnabled(!altDown && !ctrlDown);
-            execute(e);
+            execute();
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            hover(e);
             massVoxel = false;
+            hover(e);
         }
 
         @Override
@@ -143,7 +141,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         public void mouseDragged(MouseEvent e) {
             if (massVoxel) {
                 hover(e);
-                execute(e);
+                execute();
             } else {
                 data.removeVoxelHighlights();
             }
@@ -157,19 +155,31 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         // handle change of ctrl and alt
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
-            if (((e.isAltDown() && e.getKeyCode() == 18) != altDown || (e.isControlDown() && e.getKeyCode() == 17) != ctrlDown)) {
-                altDown = e.isAltDown() && e.getKeyCode() == 18;
+            if (((e.isShiftDown() && e.getKeyCode() == 16) != shiftDown || (e.isControlDown() && e.getKeyCode() == 17) != ctrlDown)) {
+                shiftDown = e.isShiftDown() && e.getKeyCode() == 16;
                 ctrlDown = e.isControlDown() && e.getKeyCode() == 17;
-                mouseMoved(new MouseEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), lastMouseMoved.x, lastMouseMoved.y, 1, false));
-                e.consume();
-                return true;
+                camera.setEnabled(!shiftDown && !ctrlDown);
+                hover(new MouseEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), lastMouseMoved.x, lastMouseMoved.y, 1, false));
             }
             return false;
         }
     }
 
     // maps voxel ids to world ids
-    BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
+    protected final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
+    protected final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
+
+    // helper
+    private void addVoxelToWorld(Voxel voxel) {
+        int id = WorldUtil.addBox(world,
+                new SimpleVector(
+                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
+                VitcoSettings.VOXEL_SIZE/2,
+                voxel.getColor());
+        voxelToObject.put(voxel.id, id);
+    }
 
     // helper
     private void updateWorldWithVoxels() {
@@ -180,18 +190,18 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         ArrayList<Integer> voxelIds = new ArrayList<Integer>();
         voxelIds.addAll(voxelToObject.keySet());
 
-        // add all new voxels
+        // loop over all voxels
         for (Voxel voxel : voxels) {
             voxelIds.remove((Integer)voxel.id);
-            if (!voxelToObject.containsKey(voxel.id)) {
-                int id = WorldUtil.addBox(world,
-                        new SimpleVector(
-                                voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
-                                voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
-                                voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
-                        VitcoSettings.VOXEL_SIZE/2,
-                        voxel.getColor());
-                voxelToObject.put(voxel.id, id);
+            if (!voxelToObject.containsKey(voxel.id)) { // add all new voxels
+                addVoxelToWorld(voxel);
+                idToVoxel.put(voxel.id, voxel);
+            } else { // remove and add all altered voxels
+                if (!idToVoxel.get(voxel.id).equals(voxel)) {
+                    idToVoxel.put(voxel.id, voxel);
+                    world.removeObject(voxelToObject.get(voxel.id)); // remove
+                    addVoxelToWorld(voxel); // add
+                }
             }
         }
 
@@ -199,6 +209,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         for (int id : voxelIds) {
             world.removeObject(voxelToObject.get(id));
             voxelToObject.removeByKey(id);
+            idToVoxel.remove(id);
         }
     }
 

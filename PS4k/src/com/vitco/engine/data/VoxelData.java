@@ -7,9 +7,7 @@ import com.vitco.engine.data.history.HistoryChangeListener;
 import com.vitco.engine.data.history.HistoryManager;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -21,32 +19,28 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         super();
         // notify when the data changes
         historyManagerV.addChangeListener(new HistoryChangeListener() {
+            private static final long serialVersionUID = 1L;
             @Override
             public final void onChange() {
-                layerBufferValid = false;
-                layerNameBufferValid = false;
-                visibleLayerVoxelBufferValid = false;
-                layerVoxelBufferValid = false;
-                layerVoxelXYBufferValid = false;
-                layerVoxelXZBufferValid = false;
-                layerVoxelYZBufferValid = false;
-                notifier.onVoxelDataChanged();
+                invalidateV();
             }
         });
     }
 
-    // ###################### DATA
+    // invalidate cache
+    protected final void invalidateV() {
+        layerBufferValid = false;
+        layerNameBufferValid = false;
+        visibleLayerVoxelBufferValid = false;
+        layerVoxelBufferValid = false;
+        layerVoxelXYBufferValid = false;
+        layerVoxelXZBufferValid = false;
+        layerVoxelYZBufferValid = false;
+        notifier.onVoxelDataChanged();
+    }
+
     // holds the historyV data
     protected final HistoryManager historyManagerV = new HistoryManager();
-
-    // holds all layers (layers map to voxel ids)
-    protected int selectedLayer = -1;
-    protected final HashMap<Integer, VoxelLayer> layers = new HashMap<Integer, VoxelLayer>();
-    // order of the layers
-    protected final ArrayList<Integer> layerOrder = new ArrayList<Integer>();
-
-    // holds all voxels (maps id to voxel)
-    private final HashMap<Integer, Voxel> voxels = new HashMap<Integer, Voxel>();
 
     // ###################### PRIVATE HELPER CLASSES
 
@@ -63,14 +57,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
         @Override
         protected void applyAction() {
-            layers.put(layerId, new VoxelLayer(layerId, layerName));
-            layerOrder.add(0, layerId);
+            dataContainer.layers.put(layerId, new VoxelLayer(layerId, layerName));
+            dataContainer.layerOrder.add(0, layerId);
         }
 
         @Override
         protected void unapplyAction() {
-            layers.remove(layerId);
-            layerOrder.remove(layerOrder.lastIndexOf(layerId));
+            dataContainer.layers.remove(layerId);
+            dataContainer.layerOrder.remove(dataContainer.layerOrder.lastIndexOf(layerId));
         }
     }
 
@@ -88,26 +82,22 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         protected void applyAction() {
             if (isFirstCall()) {
                 // remove all points in this layer
-                for (Voxel voxel : layers.get(layerId).getVoxels()) {
+                for (Voxel voxel : dataContainer.layers.get(layerId).getVoxels()) {
                     historyManagerV.applyIntent(new RemoveVoxelIntent(voxel.id, true));
                 }
-                // make sure the selected Layer is still "valid"
-                if (selectedLayer == layerId) {
-                    historyManagerV.applyIntent(new SelectLayerIntent(-1, true));
-                }
                 // remember the position of this layer
-                layerPosition = layerOrder.indexOf(layerId);
+                layerPosition = dataContainer.layerOrder.indexOf(layerId);
                 // and the name
-                layerName = layers.get(layerId).getName();
+                layerName = dataContainer.layers.get(layerId).getName();
             }
-            layers.remove(layerId);
-            layerOrder.remove(layerId);
+            dataContainer.layers.remove(layerId);
+            dataContainer.layerOrder.remove(layerId);
         }
 
         @Override
         protected void unapplyAction() {
-            layers.put(layerId, new VoxelLayer(layerId, layerName));
-            layerOrder.add(layerPosition, layerId);
+            dataContainer.layers.put(layerId, new VoxelLayer(layerId, layerName));
+            dataContainer.layerOrder.add(layerPosition, layerId);
         }
     }
 
@@ -125,14 +115,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                oldName = layers.get(layerId).getName();
+                oldName = dataContainer.layers.get(layerId).getName();
             }
-            layers.get(layerId).setName(newName);
+            dataContainer.layers.get(layerId).setName(newName);
         }
 
         @Override
         protected void unapplyAction() {
-            layers.get(layerId).setName(oldName);
+            dataContainer.layers.get(layerId).setName(oldName);
         }
     }
 
@@ -148,14 +138,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                oldLayerId = selectedLayer;
+                oldLayerId = dataContainer.selectedLayer;
             }
-            selectedLayer = newLayerId;
+            dataContainer.selectedLayer = newLayerId;
         }
 
         @Override
         protected void unapplyAction() {
-            selectedLayer = oldLayerId;
+            dataContainer.selectedLayer = oldLayerId;
         }
     }
 
@@ -173,14 +163,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                oldVisible = layers.get(layerId).isVisible();
+                oldVisible = dataContainer.layers.get(layerId).isVisible();
             }
-            layers.get(layerId).setVisible(visible);
+            dataContainer.layers.get(layerId).setVisible(visible);
         }
 
         @Override
         protected void unapplyAction() {
-            layers.get(layerId).setVisible(oldVisible);
+            dataContainer.layers.get(layerId).setVisible(oldVisible);
         }
     }
 
@@ -196,21 +186,21 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
         @Override
         protected void applyAction() {
-            int index = layerOrder.lastIndexOf(layerId);
+            int index = dataContainer.layerOrder.lastIndexOf(layerId);
             if (moveUp) {
-                Collections.swap(layerOrder, index, index - 1);
+                Collections.swap(dataContainer.layerOrder, index, index - 1);
             } else {
-                Collections.swap(layerOrder, index, index + 1);
+                Collections.swap(dataContainer.layerOrder, index, index + 1);
             }
         }
 
         @Override
         protected void unapplyAction() {
-            int index = layerOrder.lastIndexOf(layerId);
+            int index = dataContainer.layerOrder.lastIndexOf(layerId);
             if (moveUp) {
-                Collections.swap(layerOrder, index, index + 1);
+                Collections.swap(dataContainer.layerOrder, index, index + 1);
             } else {
-                Collections.swap(layerOrder, index, index - 1);
+                Collections.swap(dataContainer.layerOrder, index, index - 1);
             }
         }
     }
@@ -226,14 +216,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
         @Override
         protected void applyAction() {
-            voxels.put(voxel.id, voxel);
-            layers.get(voxel.getLayerId()).addVoxel(voxel);
+            dataContainer.voxels.put(voxel.id, voxel);
+            dataContainer.layers.get(voxel.getLayerId()).addVoxel(voxel);
         }
 
         @Override
         protected void unapplyAction() {
-            voxels.remove(voxel.id);
-            layers.get(voxel.getLayerId()).removeVoxel(voxel);
+            dataContainer.voxels.remove(voxel.id);
+            dataContainer.layers.get(voxel.getLayerId()).removeVoxel(voxel);
         }
     }
 
@@ -249,16 +239,16 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                voxel = voxels.get(voxelId);
+                voxel = dataContainer.voxels.get(voxelId);
             }
-            voxels.remove(voxel.id);
-            layers.get(voxel.getLayerId()).removeVoxel(voxel);
+            dataContainer.voxels.remove(voxel.id);
+            dataContainer.layers.get(voxel.getLayerId()).removeVoxel(voxel);
         }
 
         @Override
         protected void unapplyAction() {
-            voxels.put(voxel.id, voxel);
-            layers.get(voxel.getLayerId()).addVoxel(voxel);
+            dataContainer.voxels.put(voxel.id, voxel);
+            dataContainer.layers.get(voxel.getLayerId()).addVoxel(voxel);
         }
     }
 
@@ -275,7 +265,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                Voxel voxel = voxels.get(voxelId);
+                Voxel voxel = dataContainer.voxels.get(voxelId);
                 historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
                 historyManagerV.applyIntent(new AddVoxelIntent(voxelId, newPos, voxel.getColor(), voxel.getLayerId(), true));
             }
@@ -302,15 +292,15 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                oldColor = voxels.get(voxelId).getColor();
-                voxel = voxels.get(voxelId);
+                oldColor = dataContainer.voxels.get(voxelId).getColor();
+                voxel = dataContainer.voxels.get(voxelId);
             }
-            layers.get(voxel.getLayerId()).setVoxelColor(voxel, newColor);
+            dataContainer.layers.get(voxel.getLayerId()).setVoxelColor(voxel, newColor);
         }
 
         @Override
         protected void unapplyAction() {
-            layers.get(voxel.getLayerId()).setVoxelColor(voxel, oldColor);
+            dataContainer.layers.get(voxel.getLayerId()).setVoxelColor(voxel, oldColor);
         }
     }
 
@@ -329,15 +319,15 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                voxel = voxels.get(voxelId);
+                voxel = dataContainer.voxels.get(voxelId);
                 oldAlpha = voxel.getAlpha();
             }
-            layers.get(voxel.getLayerId()).setVoxelAlpha(voxel, newAlpha);
+            dataContainer.layers.get(voxel.getLayerId()).setVoxelAlpha(voxel, newAlpha);
         }
 
         @Override
         protected void unapplyAction() {
-            layers.get(voxel.getLayerId()).setVoxelAlpha(voxel, oldAlpha);
+            dataContainer.layers.get(voxel.getLayerId()).setVoxelAlpha(voxel, oldAlpha);
         }
     }
 
@@ -357,7 +347,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         protected void applyAction() {
             if (isFirstCall()) {
                 // get all voxels in this area and remove them
-                for (Voxel voxel : layers.get(layerId).search(pos, radius)) {
+                for (Voxel voxel : dataContainer.layers.get(layerId).search(pos, radius)) {
                     historyManagerV.applyIntent(new RemoveVoxelIntent(voxel.id, true));
                 }
             }
@@ -387,7 +377,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         protected void applyAction() {
             if (isFirstCall()) {
                 // add all the voxels in this area that do not exist yet
-                VoxelLayer layer = layers.get(layerId);
+                VoxelLayer layer = dataContainer.layers.get(layerId);
                 for (int x = pos[0] - radius; x <= pos[0] + radius; x++) {
                     for (int y = pos[1] - radius; y <= pos[1] + radius; y++) {
                         for (int z = pos[2] - radius;z <= pos[2] + radius; z++) {
@@ -419,7 +409,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         protected void applyAction() {
             if (isFirstCall()) {
                 // get all voxels and remove them
-                for (Voxel voxel : layers.get(layerId).getVoxels()) {
+                for (Voxel voxel : dataContainer.layers.get(layerId).getVoxels()) {
                     historyManagerV.applyIntent(new RemoveVoxelIntent(voxel.id, true));
                 }
             }
@@ -445,11 +435,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 historyManagerV.applyIntent(new CreateLayerIntent(mergedLayerId, "Merged", true));
 
                 // add the voxels to the new layer (top to bottom)
-                for (int layerId : layerOrder) {
-                    if (layers.get(layerId).isVisible()) { // only visible
+                for (int layerId : dataContainer.layerOrder) {
+                    if (dataContainer.layers.get(layerId).isVisible()) { // only visible
                         Voxel[] voxels = getLayerVoxels(layerId); // get voxels
                         for (Voxel voxel : voxels) {
-                            if (!layers.get(mergedLayerId).containsVoxel(voxel.getPosAsInt())) { // add if this voxel does not exist
+                            if (dataContainer.layers.get(mergedLayerId).voxelPositionFree(voxel.getPosAsInt())) { // add if this voxel does not exist
                                 historyManagerV.applyIntent( // we <need> a new id for this voxel
                                         new AddVoxelIntent(getFreeVoxelId(), voxel.getPosAsInt(),
                                                 voxel.getColor(), mergedLayerId, true)
@@ -460,16 +450,16 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 }
 
                 // delete the visible layers (not the new one)
-                Integer[] layer = new Integer[layerOrder.size()];
-                layerOrder.toArray(layer);
+                Integer[] layer = new Integer[dataContainer.layerOrder.size()];
+                dataContainer.layerOrder.toArray(layer);
                 for (int layerId : layer) {
-                    if (layerId != mergedLayerId && layers.get(layerId).isVisible()) {
+                    if (layerId != mergedLayerId && dataContainer.layers.get(layerId).isVisible()) {
                         historyManagerV.applyIntent(new DeleteLayerIntent(layerId, true));
                     }
                 }
 
-                // select the new layer
-                historyManagerV.applyIntent(new SelectLayerIntent(mergedLayerId, true));
+                // select the new layer (only when created)
+                dataContainer.selectedLayer = mergedLayerId;
             }
         }
 
@@ -485,7 +475,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private int getFreeVoxelId() {
         do {
             lastVoxel++;
-        } while (voxels.containsKey(lastVoxel));
+        } while (dataContainer.voxels.containsKey(lastVoxel));
         return lastVoxel;
     }
 
@@ -494,7 +484,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private int getFreeLayerId() {
         do {
             lastLayer++;
-        } while (layers.containsKey(lastLayer));
+        } while (dataContainer.layers.containsKey(lastLayer));
         return lastLayer;
     }
 
@@ -505,10 +495,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final int addVoxel(Color color, int[] pos) {
         int result = -1;
-        VoxelLayer layer = layers.get(selectedLayer);
-        if (layer != null && !layer.containsVoxel(pos)) {
+        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+        if (layer != null && layer.voxelPositionFree(pos)) {
             result = getFreeVoxelId();
-            historyManagerV.applyIntent(new AddVoxelIntent(result, pos, color, selectedLayer, false));
+            historyManagerV.applyIntent(new AddVoxelIntent(result, pos, color, dataContainer.selectedLayer, false));
         }
         return result;
     }
@@ -516,7 +506,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean removeVoxel(int voxelId) {
         boolean result = false;
-        if (voxels.containsKey(voxelId)) {
+        if (dataContainer.voxels.containsKey(voxelId)) {
             historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, false));
             result = true;
         }
@@ -526,9 +516,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean moveVoxel(int voxelId, int[] newPos) {
         boolean result = false;
-        Voxel voxel = voxels.get(voxelId);
+        Voxel voxel = dataContainer.voxels.get(voxelId);
         if (voxel != null) {
-            if (!layers.get(voxel.getLayerId()).containsVoxel(newPos)) {
+            if (dataContainer.layers.get(voxel.getLayerId()).voxelPositionFree(newPos)) {
                 historyManagerV.applyIntent(new MoveVoxelIntent(voxel.id, newPos, false));
                 result = true;
             }
@@ -539,8 +529,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel getVoxel(int voxelId) {
         Voxel result = null;
-        if (voxels.containsKey(voxelId)) {
-            result = voxels.get(voxelId);
+        if (dataContainer.voxels.containsKey(voxelId)) {
+            result = dataContainer.voxels.get(voxelId);
         }
         return result;
     }
@@ -548,7 +538,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean setColor(int voxelId, Color color) {
         boolean result = false;
-        if (voxels.containsKey(voxelId) && voxels.get(voxelId).getColor() != color) {
+        if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).getColor() != color) {
             historyManagerV.applyIntent(new ColorVoxelIntent(voxelId, color, false));
             result = true;
         }
@@ -558,8 +548,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Color getColor(int voxelId) {
         Color result = null;
-        if (voxels.containsKey(voxelId)) {
-            result = voxels.get(voxelId).getColor();
+        if (dataContainer.voxels.containsKey(voxelId)) {
+            result = dataContainer.voxels.get(voxelId).getColor();
         }
         return result;
     }
@@ -567,7 +557,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean setAlpha(int voxelId, int alpha) {
         boolean result = false;
-        if (voxels.containsKey(voxelId) && voxels.get(voxelId).getAlpha() != alpha) {
+        if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).getAlpha() != alpha) {
             historyManagerV.applyIntent(new AlphaVoxelIntent(voxelId, alpha, false));
             result = true;
         }
@@ -577,8 +567,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final int getAlpha(int voxelId) {
         int result = -1;
-        if (voxels.containsKey(voxelId)) {
-            result = voxels.get(voxelId).getAlpha();
+        if (dataContainer.voxels.containsKey(voxelId)) {
+            result = dataContainer.voxels.get(voxelId).getAlpha();
         }
         return result;
     }
@@ -586,8 +576,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final int getLayer(int voxelId) {
         int result = -1;
-        if (voxels.containsKey(voxelId)) {
-            result = voxels.get(voxelId).getLayerId();
+        if (dataContainer.voxels.containsKey(voxelId)) {
+            result = dataContainer.voxels.get(voxelId).getLayerId();
         }
         return result;
     }
@@ -595,9 +585,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean clearRange(int[] center, int rad) {
         boolean result = false;
-        if (layers.containsKey(selectedLayer)) {
-            if (layers.get(selectedLayer).search(center, rad).length > 0) {
-                historyManagerV.applyIntent(new ClearVoxelRangeIntent(center, rad, selectedLayer, false));
+        if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+            if (dataContainer.layers.get(dataContainer.selectedLayer).search(center, rad).length > 0) {
+                historyManagerV.applyIntent(new ClearVoxelRangeIntent(center, rad, dataContainer.selectedLayer, false));
                 result = true;
             }
         }
@@ -607,9 +597,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean fillRange(int[] center, int rad, Color color) {
         boolean result = false;
-        if (layers.containsKey(selectedLayer)) {
-            if (layers.get(selectedLayer).search(center, rad).length < Math.pow(rad*2 + 1, 3)) { // if there are still free voxels
-                historyManagerV.applyIntent(new FillVoxelRangeIntent(center, rad, selectedLayer, color, false));
+        if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+            if (dataContainer.layers.get(dataContainer.selectedLayer).search(center, rad).length < Math.pow(rad*2 + 1, 3)) { // if there are still free voxels
+                historyManagerV.applyIntent(new FillVoxelRangeIntent(center, rad, dataContainer.selectedLayer, color, false));
                 result = true;
             }
         }
@@ -619,8 +609,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean clearV(int layerId) {
         boolean result = false;
-        if (layers.containsKey(layerId)) {
-            if (layers.get(layerId).getSize() > 0) {
+        if (dataContainer.layers.containsKey(layerId)) {
+            if (dataContainer.layers.get(layerId).getSize() > 0) {
                 historyManagerV.applyIntent(new ClearVoxelIntent(layerId, false));
                 result = true;
             }
@@ -630,8 +620,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     @Override
     public final Voxel searchVoxel(int[] pos) {
-        Voxel[] result = null;
-        VoxelLayer layer = layers.get(selectedLayer);
+        Voxel[] result;
+        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
         if (layer != null) {
             result = layer.search(pos, 0);
             if (result.length > 0) {
@@ -647,7 +637,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getLayerVoxels(int layerId) {
         if (!layerVoxelBufferValid || layerVoxelBufferLastLayer != layerId) {
-            VoxelLayer layer = layers.get(layerId);
+            VoxelLayer layer = dataContainer.layers.get(layerId);
             if (layer != null) {
                 layerVoxelBuffer = layer.getVoxels();
             }
@@ -664,11 +654,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final Voxel[] getVisibleLayerVoxel() {
         if (!visibleLayerVoxelBufferValid) {
             VoxelLayer result = new VoxelLayer(-1, "tmp");
-            for (Integer layerId : layerOrder) {
-                if (layers.get(layerId).isVisible()) {
-                    Voxel[] voxels = layers.get(layerId).getVoxels();
+            for (Integer layerId : dataContainer.layerOrder) {
+                if (dataContainer.layers.get(layerId).isVisible()) {
+                    Voxel[] voxels = dataContainer.layers.get(layerId).getVoxels();
                     for (Voxel voxel : voxels) {
-                        if (!result.containsVoxel(voxel.getPosAsInt())) {
+                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
                             result.addVoxel(voxel);
                         }
                     }
@@ -686,8 +676,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getVoxelsXY(int z) {
         if (!layerVoxelXYBufferValid || z != lastVoxelXYBufferZValue) {
-            if (layers.containsKey(selectedLayer)) {
-                layerVoxelXYBuffer = layers.get(selectedLayer).search(
+            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+                layerVoxelXYBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
                         new float[] {Integer.MIN_VALUE/2, Integer.MIN_VALUE/2, z},
                         new float[] {Integer.MAX_VALUE, Integer.MAX_VALUE, 0}
                 );
@@ -704,8 +694,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getVoxelsXZ(int y) {
         if (!layerVoxelXZBufferValid || y != lastVoxelXZBufferYValue) {
-            if (layers.containsKey(selectedLayer)) {
-                layerVoxelXZBuffer = layers.get(selectedLayer).search(
+            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+                layerVoxelXZBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
                         new float[] {Integer.MIN_VALUE/2, y, Integer.MIN_VALUE/2},
                         new float[] {Integer.MAX_VALUE, 0, Integer.MAX_VALUE}
                 );
@@ -722,8 +712,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getVoxelsYZ(int x) {
         if (!layerVoxelYZBufferValid || x != lastVoxelYZBufferXValue) {
-            if (layers.containsKey(selectedLayer)) {
-                layerVoxelYZBuffer = layers.get(selectedLayer).search(
+            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+                layerVoxelYZBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
                         new float[] {x, Integer.MIN_VALUE/2, Integer.MIN_VALUE/2},
                         new float[] {0, Integer.MAX_VALUE, Integer.MAX_VALUE}
                 );
@@ -737,8 +727,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final int getVoxelCount(int layerId) {
         int result = 0;
-        if (layers.containsKey(layerId)) {
-            result = layers.get(layerId).getSize();
+        if (dataContainer.layers.containsKey(layerId)) {
+            result = dataContainer.layers.get(layerId).getSize();
         }
         return result;
     }
@@ -773,7 +763,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean deleteLayer(int layerId) {
         boolean result = false;
-        if (layers.containsKey(layerId)) {
+        if (dataContainer.layers.containsKey(layerId)) {
             historyManagerV.applyIntent(new DeleteLayerIntent(layerId, false));
             result = true;
         }
@@ -783,7 +773,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean renameLayer(int layerId, String newName) {
         boolean result = false;
-        if (layers.containsKey(layerId) && !newName.equals(layers.get(layerId).getName())) {
+        if (dataContainer.layers.containsKey(layerId) && !newName.equals(dataContainer.layers.get(layerId).getName())) {
             historyManagerV.applyIntent(new RenameLayerIntent(layerId, newName, false));
             result = true;
         }
@@ -792,7 +782,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     @Override
     public final String getLayerName(int layerId) {
-        return layers.containsKey(layerId) ? layers.get(layerId).getName() : null;
+        return dataContainer.layers.containsKey(layerId) ? dataContainer.layers.get(layerId).getName() : null;
     }
 
     private boolean layerNameBufferValid = false;
@@ -800,11 +790,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final String[] getLayerNames() {
         if (!layerNameBufferValid) {
-            if (layerNameBuffer.length != layers.size()) {
-                layerNameBuffer = new String[layers.size()];
+            if (layerNameBuffer.length != dataContainer.layers.size()) {
+                layerNameBuffer = new String[dataContainer.layers.size()];
             }
             int i = 0;
-            for (Integer layerId : layerOrder) {
+            for (Integer layerId : dataContainer.layerOrder) {
                 layerNameBuffer[i++] = getLayerName(layerId);
             }
             layerBufferValid = true;
@@ -815,7 +805,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean selectLayer(int layerId) {
         boolean result = false;
-        if ((layers.containsKey(layerId) || layerId == -1) && selectedLayer != layerId) {
+        if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
             historyManagerV.applyIntent(new SelectLayerIntent(layerId, false));
             result = true;
         }
@@ -823,8 +813,20 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
+    public final boolean selectLayerSoft(int layerId) {
+        boolean result = false;
+        if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
+            dataContainer.selectedLayer = layerId;
+            invalidateV();
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
     public final int getSelectedLayer() {
-        return selectedLayer;
+        // make sure the selected layer is always valid
+        return dataContainer.layers.containsKey(dataContainer.selectedLayer) ? dataContainer.selectedLayer : -1;
     }
 
     private boolean layerBufferValid = false;
@@ -832,10 +834,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Integer[] getLayers() {
         if (!layerBufferValid) {
-            if (layerBuffer.length != layers.size()) {
-                layerBuffer = new Integer[layers.size()];
+            if (layerBuffer.length != dataContainer.layers.size()) {
+                layerBuffer = new Integer[dataContainer.layers.size()];
             }
-            layerOrder.toArray(layerBuffer);
+            dataContainer.layerOrder.toArray(layerBuffer);
             layerBufferValid = true;
         }
         return layerBuffer.clone();
@@ -844,7 +846,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean setVisible(int layerId, boolean b) {
         boolean result = false;
-        if (layers.containsKey(layerId) && layers.get(layerId).isVisible() != b) {
+        if (dataContainer.layers.containsKey(layerId) && dataContainer.layers.get(layerId).isVisible() != b) {
             historyManagerV.applyIntent(new LayerVisibilityIntent(layerId, b, false));
             result = true;
         }
@@ -854,8 +856,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean getLayerVisible(int layerId) {
         boolean result = false;
-        if (layers.containsKey(layerId)) {
-            result = layers.get(layerId).isVisible();
+        if (dataContainer.layers.containsKey(layerId)) {
+            result = dataContainer.layers.get(layerId).isVisible();
         }
         return result;
     }
@@ -882,12 +884,12 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     @Override
     public final boolean canMoveLayerUp(int layerId) {
-        return layers.containsKey(layerId) && layerOrder.lastIndexOf(layerId) > 0;
+        return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) > 0;
     }
 
     @Override
     public final boolean canMoveLayerDown(int layerId) {
-        return layers.containsKey(layerId) && layerOrder.lastIndexOf(layerId) < layerOrder.size() - 1;
+        return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) < dataContainer.layerOrder.size() - 1;
     }
 
     @Override
@@ -903,8 +905,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final boolean canMergeVisibleLayers() {
         // if there are more than one visible layer
         int visibleLayers = 0;
-        for (int layerId : layerOrder) {
-            if (layers.get(layerId).isVisible()) {
+        for (int layerId : dataContainer.layerOrder) {
+            if (dataContainer.layers.get(layerId).isVisible()) {
                 if (visibleLayers > 0) {
                     return true;
                 }

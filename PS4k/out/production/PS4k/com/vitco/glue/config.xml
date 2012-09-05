@@ -60,6 +60,9 @@
     <!-- this allows to register and execute action -->
     <bean id="ActionManager" class="com.vitco.util.action.ActionManager"/>
 
+    <!-- manages threads -->
+    <bean id="ThreadManager" class="com.vitco.util.thread.ThreadManager"/>
+
     <!-- create ShortcutManager -->
     <!-- allow registering the windows with the shortcuts -->
     <bean id="ShortcutManager" class="com.vitco.logic.shortcut.ShortcutManager">
@@ -78,9 +81,10 @@
     </bean>
 
     <!-- handles display of layers -->
-    <bean id="LayerView" class="com.vitco.logic.layer.LayerView">
+    <bean id="LayerView" class="com.vitco.logic.layer.LayerView"/>
 
-    </bean>
+    <!--handles display of color picker-->
+    <bean id="ColorPickerView" class="com.vitco.logic.colorpicker.ColorPickerView"/>
 
     <!-- create MenuGenerator -->
     <!-- handles the menu generation (from xml) -->
@@ -118,6 +122,7 @@
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
         <constructor-arg value="PS4k - Alpha Version"/>
+        <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
         <property name="errorHandler" ref="ErrorHandler"/>
         <!-- shortcut manager -->
@@ -174,7 +179,12 @@
                     <key><value>layer</value></key>
                     <bean id="LayerLinkage" class="com.vitco.layout.frames.LayerLinkage">
                         <property name="layerView" ref="LayerView"/>
-
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>colorpicker</value></key>
+                    <bean id="ColorPickerLinkage" class="com.vitco.layout.frames.ColorPickerLinkage">
+                        <property name="ColorPickerView" ref="ColorPickerView"/>
                     </bean>
                 </entry>
             </map>

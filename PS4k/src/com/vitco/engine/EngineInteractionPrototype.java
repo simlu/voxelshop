@@ -1,12 +1,12 @@
 package com.vitco.engine;
 
+import com.newbrightidea.util.RTree;
 import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.RTree;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 
@@ -23,7 +23,7 @@ import java.util.List;
  */
 public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
-    protected transient final AnimationMouseAdapter animationAdapter = new AnimationMouseAdapter();
+    protected final AnimationMouseAdapter animationAdapter = new AnimationMouseAdapter();
     protected class AnimationMouseAdapter extends MouseAdapter {
         private int dragPoint = -1; // the point that is dragged
         private long wasDragged = -1; // -1 if not dragged or the time in ms of first drag event
@@ -349,6 +349,14 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else {
                         return data.canRedoV();
                     }
+                }
+            });
+
+            // register clear history action
+            actionManager.registerAction("clear_history_action", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    data.clearHistory();
                 }
             });
         }

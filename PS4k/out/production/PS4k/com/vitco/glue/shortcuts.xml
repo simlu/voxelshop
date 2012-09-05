@@ -10,24 +10,26 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="5" action="personal_state-action_show" caption="personal_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="6" action="layer_state-action_show" caption="layer_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
     </global>
 
     <frame name="mainView">
-        <shortcut ctrl="yes" alt="no" shift="no" key="C" action="main-view_action_copy" caption="main-view_copy_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="V" action="main-view_action_paste" caption="main-view_paste_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="X" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="T" action="mainview_toggle_voxel_snap" caption="mainview_toggle_voxel_snap_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="I" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
     </frame>
 
     <frame name="sideView">
     </frame>
 
     <frame name="console">
-        <shortcut ctrl="yes" alt="no" shift="yes" key="A" action="console_toggle_auto_show" caption="console_auto-show_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="console_toggle_auto_scroll" caption="console_auto-scroll_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="C" action="console_action_clear" caption="console_clear_caption" />
+        <shortcut ctrl="no" alt="yes" shift="yes" key="A" action="console_toggle_auto_show" caption="console_auto-show_caption" />
+        <shortcut ctrl="no" alt="yes" shift="yes" key="S" action="console_toggle_auto_scroll" caption="console_auto-scroll_caption" />
+        <shortcut ctrl="no" alt="yes" shift="yes" key="C" action="console_action_clear" caption="console_clear_caption" />
     </frame>
 
     <frame name="snapshot">
@@ -44,5 +46,8 @@
         <shortcut ctrl="yes" alt="no" shift="yes" key="N" action="layer-frame_add-layer" caption="layer-frame_add-layer_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="U" action="layer-frame_move-layer-up" caption="layer-frame_move-layer-up_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="D" action="layer-frame_move-layer-down" caption="layer-frame_move-layer-down_caption" />
+    </frame>
+
+    <frame name="colorpicker">
     </frame>
 </head>

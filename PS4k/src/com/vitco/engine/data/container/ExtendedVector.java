@@ -2,12 +2,16 @@ package com.vitco.engine.data.container;
 
 import com.threed.jpct.SimpleVector;
 
+import java.io.Serializable;
+
 /**
  * Extended Vector that has in addition to a SimpleVector an id.
  *
  * Also defines equality method: true iff same position and id.
  */
-public final class ExtendedVector extends SimpleVector {
+public final class ExtendedVector extends SimpleVector implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public final int id;
     public ExtendedVector(float x, float y, float z, int id) {
         super(x, y, z);

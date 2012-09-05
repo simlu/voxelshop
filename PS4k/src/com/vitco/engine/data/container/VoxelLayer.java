@@ -1,6 +1,6 @@
 package com.vitco.engine.data.container;
 
-import com.vitco.util.RTree;
+import com.newbrightidea.util.RTree;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -51,13 +51,13 @@ public final class VoxelLayer implements Serializable {
     }
 
     // check if a position already contains a voxel
-    public boolean containsVoxel(int[] pos) {
-        return voxelIndex.search(new float[]{pos[0], pos[1], pos[2]}, ZEROS).size() > 0;
+    public boolean voxelPositionFree(int[] pos) {
+        return voxelIndex.search(new float[]{pos[0], pos[1], pos[2]}, ZEROS).size() <= 0;
     }
 
     // add a voxel iff that position is not already occupied
     public void addVoxel(Voxel voxel) {
-        assert !containsVoxel(voxel.getPosAsInt());
+        assert voxelPositionFree(voxel.getPosAsInt());
         voxelIndex.insert(voxel.getPosAsFloat(), ZEROS, voxel);
         voxelList.add(voxel);
     }

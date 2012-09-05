@@ -1,17 +1,22 @@
 package com.vitco.logic.sideview;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
+import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.BiMap;
+import com.vitco.util.WorldUtil;
+import com.vitco.util.action.ChangeListener;
+import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Creates one side view instance (one perspective) and the specific user interaction.
@@ -43,11 +48,167 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         resetView();
     }
 
+    // maps voxel ids to world ids
+    protected final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
+    protected final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
+
+    // helper
+    private void addVoxelToWorld(Voxel voxel) {
+        int id = WorldUtil.addBox(world,
+                new SimpleVector(
+                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
+                VitcoSettings.VOXEL_SIZE / 2,
+                voxel.getColor());
+        voxelToObject.put(voxel.id, id);
+    }
+
+    private int currentplane = 0;
+
+    // helper
+    private void updateWorldWithVoxels() {
+        // get the current voxels
+        Voxel[] voxels = data.getVisibleLayerVoxel();
+        switch (side) {
+            case 0:
+                voxels = data.getVoxelsXY(currentplane);
+                break;
+            case 1:
+                voxels = data.getVoxelsXZ(currentplane);
+                break;
+            case 2:
+                voxels = data.getVoxelsYZ(currentplane);
+                break;
+        }
+
+        // temporary to find unneeded objects
+        ArrayList<Integer> voxelIds = new ArrayList<Integer>();
+        voxelIds.addAll(voxelToObject.keySet());
+
+        // loop over all voxels
+        for (Voxel voxel : voxels) {
+            voxelIds.remove((Integer)voxel.id);
+            if (!voxelToObject.containsKey(voxel.id)) { // add all new voxels
+                addVoxelToWorld(voxel);
+                idToVoxel.put(voxel.id, voxel);
+            } else { // remove and add all altered voxels
+                if (!idToVoxel.get(voxel.id).equals(voxel)) {
+                    idToVoxel.put(voxel.id, voxel);
+                    world.removeObject(voxelToObject.get(voxel.id)); // remove
+                    addVoxelToWorld(voxel); // add
+                }
+            }
+        }
+
+        // remove the objects that are no longer needed
+        for (int id : voxelIds) {
+            world.removeObject(voxelToObject.get(id));
+            voxelToObject.removeByKey(id);
+            idToVoxel.remove(id);
+        }
+    }
+
+    // for voxel interaction
+    private final VoxelAdapter drawAdapter = new VoxelAdapter();
+    private final class VoxelAdapter extends MouseAdapter implements KeyEventDispatcher {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (data.getHighlightedVoxel() != null) {
+                data.addVoxel(data.getCurrentColor(),data.getHighlightedVoxel());
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+            return false;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+
+        }
+
+        // highlight correct voxel
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            SimpleVector nPos = convert2D3D(e.getX(), e.getY(),
+                    new SimpleVector(
+                            side == 2 ? currentplane : 0,
+                            side == 1 ? currentplane : 0,
+                            side == 0 ? currentplane : 0
+                    )
+            );
+            data.highlightVoxel(new int[]{
+                    side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
+                    side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
+                    side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
+            });
+        }
+    }
+
     @Override
     public final JPanel build() {
 
-        // no need to draw the openGL content
-        container.setDrawWorld(false);
+        // enable / disable voxel interaction
+        actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
+            @Override
+            public void run() {
+                ((StateActionPrototype)actionManager.getAction("toggle_animation_mode")).addChangeListener(new ChangeListener() {
+                    @Override
+                    public void actionFired(boolean b) { // this is fired once on setup
+                        if (b) {
+                            data.removeVoxelHighlights();
+                            container.removeMouseMotionListener(drawAdapter);
+                            container.removeMouseListener(drawAdapter);
+                            KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(drawAdapter);
+                        } else {
+                            container.addMouseMotionListener(drawAdapter);
+                            container.addMouseListener(drawAdapter);
+                            KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(drawAdapter);
+                        }
+                        container.repaint();
+                    }
+                });
+            }
+        });
+
+        // make sure we can see into the distance
+        world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
+
+        // register clip buttons
+        actionManager.registerAction("sideview_move_plane_in" + (side + 1), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentplane++;
+                updateWorldWithVoxels();
+                container.repaint();
+            }
+        });
+        actionManager.registerAction("sideview_move_plane_out" + (side + 1), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentplane--;
+                updateWorldWithVoxels();
+                container.repaint();
+            }
+        });
 
         // register zoom buttons
         actionManager.registerAction("sideview_zoom_in_tb" + (side + 1), new AbstractAction() {
@@ -138,6 +299,8 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
 
             @Override
             public void onVoxelDataChanged() {
+                updateWorldWithVoxels();
+                container.doNotSkipNextWorldRender();
                 container.repaint();
             }
 

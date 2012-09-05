@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Bidirection HashMap
  */
 public class BiMap<KeyType, ValueType>{
-    private Map<KeyType, ValueType> keyToValueMap = new ConcurrentHashMap<KeyType, ValueType>();
-    private Map<ValueType, KeyType> valueToKeyMap = new ConcurrentHashMap<ValueType, KeyType>();
+    private final Map<KeyType, ValueType> keyToValueMap = new ConcurrentHashMap<KeyType, ValueType>();
+    private final Map<ValueType, KeyType> valueToKeyMap = new ConcurrentHashMap<ValueType, KeyType>();
 
     synchronized public Set<KeyType> keySet() {
         return keyToValueMap.keySet();

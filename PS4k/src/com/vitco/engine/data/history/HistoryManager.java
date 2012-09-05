@@ -1,16 +1,22 @@
 package com.vitco.engine.data.history;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Manages BasicActionIntents. History manager.
  */
-public class HistoryManager implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class HistoryManager {
+
     // holds the history data
     private int historyPosition = -1;
-    private final ArrayList<BasicActionIntent> history = new ArrayList<BasicActionIntent>();
+    private ArrayList<BasicActionIntent> history = new ArrayList<BasicActionIntent>();
+
+    public void clear() {
+        historyPosition = -1;
+        history = new ArrayList<BasicActionIntent>();
+        // invalidate the cache
+        notifyListener();
+    }
 
     public final boolean canUndo() {
         return (historyPosition > -1);
@@ -18,6 +24,22 @@ public class HistoryManager implements Serializable {
 
     public final boolean canRedo() {
         return (history.size() > historyPosition + 1);
+    }
+
+    public ArrayList<BasicActionIntent> getHistory() {
+        return new ArrayList<BasicActionIntent>(history);
+    }
+
+    public int getHistoryPosition() {
+        return historyPosition;
+    }
+
+    public void setHistory(ArrayList<BasicActionIntent> history) {
+        this.history = new ArrayList<BasicActionIntent>(history);
+    }
+
+    public void setHistoryPosition(int historyPosition) {
+        this.historyPosition = historyPosition;
     }
 
     // adds a new intent to the history and executes it
@@ -77,12 +99,13 @@ public class HistoryManager implements Serializable {
         }
     }
 
-//    // displays current historyA information
-//    public final void debug() {
-//        for (int c = Math.max(history.size()-10,0), len = history.size()-1; c < len; c++) {
-//            System.out.println(history.get(c) + " @ " + history.get(c).attach + (c == historyPosition-1 ? " XXX " : ""));
-//        }
-//        System.out.println("=================");
-//    }
+    // displays current historyA information
+    public final void debug() {
+        System.out.println(Math.max(history.size()-50,0) == 0 ? "=================" : "[...]");
+        for (int c = Math.max(history.size()-50,0), len = history.size()-1; c < len; c++) {
+            System.out.println(history.get(c) + " @ " + history.get(c).attach + (c == historyPosition-1 ? " XXX " : ""));
+        }
+        System.out.println("=================");
+    }
 
 }

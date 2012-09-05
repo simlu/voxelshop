@@ -6,11 +6,11 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
-import com.jidesoft.plaf.LookAndFeelFactory;
-import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.pref.PreferencesInterface;
 import org.w3c.dom.Document;
@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -73,6 +74,13 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.shortcutManager = shortcutManager;
     }
 
+    private ActionManagerInterface actionManager;
+    // set the action handler
+    @Override
+    public void setActionManager(ActionManagerInterface actionManager) {
+        this.actionManager = actionManager;
+    }
+
     // prepare all frames
     @Override
     public DockableFrame prepareFrame(String key) {
@@ -108,7 +116,29 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         // save the state on exit of the program
         // this needs to be done BEFORE the window is closing
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                // initialize the view when swing is ready
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        repaint();
+                    }
+                });
+            }
+
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                // fire closing action
+                actionManager.performWhenActionIsReady("program_closing_action", new Runnable() {
+                    @Override
+                    public void run() {
+                        actionManager.getAction("program_closing_action").actionPerformed(
+                                new ActionEvent(e.getSource(),e.getID(),e.paramString())
+                        );
+                    }
+                });
+                // save layout data
                 preferences.storeObject("custom_raw_layout_data", getLayoutPersistence().getLayoutRawData());
             }
         });
@@ -125,6 +155,22 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     @PostConstruct
     @Override
     public void init() {
+
+        // register close event
+        actionManager.registerActionName("program_closing_action");
+        actionManager.registerAction("program_closing_action", new StateActionPrototype() {
+            boolean shutdown = false;
+            @Override
+            public void action(ActionEvent actionEvent) {
+                shutdown = true;
+            }
+
+            @Override
+            public boolean getStatus() {
+                return shutdown;
+            }
+        });
+
         if (preferences.contains("program_boundary_rect")) {
             // load the boundary of the program (current window position)
             this.setBounds((Rectangle)preferences.loadObject("program_boundary_rect"));
@@ -194,6 +240,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         } catch (IOException e) {
             errorHandler.handle(e); // should not happen
         }
+
     }
 
 }

@@ -5,6 +5,7 @@ import com.jidesoft.docking.DockableFrame;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 
 import javax.annotation.PostConstruct;
@@ -29,10 +30,13 @@ public interface WindowManagerInterface {
     void setShortcutManager(ShortcutManagerInterface shortcutManager);
     // set error handler
     void setErrorHandler(ErrorHandlerInterface errorHandler);
+    // set the action manager
+    void setActionManager(ActionManagerInterface actionManager);
 
     @PostConstruct
     void init();
 
     @PreDestroy
     void finish();
+
 }

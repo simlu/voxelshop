@@ -6,6 +6,7 @@
     <icon-item src="resource/img/framebars/mainview/minus.png"
                tool-tip="main-view_zoom_out_caption"
                action="mainview_zoom_out"/>
+    <separator/>
     <icon-item src="resource/img/framebars/mainview/reset.png"
                tool-tip="reset_camera_main-view_tooltip"
                action="reset_main_view_camera"/>

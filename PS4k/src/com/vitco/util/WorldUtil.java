@@ -25,8 +25,6 @@ public class WorldUtil {
         box.setEnvmapped(Object3D.ENVMAP_ENABLED);
         box.setShadingMode(Object3D.SHADING_FAKED_FLAT);
         box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-        //box.setTransparency(100);
-        //box.translate(pos.x, pos.y, pos.z);
         box.setOrigin(pos);
         box.rotateY((float) Math.PI / 4); // align correctly
         box.build();

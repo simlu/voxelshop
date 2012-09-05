@@ -8,6 +8,8 @@
                tool-tip="animate_tooltip"
                checkable="true"
                action="toggle_animation_mode"/>
+    <separator/>
+
     <icon-item src="resource/img/bars/tool_bar/undo.png"
                src-gray="resource/img/bars/tool_bar/undo_disabled.png"
                tool-tip="global_undo_tooltip"
@@ -18,4 +20,25 @@
                tool-tip="global_redo_tooltip"
                grayable="true"
                action="global_action_redo"/>
+    <icon-item src="resource/img/bars/tool_bar/clear_history.png"
+               tool-tip="clear_history_tooltip"
+               action="clear_history_action"/>
+    <separator/>
+
+    <icon-item src="resource/img/bars/tool_bar/view.png"
+               tool-tip="voxel_mode_select_type_view_caption"
+               checkable="true"
+               action="voxel_mode_select_type_view"/>
+    <icon-item src="resource/img/bars/tool_bar/draw.png"
+               tool-tip="voxel_mode_select_type_draw_caption"
+               checkable="true"
+               action="voxel_mode_select_type_draw"/>
+    <icon-item src="resource/img/bars/tool_bar/erase.png"
+               tool-tip="voxel_mode_select_type_erase_caption"
+               checkable="true"
+               action="voxel_mode_select_type_erase"/>
+    <icon-item src="resource/img/bars/tool_bar/color_picker.png"
+               tool-tip="voxel_mode_select_type_picker_caption"
+               checkable="true"
+               action="voxel_mode_select_type_picker"/>
 </head>

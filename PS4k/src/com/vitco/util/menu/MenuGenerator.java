@@ -1,5 +1,6 @@
 package com.vitco.util.menu;
 
+import com.jidesoft.action.CommandBarSeparator;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideToggleButton;
@@ -113,7 +114,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
                     addDefaultItem(component, e);
                 }
             } else if (name.equals("separator")) {
-                component.add(new JSeparator());
+                component.add(new CommandBarSeparator());
             } else if (name.equals("icon-item")) {
                 Element e = (Element) node;
                 if (e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true")) {

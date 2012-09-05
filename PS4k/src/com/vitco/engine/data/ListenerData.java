@@ -6,7 +6,7 @@ import com.vitco.engine.data.notification.NotificationService;
 /**
  * Abstract class that defines methods add Data Change Listeners.
  */
-public abstract class ListenerData implements ListenerDataInterface {
+public abstract class ListenerData extends DataDefinition implements ListenerDataInterface {
     protected final NotificationService notifier = new NotificationService();
 
     @Override

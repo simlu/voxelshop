@@ -9,4 +9,11 @@
     <icon-item src="resource/img/framebars/sideview/reset.png"
                tool-tip="sideview_reset_view_tooltip"
                action="sideview_reset_view3"/>
+    <separator/>
+    <icon-item src="resource/img/framebars/sideview/move_in.png"
+               tool-tip="sideview_move_plane_in_caption"
+               action="sideview_move_plane_in3"/>
+    <icon-item src="resource/img/framebars/sideview/move_out.png"
+               tool-tip="sideview_move_plane_out_caption"
+               action="sideview_move_plane_out3"/>
 </head>

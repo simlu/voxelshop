@@ -31,7 +31,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     // the world-required objects
     protected final World world;
-    protected FrameBuffer buffer = new FrameBuffer(100, 100, FrameBuffer.SAMPLINGMODE_OGSS);
+    protected FrameBuffer buffer;
     protected final CCamera camera;
 
     // conversion
@@ -295,11 +295,21 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         buffer.dispose();
     }
 
+    private static boolean initialized = false;
     protected EngineViewPrototype() {
+
+        // only perform these actions once (even if the class is instantiated several times)
+        if (!initialized) {
+            Config.maxPolysVisible = 10000;
+            Logger.setLogLevel(Logger.ERROR);
+            initialized = true;
+        }
+
         // set up world objects
         world = new World();
         camera = new CCamera();
         world.setCameraTo(camera);
+        buffer = new FrameBuffer(100, 100, FrameBuffer.SAMPLINGMODE_OGSS);
 
         // add a border to our view
         container.setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR));
@@ -307,7 +317,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // register size change of container and change buffer size accordingly
         container.addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentResized(ComponentEvent e) {
+            public void
+
+
+            componentResized(ComponentEvent e) {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
                     buffer.dispose();
                     buffer = new FrameBuffer(container.getWidth(), container.getHeight(),

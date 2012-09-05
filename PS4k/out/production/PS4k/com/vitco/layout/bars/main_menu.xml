@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <head xmlns="http://www.unfine.de/schema/menu">
     <menu caption="file_btn">
+        <item caption="new_file_caption" action="new_file_action"/>
+        <item caption="load_file_caption" action="load_file_action"/>
+        <item caption="quick_save_file_caption" action="quick_save_file_action" grayable="true"/>
+        <item caption="save_file_caption" action="save_file_action"/>
         <!--<item caption="snapshot_caption" action="snapshot_state-action_show" grayable="true"/>-->
     </menu>
-    <menu caption="edit_btn">
+    <!--<menu caption="edit_btn">-->
 
-    </menu>
+    <!--</menu>-->
     <menu caption="view_btn">
         <menu caption="tool_windows_btn">
             <item caption="console_caption" action="console_state-action_show" checkable="true"/>
@@ -13,6 +17,7 @@
             <item caption="sideView_caption" action="side-view_state-action_show" checkable="true"/>
             <item caption="snapshot_caption" action="snapshot_state-action_show" checkable="true"/>
             <item caption="personal_caption" action="personal_state-action_show" checkable="true"/>
+            <item caption="colorpicker_caption" action="colorpicker_state-action_show" checkable="true"/>
         </menu>
     </menu>
 </head>

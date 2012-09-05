@@ -1,11 +1,14 @@
 package com.vitco.engine.data.container;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Defines an animation frame. Points that are different from the main frame are set.
  */
-public class Frame {
+public class Frame implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     // the current name
     private String name;
 

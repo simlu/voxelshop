@@ -10,6 +10,9 @@ import java.awt.*;
  * Hold all used colors. Aids in keeping a consistent color schema.
  */
 public final class VitcoSettings {
+    // color picker slider
+    public static final Color COLOR_PICKER_SLIDER_KNOB_COLOR = new Color(110, 143, 163);
+
     // e.g. for shortcut manager
     public static final Color EDIT_BG_COLOR = new Color(250, 250, 250); // new Color(187, 209, 255);
     public static final Color EDIT_TEXT_COLOR = new Color(30, 30, 30); // new Color(0, 0, 0);
@@ -46,8 +49,6 @@ public final class VitcoSettings {
 
     // xyz orientation
     public static final Color ANIMATION_AXIS_OUTER_COLOR = new Color(0, 0, 0, 255);
-    // can be removed...
-    public static final Color ANIMATION_AXIS_CENTER_COLOR = new Color(65, 65, 65, 255); // center color
     public static final Color ANIMATION_AXIS_COLOR_X = new Color(141, 0, 0, 255);
     public static final Color ANIMATION_AXIS_COLOR_Y = new Color(8, 141, 1, 255);
     public static final Color ANIMATION_AXIS_COLOR_Z = new Color(0, 92, 180, 255);

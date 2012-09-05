@@ -9,12 +9,11 @@ import com.vitco.engine.data.history.HistoryChangeListener;
 import com.vitco.engine.data.history.HistoryManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Implements all functions defined in the AnimationDataInterface
  */
-public abstract class AnimationData extends ListenerData implements AnimationDataInterface {
+public abstract class AnimationData extends GeneralData implements AnimationDataInterface {
 
     // constructor
     protected AnimationData() {
@@ -23,27 +22,21 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         historyManagerA.addChangeListener(new HistoryChangeListener() {
             @Override
             public final void onChange() {
-                lineBufferValid = false;
-                pointBufferValid = false;
-                frameBufferValid = false;
-                notifier.onAnimationDataChanged();
+                invalidateA();
             }
         });
     }
 
-    // ####################### DATA
+    // invalidate cache
+    protected final void invalidateA() {
+        lineBufferValid = false;
+        pointBufferValid = false;
+        frameBufferValid = false;
+        notifier.onAnimationDataChanged();
+    }
+
     // history manager
     protected final HistoryManager historyManagerA = new HistoryManager();
-    // holds the points
-    protected final HashMap<Integer, ExtendedVector> points = new HashMap<Integer, ExtendedVector>();
-    // holds the lines
-    protected final HashMap<String, ExtendedLine> lines = new HashMap<String, ExtendedLine>();
-    // maps the points to lines
-    protected final HashMap<Integer, ArrayList<ExtendedLine>> pointsToLines = new HashMap<Integer, ArrayList<ExtendedLine>>();
-    // currently active frame
-    protected int activeFrame = -1;
-    // all frames
-    protected final HashMap<Integer, Frame> frames = new HashMap<Integer, Frame>();
 
     // ###################### PRIVATE HELPER CLASSES
     // "add point" intent
@@ -58,13 +51,13 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
         @Override
         protected void applyAction() {
-            points.put(point.id, point);
+            dataContainer.points.put(point.id, point);
         }
 
         @Override
         protected void unapplyAction() {
-            points.remove(point.id);
-            pointsToLines.remove(point.id);
+            dataContainer.points.remove(point.id);
+            dataContainer.pointsToLines.remove(point.id);
         }
     }
 
@@ -83,29 +76,29 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         protected void applyAction() {
             if (isFirstCall()) {
                 // dc all lines that include this point
-                if (pointsToLines.containsKey(pointId)) {
-                    ExtendedLine[] lines = new ExtendedLine[pointsToLines.get(pointId).size()];
-                    pointsToLines.get(pointId).toArray(lines);
+                if ( dataContainer.pointsToLines.containsKey(pointId)) {
+                    ExtendedLine[] lines = new ExtendedLine[ dataContainer.pointsToLines.get(pointId).size()];
+                    dataContainer.pointsToLines.get(pointId).toArray(lines);
                     for (ExtendedLine line : lines) {
                         historyManagerA.applyIntent(new DisconnectIntent(line.point1, line.point2, true));
                     }
                 }
                 // delete this points in all frames
-                for (Integer frameId : frames.keySet()) {
-                    if (frames.get(frameId).getPoint(pointId) != null) {
+                for (Integer frameId :  dataContainer.frames.keySet()) {
+                    if ( dataContainer.frames.get(frameId).getPoint(pointId) != null) {
                         historyManagerA.applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
                     }
                 }
                 // store point
-                point = points.get(pointId);
+                point =  dataContainer.points.get(pointId);
             }
-            pointsToLines.remove(pointId);
-            points.remove(pointId);
+            dataContainer.pointsToLines.remove(pointId);
+            dataContainer.points.remove(pointId);
         }
 
         @Override
         protected void unapplyAction() {
-            points.put(point.id, point);
+            dataContainer.points.put(point.id, point);
         }
     }
 
@@ -125,17 +118,17 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                previousPoint = points.get(pointId);
+                previousPoint =  dataContainer.points.get(pointId);
             }
-            points.put(pointId, point);
+            dataContainer.points.put(pointId, point);
         }
 
         @Override
         protected void unapplyAction() {
             if (previousPoint != null) {
-                points.put(pointId, previousPoint);
+                dataContainer.points.put(pointId, previousPoint);
             } else {
-                points.remove(pointId);
+                dataContainer.points.remove(pointId);
             }
         }
     }
@@ -155,31 +148,31 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         @Override
         protected void applyAction() {
             ExtendedLine line = new ExtendedLine(pointId1, pointId2);
-            lines.put(pointId1 + "_" + pointId2, line);
+            dataContainer.lines.put(pointId1 + "_" + pointId2, line);
             // make sure the pointToLines is initialized
-            if (!pointsToLines.containsKey(pointId1)) {
-                pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId1)) {
+                dataContainer.pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
             }
-            if (!pointsToLines.containsKey(pointId2)) {
-                pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId2)) {
+                dataContainer.pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
             }
-            pointsToLines.get(pointId1).add(line);
-            pointsToLines.get(pointId2).add(line);
+            dataContainer.pointsToLines.get(pointId1).add(line);
+            dataContainer.pointsToLines.get(pointId2).add(line);
         }
 
         @Override
         protected void unapplyAction() {
-            ExtendedLine line = lines.get(pointId1 + "_" + pointId2);
-            lines.remove(pointId1 + "_" + pointId2);
+            ExtendedLine line =  dataContainer.lines.get(pointId1 + "_" + pointId2);
+            dataContainer.lines.remove(pointId1 + "_" + pointId2);
             // make sure the pointToLines is initialized
-            if (!pointsToLines.containsKey(pointId1)) {
-                pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId1)) {
+                dataContainer.pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
             }
-            if (!pointsToLines.containsKey(pointId2)) {
-                pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId2)) {
+                dataContainer.pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
             }
-            pointsToLines.get(pointId1).remove(line);
-            pointsToLines.get(pointId2).remove(line);
+            dataContainer.pointsToLines.get(pointId1).remove(line);
+            dataContainer.pointsToLines.get(pointId2).remove(line);
         }
     }
 
@@ -197,32 +190,32 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
         @Override
         protected void applyAction() {
-            ExtendedLine line = lines.get(pointId1 + "_" + pointId2);
-            lines.remove(pointId1 + "_" + pointId2);
+            ExtendedLine line =  dataContainer.lines.get(pointId1 + "_" + pointId2);
+            dataContainer.lines.remove(pointId1 + "_" + pointId2);
             // make sure the pointToLines is initialized
-            if (!pointsToLines.containsKey(pointId1)) {
-                pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId1)) {
+                dataContainer.pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
             }
-            if (!pointsToLines.containsKey(pointId2)) {
-                pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId2)) {
+                dataContainer.pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
             }
-            pointsToLines.get(pointId1).remove(line);
-            pointsToLines.get(pointId2).remove(line);
+            dataContainer.pointsToLines.get(pointId1).remove(line);
+            dataContainer.pointsToLines.get(pointId2).remove(line);
         }
 
         @Override
         protected void unapplyAction() {
             ExtendedLine line = new ExtendedLine(pointId1, pointId2);
-            lines.put(pointId1 + "_" + pointId2, line);
+            dataContainer.lines.put(pointId1 + "_" + pointId2, line);
             // make sure the pointToLines is initialized
-            if (!pointsToLines.containsKey(pointId1)) {
-                pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId1)) {
+                dataContainer.pointsToLines.put(pointId1, new ArrayList<ExtendedLine>());
             }
-            if (!pointsToLines.containsKey(pointId2)) {
-                pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
+            if (! dataContainer.pointsToLines.containsKey(pointId2)) {
+                dataContainer.pointsToLines.put(pointId2, new ArrayList<ExtendedLine>());
             }
-            pointsToLines.get(pointId1).add(line);
-            pointsToLines.get(pointId2).add(line);
+            dataContainer.pointsToLines.get(pointId1).add(line);
+            dataContainer.pointsToLines.get(pointId2).add(line);
         }
     }
 
@@ -237,8 +230,8 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         protected void applyAction() {
             // remove all points (attach)
             if (isFirstCall()) { // delete all points of this frame
-                Integer[] pointIds = new Integer[points.size()];
-                points.keySet().toArray(pointIds);
+                Integer[] pointIds = new Integer[ dataContainer.points.size()];
+                dataContainer.points.keySet().toArray(pointIds);
                 for (Integer pointId : pointIds) {
                     historyManagerA.applyIntent(new RemovePointIntent(pointId, true));
                 }
@@ -265,12 +258,12 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
         @Override
         protected void applyAction() {
-            frames.put(frameId, new Frame(frameName));
+            dataContainer.frames.put(frameId, new Frame(frameName));
         }
 
         @Override
         protected void unapplyAction() {
-            frames.remove(frameId);
+            dataContainer.frames.remove(frameId);
         }
     }
 
@@ -289,22 +282,22 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         protected void applyAction() {
             if (isFirstCall()) {
                 // delete all points of this frame
-                Frame frameRef = frames.get(frameId);
+                Frame frameRef =  dataContainer.frames.get(frameId);
                 for (Integer pointId : frameRef.getPoints()) {
                     historyManagerA.applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
                 }
-                if (activeFrame == frameId) { // make sure the frameId is still valid
+                if ( dataContainer.activeFrame == frameId) { // make sure the frameId is still valid
                     historyManagerA.applyIntent(new SetActiveFrameIntent(-1, true));
                 }
                 // get the frame name
                 frameName = frameRef.getName();
             }
-            frames.remove(frameId);
+            dataContainer.frames.remove(frameId);
         }
 
         @Override
         protected void unapplyAction() {
-            frames.put(frameId, new Frame(frameName));
+            dataContainer.frames.put(frameId, new Frame(frameName));
         }
     }
 
@@ -321,7 +314,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                Frame frameRef = frames.get(frameId);
+                Frame frameRef =  dataContainer.frames.get(frameId);
                 for (Integer pointId : frameRef.getPoints()) {
                     historyManagerA.applyIntent(new RemoveFramePointIntent(pointId, frameId, true));
                 }
@@ -350,14 +343,14 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                oldFrameName = frames.get(frameId).getName();
+                oldFrameName =  dataContainer.frames.get(frameId).getName();
             }
-            frames.get(frameId).setName(frameName);
+            dataContainer.frames.get(frameId).setName(frameName);
         }
 
         @Override
         protected void unapplyAction() {
-            frames.get(frameId).setName(oldFrameName);
+            dataContainer.frames.get(frameId).setName(oldFrameName);
         }
     }
 
@@ -376,7 +369,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
         @Override
         protected void applyAction() {
-            Frame frameRef = frames.get(frameId);
+            Frame frameRef =  dataContainer.frames.get(frameId);
             if (isFirstCall()) {
                 oldPoint = frameRef.getPoint(point.id);
             }
@@ -386,9 +379,9 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         @Override
         protected void unapplyAction() {
             if (oldPoint != null) {
-                frames.get(frameId).setPoint(oldPoint.id, oldPoint);
+                dataContainer.frames.get(frameId).setPoint(oldPoint.id, oldPoint);
             } else {
-                frames.get(frameId).removePoint(point.id);
+                dataContainer.frames.get(frameId).removePoint(point.id);
             }
         }
     }
@@ -408,7 +401,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
         @Override
         protected void applyAction() {
-            Frame frameRef = frames.get(frameId);
+            Frame frameRef =  dataContainer.frames.get(frameId);
             if (isFirstCall()) {
                 oldPoint = frameRef.getPoint(pointId);
             }
@@ -417,7 +410,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
         @Override
         protected void unapplyAction() {
-            frames.get(frameId).setPoint(oldPoint.id, oldPoint);
+            dataContainer.frames.get(frameId).setPoint(oldPoint.id, oldPoint);
         }
     }
 
@@ -435,14 +428,14 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                oldFrameId = activeFrame;
+                oldFrameId =  dataContainer.activeFrame;
             }
-            activeFrame = frameId;
+            dataContainer.activeFrame = frameId;
         }
 
         @Override
         protected void unapplyAction() {
-            activeFrame = oldFrameId;
+            dataContainer.activeFrame = oldFrameId;
         }
     }
 
@@ -453,7 +446,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     private int getFreePointId() {
         do {
             lastPoint++;
-        } while (points.containsKey(lastPoint));
+        } while (dataContainer.points.containsKey(lastPoint));
         return lastPoint;
     }
 
@@ -462,7 +455,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     private int getFreeFrameId() {
         do {
             lastFrame++;
-        } while (frames.containsKey(lastFrame));
+        } while (dataContainer.frames.containsKey(lastFrame));
         return lastFrame;
     }
 
@@ -474,7 +467,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
     @Override
     public final boolean isValid(int pointId) {
-        return points.containsKey(pointId);
+        return dataContainer.points.containsKey(pointId);
     }
 
     @Override
@@ -499,10 +492,10 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     public final boolean movePoint(int pointId, SimpleVector pos) {
         boolean result = false;
         if (isValid(pointId)) {
-            if (activeFrame == -1) { // move real point
+            if (dataContainer.activeFrame == -1) { // move real point
                 historyManagerA.applyIntent(new MovePointIntent(pointId, pos, false));
             } else { // move frame point
-                historyManagerA.applyIntent(new PlaceFramePointIntent(pointId, pos, activeFrame, false));
+                historyManagerA.applyIntent(new PlaceFramePointIntent(pointId, pos, dataContainer.activeFrame, false));
             }
             result = true;
         }
@@ -511,7 +504,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
     @Override
     public final boolean areConnected(int id1, int id2) {
-        return lines.containsKey(Math.min(id1, id2) + "_" + Math.max(id1, id2));
+        return dataContainer.lines.containsKey(Math.min(id1, id2) + "_" + Math.max(id1, id2));
     }
 
     @Override
@@ -527,7 +520,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final boolean clearA() {
         boolean result = false;
-        if (points.size() > 0) {
+        if (dataContainer.points.size() > 0) {
             historyManagerA.applyIntent(new ClearAIntent(false));
             result = true;
         }
@@ -546,13 +539,13 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
     @Override
     public final ExtendedVector getPoint(int pointId) {
-        if (activeFrame != -1) { // return frame point if defined
-            ExtendedVector point = frames.get(activeFrame).getPoint(pointId);
+        if (dataContainer.activeFrame != -1) { // return frame point if defined
+            ExtendedVector point = dataContainer.frames.get(dataContainer.activeFrame).getPoint(pointId);
             if (point != null) {
                 return point;
             }
         }
-        return points.get(pointId);
+        return dataContainer.points.get(pointId);
     }
 
     private ExtendedVector[] pointBuffer = new ExtendedVector[]{};
@@ -560,11 +553,11 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final ExtendedVector[] getPoints() {
         if (!pointBufferValid) {
-            if (pointBuffer.length != points.size()) {
-                pointBuffer = new ExtendedVector[points.size()];
+            if (pointBuffer.length != dataContainer.points.size()) {
+                pointBuffer = new ExtendedVector[dataContainer.points.size()];
             }
             int i = 0;
-            for (int pointId : points.keySet()) {
+            for (int pointId : dataContainer.points.keySet()) {
                 pointBuffer[i++] = getPoint(pointId);
             }
             pointBufferValid = true;
@@ -577,11 +570,11 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final ExtendedVector[][] getLines() {
         if (!lineBufferValid) {
-            if (lineBuffer.length != lines.size()) {
-                lineBuffer = new ExtendedVector[lines.size()][2];
+            if (lineBuffer.length != dataContainer.lines.size()) {
+                lineBuffer = new ExtendedVector[dataContainer.lines.size()][2];
             }
             int i = 0;
-            for (ExtendedLine line : lines.values()) {
+            for (ExtendedLine line : dataContainer.lines.values()) {
                 lineBuffer[i][0] = getPoint(line.point1);
                 lineBuffer[i][1] = getPoint(line.point2);
                 i++;
@@ -614,7 +607,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final boolean selectFrame(int frameId) {
         boolean result = false;
-        if (frames.containsKey(frameId) || frameId == -1) {
+        if (dataContainer.frames.containsKey(frameId) || frameId == -1) {
             historyManagerA.applyIntent(new SetActiveFrameIntent(frameId, false));
             result = true;
         }
@@ -623,7 +616,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
     @Override
     public final int getSelectedFrame() {
-        return activeFrame;
+        return dataContainer.activeFrame;
     }
 
     @Override
@@ -636,7 +629,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final boolean deleteFrame(int frameId) {
         boolean result = false;
-        if (frames.containsKey(frameId)) {
+        if (dataContainer.frames.containsKey(frameId)) {
             historyManagerA.applyIntent(new DeleteFrameIntent(frameId, false));
             result = true;
         }
@@ -646,7 +639,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final boolean renameFrame(int frameId, String newName) {
         boolean result = false;
-        if (frames.containsKey(frameId)) {
+        if (dataContainer.frames.containsKey(frameId)) {
             historyManagerA.applyIntent(new RenameFrameIntent(frameId, newName, false));
             result = true;
         }
@@ -658,10 +651,10 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final Integer[] getFrames() {
         if (!frameBufferValid) {
-            if (frameBuffer.length != frames.size()) {
-                frameBuffer = new Integer[frames.size()];
+            if (frameBuffer.length != dataContainer.frames.size()) {
+                frameBuffer = new Integer[dataContainer.frames.size()];
             }
-            frames.keySet().toArray(frameBuffer);
+            dataContainer.frames.keySet().toArray(frameBuffer);
             frameBufferValid = true;
         }
         return frameBuffer.clone();
@@ -670,7 +663,7 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
     @Override
     public final boolean resetFrame(int frameId) {
         boolean result = false;
-        if (frames.containsKey(frameId)) {
+        if (dataContainer.frames.containsKey(frameId)) {
             historyManagerA.applyIntent(new ResetFrameIntent(frameId, false));
             result = true;
         }
@@ -679,8 +672,8 @@ public abstract class AnimationData extends ListenerData implements AnimationDat
 
     @Override
     public final String getFrameName(int frameId) {
-        if (frames.containsKey(frameId)) {
-            return frames.get(frameId).getName();
+        if (dataContainer.frames.containsKey(frameId)) {
+            return dataContainer.frames.get(frameId).getName();
         }
         return null;
     }

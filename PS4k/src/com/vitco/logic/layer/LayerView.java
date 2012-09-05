@@ -178,6 +178,10 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         table.getColumnModel().getColumn(0).setCellRenderer(new TableRenderer());
         table.getColumnModel().getColumn(1).setCellRenderer(new TableRenderer());
 
+        // update now
+        selectedLayer = data.getSelectedLayer();
+        layers = data.getLayers();
+
         // update table when data changes
         data.addDataChangeListener(new DataChangeAdapter() {
             @Override
@@ -219,7 +223,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 int col = aTable.columnAtPoint(e.getPoint());
 
                 if (e.getClickCount() == 1) { // select layer
-                    data.selectLayer(layers[row]);
+                    data.selectLayerSoft(layers[row]);
                 } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
                     data.setVisible(layers[row], !data.getLayerVisible(layers[row]));
                 }
@@ -234,9 +238,6 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         table.getColumnModel().getColumn(0).setCellEditor(new CellEditor());
         // stop editing when table looses focus
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-
-        // create initial layer and select it
-        data.selectLayer(data.createLayer("Layer"));
 
         // container for table
         JScrollPane pane = new JScrollPane(table);
@@ -295,6 +296,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 return data.canMergeVisibleLayers();
             }
         });
+
 
         return result;
     }

@@ -6,6 +6,7 @@
     <icon-item src="resource/img/framebars/layer/remove.png"
                tool-tip="layer-frame_remove-layer_tooltip"
                action="layer-frame_remove-layer"/>
+    <separator/>
     <icon-item src="resource/img/framebars/layer/move_up.png"
                tool-tip="layer-frame_move-layer-up_tooltip"
                action="layer-frame_move-layer-up"

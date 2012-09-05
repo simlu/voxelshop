@@ -617,11 +617,20 @@ public class VoxelDataTest {
                 }
             }
 
+            public void selectLayerSoft() {
+                Integer[] layers = data.getLayers();
+                if (layers.length > 0) {
+                    int rem = rand.nextInt(layers.length);
+                    data.selectLayerSoft(layers[rem]);
+                    assert ((Integer)data.getSelectedLayer()).equals(layers[rem]);
+                }
+            }
+
         }
 
-        final int poss = 15;
+        final int poss = 16;
 
-        for (int seed = 50; seed < 55; seed ++) {
+        for (int seed = 2000; seed < 2005; seed ++) {
             Util util = new Util(seed);
             float[] prob = new float[poss];
             for (int k = 0; k < prob.length; k++) {
@@ -702,6 +711,11 @@ public class VoxelDataTest {
                     case 15:
                         if (util.getFloat() < prob[14]) {
                             util.clear();
+                        }
+                        break;
+                    case 16:
+                        if (util.getFloat() < prob[15]) {
+                            util.selectLayerSoft();
                         }
                         break;
                 }
