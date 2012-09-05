@@ -122,9 +122,11 @@
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
         <constructor-arg value="PS4k - Alpha Version"/>
+        <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
         <property name="errorHandler" ref="ErrorHandler"/>
+        <property name="data" ref="Data"/>
         <!-- shortcut manager -->
         <property name="shortcutManager" ref="ShortcutManager"/>
         <!-- set the linkage map (bars) -->

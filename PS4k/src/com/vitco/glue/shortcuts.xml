@@ -9,11 +9,15 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="4" action="snapshot_state-action_show" caption="snapshot_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="5" action="personal_state-action_show" caption="personal_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="6" action="layer_state-action_show" caption="layer_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
         <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F1" action="voxel_mode_select_type_view" caption="voxel_mode_select_type_view_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F2" action="voxel_mode_select_type_draw" caption="voxel_mode_select_type_draw_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
     </global>
 
     <frame name="mainView">

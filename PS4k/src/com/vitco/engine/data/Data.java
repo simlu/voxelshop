@@ -44,6 +44,8 @@ public final class Data extends VoxelHighlight implements DataInterface {
         notifier.onAnimationDataChanged();
         notifier.onVoxelDataChanged();
         notifier.onColorDataChanged();
+        // file has not changed yet
+        hasChanged = false;
     }
 
     @Override
@@ -55,6 +57,8 @@ public final class Data extends VoxelHighlight implements DataInterface {
             dataContainer = (DataContainer)loaded;
             invalidateA();
             invalidateV();
+            // file has not changed yet
+            hasChanged = false;
             result = true;
         }
         return result;
@@ -62,6 +66,10 @@ public final class Data extends VoxelHighlight implements DataInterface {
 
     @Override
     public final boolean saveToFile(File file) {
-        return FileTools.saveToFile(file, dataContainer, errorHandler);
+        boolean result = FileTools.saveToFile(file, dataContainer, errorHandler);
+        if (result) {
+            hasChanged = false;
+        }
+        return result;
     }
 }

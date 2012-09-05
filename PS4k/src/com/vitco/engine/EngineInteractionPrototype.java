@@ -4,18 +4,22 @@ import com.newbrightidea.util.RTree;
 import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
+import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.ExtendedVector;
+import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.action.ChangeListener;
-import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.util.BiMap;
+import com.vitco.util.WorldUtil;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -224,141 +228,223 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         });
     }
 
-    private static boolean initialized = false;
-    private static boolean animationMode = true;
+    // current mode
+    protected DataContainer.VOXELMODE voxelMode;
+
+    // helper - add a voxel object to world
+    protected final void addVoxelToWorld(Voxel voxel) {
+        int id = WorldUtil.addBox(world,
+                new SimpleVector(
+                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
+                VitcoSettings.VOXEL_SIZE / 2,
+                voxel.getColor());
+        voxelToObject.put(voxel.id, id);
+    }
+
+    // update the world with voxels
+    protected abstract void updateWorldWithVoxels();
+
+    // maps voxel ids to world ids
+    protected final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
+    protected final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
+
+    // voxel draw adapter for main view
+    @SuppressWarnings("CanBeFinal")
+    protected VoxelAdapter voxelAdapter = new VoxelAdapter();
+    protected class VoxelAdapter extends MouseAdapter {
+        // true means we're currently adding/removing voxels on drag
+        private boolean massVoxel = false;
+
+        private Point lastMovePos = new Point(0,0);
+
+        // replay the last hover
+        public final void replayHover() {
+            hover(lastMovePos);
+        }
+
+        // execute on mouse event
+        protected void execute() {
+            if (data.getHighlightedVoxel() != null) { // something highlighted
+                camera.setEnabled(voxelMode == DataContainer.VOXELMODE.VIEW);
+                if (voxelMode == DataContainer.VOXELMODE.DRAW) { // add voxel
+                    int[] highlightedVoxel = data.getHighlightedVoxel();
+                    data.highlightVoxel(null);
+                    data.addVoxel(data.getCurrentColor(), highlightedVoxel);
+                    massVoxel = true;
+                } else if (voxelMode == DataContainer.VOXELMODE.ERASE) { // remove voxel
+                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
+                    if (highlightedVoxel != null) {
+                        data.removeVoxel(highlightedVoxel.id);
+                    }
+                    massVoxel = true;
+                } else if (voxelMode == DataContainer.VOXELMODE.PICKER) {
+                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
+                    if (highlightedVoxel != null) {
+                        data.setCurrentColor(highlightedVoxel.getColor());
+                    }
+                }
+            }
+        }
+
+        // hover on mouse event
+        protected void hover(Point point) {
+            // check if we hit something
+            SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
+            Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
+            if (res[1] != null && voxelMode != DataContainer.VOXELMODE.VIEW) { // something hit
+                Object3D obj3D = ((Object3D)res[1]);
+                int[] voxelPos = data.getVoxel(voxelToObject.getKey(obj3D.getID())).getPosAsInt();
+                if (voxelMode != DataContainer.VOXELMODE.ERASE && voxelMode != DataContainer.VOXELMODE.PICKER) { // select next to voxel
+                    // find collision point
+                    SimpleVector colPoint = camera.getPosition();
+                    dir.scalarMul((Float)res[0]);
+                    colPoint.add(dir);
+                    // find side that it hits
+                    ArrayList<float[]> planes = new ArrayList<float[]>();
+                    planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
+                    planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
+                    planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
+                    planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
+                    planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
+                    planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
+                    Collections.sort(planes, new Comparator<float[]>() {
+                        @Override
+                        public int compare(float[] o1, float[] o2) {
+                            return (int) Math.signum(o1[1] - o2[1]);
+                        }
+                    });
+                    switch ((int)planes.get(0)[0]) {
+                        case 1:  voxelPos[1] -= 1; break;
+                        case 2:  voxelPos[1] += 1; break;
+                        case 3:  voxelPos[0] -= 1; break;
+                        case 4:  voxelPos[0] += 1; break;
+                        case 5:  voxelPos[2] -= 1; break;
+                        case 6:  voxelPos[2] += 1; break;
+                    }
+                }
+                // highlight the voxel (position)
+                data.highlightVoxel(voxelPos);
+            } else { // hit nothing
+                if (voxelMode == DataContainer.VOXELMODE.DRAW) { // trying to draw
+                    // hit nothing, draw preview on zero level
+                    if (dir.y > 0.05) { // angle big enough
+                        // calculate position
+                        float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - camera.getPosition().y) / dir.y;
+                        dir.scalarMul(t);
+                        SimpleVector pos = camera.getPosition();
+                        pos.add(dir);
+                        pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
+                        if (Math.abs(pos.x) < VitcoSettings.VOXEL_GROUND_MAX_RANGE && Math.abs(pos.z) < VitcoSettings.VOXEL_GROUND_MAX_RANGE) {
+                            // if we hit the ground plane
+                            data.highlightVoxel(new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)});
+                        } else {
+                            data.highlightVoxel(null);
+                        }
+                    } else { // angle too small
+                        data.highlightVoxel(null);
+                    }
+                } else { // not trying to draw and hit nothing
+                    data.highlightVoxel(null);
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            execute();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            massVoxel = false;
+            hover(e.getPoint());
+            camera.setEnabled(true);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            data.removeVoxelHighlights();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (massVoxel) {
+                hover(e.getPoint());
+                execute();
+            } else {
+                data.removeVoxelHighlights();
+            }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            lastMovePos = e.getPoint();
+            hover(e.getPoint());
+        }
+    }
+
+
     @PostConstruct
     protected final void init() {
 
-        // change what is drawn/what user can do when the mode changes
-        actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
+        DataChangeAdapter dca = new DataChangeAdapter() {
+
             @Override
-            public void run() {
-                ((StateActionPrototype)actionManager.getAction("toggle_animation_mode")).addChangeListener(new ChangeListener() {
-                    @Override
-                    public void actionFired(boolean b) { // this is fired once on setup
-                        if (b) {
-                            container.addMouseMotionListener(animationAdapter);
-                            container.addMouseListener(animationAdapter);
-                        } else {
-                            data.removeAnimationHighlights();
-                            container.removeMouseMotionListener(animationAdapter);
-                            container.removeMouseListener(animationAdapter);
-                        }
-                        container.setDrawAnimationOverlay(b);
-                        container.repaint();
-                    }
-                });
+            public void onAnimationDataChanged() {
+                container.skipNextWorldRender(); // no need to re-render scene
+                animationAdapter.refresh2DIndex(); // refresh 2D index when data changes
+                container.repaint();
             }
-        });
 
-        // only perform these actions once (even if the class is instantiated several times)
-        if (!initialized) {
-            initialized = true;
+            @Override
+            public void onAnimationSelectionChanged() {
+                container.skipNextWorldRender(); // no need to re-render scene
+                container.repaint();
+            }
 
-            // action to refresh the status of the history buttons
-            final Runnable refreshHistoryButton = new Runnable() {
-                @Override
-                public void run() {
-                    actionManager.performWhenActionIsReady("global_action_undo", new Runnable() {
-                        @Override
-                        public void run() {
-                            ((StateActionPrototype)actionManager.getAction("global_action_undo")).refresh();
-                        }
-                    });
-                    actionManager.performWhenActionIsReady("global_action_redo", new Runnable() {
-                        @Override
-                        public void run() {
-                            ((StateActionPrototype)actionManager.getAction("global_action_redo")).refresh();
-                        }
-                    });
+            @Override
+            public void onVoxelDataChanged() {
+                updateWorldWithVoxels();
+                container.doNotSkipNextWorldRender();
+                container.repaint();
+            }
+
+            @Override
+            public void onVoxelSelectionChanged() {
+                container.skipNextWorldRender();
+                container.repaint();
+            }
+
+            @Override
+            public void onAnimateChanged() {
+                if (data.isAnimate()) {
+                    data.removeVoxelHighlights();
+                    container.removeMouseMotionListener(voxelAdapter);
+                    container.removeMouseListener(voxelAdapter);
+                    container.addMouseMotionListener(animationAdapter);
+                    container.addMouseListener(animationAdapter);
+                } else {
+                    data.removeAnimationHighlights();
+                    container.removeMouseMotionListener(animationAdapter);
+                    container.removeMouseListener(animationAdapter);
+                    container.addMouseMotionListener(voxelAdapter);
+                    container.addMouseListener(voxelAdapter);
                 }
-            };
+                container.setDrawAnimationOverlay(data.isAnimate());
+                container.repaint();
+            }
 
-            // know the mode at all times
-            actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
-                @Override
-                public void run() {
-                    ((StateActionPrototype) actionManager.getAction("toggle_animation_mode")).addChangeListener(new ChangeListener() {
-                        @Override
-                        public void actionFired(boolean b) {
-                            animationMode = b;
-                            refreshHistoryButton.run();
-                        }
-                    });
-                }
-            });
-
-            // register action status change events
-            data.addDataChangeListener(new DataChangeAdapter() {
-                @Override
-                public void onAnimationDataChanged() {
-                    refreshHistoryButton.run();
-                }
-
-                @Override
-                public void onVoxelDataChanged() {
-                    refreshHistoryButton.run();
-                }
-            });
-
-            // register global shortcuts for data interaction
-            // register undo action
-            actionManager.registerAction("global_action_undo", new StateActionPrototype() {
-                @Override
-                public void action(ActionEvent actionEvent) {
-                    if (getStatus()) {
-                        if (animationMode) {
-                            data.removeAnimationHighlights();
-                            data.undoA();
-                        } else {
-                            data.removeVoxelHighlights();
-                            data.undoV();
-                        }
-                    }
-                }
-
-                @Override
-                public boolean getStatus() {
-                    if (animationMode) {
-                        return data.canUndoA();
-                    } else {
-                        return data.canUndoV();
-                    }
-                }
-            });
-
-            // register redo action
-            actionManager.registerAction("global_action_redo", new StateActionPrototype() {
-                @Override
-                public void action(ActionEvent actionEvent) {
-                    if (getStatus()) {
-                        if (animationMode) {
-                            data.removeAnimationHighlights();
-                            data.redoA();
-                        } else {
-                            data.removeVoxelHighlights();
-                            data.redoV();
-                        }
-                    }
-                }
-
-                @Override
-                public boolean getStatus() {
-                    if (animationMode) {
-                        return data.canRedoA();
-                    } else {
-                        return data.canRedoV();
-                    }
-                }
-            });
-
-            // register clear history action
-            actionManager.registerAction("clear_history_action", new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    data.clearHistory();
-                }
-            });
-        }
+            @Override
+            public void onVoxelModeChanged() {
+                voxelMode = data.getVoxelMode();
+                voxelAdapter.replayHover();
+            }
+        };
+        data.addDataChangeListener(dca);
+        // initialize modes
+        dca.onAnimateChanged();
+        dca.onVoxelModeChanged();
     }
 }

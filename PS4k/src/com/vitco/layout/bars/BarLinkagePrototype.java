@@ -5,12 +5,14 @@ import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.menu.MenuGeneratorInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.awt.*;
+
 /**
  * Prototype of class that links bar to content.
  */
 public abstract class BarLinkagePrototype {
     // constructs the bar (with content)
-    public abstract CommandBar buildBar(String key);
+    public abstract CommandBar buildBar(String key, Frame frame);
     // var & setter
     protected MenuGeneratorInterface menuGenerator;
     @Autowired(required = true)

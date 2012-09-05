@@ -15,4 +15,10 @@ public interface GeneralDataInterface {
     boolean setVoxelMode(DataContainer.VOXELMODE mode);
 
     DataContainer.VOXELMODE getVoxelMode();
+
+    boolean setAnimate(boolean animate);
+
+    boolean isAnimate();
+
+    boolean hasChanged();
 }

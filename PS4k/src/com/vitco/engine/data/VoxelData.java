@@ -19,7 +19,6 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         super();
         // notify when the data changes
         historyManagerV.addChangeListener(new HistoryChangeListener() {
-            private static final long serialVersionUID = 1L;
             @Override
             public final void onChange() {
                 invalidateV();

@@ -4,19 +4,17 @@ import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
+import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.Voxel;
-import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.BiMap;
-import com.vitco.util.WorldUtil;
-import com.vitco.util.action.ChangeListener;
-import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Creates one side view instance (one perspective) and the specific user interaction.
@@ -46,28 +44,16 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     public SideView(int side) {
         this.side = side;
         resetView();
+        // set the adapter with the altered behalvior
+        voxelAdapter = new VoxelAdapterSideView();
     }
 
-    // maps voxel ids to world ids
-    protected final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
-    protected final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
-
-    // helper
-    private void addVoxelToWorld(Voxel voxel) {
-        int id = WorldUtil.addBox(world,
-                new SimpleVector(
-                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
-                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
-                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
-                VitcoSettings.VOXEL_SIZE / 2,
-                voxel.getColor());
-        voxelToObject.put(voxel.id, id);
-    }
-
+    // the current depth of the plane that is shown
     private int currentplane = 0;
 
     // helper
-    private void updateWorldWithVoxels() {
+    @Override
+    public void updateWorldWithVoxels() {
         // get the current voxels
         Voxel[] voxels = data.getVisibleLayerVoxel();
         switch (side) {
@@ -89,7 +75,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         // loop over all voxels
         for (Voxel voxel : voxels) {
             voxelIds.remove((Integer)voxel.id);
-            if (!voxelToObject.containsKey(voxel.id)) { // add all new voxels
+            if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
                 addVoxelToWorld(voxel);
                 idToVoxel.put(voxel.id, voxel);
             } else { // remove and add all altered voxels
@@ -109,85 +95,37 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         }
     }
 
-    // for voxel interaction
-    private final VoxelAdapter drawAdapter = new VoxelAdapter();
-    private final class VoxelAdapter extends MouseAdapter implements KeyEventDispatcher {
-
+    // alter the behavior
+    private final class VoxelAdapterSideView extends EngineInteractionPrototype.VoxelAdapter {
+        // hover on mouse event
         @Override
-        public void mousePressed(MouseEvent e) {
-            if (data.getHighlightedVoxel() != null) {
-                data.addVoxel(data.getCurrentColor(),data.getHighlightedVoxel());
+        protected void hover(Point point) {
+            if (voxelMode != DataContainer.VOXELMODE.VIEW) {
+                // calculate position
+                SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
+                        new SimpleVector(
+                                side == 2 ? currentplane : 0,
+                                side == 1 ? currentplane : 0,
+                                side == 0 ? currentplane : 0
+                        )
+                );
+                int[] pos = new int[]{
+                        side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
+                        side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
+                        side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
+                };
+                Voxel voxel = data.searchVoxel(pos);
+                if (voxel != null || DataContainer.VOXELMODE.DRAW == voxelMode) {
+                    data.highlightVoxel(pos);
+                } else {
+                    data.highlightVoxel(null);
+                }
             }
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-
-        }
-
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            return false;
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-
-        }
-
-        // highlight correct voxel
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            SimpleVector nPos = convert2D3D(e.getX(), e.getY(),
-                    new SimpleVector(
-                            side == 2 ? currentplane : 0,
-                            side == 1 ? currentplane : 0,
-                            side == 0 ? currentplane : 0
-                    )
-            );
-            data.highlightVoxel(new int[]{
-                    side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
-                    side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
-                    side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
-            });
         }
     }
 
     @Override
     public final JPanel build() {
-
-        // enable / disable voxel interaction
-        actionManager.performWhenActionIsReady("toggle_animation_mode", new Runnable() {
-            @Override
-            public void run() {
-                ((StateActionPrototype)actionManager.getAction("toggle_animation_mode")).addChangeListener(new ChangeListener() {
-                    @Override
-                    public void actionFired(boolean b) { // this is fired once on setup
-                        if (b) {
-                            data.removeVoxelHighlights();
-                            container.removeMouseMotionListener(drawAdapter);
-                            container.removeMouseListener(drawAdapter);
-                            KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(drawAdapter);
-                        } else {
-                            container.addMouseMotionListener(drawAdapter);
-                            container.addMouseListener(drawAdapter);
-                            KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(drawAdapter);
-                        }
-                        container.repaint();
-                    }
-                });
-            }
-        });
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
@@ -281,35 +219,6 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         };
         container.addMouseMotionListener(shiftingMouseAdapter);
         container.addMouseListener(shiftingMouseAdapter);
-
-        // register redraw on animation data change
-        data.addDataChangeListener(new DataChangeAdapter() {
-            @Override
-            public void onAnimationDataChanged() {
-                container.skipNextWorldRender(); // no need to re-render scene
-                animationAdapter.refresh2DIndex(); // refresh 2D index when data changes
-                container.repaint();
-            }
-
-            @Override
-            public void onAnimationSelectionChanged() {
-                container.skipNextWorldRender();
-                container.repaint();
-            }
-
-            @Override
-            public void onVoxelDataChanged() {
-                updateWorldWithVoxels();
-                container.doNotSkipNextWorldRender();
-                container.repaint();
-            }
-
-            @Override
-            public void onVoxelSelectionChanged() {
-                container.skipNextWorldRender();
-                container.repaint();
-            }
-        });
 
         // holds the menu and the draw panel (container)
         final JPanel wrapper = new JPanel();

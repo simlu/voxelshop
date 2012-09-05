@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -46,7 +47,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
     }
 
     @Override
-    public CommandBar buildBar(String key) {
+    public CommandBar buildBar(String key, final Frame frame) {
         final CommandMenuBar bar = new CommandMenuBar(key);
 
         // build the menu
@@ -62,7 +63,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         actionManager.registerAction("save_file_action", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int returnVal = fc.showSaveDialog(bar.getComponent());
+                int returnVal = fc.showSaveDialog(frame);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     // make sure filename ends with *.vsd
                     String dir = fc.getSelectedFile().getPath();
@@ -72,7 +73,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
                     File saveTo = new File(dir);
                     // query if file already exists
                     if (!saveTo.exists() ||
-                            JOptionPane.showConfirmDialog(null,
+                            JOptionPane.showConfirmDialog(frame,
                                     dir + " " + langSelector.getString("replace_file_query"),
                                     langSelector.getString("replace_file_query_title"),
                                     JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
@@ -88,10 +89,15 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         actionManager.registerAction("load_file_action", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int returnVal = fc.showOpenDialog(bar.getComponent());
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    data.loadFromFile(fc.getSelectedFile());
-                    save_location[0] = fc.getSelectedFile().getPath(); // remember load location
+                if (!data.hasChanged() || JOptionPane.showConfirmDialog(frame,
+                        langSelector.getString("unsaved_changes_on_open"),
+                        langSelector.getString("unsaved_changes_on_open_title"),
+                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                    int returnVal = fc.showOpenDialog(frame);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        data.loadFromFile(fc.getSelectedFile());
+                        save_location[0] = fc.getSelectedFile().getPath(); // remember load location
+                    }
                 }
             }
         });
@@ -116,37 +122,42 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         actionManager.registerAction("new_file_action", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // option to save changes / erase changes / cancel
-                switch (JOptionPane.showConfirmDialog(null, langSelector.getString("save_current_changed_query"))) {
-                    case JOptionPane.YES_OPTION: // save changes
-                        if (save_location[0] != null) { // we already know where to save (ok)
-                            File file = new File(save_location[0]);
-                            data.saveToFile(file);
-                            save_location[0] = null;
-                            data.freshStart();
-                        } else { // we dont know where
-                            int returnVal = fc.showSaveDialog(bar.getComponent());
-                            if (returnVal == JFileChooser.APPROVE_OPTION) { // location selected
-                                // query if the file already exists
-                                if (!fc.getSelectedFile().exists() ||
-                                        JOptionPane.showConfirmDialog(null,
-                                                fc.getSelectedFile().getName() + " " + langSelector.getString("replace_file_query"),
-                                                langSelector.getString("replace_file_query_title"),
-                                                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                                    data.saveToFile(fc.getSelectedFile());
-                                    save_location[0] = null;
-                                    data.freshStart();
+                if (data.hasChanged()) {
+                    // option to save changes / erase changes / cancel
+                    switch (JOptionPane.showConfirmDialog(frame, langSelector.getString("save_current_changed_query"))) {
+                        case JOptionPane.YES_OPTION: // save changes
+                            if (save_location[0] != null) { // we already know where to save (ok)
+                                File file = new File(save_location[0]);
+                                data.saveToFile(file);
+                                save_location[0] = null;
+                                data.freshStart();
+                            } else { // we dont know where
+                                int returnVal = fc.showSaveDialog(frame);
+                                if (returnVal == JFileChooser.APPROVE_OPTION) { // location selected
+                                    // query if the file already exists
+                                    if (!fc.getSelectedFile().exists() ||
+                                            JOptionPane.showConfirmDialog(frame,
+                                                    fc.getSelectedFile().getName() + " " + langSelector.getString("replace_file_query"),
+                                                    langSelector.getString("replace_file_query_title"),
+                                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                                        data.saveToFile(fc.getSelectedFile());
+                                        save_location[0] = null;
+                                        data.freshStart();
+                                    }
                                 }
                             }
-                        }
-                        break;
-                    case JOptionPane.NO_OPTION: // don't save option
-                        data.freshStart();
-                        save_location[0] = null;
-                        break;
-                    case JOptionPane.CANCEL_OPTION: // cancel = do nothing
-                        // cancel
-                        break;
+                            break;
+                        case JOptionPane.NO_OPTION: // don't save option
+                            data.freshStart();
+                            save_location[0] = null;
+                            break;
+                        case JOptionPane.CANCEL_OPTION: // cancel = do nothing
+                            // cancel
+                            break;
+                    }
+                } else {
+                    data.freshStart();
+                    save_location[0] = null;
                 }
             }
         });

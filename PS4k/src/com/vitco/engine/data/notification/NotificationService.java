@@ -56,4 +56,18 @@ public final class NotificationService implements NotificationServiceInterface {
             listener.onColorDataChanged();
         }
     }
+
+    @Override
+    public void onVoxelModeChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onVoxelModeChanged();
+        }
+    }
+
+    @Override
+    public void onAnimateChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onAnimateChanged();
+        }
+    }
 }

@@ -6,12 +6,14 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
+import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
 import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -53,8 +55,16 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.errorHandler = errorHandler;
     }
 
+    // var & setter (can not be interface!!)
+    protected Data data;
+    @Override
+    public void setData(Data data) {
+        this.data = data;
+    }
+
     // var & setter
     private PreferencesInterface preferences;
+    @Override
     public void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
@@ -81,6 +91,13 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.actionManager = actionManager;
     }
 
+    // var & setter
+    protected LangSelectorInterface langSelector;
+    @Override
+    public void setLangSelector(LangSelectorInterface langSelector) {
+        this.langSelector = langSelector;
+    }
+
     // prepare all frames
     @Override
     public DockableFrame prepareFrame(String key) {
@@ -95,13 +112,15 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         return frame;
     }
 
+    final Frame thisFrame = this;
+
     // prepare all bars
     @Override
     public DockableBar prepareBar(String key) {
 
         CommandBar bar = null;
         if (barLinkageMap.containsKey(key)) {
-            bar = barLinkageMap.get(key).buildBar(key);
+            bar = barLinkageMap.get(key).buildBar(key, thisFrame);
         } else {
             System.err.println("Error: No linkage class defined for bar \"" + key + "\"");
         }
@@ -112,7 +131,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     // constructor
     public WindowManager(String title) throws HeadlessException {
         super(title);
-
         // save the state on exit of the program
         // this needs to be done BEFORE the window is closing
         addWindowListener(new WindowAdapter() {
@@ -129,17 +147,24 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
             @Override
             public void windowClosing(final WindowEvent e) {
-                // fire closing action
-                actionManager.performWhenActionIsReady("program_closing_action", new Runnable() {
-                    @Override
-                    public void run() {
-                        actionManager.getAction("program_closing_action").actionPerformed(
-                                new ActionEvent(e.getSource(),e.getID(),e.paramString())
-                        );
-                    }
-                });
-                // save layout data
-                preferences.storeObject("custom_raw_layout_data", getLayoutPersistence().getLayoutRawData());
+                if (!data.hasChanged() || JOptionPane.showConfirmDialog(thisFrame,
+                        langSelector.getString("unsaved_changes_on_exit"),
+                        langSelector.getString("unsaved_changes_on_exit_title"),
+                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                    // fire closing action
+                    actionManager.performWhenActionIsReady("program_closing_action", new Runnable() {
+                        @Override
+                        public void run() {
+                            actionManager.getAction("program_closing_action").actionPerformed(
+                                    new ActionEvent(e.getSource(), e.getID(), e.paramString())
+                            );
+                        }
+                    });
+                    // save layout data
+                    preferences.storeObject("custom_raw_layout_data", getLayoutPersistence().getLayoutRawData());
+
+                    thisFrame.dispose();
+                }
             }
         });
 
@@ -176,7 +201,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             this.setBounds((Rectangle)preferences.loadObject("program_boundary_rect"));
         }
         // default close action
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // set the icon
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(

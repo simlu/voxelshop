@@ -9,4 +9,6 @@ public interface DataChangeListener {
     void onVoxelDataChanged();
     void onVoxelSelectionChanged();
     void onColorDataChanged();
+    void onVoxelModeChanged();
+    void onAnimateChanged();
 }

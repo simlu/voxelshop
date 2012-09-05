@@ -19,4 +19,10 @@ public abstract class DataChangeAdapter implements DataChangeListener {
 
     @Override
     public void onColorDataChanged() {}
+
+    @Override
+    public void onVoxelModeChanged() {}
+
+    @Override
+    public void onAnimateChanged() {}
 }

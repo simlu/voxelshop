@@ -57,11 +57,11 @@ public class ColorPickerView implements ColorPickerViewInterface {
     private final class PaintThread extends LifeTimeThread {
         // get some needed components/settings
         private static final int SUBFRAMES = 30;
-        int width = image.getWidth();
-        int height = image.getHeight();
+        final int width = image.getWidth();
+        final int height = image.getHeight();
         int curPos = 0;
-        Graphics2D ig = (Graphics2D)image.getGraphics();
-        int count = width/SUBFRAMES + 1;
+        final Graphics2D ig = (Graphics2D)image.getGraphics();
+        final int count = width/SUBFRAMES + 1;
 
         // main work, this will loop until stopped (external or internal)
         @Override

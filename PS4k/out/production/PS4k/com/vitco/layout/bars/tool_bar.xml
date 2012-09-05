@@ -26,19 +26,19 @@
     <separator/>
 
     <icon-item src="resource/img/bars/tool_bar/view.png"
-               tool-tip="voxel_mode_select_type_view_caption"
+               tool-tip="voxel_mode_select_type_view_tooltip"
                checkable="true"
                action="voxel_mode_select_type_view"/>
     <icon-item src="resource/img/bars/tool_bar/draw.png"
-               tool-tip="voxel_mode_select_type_draw_caption"
+               tool-tip="voxel_mode_select_type_draw_tooltip"
                checkable="true"
                action="voxel_mode_select_type_draw"/>
     <icon-item src="resource/img/bars/tool_bar/erase.png"
-               tool-tip="voxel_mode_select_type_erase_caption"
+               tool-tip="voxel_mode_select_type_erase_tooltip"
                checkable="true"
                action="voxel_mode_select_type_erase"/>
     <icon-item src="resource/img/bars/tool_bar/color_picker.png"
-               tool-tip="voxel_mode_select_type_picker_caption"
+               tool-tip="voxel_mode_select_type_picker_tooltip"
                checkable="true"
                action="voxel_mode_select_type_picker"/>
 </head>

@@ -21,7 +21,7 @@ public class ThreadManager implements ThreadManagerInterface {
         this.actionManager = actionManager;
     }
 
-    private ArrayList<LifeTimeThread> threads = new ArrayList<LifeTimeThread>();
+    private final ArrayList<LifeTimeThread> threads = new ArrayList<LifeTimeThread>();
 
     // manage a thread
     @Override

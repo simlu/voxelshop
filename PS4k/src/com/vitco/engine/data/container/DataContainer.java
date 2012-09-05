@@ -13,13 +13,16 @@ public class DataContainer implements Serializable {
 
     public static enum VOXELMODE {
         VIEW, DRAW, ERASE, PICKER
-    };
+    }
 
     // ######################
     public ArrayList<Color> usedColors = new ArrayList<Color>(); //todo use this!
     public Color currentColor = new Color(193, 124, 50);
 
     public VOXELMODE mode = VOXELMODE.VIEW;
+
+    // true if we are dealing with animation (not voxel)
+    public boolean animate = false;
 
     // ###################### DATA (Voxel)
     // holds all layers (layers map to voxel ids)

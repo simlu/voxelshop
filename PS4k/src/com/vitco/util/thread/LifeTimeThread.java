@@ -24,5 +24,6 @@ public abstract class LifeTimeThread extends Thread {
     }
 
     // loop to be defines
+    @SuppressWarnings("RedundantThrows")
     public abstract void loop() throws InterruptedException;
 }
