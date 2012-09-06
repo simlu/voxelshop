@@ -1,14 +1,25 @@
 package com.vitco.engine.data;
 
-import com.vitco.engine.data.container.DataContainer;
+import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Manages everything that has to do with general data
  */
 public class GeneralData extends ListenerData implements GeneralDataInterface {
+
+    // ######################
+    protected ArrayList<Color> USED_COLORS = new ArrayList<Color>(); //todo use this!
+    protected Color CURRENT_COLOR = new Color(193, 124, 50);
+
+    protected VOXELMODE TOOL_MODE = VOXELMODE.VIEW;
+
+    // true if we are dealing with animation (not voxel)
+    protected boolean STATE_ANIMATE = false;
+
     public GeneralData() {
         this.addDataChangeListener(new DataChangeAdapter() {
             @Override
@@ -32,15 +43,15 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
     }
 
     @Override
-    public Color getCurrentColor() {
-        return dataContainer.currentColor;
+    public Color getCURRENT_COLOR() {
+        return CURRENT_COLOR;
     }
 
     @Override
     public boolean setCurrentColor(Color color) {
         boolean result = false;
-        if (dataContainer.currentColor != color) {
-            dataContainer.currentColor = color;
+        if (CURRENT_COLOR != color) {
+            CURRENT_COLOR = color;
             notifier.onColorDataChanged();
             result = true;
         }
@@ -48,10 +59,10 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
     }
 
     @Override
-    public boolean setVoxelMode(DataContainer.VOXELMODE mode) {
+    public boolean setVoxelMode(VOXELMODE mode) {
         boolean result = false;
-        if (dataContainer.mode != mode) {
-            dataContainer.mode = mode;
+        if (this.TOOL_MODE != mode) {
+            this.TOOL_MODE = mode;
             notifier.onVoxelModeChanged();
             result = true;
         }
@@ -59,15 +70,15 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
     }
 
     @Override
-    public DataContainer.VOXELMODE getVoxelMode() {
-        return dataContainer.mode;
+    public VOXELMODE getVoxelMode() {
+        return TOOL_MODE;
     }
 
     @Override
     public boolean setAnimate(boolean animate) {
         boolean result = false;
-        if (dataContainer.animate != animate) {
-            dataContainer.animate = animate;
+        if (this.STATE_ANIMATE != animate) {
+            this.STATE_ANIMATE = animate;
             notifier.onAnimateChanged();
             result = true;
         }
@@ -76,7 +87,7 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
 
     @Override
     public boolean isAnimate() {
-        return dataContainer.animate;
+        return STATE_ANIMATE;
     }
 
 

@@ -14,8 +14,12 @@ import java.io.File;
 public final class Data extends VoxelHighlight implements DataInterface {
 
     @Override
-    public final void clearHistory() {
+    public final void clearHistoryA() {
         historyManagerA.clear();
+    }
+
+    @Override
+    public final void clearHistoryV() {
         historyManagerV.clear();
     }
 
@@ -34,13 +38,14 @@ public final class Data extends VoxelHighlight implements DataInterface {
     @Override
     public final void freshStart() {
         // reset, but save current color
-        Color currentColor = dataContainer.currentColor;
+        Color currentColor = CURRENT_COLOR;
         dataContainer = new DataContainer();
-        dataContainer.currentColor = currentColor;
+        CURRENT_COLOR = currentColor;
         // create initial layer and select it
         selectLayerSoft(createLayer("Layer"));
         // remove history
-        clearHistory();
+        clearHistoryA();
+        clearHistoryV();
         notifier.onAnimationDataChanged();
         notifier.onVoxelDataChanged();
         notifier.onColorDataChanged();
@@ -53,7 +58,8 @@ public final class Data extends VoxelHighlight implements DataInterface {
         boolean result = false;
         Object loaded = FileTools.loadFromFile(file, errorHandler);
         if (loaded != null) {
-            clearHistory();
+            clearHistoryA();
+            clearHistoryV();
             dataContainer = (DataContainer)loaded;
             invalidateA();
             invalidateV();

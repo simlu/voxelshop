@@ -96,7 +96,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
 
         @Override
         protected final void paintComponent(Graphics g1) {
-            Color color = data.getCurrentColor();
+            Color color = data.getCURRENT_COLOR();
             if (color != colorRef) {
                 float[] val = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
                 crossPosition = new Point(
@@ -146,7 +146,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
             JSlider source = (JSlider) e.getSource();
             if (!source.getValueIsAdjusting()) {
                 brightness = source.getValue()/(float)255;
-                Color color = data.getCurrentColor();
+                Color color = data.getCURRENT_COLOR();
                 float[] val = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
                 data.setCurrentColor(Color.getHSBColor(val[0],val[1],brightness));
                 computeColorPicker();
@@ -244,7 +244,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
     @Override
     @PreDestroy
     public void finish() { // store color to pref
-        preferences.storeObject("previous_current_color", data.getCurrentColor());
+        preferences.storeObject("previous_current_color", data.getCURRENT_COLOR());
     }
 
 }

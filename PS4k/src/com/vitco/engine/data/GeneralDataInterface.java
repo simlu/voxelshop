@@ -1,6 +1,6 @@
 package com.vitco.engine.data;
 
-import com.vitco.engine.data.container.DataContainer;
+import com.vitco.engine.data.container.VOXELMODE;
 
 import java.awt.*;
 
@@ -8,13 +8,13 @@ import java.awt.*;
  * Manages everything that has to do with general data
  */
 public interface GeneralDataInterface {
-    Color getCurrentColor();
+    Color getCURRENT_COLOR();
 
     boolean setCurrentColor(Color color);
 
-    boolean setVoxelMode(DataContainer.VOXELMODE mode);
+    boolean setVoxelMode(VOXELMODE mode);
 
-    DataContainer.VOXELMODE getVoxelMode();
+    VOXELMODE getVoxelMode();
 
     boolean setAnimate(boolean animate);
 

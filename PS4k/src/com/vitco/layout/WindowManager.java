@@ -29,6 +29,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Map;
 
 /*
@@ -163,7 +165,23 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
                     // save layout data
                     preferences.storeObject("custom_raw_layout_data", getLayoutPersistence().getLayoutRawData());
 
+                    // do not print any thread errors (JFileChooser thread can cause this!)
+                    PrintStream nullStream = new PrintStream(new OutputStream() {
+                        public void write(int b) throws IOException {
+                        }
+
+                        public void write(byte b[]) throws IOException {
+                        }
+
+                        public void write(byte b[], int off, int len) throws IOException {
+                        }
+                    });
+                    System.setErr(nullStream);
+                    System.setOut(nullStream);
+
+                    // and exit
                     thisFrame.dispose();
+                    System.exit(0);
                 }
             }
         });

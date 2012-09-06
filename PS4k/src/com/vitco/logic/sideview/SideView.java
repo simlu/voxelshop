@@ -4,7 +4,7 @@ import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
-import com.vitco.engine.data.container.DataContainer;
+import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
 
@@ -100,7 +100,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         // hover on mouse event
         @Override
         protected void hover(Point point) {
-            if (voxelMode != DataContainer.VOXELMODE.VIEW) {
+            if (voxelMode != VOXELMODE.VIEW) {
                 // calculate position
                 SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
                         new SimpleVector(
@@ -115,7 +115,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                         side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
                 };
                 Voxel voxel = data.searchVoxel(pos);
-                if (voxel != null || DataContainer.VOXELMODE.DRAW == voxelMode) {
+                if (voxel != null || VOXELMODE.DRAW == voxelMode) {
                     data.highlightVoxel(pos);
                 } else {
                     data.highlightVoxel(null);

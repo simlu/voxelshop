@@ -2,14 +2,15 @@ package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
 import com.vitco.engine.data.Data;
-import com.vitco.engine.data.container.DataContainer;
+import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.util.action.types.StateActionPrototype;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * the tool bar, uses menu generator to load content from file
@@ -23,62 +24,42 @@ public class ToolBarLinkage extends BarLinkagePrototype {
         this.data = data;
     }
 
-    // update all tool action states
-    private void refreshAllActions() {
-        viewAction.refresh();
-        eraseAction.refresh();
-        drawAction.refresh();
-        pickerAction.refresh();
+    // update all action states
+    private void refreshActions(HashMap<String, StateActionPrototype> map) {
+        for (StateActionPrototype action : map.values()) {
+            action.refresh();
+        }
     }
-    // all tool actions
-    final StateActionPrototype viewAction = new StateActionPrototype() {
+
+    // register all action states
+    private void registerActions(HashMap<String, StateActionPrototype> map) {
+        for (Map.Entry<String,StateActionPrototype> entry : map.entrySet()) {
+            actionManager.registerAction(entry.getKey(), entry.getValue());
+        }
+    }
+
+    // the different action categories
+    private final HashMap<String, StateActionPrototype> toolActions = new HashMap<String, StateActionPrototype>();
+    private final HashMap<String, StateActionPrototype> historyActions = new HashMap<String, StateActionPrototype>();
+
+    // basic tool action to be reused
+    private class ToolAction extends StateActionPrototype {
+        private final VOXELMODE tool;
+        private ToolAction(VOXELMODE tool) {
+            super();
+            this.tool = tool;
+        }
+
         @Override
         public void action(ActionEvent actionEvent) {
-            data.setVoxelMode(DataContainer.VOXELMODE.VIEW);
-            refreshAllActions();
+            data.setVoxelMode(tool);
         }
 
         @Override
         public boolean getStatus() {
-            return data.getVoxelMode() == DataContainer.VOXELMODE.VIEW;
+            return data.getVoxelMode() == tool;
         }
-    };
-    final StateActionPrototype eraseAction = new StateActionPrototype() {
-        @Override
-        public void action(ActionEvent actionEvent) {
-            data.setVoxelMode(DataContainer.VOXELMODE.ERASE);
-            refreshAllActions();
-        }
-
-        @Override
-        public boolean getStatus() {
-            return data.getVoxelMode() == DataContainer.VOXELMODE.ERASE;
-        }
-    };
-    final StateActionPrototype drawAction = new StateActionPrototype() {
-        @Override
-        public void action(ActionEvent actionEvent) {
-            data.setVoxelMode(DataContainer.VOXELMODE.DRAW);
-            refreshAllActions();
-        }
-
-        @Override
-        public boolean getStatus() {
-            return data.getVoxelMode() == DataContainer.VOXELMODE.DRAW;
-        }
-    };
-    final StateActionPrototype pickerAction = new StateActionPrototype() {
-        @Override
-        public void action(ActionEvent actionEvent) {
-            data.setVoxelMode(DataContainer.VOXELMODE.PICKER);
-            refreshAllActions();
-        }
-
-        @Override
-        public boolean getStatus() {
-            return data.getVoxelMode() == DataContainer.VOXELMODE.PICKER;
-        }
-    };
+    }
 
     @Override
     public CommandBar buildBar(String key, final Frame frame) {
@@ -86,22 +67,18 @@ public class ToolBarLinkage extends BarLinkagePrototype {
 
         menuGenerator.buildMenuFromXML(bar, "com/vitco/layout/bars/tool_bar.xml");
 
-        // register the toggle animation mode action
-        actionManager.registerAction("toggle_animation_mode", new StateActionPrototype() {
-            @Override
-            public void action(ActionEvent actionEvent) {
-                data.setAnimate(!data.isAnimate());
-            }
+        // register the tool actions
+        // =====================================
+        toolActions.put("voxel_mode_select_type_view", new ToolAction(VOXELMODE.VIEW));
+        toolActions.put("voxel_mode_select_type_draw", new ToolAction(VOXELMODE.DRAW));
+        toolActions.put("voxel_mode_select_type_erase", new ToolAction(VOXELMODE.ERASE));
+        toolActions.put("voxel_mode_select_type_picker", new ToolAction(VOXELMODE.PICKER));
+        registerActions(toolActions);
+        // =====================================
 
-            @Override
-            public boolean getStatus() {
-                return data.isAnimate();
-            }
-        });
-
-        // register global shortcuts for data interaction
-        // register undo action
-        actionManager.registerAction("global_action_undo", new StateActionPrototype() {
+        // register history actions
+        // =====================================
+        historyActions.put("global_action_undo", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
@@ -124,9 +101,7 @@ public class ToolBarLinkage extends BarLinkagePrototype {
                 }
             }
         });
-
-        // register redo action
-        actionManager.registerAction("global_action_redo", new StateActionPrototype() {
+        historyActions.put("global_action_redo", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
@@ -149,53 +124,65 @@ public class ToolBarLinkage extends BarLinkagePrototype {
                 }
             }
         });
-
-        // register clear history action
-        actionManager.registerAction("clear_history_action", new AbstractAction() {
+        historyActions.put("clear_history_action", new StateActionPrototype() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                data.clearHistory();
+            public void action(ActionEvent e) {
+                if (data.isAnimate()) {
+                    data.clearHistoryA();
+                } else {
+                    data.clearHistoryV();
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                if (data.isAnimate()) {
+                    return data.canUndoA() || data.canRedoA();
+                } else {
+                    return data.canUndoV() || data.canRedoV();
+                }
+            }
+        });
+        registerActions(historyActions);
+        // =====================================
+
+        // register the toggle animate mode action (always possible)
+        actionManager.registerAction("toggle_animation_mode", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                data.setAnimate(!data.isAnimate());
+            }
+
+            @Override
+            public boolean getStatus() {
+                return data.isAnimate();
             }
         });
 
-        // make sure the history buttons are correctly enabled when mode changes
+        // make sure the buttons are correctly enabled when modes change
         data.addDataChangeListener(new DataChangeAdapter() {
-            private void refreshHistoryButtons() {
-                actionManager.performWhenActionIsReady("global_action_undo", new Runnable() {
-                    @Override
-                    public void run() {
-                        ((StateActionPrototype)actionManager.getAction("global_action_undo")).refresh();
-                    }
-                });
-                actionManager.performWhenActionIsReady("global_action_redo", new Runnable() {
-                    @Override
-                    public void run() {
-                        ((StateActionPrototype)actionManager.getAction("global_action_redo")).refresh();
-                    }
-                });
-            }
 
             @Override
             public void onAnimationDataChanged() {
-                refreshHistoryButtons();
+                refreshActions(historyActions);
             }
 
             @Override
             public void onVoxelDataChanged() {
-                refreshHistoryButtons();
+                refreshActions(historyActions);
             }
 
             @Override
             public void onAnimateChanged() {
-                refreshHistoryButtons();
+                refreshActions(historyActions);
+                refreshActions(toolActions);
+            }
+
+            @Override
+            public void onVoxelModeChanged() {
+                refreshActions(toolActions);
             }
         });
-
-        // register the draw mode actions
-        actionManager.registerAction("voxel_mode_select_type_view", viewAction);
-        actionManager.registerAction("voxel_mode_select_type_draw", drawAction);
-        actionManager.registerAction("voxel_mode_select_type_erase", eraseAction);
-        actionManager.registerAction("voxel_mode_select_type_picker", pickerAction);
 
         return bar;
     }

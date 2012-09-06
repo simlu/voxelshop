@@ -22,6 +22,7 @@
                action="global_action_redo"/>
     <icon-item src="resource/img/bars/tool_bar/clear_history.png"
                tool-tip="clear_history_tooltip"
+               grayable="true"
                action="clear_history_action"/>
     <separator/>
 

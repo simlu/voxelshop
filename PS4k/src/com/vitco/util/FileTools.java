@@ -43,11 +43,11 @@ public class FileTools {
             ObjectOutput output = new ObjectOutputStream( buffer );
             try{
                 output.writeObject(object);
+                result = true;
             }
             finally{
                 output.close();
             }
-            result = true;
         }
         catch(IOException ex){
             errorHandler.handle(ex);

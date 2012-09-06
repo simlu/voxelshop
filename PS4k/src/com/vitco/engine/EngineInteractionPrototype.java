@@ -4,7 +4,6 @@ import com.newbrightidea.util.RTree;
 import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
-import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
@@ -21,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+import com.vitco.engine.data.container.VOXELMODE;
 
 /**
  * Defines general (common) interactions available for this engine view and sets them up.
@@ -229,7 +229,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     }
 
     // current mode
-    protected DataContainer.VOXELMODE voxelMode;
+    protected VOXELMODE voxelMode;
 
     // helper - add a voxel object to world
     protected final void addVoxelToWorld(Voxel voxel) {
@@ -258,28 +258,30 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private boolean massVoxel = false;
 
         private Point lastMovePos = new Point(0,0);
-
+        private boolean mouseInside = false;
         // replay the last hover
         public final void replayHover() {
-            hover(lastMovePos);
+            if (mouseInside) {
+                hover(lastMovePos);
+            }
         }
 
         // execute on mouse event
         protected void execute() {
             if (data.getHighlightedVoxel() != null) { // something highlighted
-                camera.setEnabled(voxelMode == DataContainer.VOXELMODE.VIEW);
-                if (voxelMode == DataContainer.VOXELMODE.DRAW) { // add voxel
+                camera.setEnabled(voxelMode == VOXELMODE.VIEW);
+                if (voxelMode == VOXELMODE.DRAW) { // add voxel
                     int[] highlightedVoxel = data.getHighlightedVoxel();
                     data.highlightVoxel(null);
-                    data.addVoxel(data.getCurrentColor(), highlightedVoxel);
+                    data.addVoxel(data.getCURRENT_COLOR(), highlightedVoxel);
                     massVoxel = true;
-                } else if (voxelMode == DataContainer.VOXELMODE.ERASE) { // remove voxel
+                } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
                     Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
                     if (highlightedVoxel != null) {
                         data.removeVoxel(highlightedVoxel.id);
                     }
                     massVoxel = true;
-                } else if (voxelMode == DataContainer.VOXELMODE.PICKER) {
+                } else if (voxelMode == VOXELMODE.PICKER) {
                     Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
                     if (highlightedVoxel != null) {
                         data.setCurrentColor(highlightedVoxel.getColor());
@@ -293,10 +295,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             // check if we hit something
             SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
             Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
-            if (res[1] != null && voxelMode != DataContainer.VOXELMODE.VIEW) { // something hit
+            if (res[1] != null && voxelMode != VOXELMODE.VIEW) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
                 int[] voxelPos = data.getVoxel(voxelToObject.getKey(obj3D.getID())).getPosAsInt();
-                if (voxelMode != DataContainer.VOXELMODE.ERASE && voxelMode != DataContainer.VOXELMODE.PICKER) { // select next to voxel
+                if (voxelMode != VOXELMODE.ERASE && voxelMode != VOXELMODE.PICKER) { // select next to voxel
                     // find collision point
                     SimpleVector colPoint = camera.getPosition();
                     dir.scalarMul((Float)res[0]);
@@ -327,7 +329,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 // highlight the voxel (position)
                 data.highlightVoxel(voxelPos);
             } else { // hit nothing
-                if (voxelMode == DataContainer.VOXELMODE.DRAW) { // trying to draw
+                if (voxelMode == VOXELMODE.DRAW) { // trying to draw
                     // hit nothing, draw preview on zero level
                     if (dir.y > 0.05) { // angle big enough
                         // calculate position
@@ -364,12 +366,19 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         @Override
+        public void mouseEntered(MouseEvent e) {
+            mouseInside = true;
+        }
+
+        @Override
         public void mouseExited(MouseEvent e) {
+            mouseInside = false;
             data.removeVoxelHighlights();
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
+            lastMovePos = new Point(e.getPoint());
             if (massVoxel) {
                 hover(e.getPoint());
                 execute();
@@ -380,7 +389,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            lastMovePos = e.getPoint();
+            lastMovePos = new Point(e.getPoint());
             hover(e.getPoint());
         }
     }
@@ -431,6 +440,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     container.removeMouseListener(animationAdapter);
                     container.addMouseMotionListener(voxelAdapter);
                     container.addMouseListener(voxelAdapter);
+                    voxelAdapter.replayHover();
                 }
                 container.setDrawAnimationOverlay(data.isAnimate());
                 container.repaint();
@@ -440,6 +450,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             public void onVoxelModeChanged() {
                 voxelMode = data.getVoxelMode();
                 voxelAdapter.replayHover();
+                container.repaint();
             }
         };
         data.addDataChangeListener(dca);

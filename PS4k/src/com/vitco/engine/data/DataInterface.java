@@ -11,7 +11,8 @@ public interface DataInterface {
     // stores all data to file
     boolean saveToFile(File file);
     // delete all history
-    void clearHistory();
+    void clearHistoryA();
+    void clearHistoryV();
     // erase everything and start fresh
     void freshStart();
 }
