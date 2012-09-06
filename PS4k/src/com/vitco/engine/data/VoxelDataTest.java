@@ -1,6 +1,7 @@
 package com.vitco.engine.data;
 
 import com.vitco.engine.data.container.Voxel;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.awt.*;
@@ -14,6 +15,15 @@ import java.util.Random;
 public class VoxelDataTest {
 
     private final Data data = new Data();
+
+    @Before
+    public void setUp() throws Exception {
+        // all tests expect an empty data container
+        while (data.getLayers().length > 0) {
+            data.deleteLayer(data.getLayers()[0]);
+        }
+        data.clearHistoryV();
+    }
 
     // tests for voxels
 

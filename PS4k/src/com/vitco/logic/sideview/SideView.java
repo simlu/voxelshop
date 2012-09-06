@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
 
 /**
  * Creates one side view instance (one perspective) and the specific user interaction.
@@ -51,9 +50,8 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     // the current depth of the plane that is shown
     private int currentplane = 0;
 
-    // helper
     @Override
-    public void updateWorldWithVoxels() {
+    protected Voxel[] getVoxels() {
         // get the current voxels
         Voxel[] voxels = data.getVisibleLayerVoxel();
         switch (side) {
@@ -67,32 +65,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 voxels = data.getVoxelsYZ(currentplane);
                 break;
         }
-
-        // temporary to find unneeded objects
-        ArrayList<Integer> voxelIds = new ArrayList<Integer>();
-        voxelIds.addAll(voxelToObject.keySet());
-
-        // loop over all voxels
-        for (Voxel voxel : voxels) {
-            voxelIds.remove((Integer)voxel.id);
-            if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
-                addVoxelToWorld(voxel);
-                idToVoxel.put(voxel.id, voxel);
-            } else { // remove and add all altered voxels
-                if (!idToVoxel.get(voxel.id).equals(voxel)) {
-                    idToVoxel.put(voxel.id, voxel);
-                    world.removeObject(voxelToObject.get(voxel.id)); // remove
-                    addVoxelToWorld(voxel); // add
-                }
-            }
-        }
-
-        // remove the objects that are no longer needed
-        for (int id : voxelIds) {
-            world.removeObject(voxelToObject.get(id));
-            voxelToObject.removeByKey(id);
-            idToVoxel.remove(id);
-        }
+        return voxels;
     }
 
     // alter the behavior

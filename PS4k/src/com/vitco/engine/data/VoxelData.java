@@ -279,8 +279,6 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private final class ColorVoxelIntent extends BasicActionIntent {
         private final int voxelId;
         private final Color newColor;
-        private Color oldColor;
-        private Voxel voxel;
 
         protected ColorVoxelIntent(int voxelId, Color newColor, boolean attach) {
             super(attach);
@@ -291,15 +289,15 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
-                oldColor = dataContainer.voxels.get(voxelId).getColor();
-                voxel = dataContainer.voxels.get(voxelId);
+                Voxel voxel = dataContainer.voxels.get(voxelId);
+                historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
+                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(), newColor, voxel.getLayerId(), true));
             }
-            dataContainer.layers.get(voxel.getLayerId()).setVoxelColor(voxel, newColor);
         }
 
         @Override
         protected void unapplyAction() {
-            dataContainer.layers.get(voxel.getLayerId()).setVoxelColor(voxel, oldColor);
+
         }
     }
 
@@ -317,6 +315,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
         @Override
         protected void applyAction() {
+            // todo this will not update the voxel on refresh (!)
             if (isFirstCall()) {
                 voxel = dataContainer.voxels.get(voxelId);
                 oldAlpha = voxel.getAlpha();

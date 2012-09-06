@@ -231,6 +231,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     // current mode
     protected VOXELMODE voxelMode;
 
+    // voxel data getter to be defined
+    protected abstract Voxel[] getVoxels();
+
+    // maps voxel ids to world ids
+    protected final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
+    protected final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
+
     // helper - add a voxel object to world
     protected final void addVoxelToWorld(Voxel voxel) {
         int id = WorldUtil.addBox(world,
@@ -243,12 +250,36 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         voxelToObject.put(voxel.id, id);
     }
 
-    // update the world with voxels
-    protected abstract void updateWorldWithVoxels();
+    // helper - make sure the voxel objects in the world are up to date
+    protected final void updateWorldWithVoxels() {
+        Voxel[] voxels = getVoxels();
 
-    // maps voxel ids to world ids
-    protected final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
-    protected final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
+        // temporary to find unneeded objects
+        ArrayList<Integer> voxelIds = new ArrayList<Integer>();
+        voxelIds.addAll(voxelToObject.keySet());
+
+        // loop over all voxels
+        for (Voxel voxel : voxels) {
+            voxelIds.remove((Integer)voxel.id);
+            if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
+                addVoxelToWorld(voxel);
+                idToVoxel.put(voxel.id, voxel);
+            } else { // remove and add all altered voxels
+                if (!idToVoxel.get(voxel.id).equals(voxel)) {
+                    idToVoxel.put(voxel.id, voxel);
+                    world.removeObject(voxelToObject.get(voxel.id)); // remove
+                    addVoxelToWorld(voxel); // add
+                }
+            }
+        }
+
+        // remove the objects that are no longer needed
+        for (int id : voxelIds) {
+            world.removeObject(voxelToObject.get(id));
+            voxelToObject.removeByKey(id);
+            idToVoxel.remove(id);
+        }
+    }
 
     // voxel draw adapter for main view
     @SuppressWarnings("CanBeFinal")
@@ -273,7 +304,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 if (voxelMode == VOXELMODE.DRAW) { // add voxel
                     int[] highlightedVoxel = data.getHighlightedVoxel();
                     data.highlightVoxel(null);
-                    data.addVoxel(data.getCURRENT_COLOR(), highlightedVoxel);
+                    data.addVoxel(data.getCurrentColor(), highlightedVoxel);
                     massVoxel = true;
                 } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
                     Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
@@ -286,6 +317,12 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     if (highlightedVoxel != null) {
                         data.setCurrentColor(highlightedVoxel.getColor());
                     }
+                } else if (voxelMode == VOXELMODE.COLORCHANGER) {
+                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
+                    if (highlightedVoxel != null) {
+                        data.setColor(highlightedVoxel.id, data.getCurrentColor());
+                    }
+                    massVoxel = true;
                 }
             }
         }
@@ -298,7 +335,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             if (res[1] != null && voxelMode != VOXELMODE.VIEW) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
                 int[] voxelPos = data.getVoxel(voxelToObject.getKey(obj3D.getID())).getPosAsInt();
-                if (voxelMode != VOXELMODE.ERASE && voxelMode != VOXELMODE.PICKER) { // select next to voxel
+                if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
                     // find collision point
                     SimpleVector colPoint = camera.getPosition();
                     dir.scalarMul((Float)res[0]);
@@ -393,7 +430,6 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             hover(e.getPoint());
         }
     }
-
 
     @PostConstruct
     protected final void init() {

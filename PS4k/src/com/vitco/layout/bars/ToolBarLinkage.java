@@ -73,6 +73,7 @@ public class ToolBarLinkage extends BarLinkagePrototype {
         toolActions.put("voxel_mode_select_type_draw", new ToolAction(VOXELMODE.DRAW));
         toolActions.put("voxel_mode_select_type_erase", new ToolAction(VOXELMODE.ERASE));
         toolActions.put("voxel_mode_select_type_picker", new ToolAction(VOXELMODE.PICKER));
+        toolActions.put("voxel_mode_select_type_color_changer", new ToolAction(VOXELMODE.COLORCHANGER));
         registerActions(toolActions);
         // =====================================
 

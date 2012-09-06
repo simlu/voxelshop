@@ -43,7 +43,7 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
     }
 
     @Override
-    public Color getCURRENT_COLOR() {
+    public Color getCurrentColor() {
         return CURRENT_COLOR;
     }
 
