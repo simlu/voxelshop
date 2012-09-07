@@ -8,6 +8,9 @@ import java.awt.*;
  * Defines the voxel data interaction (layer, undo, etc)
  */
 public interface VoxelDataInterface {
+    // adds a voxel directly to the container (no history entry is created!)
+    // only to be used for back imports etc
+    int addVoxelDirect(Color color, int[] pos);
     // adds a voxel to current layer and returns voxel id
     int addVoxel(Color color, int[] pos);
     // deleted the voxel
@@ -33,7 +36,7 @@ public interface VoxelDataInterface {
     // delete all voxels in layer
     boolean clearV(int layerId);
     // returns a voxel if the current layer has a voxel at the position
-    Voxel searchVoxel(int[] pos);
+    Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer);
     // get all voxels in current layer
     Voxel[] getLayerVoxels(int layerId);
     // get all visible layer voxels

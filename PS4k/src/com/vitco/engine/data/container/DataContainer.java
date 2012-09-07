@@ -6,10 +6,11 @@ import java.util.HashMap;
 
 /**
  * Collection of all the persistent data
+ *
+ * IMPORTANT: This class should never be changes!
  */
-public class DataContainer implements Serializable {
+public final class DataContainer implements Serializable {
     private static final long serialVersionUID = 1L;
-
     // ###################### DATA (Voxel)
     // holds all layers (layers map to voxel ids)
     public int selectedLayer = -1;

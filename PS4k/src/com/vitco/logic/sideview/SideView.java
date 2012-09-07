@@ -87,7 +87,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                         side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
                         side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
                 };
-                Voxel voxel = data.searchVoxel(pos);
+                Voxel voxel = data.searchVoxel(pos, true);
                 if (voxel != null || VOXELMODE.DRAW == voxelMode) {
                     data.highlightVoxel(pos);
                 } else {
@@ -161,8 +161,21 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             }
         });
 
-        // register shifting
+        // register shifting and preview plane
         MouseAdapter shiftingMouseAdapter = new MouseAdapter() {
+            // preview plane
+            // =======================
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                data.setPreviewPlane(side);
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                data.setPreviewPlane(-1);
+            }
+
+            // shifting
+            // =======================
             private Point mouse_down_point = null;
 
             @Override

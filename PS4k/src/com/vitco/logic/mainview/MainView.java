@@ -1,11 +1,10 @@
 package com.vitco.logic.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
-import com.threed.jpct.Object3D;
-import com.threed.jpct.Primitives;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
+import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.types.StateActionPrototype;
@@ -17,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
 
 /**
  * Creates the main view instance and attaches the specific user interaction.
@@ -46,14 +44,15 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         WorldUtil.addLight(world, new SimpleVector(1300, 200, 200), 1);
         WorldUtil.addLight(world, new SimpleVector(-1300, -200, -200), 1);
 
-        // add the world plane (ground)
-        Object3D plane = Primitives.getPlane(1, VitcoSettings.VOXEL_GROUND_PLANE_SIZE);
-        plane.setCulling(false); //show from both sides
-        plane.setTransparency(0);
-        plane.setAdditionalColor(VitcoSettings.MAIN_VIEW_GROUND_PLANE_COLOR);
-        plane.setOrigin(new SimpleVector(0, VitcoSettings.VOXEL_GROUND_DISTANCE, 0));
-        plane.rotateX((float)Math.PI/2);
-        world.addObject(plane);
+        // add ground plane
+        WorldUtil.addPlane(
+                world,
+                new SimpleVector(0, VitcoSettings.VOXEL_GROUND_DISTANCE, 0),
+                new SimpleVector(0, 0, 0),
+                VitcoSettings.VOXEL_GROUND_PLANE_SIZE,
+                VitcoSettings.MAIN_VIEW_GROUND_PLANE_COLOR,
+                0
+        );
 
         // user mouse input - change camera position
         MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -143,6 +142,54 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             public void actionPerformed(ActionEvent e) {
                 camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION);
                 container.repaint();
+            }
+        });
+
+        // register "show preview plane"
+        data.addDataChangeListener(new DataChangeAdapter() {
+            int previewPlaneId = -1;
+            int previewPlane = -1;
+            boolean planeSet = false;
+
+            private void removePreviewPlaneIfExists() {
+                if (planeSet) {
+                    world.removeObject(previewPlaneId);
+                    planeSet = false;
+                    container.doNotSkipNextWorldRender();
+                    container.repaint();
+                }
+            }
+
+            @Override
+            public void onPreviewPlaneChanged() {
+                previewPlane = data.getPreviewPlane();
+                removePreviewPlaneIfExists();
+            }
+
+            @Override
+            public void onVoxelSelectionChanged() {
+                if (previewPlane != -1) {
+                    removePreviewPlaneIfExists();
+                    int[] origin = data.getHighlightedVoxel();
+                    if (origin != null) {
+                        SimpleVector originVec = new SimpleVector(origin[0], origin[1], origin[2]);
+                        originVec.scalarMul(VitcoSettings.VOXEL_SIZE);
+                        previewPlaneId = WorldUtil.addPlane(
+                                world,
+                                originVec,
+                                new SimpleVector(
+                                        previewPlane == 0 ? (float)Math.PI/2 : 0,
+                                        0,
+                                        previewPlane == 2 ? (float)Math.PI/2 : 0),
+                                VitcoSettings.VOXEL_PREVIEW_PLANE_SIZE,
+                                VitcoSettings.VOXEL_PREVIEW_PLANE_COLOR,
+                                0
+                        );
+                        planeSet = true;
+                        container.doNotSkipNextWorldRender();
+                        container.repaint();
+                    }
+                }
             }
         });
 

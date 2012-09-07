@@ -5,6 +5,7 @@ import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.data.container.ExtendedVector;
+import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
@@ -20,7 +21,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-import com.vitco.engine.data.container.VOXELMODE;
 
 /**
  * Defines general (common) interactions available for this engine view and sets them up.
@@ -302,28 +302,26 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             if (data.getHighlightedVoxel() != null) { // something highlighted
                 camera.setEnabled(voxelMode == VOXELMODE.VIEW);
                 if (voxelMode == VOXELMODE.DRAW) { // add voxel
-                    int[] highlightedVoxel = data.getHighlightedVoxel();
-                    data.highlightVoxel(null);
-                    data.addVoxel(data.getCurrentColor(), highlightedVoxel);
-                    massVoxel = true;
+                    if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
+                        data.addVoxel(data.getCurrentColor(), data.getHighlightedVoxel());
+                    }
                 } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
-                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
+                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
                     if (highlightedVoxel != null) {
                         data.removeVoxel(highlightedVoxel.id);
                     }
-                    massVoxel = true;
                 } else if (voxelMode == VOXELMODE.PICKER) {
-                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
+                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), false);
                     if (highlightedVoxel != null) {
                         data.setCurrentColor(highlightedVoxel.getColor());
                     }
                 } else if (voxelMode == VOXELMODE.COLORCHANGER) {
-                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel());
+                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
                     if (highlightedVoxel != null) {
                         data.setColor(highlightedVoxel.id, data.getCurrentColor());
                     }
-                    massVoxel = true;
                 }
+                massVoxel = true;
             }
         }
 

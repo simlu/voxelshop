@@ -1,11 +1,9 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
-import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.util.action.types.StateActionPrototype;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,15 +12,10 @@ import java.util.Map;
 
 /**
  * the tool bar, uses menu generator to load content from file
+ *
+ * defines interactions
  */
 public class ToolBarLinkage extends BarLinkagePrototype {
-
-    // var & setter (can not be interface!!)
-    protected Data data;
-    @Autowired
-    public void setData(Data data) {
-        this.data = data;
-    }
 
     // update all action states
     private void refreshActions(HashMap<String, StateActionPrototype> map) {

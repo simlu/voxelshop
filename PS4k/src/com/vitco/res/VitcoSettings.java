@@ -60,7 +60,7 @@ public final class VitcoSettings {
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
     public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 500;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
-    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(0, -200, -200);
+    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(30, -200, -200);
     public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // "drag" move content
     public static final float MAIN_VIEW_ROTATION_X_FACTOR = 0.02f;
     public static final float MAIN_VIEW_ROTATION_Y_FACTOR = 0.01f;
@@ -96,8 +96,15 @@ public final class VitcoSettings {
     // general config
     public static final Float VOXEL_SIZE = 10f;
     public static final Float VOXEL_GROUND_DISTANCE = 10f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
-    public static final Float VOXEL_GROUND_PLANE_SIZE = 21 * VOXEL_SIZE;
+    public static final Float VOXEL_GROUND_PLANE_SIZE = 25 * VOXEL_SIZE; // when changing this make sure the edges are ok
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
+
+    // preview plane
+    public static final Float VOXEL_PREVIEW_PLANE_SIZE = 5 * VOXEL_SIZE;
+    public static final Color VOXEL_PREVIEW_PLANE_COLOR = new Color(70, 122, 255);
+
+    // file import
+    public static final Integer VOXEL_COUNT_FILE_IMPORT_LIMIT = 1000;
 
 }

@@ -21,7 +21,6 @@ public final class NotificationService implements NotificationServiceInterface {
         listeners.remove(dcl);
     }
 
-    // todo add these method calls to the correct places (do last)
     @Override
     public void onAnimationDataChanged() {
         for (DataChangeListener listener : listeners) {
@@ -68,6 +67,13 @@ public final class NotificationService implements NotificationServiceInterface {
     public void onAnimateChanged() {
         for (DataChangeListener listener : listeners) {
             listener.onAnimateChanged();
+        }
+    }
+
+    @Override
+    public void onPreviewPlaneChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onPreviewPlaneChanged();
         }
     }
 }

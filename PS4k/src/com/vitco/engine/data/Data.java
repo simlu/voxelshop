@@ -48,7 +48,6 @@ public final class Data extends VoxelHighlight implements DataInterface {
         clearHistoryV();
         notifier.onAnimationDataChanged();
         notifier.onVoxelDataChanged();
-        notifier.onColorDataChanged();
         // file has not changed yet
         hasChanged = false;
     }

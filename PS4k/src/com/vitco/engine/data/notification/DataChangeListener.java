@@ -11,4 +11,5 @@ public interface DataChangeListener {
     void onColorDataChanged();
     void onVoxelModeChanged();
     void onAnimateChanged();
+    void onPreviewPlaneChanged();
 }

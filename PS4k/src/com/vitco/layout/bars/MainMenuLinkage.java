@@ -2,27 +2,34 @@ package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandBar;
 import com.jidesoft.action.CommandMenuBar;
-import com.vitco.engine.data.Data;
+import com.vitco.logic.console.ConsoleInterface;
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * the main menu, uses menu generator to load content from file
+ *
+ * defines interactions
  */
 public class MainMenuLinkage extends BarLinkagePrototype {
 
-    // var & setter (can not be interface!!)
-    protected Data data;
+    // var & setter
+    private ConsoleInterface console;
     @Autowired
-    public void setData(Data data) {
-        this.data = data;
+    public void setConsole(ConsoleInterface console) {
+        this.console = console;
     }
 
     // var & setter
@@ -32,12 +39,19 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         this.langSelector = langSelector;
     }
 
+    // var & setter
+    protected ErrorHandlerInterface errorHandler;
+    @Autowired(required=true)
+    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
     // util for save/load/new file
     // ======================================
     // the location of active file (or null if none active)
     final String[] save_location = new String[] {null};
     // the file chooser
-    final JFileChooser fc = new JFileChooser();
+    final JFileChooser fc_vsd = new JFileChooser();
     // filter to only allow vsd files
     private static final class VSDFilter extends FileFilter
     {
@@ -51,13 +65,47 @@ public class MainMenuLinkage extends BarLinkagePrototype {
             return "PS4k File (*.vsd)";
         }
     }
+    // import file chooser
+    final JFileChooser fc_import = new JFileChooser();
+    // filter to only allow import files (png)
+    private static final class ImportFilter extends FileFilter
+    {
+        private final String[] names;
+        private ImportFilter(String[] names) {
+            this.names = names;
+        }
+
+        public boolean accept(File f)
+        {
+            if (f.isDirectory()) {
+                return true;
+            }
+            for (String name : names) {
+                if (f.getName().endsWith("." + name.toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public String getDescription()
+        {
+            StringBuffer result = new StringBuffer();
+            boolean first = true;
+            for (String name : names) {
+                result.append((!first ? "|" : "") + name.toUpperCase() + " (*." +  name.toLowerCase() + ")");
+                first = false;
+            }
+            return result.toString();
+        }
+    }
     // save file prompt (and overwrite prompt): true iff save was successful
-    private final boolean handleSaveDialog(Frame frame) {
+    private boolean handleSaveDialog(Frame frame) {
         boolean result = false;
-        int returnVal = fc.showSaveDialog(frame);
+        int returnVal = fc_vsd.showSaveDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             // make sure filename ends with *.vsd
-            String dir = fc.getSelectedFile().getPath();
+            String dir = fc_vsd.getSelectedFile().getPath();
             if(!dir.toLowerCase().endsWith(".vsd")) {
                 dir += ".vsd";
             }
@@ -78,7 +126,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         return result;
     }
     // handles unsaved changes: true iff we are save to discard after this was called
-    private final boolean checkUnsavedChanges(Frame frame) {
+    private boolean checkUnsavedChanges(Frame frame) {
         boolean result = false;
         if (data.hasChanged()) {
             // option to save changes / erase changes / cancel
@@ -105,6 +153,42 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         }
         return result;
     }
+    // import a file
+    private void importImage(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        boolean stop = false;
+        int voxelCount = 1;
+        for (int y=height-1; y >= 0 && !stop; y--) {
+            for (int x = 0; x < width && !stop; x++) {
+                int rgb = img.getRGB(x,y);
+                int alpha = (rgb & 0xff000000) >> 24;
+                int  red = (rgb & 0x00ff0000) >> 16;
+                int  green = (rgb & 0x0000ff00) >> 8;
+                int  blue = rgb & 0x000000ff;
+                if (alpha != 0) {
+                    data.addVoxelDirect(new Color(red, green, blue), new int[]{
+                            x - img.getWidth() / 2,
+                            y + Math.round(VitcoSettings.VOXEL_GROUND_DISTANCE / VitcoSettings.VOXEL_SIZE) - img.getHeight(),
+                            0
+                    });
+                    if (voxelCount >= VitcoSettings.VOXEL_COUNT_FILE_IMPORT_LIMIT) {
+                        stop = true;
+                        console.addLine(
+                                langSelector.getString("import_voxel_limit_reached_pre") + " " +
+                                        VitcoSettings.VOXEL_COUNT_FILE_IMPORT_LIMIT +
+                                        " " + langSelector.getString("import_voxel_limit_reached_post"));
+                    }
+                    voxelCount++;
+                }
+            }
+        }
+        // force a refresh of the data (redraw)
+        data.setVisible(data.getSelectedLayer(), false);
+        data.setVisible(data.getSelectedLayer(), true);
+        data.clearHistoryV();
+        data.resetHasChanged();
+    }
     // ======================================
 
     @Override
@@ -115,8 +199,15 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         menuGenerator.buildMenuFromXML(bar, "com/vitco/layout/bars/main_menu.xml");
 
         // initialize the filter
-        fc.addChoosableFileFilter(new VSDFilter());
-        fc.setFileFilter(new VSDFilter());
+        fc_vsd.setFileFilter(new VSDFilter());
+        fc_vsd.setAcceptAllFileFilterUsed(false);
+
+        FileFilter pngFilter = new ImportFilter(new String[] {"png"});
+        fc_import.addChoosableFileFilter(pngFilter);
+        fc_import.addChoosableFileFilter(new ImportFilter(new String[] {"jpg"}));
+        fc_import.addChoosableFileFilter(new ImportFilter(new String[] {"jpeg"}));
+        fc_import.setFileFilter(pngFilter);
+        fc_import.setAcceptAllFileFilterUsed(false);
 
         // save file
         actionManager.registerAction("save_file_action", new AbstractAction() {
@@ -131,9 +222,28 @@ public class MainMenuLinkage extends BarLinkagePrototype {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (checkUnsavedChanges(frame)) {
-                    if (fc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                        data.loadFromFile(fc.getSelectedFile());
-                        save_location[0] = fc.getSelectedFile().getPath(); // remember load location
+                    if (fc_vsd.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                        data.loadFromFile(fc_vsd.getSelectedFile());
+                        save_location[0] = fc_vsd.getSelectedFile().getPath(); // remember load location
+                    }
+                }
+            }
+        });
+
+        // import file
+        actionManager.registerAction("import_file_action", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (checkUnsavedChanges(frame)) {
+                    if (fc_import.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                        data.freshStart();
+                        save_location[0] = null;
+                        try {
+                            BufferedImage img = ImageIO.read(fc_import.getSelectedFile());
+                            importImage(img);
+                        } catch (IOException e1) {
+                            errorHandler.handle(e1);
+                        }
                     }
                 }
             }
@@ -168,4 +278,5 @@ public class MainMenuLinkage extends BarLinkagePrototype {
 
         return bar;
     }
+
 }

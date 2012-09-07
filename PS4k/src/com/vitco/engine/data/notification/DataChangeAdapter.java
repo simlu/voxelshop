@@ -25,4 +25,7 @@ public abstract class DataChangeAdapter implements DataChangeListener {
 
     @Override
     public void onAnimateChanged() {}
+
+    @Override
+    public void onPreviewPlaneChanged() {}
 }

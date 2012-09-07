@@ -21,9 +21,11 @@ import java.util.EventObject;
  */
 public class LayerView extends ViewPrototype implements LayerViewInterface {
     // the currently selected layer
-    int selectedLayer = -1;
+    private int selectedLayer = -1;
     // layer buffer
-    Integer[] layers = new Integer[]{};
+    private Integer[] layers = new Integer[]{};
+    // true if editing was canceled
+    private boolean cancelEdit = false;
 
     // layout of cells
     private class TableRenderer extends DefaultTableCellRenderer {
@@ -95,16 +97,21 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         }
 
         public void setValueAt(Object value, int row, int col) {
-            switch (col) {
-                case 0:
-                    data.renameLayer(layers[row], (String)value);
-                    break;
+            if (!cancelEdit) {
+                switch (col) {
+                    case 0:
+                        data.renameLayer(layers[row], (String) value);
+                        break;
+                }
+                fireTableCellUpdated(row, col);
+            } else {
+                cancelEdit = false;
             }
-            fireTableCellUpdated(row, col);
         }
 
     }
 
+    private final CellEditor cellEditor = new CellEditor();
     private class CellEditor extends AbstractCellEditor implements TableCellEditor {
         // handles the editing of the cell value
         JTextArea component;
@@ -126,7 +133,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 @Override
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == 10) { // apply changes (return key)
-                        component.setFocusable(false);
+                        finishCellEditing(table);
                     }
                 }
 
@@ -135,16 +142,6 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                     e.consume(); // prevent further use of this keystroke
                 }
 
-            });
-            // when this component looses focus: stop editing
-            component.addFocusListener(new FocusAdapter() {
-                @Override
-                public void focusLost(FocusEvent e) {
-                    table.setValueAt(component.getText(), rowIndex, vColIndex);
-                    if (table.getCellEditor() != null) {
-                        table.getCellEditor().stopCellEditing();
-                    }
-                }
             });
             component.setBackground(VitcoSettings.EDIT_BG_COLOR); // bg color when edit
             component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
@@ -158,7 +155,6 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         }
     }
 
-
     // var & setter
     protected Data data;
     @Autowired
@@ -166,12 +162,31 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         this.data = data;
     }
 
+    protected void finishCellEditing(JTable table) {
+        if (table.isEditing()) {
+            // save the value
+            Component editField = table.getEditorComponent();
+            if (editField != null) {
+                data.renameLayer(layers[table.getEditingRow()], ((JTextArea)editField).getText());
+            }
+            // cancel all further saving of edits
+            cancelEdit = true;
+            TableCellEditor tce = table.getCellEditor();
+            if (tce != null) {
+                tce.stopCellEditing();
+            }
+            cancelEdit = false;
+        }
+    }
+
     @Override
     public final JPanel build() {
         JPanel result = new JPanel();
         result.setLayout(new BorderLayout());
 
+        // create the table
         final JTable table = new JTable(new LayerTableModel());
+
         // custom row height
         table.setRowHeight(table.getRowHeight()+VitcoSettings.DEFAULT_TABLE_INCREASE);
         // custom layout for cells
@@ -227,15 +242,15 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
                     data.setVisible(layers[row], !data.getLayerVisible(layers[row]));
                 }
-                if (table.isEditing()) { // stop editing of table if it takes place
-                    table.getEditorComponent().setFocusable(false);
+                // cancel editing if we are editing
+                if (e.getClickCount() == 1 && table.isEditing()) {
+                    finishCellEditing(table);
                 }
-
             }
         });
 
         // register editing
-        table.getColumnModel().getColumn(0).setCellEditor(new CellEditor());
+        table.getColumnModel().getColumn(0).setCellEditor(cellEditor);
         // stop editing when table looses focus
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
@@ -254,18 +269,21 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         actionManager.registerAction("layer-frame_add-layer", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                finishCellEditing(table);
                 data.createLayer("Layer");
             }
         });
         actionManager.registerAction("layer-frame_remove-layer", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                finishCellEditing(table);
                 data.deleteLayer(data.getSelectedLayer());
             }
         });
         actionManager.registerAction("layer-frame_move-layer-up", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
+                finishCellEditing(table);
                 data.moveLayerUp(data.getSelectedLayer());
             }
 
@@ -277,6 +295,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         actionManager.registerAction("layer-frame_move-layer-down", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
+                finishCellEditing(table);
                 data.moveLayerDown(data.getSelectedLayer());
             }
 
@@ -288,6 +307,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         actionManager.registerAction("layer-frame_layer-merge", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
+                finishCellEditing(table);
                 data.mergeVisibleLayers();
             }
 
@@ -296,7 +316,6 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 return data.canMergeVisibleLayers();
             }
         });
-
 
         return result;
     }

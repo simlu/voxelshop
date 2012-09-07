@@ -1,5 +1,6 @@
 package com.vitco.engine.data;
 
+import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 
@@ -11,14 +12,24 @@ import java.util.ArrayList;
  */
 public class GeneralData extends ListenerData implements GeneralDataInterface {
 
+    // main data container
+    protected DataContainer dataContainer = new DataContainer();
+
     // ######################
     protected ArrayList<Color> USED_COLORS = new ArrayList<Color>(); //todo use this!
     protected Color CURRENT_COLOR = new Color(193, 124, 50);
 
+    // the mode of voxel drawing
     protected VOXELMODE TOOL_MODE = VOXELMODE.VIEW;
 
     // true if we are dealing with animation (not voxel)
     protected boolean STATE_ANIMATE = false;
+
+    // true if the data has changed since last save
+    protected boolean hasChanged = false;
+
+    // the preview plane (-1 if none)
+    protected int PREVIEW_PLANE = -1;
 
     public GeneralData() {
         this.addDataChangeListener(new DataChangeAdapter() {
@@ -34,12 +45,27 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
         });
     }
 
-    // true if the data has changed since last save
-    protected boolean hasChanged = false;
+    @Override
+    public void setPreviewPlane(int i) {
+        if (PREVIEW_PLANE != i) {
+            PREVIEW_PLANE = Math.max(-1, Math.min(2, i));
+            notifier.onPreviewPlaneChanged();
+        }
+    }
+
+    @Override
+    public int getPreviewPlane() {
+        return PREVIEW_PLANE;
+    }
 
     @Override
     public boolean hasChanged() {
         return hasChanged;
+    }
+
+    @Override
+    public void resetHasChanged() {
+        hasChanged = false;
     }
 
     @Override

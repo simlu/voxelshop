@@ -21,4 +21,10 @@ public interface GeneralDataInterface {
     boolean isAnimate();
 
     boolean hasChanged();
+
+    void setPreviewPlane(int i);
+
+    int getPreviewPlane();
+
+    void resetHasChanged();
 }

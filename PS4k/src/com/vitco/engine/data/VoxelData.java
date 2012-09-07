@@ -491,6 +491,19 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     // =========================
 
     @Override
+    public final int addVoxelDirect(Color color, int[] pos) {
+        int result = -1;
+        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+        if (layer != null && layer.voxelPositionFree(pos)) {
+            result = getFreeVoxelId();
+            Voxel voxel = new Voxel(result, pos, color, dataContainer.selectedLayer);
+            dataContainer.voxels.put(voxel.id, voxel);
+            dataContainer.layers.get(voxel.getLayerId()).addVoxel(voxel);
+        }
+        return result;
+    }
+
+    @Override
     public final int addVoxel(Color color, int[] pos) {
         int result = -1;
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
@@ -617,13 +630,24 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final Voxel searchVoxel(int[] pos) {
+    public final Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer) {
         Voxel[] result;
-        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
-        if (layer != null) {
-            result = layer.search(pos, 0);
-            if (result.length > 0) {
-                return result[0];
+        if (onlyCurrentLayer) { // search only the current layers
+            VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+            if (layer != null && layer.isVisible()) {
+                result = layer.search(pos, 0);
+                if (result.length > 0) {
+                    return result[0];
+                }
+            }
+        } else { // search all layers in correct order
+            for (Integer layerId : dataContainer.layerOrder) {
+                if (dataContainer.layers.get(layerId).isVisible()) {
+                    result = dataContainer.layers.get(layerId).search(pos, 0);
+                    if (result.length > 0) {
+                        return result[0];
+                    }
+                }
             }
         }
         return null;

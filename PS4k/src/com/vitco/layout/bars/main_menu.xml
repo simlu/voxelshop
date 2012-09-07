@@ -3,6 +3,7 @@
     <menu caption="file_btn">
         <item caption="new_file_caption" action="new_file_action"/>
         <item caption="load_file_caption" action="load_file_action"/>
+        <item caption="import_file_caption" action="import_file_action"/>
         <item caption="quick_save_file_caption" action="quick_save_file_action" grayable="true"/>
         <item caption="save_file_caption" action="save_file_action"/>
         <!--<item caption="snapshot_caption" action="snapshot_state-action_show" grayable="true"/>-->
