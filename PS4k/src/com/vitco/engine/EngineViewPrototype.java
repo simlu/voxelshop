@@ -403,6 +403,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         world.setCameraTo(camera);
         buffer = new FrameBuffer(100, 100, FrameBuffer.SAMPLINGMODE_OGSS);
 
+        // lighting
+        world.setAmbientLight(1, 1, 1);
+
         // add a border to our view
         container.setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR));
 

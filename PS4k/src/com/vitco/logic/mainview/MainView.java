@@ -36,12 +36,10 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         camera.setZoomLimits(VitcoSettings.MAIN_VIEW_ZOOM_IN_LIMIT, VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT);
         camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION); // camera initial position
 
-        // lighting
-        world.setAmbientLight(50, 50, 50);
-        WorldUtil.addLight(world, new SimpleVector(-200, -1300, -200), 3);
-        WorldUtil.addLight(world, new SimpleVector(200, 1300, 200), 3);
-        WorldUtil.addLight(world, new SimpleVector(1300, 200, 200), 1);
-        WorldUtil.addLight(world, new SimpleVector(-1300, -200, -200), 1);
+        WorldUtil.addLight(world, new SimpleVector(-200, -1300, -200), 2);
+        WorldUtil.addLight(world, new SimpleVector(200, 1300, 200), 2);
+        //WorldUtil.addLight(world, new SimpleVector(1300, 200, 200), 1);
+        //WorldUtil.addLight(world, new SimpleVector(-1300, -200, -200), 1);
 
         // add ground plane
         WorldUtil.addPlane(
