@@ -48,7 +48,7 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
     @Override
     public void setPreviewPlane(int i) {
         if (PREVIEW_PLANE != i) {
-            PREVIEW_PLANE = Math.max(-1, Math.min(2, i));
+            PREVIEW_PLANE = Math.max(-1, Math.min(5, i));
             notifier.onPreviewPlaneChanged();
         }
     }

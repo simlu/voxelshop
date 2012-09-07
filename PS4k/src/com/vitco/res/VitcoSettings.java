@@ -60,7 +60,7 @@ public final class VitcoSettings {
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
     public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 500;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
-    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(30, -200, -200);
+    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-30, -200, -200);
     public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // "drag" move content
     public static final float MAIN_VIEW_ROTATION_X_FACTOR = 0.02f;
     public static final float MAIN_VIEW_ROTATION_Y_FACTOR = 0.01f;

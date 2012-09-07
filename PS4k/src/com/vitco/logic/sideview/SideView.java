@@ -107,7 +107,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         actionManager.registerAction("sideview_move_plane_in" + (side + 1), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentplane++;
+                currentplane--;
                 updateWorldWithVoxels();
                 container.repaint();
             }
@@ -115,7 +115,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         actionManager.registerAction("sideview_move_plane_out" + (side + 1), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentplane--;
+                currentplane++;
                 updateWorldWithVoxels();
                 container.repaint();
             }
@@ -167,7 +167,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             // =======================
             @Override
             public void mouseEntered(MouseEvent e) {
-                data.setPreviewPlane(side);
+                data.setPreviewPlane(side*2);
             }
             @Override
             public void mouseExited(MouseEvent e) {

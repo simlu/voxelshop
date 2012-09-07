@@ -4,7 +4,6 @@ import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
-import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.types.StateActionPrototype;
@@ -145,53 +144,54 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
         });
 
-        // register "show preview plane"
-        data.addDataChangeListener(new DataChangeAdapter() {
-            int previewPlaneId = -1;
-            int previewPlane = -1;
-            boolean planeSet = false;
-
-            private void removePreviewPlaneIfExists() {
-                if (planeSet) {
-                    world.removeObject(previewPlaneId);
-                    planeSet = false;
-                    container.doNotSkipNextWorldRender();
-                    container.repaint();
-                }
-            }
-
-            @Override
-            public void onPreviewPlaneChanged() {
-                previewPlane = data.getPreviewPlane();
-                removePreviewPlaneIfExists();
-            }
-
-            @Override
-            public void onVoxelSelectionChanged() {
-                if (previewPlane != -1) {
-                    removePreviewPlaneIfExists();
-                    int[] origin = data.getHighlightedVoxel();
-                    if (origin != null) {
-                        SimpleVector originVec = new SimpleVector(origin[0], origin[1], origin[2]);
-                        originVec.scalarMul(VitcoSettings.VOXEL_SIZE);
-                        previewPlaneId = WorldUtil.addPlane(
-                                world,
-                                originVec,
-                                new SimpleVector(
-                                        previewPlane == 0 ? (float)Math.PI/2 : 0,
-                                        0,
-                                        previewPlane == 2 ? (float)Math.PI/2 : 0),
-                                VitcoSettings.VOXEL_PREVIEW_PLANE_SIZE,
-                                VitcoSettings.VOXEL_PREVIEW_PLANE_COLOR,
-                                0
-                        );
-                        planeSet = true;
-                        container.doNotSkipNextWorldRender();
-                        container.repaint();
-                    }
-                }
-            }
-        });
+        // todo remove
+//        // register "show preview plane"
+//        data.addDataChangeListener(new DataChangeAdapter() {
+//            int previewPlaneId = -1;
+//            int previewPlane = -1;
+//            boolean planeSet = false;
+//
+//            private void removePreviewPlaneIfExists() {
+//                if (planeSet) {
+//                    world.removeObject(previewPlaneId);
+//                    planeSet = false;
+//                    container.doNotSkipNextWorldRender();
+//                    container.repaint();
+//                }
+//            }
+//
+//            @Override
+//            public void onPreviewPlaneChanged() {
+//                previewPlane = data.getPreviewPlane();
+//                removePreviewPlaneIfExists();
+//            }
+//
+//            @Override
+//            public void onVoxelSelectionChanged() {
+//                if (previewPlane != -1) {
+//                    removePreviewPlaneIfExists();
+//                    int[] origin = data.getHighlightedVoxel();
+//                    if (origin != null) {
+//                        SimpleVector originVec = new SimpleVector(origin[0], origin[1], origin[2]);
+//                        originVec.scalarMul(VitcoSettings.VOXEL_SIZE);
+//                        previewPlaneId = WorldUtil.addPlane(
+//                                world,
+//                                originVec,
+//                                new SimpleVector(
+//                                        previewPlane == 0 ? (float)Math.PI/2 : 0,
+//                                        0,
+//                                        previewPlane == 2 ? (float)Math.PI/2 : 0),
+//                                VitcoSettings.VOXEL_PREVIEW_PLANE_SIZE,
+//                                VitcoSettings.VOXEL_PREVIEW_PLANE_COLOR,
+//                                0
+//                        );
+//                        planeSet = true;
+//                        container.doNotSkipNextWorldRender();
+//                        container.repaint();
+//                    }
+//                }
+//            }
+//        });
 
         // holds menu and render area (container)
         final JPanel wrapper = new JPanel();

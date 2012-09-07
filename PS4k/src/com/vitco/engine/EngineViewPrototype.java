@@ -1,9 +1,9 @@
 package com.vitco.engine;
 
 import com.threed.jpct.*;
-import com.vitco.logic.ViewPrototype;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.ExtendedVector;
+import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,54 +104,146 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
         }
 
+        // wrapper
+        private void drawCubeLine(Graphics2D ig, SimpleVector[] vectors, int i, int j, Color color, float distance, float[] zRange) {
+            float range1 = (vectors[i].z-zRange[0])/distance;
+            float range2 = (vectors[j].z-zRange[0])/distance;
+
+            ig.setPaint(new GradientPaint(
+                    Math.round(vectors[i].x), Math.round(vectors[i].y),
+                    new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.round(55 + range1*150)),
+                    Math.round(vectors[j].x), Math.round(vectors[j].y),
+                    new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.round(55 + range2*150)),
+                    false));
+
+            ig.drawLine(Math.round(vectors[i].x), Math.round(vectors[i].y),
+                    Math.round(vectors[j].x), Math.round(vectors[j].y));
+        }
+
         // draw overlay for voxels
         private void drawVoxelOverlay(Graphics2D ig) {
             // Anti-alias
             ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-            // draw selected voxel (ghost / preview voxel)
-            int[] voxel = data.getHighlightedVoxel();
-            if (voxel != null) {
-                SimpleVector v1 = new SimpleVector(voxel[0] + 0.5, voxel[1] + 0.5, voxel[2] + 0.5);
-                SimpleVector v2 = new SimpleVector(voxel[0] + 0.5, voxel[1] + 0.5, voxel[2] - 0.5);
-                SimpleVector v3 = new SimpleVector(voxel[0] + 0.5, voxel[1] - 0.5, voxel[2] - 0.5);
-                SimpleVector v4 = new SimpleVector(voxel[0] + 0.5, voxel[1] - 0.5, voxel[2] + 0.5);
-                SimpleVector v5 = new SimpleVector(voxel[0] - 0.5, voxel[1] + 0.5, voxel[2] + 0.5);
-                SimpleVector v6 = new SimpleVector(voxel[0] - 0.5, voxel[1] + 0.5, voxel[2] - 0.5);
-                SimpleVector v7 = new SimpleVector(voxel[0] - 0.5, voxel[1] - 0.5, voxel[2] - 0.5);
-                SimpleVector v8 = new SimpleVector(voxel[0] - 0.5, voxel[1] - 0.5, voxel[2] + 0.5);
-                v1.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v2.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v3.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v4.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v5.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v6.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v7.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v8.scalarMul(VitcoSettings.VOXEL_SIZE);
-                v1 = convert3D2D(v1);
-                v2 = convert3D2D(v2);
-                v3 = convert3D2D(v3);
-                v4 = convert3D2D(v4);
-                v5 = convert3D2D(v5);
-                v6 = convert3D2D(v6);
-                v7 = convert3D2D(v7);
-                v8 = convert3D2D(v8);
 
-                if (v1 != null && v2 != null && v3 != null && v4 != null && v5 != null && v6 != null && v7 != null && v8 != null) {
-                    ig.setColor(VitcoSettings.VOXEL_PREVIEW_LINE_COLOR); // line color
+            final int[] voxel = data.getHighlightedVoxel();
+            // draw selected voxel (ghost / preview voxel)
+            if (voxel != null) {
+                // define the points of the voxel
+                SimpleVector[] vectors = new SimpleVector[] {
+                        new SimpleVector(voxel[0] + 0.5, voxel[1] + 0.5, voxel[2] + 0.5),
+                        new SimpleVector(voxel[0] + 0.5, voxel[1] + 0.5, voxel[2] - 0.5),
+                        new SimpleVector(voxel[0] + 0.5, voxel[1] - 0.5, voxel[2] - 0.5),
+                        new SimpleVector(voxel[0] + 0.5, voxel[1] - 0.5, voxel[2] + 0.5),
+                        new SimpleVector(voxel[0] - 0.5, voxel[1] + 0.5, voxel[2] + 0.5),
+                        new SimpleVector(voxel[0] - 0.5, voxel[1] + 0.5, voxel[2] - 0.5),
+                        new SimpleVector(voxel[0] - 0.5, voxel[1] - 0.5, voxel[2] - 0.5),
+                        new SimpleVector(voxel[0] - 0.5, voxel[1] - 0.5, voxel[2] + 0.5)
+                };
+                boolean valid = true;
+                for (int i = 0; i < vectors.length; i++) {
+                    // scale and convert the points
+                    vectors[i].scalarMul(VitcoSettings.VOXEL_SIZE);
+                    vectors[i] = convert3D2D(vectors[i]);
+                    // check that valid
+                    if (vectors[i] == null) {
+                        valid = false;
+                    }
+                }
+
+                if (valid) {
+                    // calculate the z range
+                    float[] zRange = new float[] {vectors[0].z, vectors[0].z}; // min and max z value
+                    for (int i = 1; i < 8; i ++) {
+                        zRange[0] = Math.min(vectors[i].z, zRange[0]);
+                        zRange[1] = Math.max(vectors[i].z, zRange[1]);
+                    }
+                    float distance = zRange[1] - zRange[0];
+
+                    // draw the cube
                     ig.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
-                    ig.drawLine(Math.round(v1.x), Math.round(v1.y), Math.round(v2.x), Math.round(v2.y));
-                    ig.drawLine(Math.round(v2.x), Math.round(v2.y), Math.round(v3.x), Math.round(v3.y));
-                    ig.drawLine(Math.round(v3.x), Math.round(v3.y), Math.round(v4.x), Math.round(v4.y));
-                    ig.drawLine(Math.round(v4.x), Math.round(v4.y), Math.round(v1.x), Math.round(v1.y));
-                    ig.drawLine(Math.round(v5.x), Math.round(v5.y), Math.round(v6.x), Math.round(v6.y));
-                    ig.drawLine(Math.round(v6.x), Math.round(v6.y), Math.round(v7.x), Math.round(v7.y));
-                    ig.drawLine(Math.round(v7.x), Math.round(v7.y), Math.round(v8.x), Math.round(v8.y));
-                    ig.drawLine(Math.round(v8.x), Math.round(v8.y), Math.round(v5.x), Math.round(v5.y));
-                    ig.drawLine(Math.round(v1.x), Math.round(v1.y), Math.round(v5.x), Math.round(v5.y));
-                    ig.drawLine(Math.round(v2.x), Math.round(v2.y), Math.round(v6.x), Math.round(v6.y));
-                    ig.drawLine(Math.round(v3.x), Math.round(v3.y), Math.round(v7.x), Math.round(v7.y));
-                    ig.drawLine(Math.round(v4.x), Math.round(v4.y), Math.round(v8.x), Math.round(v8.y));
+                    for (int i = 0; i < 4; i++) {
+                        drawCubeLine(ig, vectors, i, (i + 1) % 4, VitcoSettings.VOXEL_PREVIEW_LINE_COLOR, distance, zRange);
+                        drawCubeLine(ig, vectors, i + 4, (i + 1) % 4 + 4, VitcoSettings.VOXEL_PREVIEW_LINE_COLOR, distance, zRange);
+                        drawCubeLine(ig, vectors, i, i + 4, VitcoSettings.VOXEL_PREVIEW_LINE_COLOR, distance, zRange);
+                    }
+
+                    // draw the highlighted side
+                    int side = data.getPreviewPlane();
+                    if (side != -1) {
+                        // calculate center and some variables
+                        int RANGE = 4;
+                        float shift = (side%2 == 0 ? 0.5f : -0.5f);
+                        int plane = side / 2;
+                        SimpleVector center = new SimpleVector(
+                                voxel[0] + (plane == 2 ? shift : 0),
+                                voxel[1] + (plane == 1 ? shift : 0),
+                                voxel[2] + (plane == 0 ? shift : 0)
+                        );
+
+                        // calculate the points
+                        SimpleVector[] points = new SimpleVector[(RANGE*2 - 1) * 4];
+                        float[] range = new float[]{-RANGE, RANGE + 1};
+                        int c = 0;
+                        for (int i = -RANGE + 1; i < RANGE; i++) {
+                            for (float j : range) {
+                                points[c] = center.calcAdd(new SimpleVector(
+                                        (plane != 2 ? i - 0.5 : 0),
+                                        (plane != 1 ? j - 0.5 : 0),
+                                        (plane == 1 ? j - 0.5 : (plane == 2 ? i - 0.5 : 0))
+                                ));
+                                points[c].scalarMul(VitcoSettings.VOXEL_SIZE);
+                                points[c] = convert3D2D(points[c]);
+                                points[c+1] = center.calcAdd(new SimpleVector(
+                                        (plane != 2 ? j - 0.5 : 0),
+                                        (plane != 1 ? i - 0.5 : 0),
+                                        (plane == 1 ? i - 0.5 : (plane == 2 ? j - 0.5 : 0))
+                                ));
+                                points[c+1].scalarMul(VitcoSettings.VOXEL_SIZE);
+                                points[c+1] = convert3D2D(points[c+1]);
+                                if (points[c] == null || points[c+1] == null) {
+                                    valid = false;
+                                }
+                                c+=2;
+                            }
+                        }
+
+                        if (valid) {
+                            // draw the lines
+                            float halfLen = points.length/((float)8);
+                            Color transColor = new Color(VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getRed(),
+                                    VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getGreen(),
+                                    VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getBlue(),
+                                    0);
+                            for (int i = 0, len = points.length/4; i < len; i++) {
+
+                                float alpha = (halfLen-Math.abs(i-halfLen))/halfLen;
+                                Color visColor = new Color(
+                                        VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getRed(),
+                                        VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getGreen(),
+                                        VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getBlue(),
+                                        Math.min(255,Math.max(0,Math.round(100*alpha))));
+
+                                ig.setPaint(new GradientPaint(
+                                        Math.round(points[i*4].x), Math.round(points[i*4].y),
+                                        transColor,
+                                        Math.round((points[i*4].x + points[i*4 + 2].x)/2), Math.round((points[i*4].y + points[i*4 + 2].y)/2),
+                                        visColor,
+                                        true));
+                                ig.drawLine(Math.round(points[i*4].x), Math.round(points[i*4].y),
+                                        Math.round(points[i*4 + 2].x), Math.round(points[i*4 + 2].y));
+
+                                ig.setPaint(new GradientPaint(
+                                        Math.round(points[i*4 + 1].x), Math.round(points[i*4 + 1].y),
+                                        transColor,
+                                        Math.round((points[i*4 + 1].x + points[i*4 + 3].x)/2), Math.round((points[i*4 + 1].y + points[i*4 + 3].y)/2),
+                                        visColor,
+                                        true));
+                                ig.drawLine(Math.round(points[i*4 + 1].x), Math.round(points[i*4 + 1].y),
+                                        Math.round(points[i*4 + 3].x), Math.round(points[i*4 + 3].y));
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -8,6 +8,8 @@ import java.awt.*;
  * Manages everything that has to do with general data
  */
 public interface GeneralDataInterface {
+
+    // todo: comment
     Color getCurrentColor();
 
     boolean setCurrentColor(Color color);

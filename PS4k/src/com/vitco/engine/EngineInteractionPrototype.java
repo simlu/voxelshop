@@ -352,13 +352,40 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             return (int) Math.signum(o1[1] - o2[1]);
                         }
                     });
+                    // todo remove
+//                    switch ((int)planes.get(0)[0]) {
+//                        case 1:
+//                            voxelPos[1] -= 1;
+//                            data.setPreviewPlane(2);
+//                            break;
+//                        case 2:
+//                            voxelPos[1] += 1;
+//                            data.setPreviewPlane(3);
+//                            break;
+//                        case 3:
+//                            voxelPos[0] -= 1;
+//                            data.setPreviewPlane(4);
+//                            break;
+//                        case 4:
+//                            voxelPos[0] += 1;
+//                            data.setPreviewPlane(5);
+//                            break;
+//                        case 5:
+//                            voxelPos[2] -= 1;
+//                            data.setPreviewPlane(0);
+//                            break;
+//                        case 6:
+//                            voxelPos[2] += 1;
+//                            data.setPreviewPlane(1);
+//                            break;
+//                    }
                     switch ((int)planes.get(0)[0]) {
-                        case 1:  voxelPos[1] -= 1; break;
-                        case 2:  voxelPos[1] += 1; break;
-                        case 3:  voxelPos[0] -= 1; break;
-                        case 4:  voxelPos[0] += 1; break;
-                        case 5:  voxelPos[2] -= 1; break;
-                        case 6:  voxelPos[2] += 1; break;
+                        case 1: voxelPos[1] -= 1; break;
+                        case 2: voxelPos[1] += 1; break;
+                        case 3: voxelPos[0] -= 1; break;
+                        case 4: voxelPos[0] += 1; break;
+                        case 5: voxelPos[2] -= 1; break;
+                        case 6: voxelPos[2] += 1; break;
                     }
                 }
                 // highlight the voxel (position)
