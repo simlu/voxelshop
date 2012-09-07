@@ -64,7 +64,6 @@ public final class VitcoSettings {
     public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // "drag" move content
     public static final float MAIN_VIEW_ROTATION_X_FACTOR = 0.02f;
     public static final float MAIN_VIEW_ROTATION_Y_FACTOR = 0.01f;
-    public static final Color MAIN_VIEW_GROUND_PLANE_COLOR = new Color(181, 181, 181);
 
     // general
     public static final Color DEFAULT_BORDER_COLOR = new Color(90, 90, 90);
@@ -98,6 +97,7 @@ public final class VitcoSettings {
     public static final Float VOXEL_GROUND_DISTANCE = 10f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
     public static final Float VOXEL_GROUND_PLANE_SIZE = 25 * VOXEL_SIZE; // when changing this make sure the edges are ok
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
+    public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
 
     // preview plane

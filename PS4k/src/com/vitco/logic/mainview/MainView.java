@@ -47,7 +47,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 new SimpleVector(0, VitcoSettings.VOXEL_GROUND_DISTANCE, 0),
                 new SimpleVector(0, 0, 0),
                 VitcoSettings.VOXEL_GROUND_PLANE_SIZE,
-                VitcoSettings.MAIN_VIEW_GROUND_PLANE_COLOR,
+                VitcoSettings.VOXEL_GROUND_PLANE_COLOR,
                 0
         );
 
