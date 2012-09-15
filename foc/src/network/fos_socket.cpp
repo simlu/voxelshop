@@ -4,6 +4,7 @@
 #include <IwDebug.h>
 #include <s3eDevice.h>
 #include <google/protobuf/io/coded_stream.h>
+#include <s3eTimer.h>
 
 using namespace google::protobuf::io;
 
@@ -11,6 +12,8 @@ fos_socket::fos_socket() {
 	_socket = NULL;
 	_is_connected = false;
 	_errors = S3E_SOCKET_ERR_NONE;
+	_ping_fm.set_type(PING);
+	_ping_fm.mutable__ping();
 }
 
 void fos_socket::connect(std::string ip, uint16 port) {
@@ -118,7 +121,7 @@ void fos_socket::send(fantasy_message fm) {
 				s3eSocketError errors = s3eSocketGetError();
 				if (errors == S3E_SOCKET_ERR_AGAIN) {
 					// REALLY DON'T WANT TO DO THIS!
-					s3eDeviceYield(50);
+					s3eDeviceYield(10);
 					// ALERT ALERT BAD BAD BAD
 					continue;
 				}
@@ -127,6 +130,11 @@ void fos_socket::send(fantasy_message fm) {
 	} else {
 		// FAIL WHAT TO DO!?
 	}
+}
+
+void fos_socket::ping() {
+	_ping_fm.mutable__ping()->set_timestamp(s3eTimerGetMs());
+	send(_ping_fm);
 }
 
 fos_socket::~fos_socket() {

@@ -1,3 +1,7 @@
+includepaths
+{
+    ./
+}
 options
 {
     enable-exceptions

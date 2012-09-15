@@ -1,6 +1,5 @@
-package com.pixelatedgames.fos;
+package com.pixelatedgames.fols;
 
-import com.pixelatedgames.fos.handlers.fos_server_initializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,34 +10,39 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-public class fo_server {
-    private ServerBootstrap b = new ServerBootstrap();
+public class fols_server {
+    // login server
+    private ServerBootstrap loginBootstrap = new ServerBootstrap();
 
     public void run() throws Exception {
         try {
-            b.group(new NioEventLoopGroup(), new NioEventLoopGroup())
+
+            // create the login server
+            loginBootstrap.group(new NioEventLoopGroup(), new NioEventLoopGroup())
                     .channel(new NioServerSocketChannel())
                     .option(ChannelOption.SO_BACKLOG, 100)
-                    .localAddress(8080)
+                    .localAddress(80)
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(
-                                new LoggingHandler(LogLevel.INFO),
-                                new fos_server_initializer()
+                                    new LoggingHandler(LogLevel.INFO)//,
+                                    //new fos_server_initializer()
                             );
                         }
                     });
-
-            // Start the server.
-            ChannelFuture f = b.bind().sync();
+            // start the login server
+            ChannelFuture f = loginBootstrap.bind().sync();
 
             // Wait until the server socket is closed.
+            // this is what locks things up and forces the jar not to exit
+            // not sure if it matters which we sync to
+            // if there is more than one handler bound
             f.channel().closeFuture().sync();
         } finally {
             // Shut down all event loops to terminate all threads.
-            b.shutdown();
+            loginBootstrap.shutdown();
         }
     }
 }

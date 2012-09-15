@@ -16,6 +16,7 @@ private:
 	uint8					_read_buf[_read_buf_len];
 	static const int32		_send_buf_len = 1024;
 	uint8					_send_buf[_send_buf_len];
+	fantasy_message			_ping_fm;
 public:
 	fos_socket();
 	~fos_socket();
@@ -23,6 +24,7 @@ public:
 	void connect(std::string ip, uint16 port);
 	void receive();
 	void send(fantasy_message fm);
+	void ping();
 
 	bool is_connected() { return _is_connected; }
 	s3eSocketError is_errors() { return _errors; } 

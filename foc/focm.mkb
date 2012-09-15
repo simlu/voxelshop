@@ -3,6 +3,11 @@
 includepath src
 includepath boost
 
+options
+{
+   app-icf='icfs/focm.icf'
+}
+
 files
 {
     [src/game]
@@ -15,7 +20,6 @@ files
     connecting_state.h
     disconnected_state.h
     connected_state.h
-    server_init_state.h
 
     [src/network]
     (src/network)
@@ -37,8 +41,11 @@ files
 subprojects
 {
     iwgx
+    iwssl
     (boost\boost)
     boost
     (google)
     google.mkf
+    (PolyVox)
+    polyvox.mkf
 }

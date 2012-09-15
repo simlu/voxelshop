@@ -17,6 +17,7 @@ namespace protobufs {
 
 void protobuf_ShutdownFile_fantasy_5fmessages_2eproto() {
   delete fantasy_message::default_instance_;
+  delete ping::default_instance_;
   delete login::default_instance_;
 }
 
@@ -27,8 +28,10 @@ void protobuf_AddDesc_fantasy_5fmessages_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   fantasy_message::default_instance_ = new fantasy_message();
+  ping::default_instance_ = new ping();
   login::default_instance_ = new login();
   fantasy_message::default_instance_->InitAsDefaultInstance();
+  ping::default_instance_->InitAsDefaultInstance();
   login::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_fantasy_5fmessages_2eproto);
 }
@@ -55,6 +58,7 @@ bool fantasy_message_type_IsValid(int value) {
 
 #ifndef _MSC_VER
 const int fantasy_message::kTypeFieldNumber;
+const int fantasy_message::kPingFieldNumber;
 const int fantasy_message::kLoginFieldNumber;
 #endif  // !_MSC_VER
 
@@ -64,6 +68,7 @@ fantasy_message::fantasy_message()
 }
 
 void fantasy_message::InitAsDefaultInstance() {
+  _ping_ = const_cast< ::com::pixelatedgames::fos::protobufs::ping*>(&::com::pixelatedgames::fos::protobufs::ping::default_instance());
   _login_ = const_cast< ::com::pixelatedgames::fos::protobufs::login*>(&::com::pixelatedgames::fos::protobufs::login::default_instance());
 }
 
@@ -76,6 +81,7 @@ fantasy_message::fantasy_message(const fantasy_message& from)
 void fantasy_message::SharedCtor() {
   _cached_size_ = 0;
   type_ = 1;
+  _ping_ = NULL;
   _login_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -86,6 +92,7 @@ fantasy_message::~fantasy_message() {
 
 void fantasy_message::SharedDtor() {
   if (this != default_instance_) {
+    delete _ping_;
     delete _login_;
   }
 }
@@ -108,6 +115,9 @@ fantasy_message* fantasy_message::New() const {
 void fantasy_message::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     type_ = 1;
+    if (has__ping()) {
+      if (_ping_ != NULL) _ping_->::com::pixelatedgames::fos::protobufs::ping::Clear();
+    }
     if (has__login()) {
       if (_login_ != NULL) _login_->::com::pixelatedgames::fos::protobufs::login::Clear();
     }
@@ -135,12 +145,26 @@ bool fantasy_message::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse__login;
+        if (input->ExpectTag(18)) goto parse__ping;
         break;
       }
       
-      // optional .com.pixelatedgames.fos.protobufs.login _login = 2;
+      // optional .com.pixelatedgames.fos.protobufs.ping _ping = 2;
       case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse__ping:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable__ping()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse__login;
+        break;
+      }
+      
+      // optional .com.pixelatedgames.fos.protobufs.login _login = 3;
+      case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse__login:
@@ -176,10 +200,16 @@ void fantasy_message::SerializeWithCachedSizes(
       1, this->type(), output);
   }
   
-  // optional .com.pixelatedgames.fos.protobufs.login _login = 2;
+  // optional .com.pixelatedgames.fos.protobufs.ping _ping = 2;
+  if (has__ping()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      2, this->_ping(), output);
+  }
+  
+  // optional .com.pixelatedgames.fos.protobufs.login _login = 3;
   if (has__login()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      2, this->_login(), output);
+      3, this->_login(), output);
   }
   
 }
@@ -194,7 +224,14 @@ int fantasy_message::ByteSize() const {
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
     }
     
-    // optional .com.pixelatedgames.fos.protobufs.login _login = 2;
+    // optional .com.pixelatedgames.fos.protobufs.ping _ping = 2;
+    if (has__ping()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->_ping());
+    }
+    
+    // optional .com.pixelatedgames.fos.protobufs.login _login = 3;
     if (has__login()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -219,6 +256,9 @@ void fantasy_message::MergeFrom(const fantasy_message& from) {
     if (from.has_type()) {
       set_type(from.type());
     }
+    if (from.has__ping()) {
+      mutable__ping()->::com::pixelatedgames::fos::protobufs::ping::MergeFrom(from._ping());
+    }
     if (from.has__login()) {
       mutable__login()->::com::pixelatedgames::fos::protobufs::login::MergeFrom(from._login());
     }
@@ -234,6 +274,9 @@ void fantasy_message::CopyFrom(const fantasy_message& from) {
 bool fantasy_message::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
   
+  if (has__ping()) {
+    if (!this->_ping().IsInitialized()) return false;
+  }
   if (has__login()) {
     if (!this->_login().IsInitialized()) return false;
   }
@@ -243,6 +286,7 @@ bool fantasy_message::IsInitialized() const {
 void fantasy_message::Swap(fantasy_message* other) {
   if (other != this) {
     std::swap(type_, other->type_);
+    std::swap(_ping_, other->_ping_);
     std::swap(_login_, other->_login_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     std::swap(_cached_size_, other->_cached_size_);
@@ -257,7 +301,166 @@ void fantasy_message::Swap(fantasy_message* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int login::kAuthenticationFieldNumber;
+const int ping::kTimestampFieldNumber;
+#endif  // !_MSC_VER
+
+ping::ping()
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+}
+
+void ping::InitAsDefaultInstance() {
+}
+
+ping::ping(const ping& from)
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void ping::SharedCtor() {
+  _cached_size_ = 0;
+  timestamp_ = GOOGLE_ULONGLONG(0);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+ping::~ping() {
+  SharedDtor();
+}
+
+void ping::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void ping::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ping& ping::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_fantasy_5fmessages_2eproto();  return *default_instance_;
+}
+
+ping* ping::default_instance_ = NULL;
+
+ping* ping::New() const {
+  return new ping;
+}
+
+void ping::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    timestamp_ = GOOGLE_ULONGLONG(0);
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+bool ping::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required uint64 timestamp = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &timestamp_)));
+          set_has_timestamp();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void ping::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required uint64 timestamp = 1;
+  if (has_timestamp()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->timestamp(), output);
+  }
+  
+}
+
+int ping::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required uint64 timestamp = 1;
+    if (has_timestamp()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+          this->timestamp());
+    }
+    
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ping::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const ping*>(&from));
+}
+
+void ping::MergeFrom(const ping& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_timestamp()) {
+      set_timestamp(from.timestamp());
+    }
+  }
+}
+
+void ping::CopyFrom(const ping& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ping::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+  
+  return true;
+}
+
+void ping::Swap(ping* other) {
+  if (other != this) {
+    std::swap(timestamp_, other->timestamp_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::std::string ping::GetTypeName() const {
+  return "com.pixelatedgames.fos.protobufs.ping";
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int login::kAuthFieldNumber;
 #endif  // !_MSC_VER
 
 login::login()
@@ -276,7 +479,7 @@ login::login(const login& from)
 
 void login::SharedCtor() {
   _cached_size_ = 0;
-  authentication_ = GOOGLE_LONGLONG(0);
+  auth_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -306,7 +509,7 @@ login* login::New() const {
 
 void login::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    authentication_ = GOOGLE_LONGLONG(0);
+    auth_ = GOOGLE_LONGLONG(0);
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -317,14 +520,14 @@ bool login::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int64 authentication = 2;
-      case 2: {
+      // required int64 auth = 1;
+      case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &authentication_)));
-          set_has_authentication();
+                 input, &auth_)));
+          set_has_auth();
         } else {
           goto handle_uninterpreted;
         }
@@ -349,9 +552,9 @@ bool login::MergePartialFromCodedStream(
 
 void login::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int64 authentication = 2;
-  if (has_authentication()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->authentication(), output);
+  // required int64 auth = 1;
+  if (has_auth()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->auth(), output);
   }
   
 }
@@ -360,11 +563,11 @@ int login::ByteSize() const {
   int total_size = 0;
   
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int64 authentication = 2;
-    if (has_authentication()) {
+    // required int64 auth = 1;
+    if (has_auth()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->authentication());
+          this->auth());
     }
     
   }
@@ -382,8 +585,8 @@ void login::CheckTypeAndMergeFrom(
 void login::MergeFrom(const login& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_authentication()) {
-      set_authentication(from.authentication());
+    if (from.has_auth()) {
+      set_auth(from.auth());
     }
   }
 }
@@ -402,7 +605,7 @@ bool login::IsInitialized() const {
 
 void login::Swap(login* other) {
   if (other != this) {
-    std::swap(authentication_, other->authentication_);
+    std::swap(auth_, other->auth_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     std::swap(_cached_size_, other->_cached_size_);
   }

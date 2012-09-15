@@ -2,215 +2,34 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6663e3f-9c0a-4db3-a1a5-3d9fcbffa891" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/google.mkf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_test_bad_identifiers.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/plugin.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testdata/golden_message" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testdata/golden_packed_fields_message" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_custom_options.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_embed_optimize_for.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_empty.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_enormous_descriptor.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_import.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_import_lite.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_lite.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_lite_imports_nonlite.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_mset.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_no_generic_services.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unittest_optimize_for.proto" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/pcompile.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/config.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/code_generator.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/code_generator.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/command_line_interface.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/command_line_interface.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/command_line_interface_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_bootstrap_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_enum.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_enum.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_enum_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_enum_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_extension.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_extension.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_file.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_file.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_generator.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_generator.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_helpers.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_helpers.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_message.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_message.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_message_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_message_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_plugin_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_primitive_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_primitive_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_service.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_service.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_string_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_string_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/cpp/cpp_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/importer.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/importer.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/importer_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_enum.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_enum.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_enum_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_enum_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_extension.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_extension.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_file.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_file.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_generator.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_generator.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_helpers.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_helpers.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_message.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_message.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_message_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_message_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_plugin_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_primitive_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_primitive_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_service.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_service.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_string_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/java/java_string_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/main.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/mock_code_generator.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/mock_code_generator.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/package_info.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/parser.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/parser.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/parser_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/plugin.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/plugin.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/plugin.pb.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/plugin.pb.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/python/python_generator.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/python/python_generator.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/python/python_plugin_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/subprocess.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/subprocess.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/test_plugin.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/zip_output_unittest.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/zip_writer.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/compiler/zip_writer.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor.pb.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor.pb.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor_database.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor_database.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor_database_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/descriptor_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/dynamic_message.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/dynamic_message.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/dynamic_message_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/extension_set.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/extension_set.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/extension_set_heavy.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/extension_set_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/generated_message_reflection.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/generated_message_reflection.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/generated_message_reflection_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/generated_message_util.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/generated_message_util.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/coded_stream.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/coded_stream.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/coded_stream_inl.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/coded_stream_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/gzip_stream.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/gzip_stream.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/gzip_stream_unittest.sh" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/package_info.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/printer.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/printer.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/printer_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/tokenizer.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/tokenizer.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/tokenizer_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/zero_copy_stream.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/zero_copy_stream.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/zero_copy_stream_impl.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/zero_copy_stream_impl.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/zero_copy_stream_impl_lite.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/zero_copy_stream_impl_lite.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/io/zero_copy_stream_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/lite_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/message.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/message.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/message_lite.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/message_lite.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/message_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/package_info.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/reflection_ops.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/reflection_ops.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/reflection_ops_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/repeated_field.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/repeated_field.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/repeated_field_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/service.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/service.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/common.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/common.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/common_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/hash.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/map-util.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/once.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/once.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/once_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/stl_util-inl.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/structurally_valid.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/structurally_valid_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/strutil.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/strutil.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/strutil_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/substitute.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/stubs/substitute.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/test_util.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/test_util.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/test_util_lite.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/test_util_lite.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testdata/text_format_unittest_data.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testdata/text_format_unittest_extensions_data.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testing/file.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testing/file.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testing/googletest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testing/googletest.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testing/zcgunzip.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/testing/zcgzip.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/text_format.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/text_format.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/text_format_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unknown_field_set.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unknown_field_set.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/unknown_field_set_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/wire_format.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/wire_format.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/wire_format_lite.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/wire_format_lite.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/wire_format_lite_inl.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/google/protobuf/wire_format_unittest.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/network/fantasy_messages.pb.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/network/fantasy_messages.pb.h" />
-      <change type="DELETED" beforePath="C:\fo2\foc\boost\boost.mkf" afterPath="" />
-      <change type="MOVED" beforePath="C:\fo2\proto\pcompile.bat" afterPath="$PROJECT_DIR$/../proto/old_pcompile.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/boost/boost/boost.mkf" afterPath="$PROJECT_DIR$/../foc/boost/boost/boost.mkf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/icfs/focm.icf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/.name" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/compiler.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/copyright/profiles_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/libraries/libs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/scopes/scope_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/uiDesigner.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/vcs.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/fols.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/Main.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/fols_server.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fos/Main.java" />
+      <change type="DELETED" beforePath="C:\fo2\foc\src\game\states\server_init_state.h" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\fos\src\com\pixelatedgames\Main.java" afterPath="" />
+      <change type="MOVED" beforePath="C:\fo2\fos\src\com\pixelatedgames\fos\fo_server.java" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fos/fos_server.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/focm.mkb" afterPath="$PROJECT_DIR$/../foc/focm.mkb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../proto/fantasy_messages.proto" afterPath="$PROJECT_DIR$/../proto/fantasy_messages.proto" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/game.cpp" afterPath="$PROJECT_DIR$/../foc/src/game/game.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/states/connected_state.h" afterPath="$PROJECT_DIR$/../foc/src/game/states/connected_state.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/network/fantasy_messages.pb.cpp" afterPath="$PROJECT_DIR$/../foc/src/network/fantasy_messages.pb.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/network/fantasy_messages.pb.h" afterPath="$PROJECT_DIR$/../foc/src/network/fantasy_messages.pb.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/network/fos_socket.cpp" afterPath="$PROJECT_DIR$/../foc/src/network/fos_socket.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/network/fos_socket.h" afterPath="$PROJECT_DIR$/../foc/src/network/fos_socket.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/utils/ssm.cpp" afterPath="$PROJECT_DIR$/../foc/src/utils/ssm.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java" />
     </list>
     <ignored path="fos.iws" />
@@ -281,8 +100,8 @@
       <property name="field_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByClasses" value="true" />
       <property name="exception_breakpoints_viewId" value="TABLE" />
-      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="field_breakpoints_viewId" value="TABLE" />
+      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByMethods" value="false" />
     </ui_properties>
   </component>
@@ -295,9 +114,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_initializer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="16" column="73" selection-start="744" selection-end="772" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -305,16 +122,34 @@
       <file leaf-file-name="FantasyMessages.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="107" column="0" selection-start="3765" selection-end="3765" vertical-scroll-proportion="0.0">
+            <state line="107" column="0" selection-start="3719" selection-end="3719" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fos_server_handler.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="fos_server_handler.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="11" selection-start="485" selection-end="485" vertical-scroll-proportion="0.31875">
+            <state line="11" column="11" selection-start="485" selection-end="485" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/Main.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="40" selection-start="208" selection-end="208" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fos_server.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/fos_server.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="42" column="8" selection-start="541" selection-end="1708" vertical-scroll-proportion="0.60642093">
               <folding />
             </state>
           </provider>
@@ -336,8 +171,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/pixelatedgames/es/EntityManager.java" />
-        <option value="$PROJECT_DIR$/src/com/pixelatedgames/es/Entity.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/es/systems/EntitySystem.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/es/components/PositionComponent.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/FantasyClient.java" />
@@ -346,12 +179,14 @@
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/FantasyServerHandler.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/FantasyServer.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/LoginHandler.java" />
-        <option value="$PROJECT_DIR$/src/com/pixelatedgames/Main.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/fo_server.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/varint32decoder.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_initializer.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java" />
+        <option value="$PROJECT_DIR$/src/com/pixelatedgames/Main.java" />
+        <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/fos_server.java" />
+        <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/Main.java" />
       </list>
     </option>
   </component>
@@ -449,6 +284,16 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -489,32 +334,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="pixelatedgames" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pixelatedgames" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="fos" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -535,76 +354,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="com" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pixelatedgames" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protobufs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pixelatedgames" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="handlers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -626,9 +375,9 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RunManager" selected="Application.Main">
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
@@ -638,7 +387,7 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="MAIN_CLASS_NAME" value="com.pixelatedgames.Main" />
+      <option name="MAIN_CLASS_NAME" value="com.pixelatedgames.fos.Main" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -700,24 +449,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -744,6 +475,24 @@
       <envs />
       <properties />
       <listeners />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -867,7 +616,6 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.6002227" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -877,6 +625,7 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290993" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -974,11 +723,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/google/protobuf/GeneratedMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1390" column="28" selection-start="49663" selection-end="49663" vertical-scroll-proportion="-0.06420233" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/google/protobuf/Descriptors.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="893" column="51" selection-start="33009" selection-end="33015" vertical-scroll-proportion="0.402863" />
@@ -989,11 +733,6 @@
         <state line="6" column="49" selection-start="211" selection-end="247" vertical-scroll-proportion="0.10585305" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="59" selection-start="203" selection-end="203" vertical-scroll-proportion="0.34343433" />
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/bootstrap/ServerBootstrap.class">
       <provider selected="true" editor-type-id="text-editor">
         <state line="36" column="46" selection-start="2089" selection-end="2089" vertical-scroll-proportion="0.3501094" />
@@ -1001,67 +740,69 @@
     </entry>
     <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/handler/codec/protobuf/ProtobufVarint32FrameDecoder.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="11" selection-start="286" selection-end="286" vertical-scroll-proportion="0.19465649">
-          <folding />
-        </state>
+        <state line="7" column="11" selection-start="286" selection-end="286" vertical-scroll-proportion="0.19465649" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/handler/codec/protobuf/ProtobufDecoder.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="27" selection-start="139" selection-end="144" vertical-scroll-proportion="0.097328246">
-          <folding>
-            <element signature="e#0#1021#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/fo_server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="21" selection-start="1418" selection-end="1418" vertical-scroll-proportion="0.6502732">
-          <folding />
-        </state>
+        <state line="3" column="27" selection-start="139" selection-end="144" vertical-scroll-proportion="0.097328246" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/channel/ChannelInboundMessageHandlerAdapter.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="151" selection-start="285" selection-end="313" vertical-scroll-proportion="-2.72">
-          <folding />
-        </state>
+        <state line="5" column="151" selection-start="285" selection-end="313" vertical-scroll-proportion="-2.72" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/channel/ChannelInboundMessageHandler.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="80" selection-start="216" selection-end="237" vertical-scroll-proportion="-2.72">
-          <folding />
-        </state>
+        <state line="5" column="80" selection-start="216" selection-end="237" vertical-scroll-proportion="-2.72" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/channel/ChannelInboundHandler.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="17" selection-start="158" selection-end="158" vertical-scroll-proportion="0.129771">
-          <folding />
-        </state>
+        <state line="5" column="17" selection-start="158" selection-end="158" vertical-scroll-proportion="0.129771" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/channel/ChannelOption.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="74" selection-start="1093" selection-end="1093" vertical-scroll-proportion="0.29166666" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/channel/ChannelFuture.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="35" selection-start="845" selection-end="845" vertical-scroll-proportion="0.35164836" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../fols/fols.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_initializer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="73" selection-start="744" selection-end="772" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
+        <state line="16" column="73" selection-start="744" selection-end="772" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="107" column="0" selection-start="3765" selection-end="3765" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="107" column="0" selection-start="3719" selection-end="3719" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="11" selection-start="485" selection-end="485" vertical-scroll-proportion="0.31875">
+        <state line="11" column="11" selection-start="485" selection-end="485" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="40" selection-start="208" selection-end="208" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/fos_server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="8" selection-start="541" selection-end="1708" vertical-scroll-proportion="0.60642093">
           <folding />
         </state>
       </provider>

@@ -53,6 +53,7 @@ void game::update() {
 }
 
 void game::draw() {
+	
 	// Set the background colour to (opaque) blue
 	IwGxSetColClear(0, 0, 0xff, 0xff);
 
@@ -64,9 +65,11 @@ void game::draw() {
 	tmp << frameTime;
 
 
-	//IwGxPrintString(120, 150, tmp.str().c_str());
+	
 	IwTrace(DEFAULT, (tmp.str().c_str()));
 	*/
+
+	IwGxPrintString(120, 150, "ROFLWAFLE");
 
 	// Standard EGL-style flush of drawing to the surface
 	IwGxFlush();

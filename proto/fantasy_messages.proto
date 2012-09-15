@@ -3,7 +3,8 @@ package com.pixelatedgames.fos.protobufs;
 option optimize_for = LITE_RUNTIME;
 
 enum fantasy_message_type {
-	LOGIN = 1;
+	PING	= 1;
+	LOGIN 	= 2;
 }
 
 message fantasy_message {	
@@ -11,10 +12,14 @@ message fantasy_message {
 	required fantasy_message_type type = 1;
 	
 	// One of the following will be filled in.
-	optional login _login = 2;
+	optional ping	_ping	= 2;
+	optional login 	_login 	= 3;
+}
+message ping {
+	required uint64 timestamp = 1;
 }
 
 message login {		
-	required int64 authentication = 2;
+	required int64 auth = 1;
 }
 

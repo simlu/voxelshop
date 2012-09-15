@@ -35,15 +35,16 @@ void protobuf_AssignDesc_fantasy_5fmessages_2eproto();
 void protobuf_ShutdownFile_fantasy_5fmessages_2eproto();
 
 class fantasy_message;
+class ping;
 class login;
 
 enum fantasy_message_type {
-  LOGIN = 1,
-  POSITION = 2
+  PING = 1,
+  LOGIN = 2
 };
 bool fantasy_message_type_IsValid(int value);
-const fantasy_message_type fantasy_message_type_MIN = LOGIN;
-const fantasy_message_type fantasy_message_type_MAX = POSITION;
+const fantasy_message_type fantasy_message_type_MIN = PING;
+const fantasy_message_type fantasy_message_type_MAX = LOGIN;
 const int fantasy_message_type_ARRAYSIZE = fantasy_message_type_MAX + 1;
 
 // ===================================================================
@@ -98,10 +99,18 @@ class fantasy_message : public ::google::protobuf::MessageLite {
   inline com::pixelatedgames::fos::protobufs::fantasy_message_type type() const;
   inline void set_type(com::pixelatedgames::fos::protobufs::fantasy_message_type value);
   
-  // optional .com.pixelatedgames.fos.protobufs.login _login = 2;
+  // optional .com.pixelatedgames.fos.protobufs.ping _ping = 2;
+  inline bool has__ping() const;
+  inline void clear__ping();
+  static const int kPingFieldNumber = 2;
+  inline const ::com::pixelatedgames::fos::protobufs::ping& _ping() const;
+  inline ::com::pixelatedgames::fos::protobufs::ping* mutable__ping();
+  inline ::com::pixelatedgames::fos::protobufs::ping* release__ping();
+  
+  // optional .com.pixelatedgames.fos.protobufs.login _login = 3;
   inline bool has__login() const;
   inline void clear__login();
-  static const int kLoginFieldNumber = 2;
+  static const int kLoginFieldNumber = 3;
   inline const ::com::pixelatedgames::fos::protobufs::login& _login() const;
   inline ::com::pixelatedgames::fos::protobufs::login* mutable__login();
   inline ::com::pixelatedgames::fos::protobufs::login* release__login();
@@ -110,14 +119,17 @@ class fantasy_message : public ::google::protobuf::MessageLite {
  private:
   inline void set_has_type();
   inline void clear_has_type();
+  inline void set_has__ping();
+  inline void clear_has__ping();
   inline void set_has__login();
   inline void clear_has__login();
   
+  ::com::pixelatedgames::fos::protobufs::ping* _ping_;
   ::com::pixelatedgames::fos::protobufs::login* _login_;
   int type_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_fantasy_5fmessages_2eproto();
   friend void protobuf_AssignDesc_fantasy_5fmessages_2eproto();
@@ -125,6 +137,75 @@ class fantasy_message : public ::google::protobuf::MessageLite {
   
   void InitAsDefaultInstance();
   static fantasy_message* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ping : public ::google::protobuf::MessageLite {
+ public:
+  ping();
+  virtual ~ping();
+  
+  ping(const ping& from);
+  
+  inline ping& operator=(const ping& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  static const ping& default_instance();
+  
+  void Swap(ping* other);
+  
+  // implements Message ----------------------------------------------
+  
+  ping* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const ping& from);
+  void MergeFrom(const ping& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::std::string GetTypeName() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required uint64 timestamp = 1;
+  inline bool has_timestamp() const;
+  inline void clear_timestamp();
+  static const int kTimestampFieldNumber = 1;
+  inline ::google::protobuf::uint64 timestamp() const;
+  inline void set_timestamp(::google::protobuf::uint64 value);
+  
+  // @@protoc_insertion_point(class_scope:com.pixelatedgames.fos.protobufs.ping)
+ private:
+  inline void set_has_timestamp();
+  inline void clear_has_timestamp();
+  
+  ::google::protobuf::uint64 timestamp_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_fantasy_5fmessages_2eproto();
+  friend void protobuf_AssignDesc_fantasy_5fmessages_2eproto();
+  friend void protobuf_ShutdownFile_fantasy_5fmessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static ping* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -171,19 +252,19 @@ class login : public ::google::protobuf::MessageLite {
   
   // accessors -------------------------------------------------------
   
-  // required int64 authentication = 2;
-  inline bool has_authentication() const;
-  inline void clear_authentication();
-  static const int kAuthenticationFieldNumber = 2;
-  inline ::google::protobuf::int64 authentication() const;
-  inline void set_authentication(::google::protobuf::int64 value);
+  // required int64 auth = 1;
+  inline bool has_auth() const;
+  inline void clear_auth();
+  static const int kAuthFieldNumber = 1;
+  inline ::google::protobuf::int64 auth() const;
+  inline void set_auth(::google::protobuf::int64 value);
   
   // @@protoc_insertion_point(class_scope:com.pixelatedgames.fos.protobufs.login)
  private:
-  inline void set_has_authentication();
-  inline void clear_has_authentication();
+  inline void set_has_auth();
+  inline void clear_has_auth();
   
-  ::google::protobuf::int64 authentication_;
+  ::google::protobuf::int64 auth_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -225,15 +306,44 @@ inline void fantasy_message::set_type(com::pixelatedgames::fos::protobufs::fanta
   type_ = value;
 }
 
-// optional .com.pixelatedgames.fos.protobufs.login _login = 2;
-inline bool fantasy_message::has__login() const {
+// optional .com.pixelatedgames.fos.protobufs.ping _ping = 2;
+inline bool fantasy_message::has__ping() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void fantasy_message::set_has__login() {
+inline void fantasy_message::set_has__ping() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void fantasy_message::clear_has__login() {
+inline void fantasy_message::clear_has__ping() {
   _has_bits_[0] &= ~0x00000002u;
+}
+inline void fantasy_message::clear__ping() {
+  if (_ping_ != NULL) _ping_->::com::pixelatedgames::fos::protobufs::ping::Clear();
+  clear_has__ping();
+}
+inline const ::com::pixelatedgames::fos::protobufs::ping& fantasy_message::_ping() const {
+  return _ping_ != NULL ? *_ping_ : *default_instance_->_ping_;
+}
+inline ::com::pixelatedgames::fos::protobufs::ping* fantasy_message::mutable__ping() {
+  set_has__ping();
+  if (_ping_ == NULL) _ping_ = new ::com::pixelatedgames::fos::protobufs::ping;
+  return _ping_;
+}
+inline ::com::pixelatedgames::fos::protobufs::ping* fantasy_message::release__ping() {
+  clear_has__ping();
+  ::com::pixelatedgames::fos::protobufs::ping* temp = _ping_;
+  _ping_ = NULL;
+  return temp;
+}
+
+// optional .com.pixelatedgames.fos.protobufs.login _login = 3;
+inline bool fantasy_message::has__login() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void fantasy_message::set_has__login() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void fantasy_message::clear_has__login() {
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void fantasy_message::clear__login() {
   if (_login_ != NULL) _login_->::com::pixelatedgames::fos::protobufs::login::Clear();
@@ -256,28 +366,54 @@ inline ::com::pixelatedgames::fos::protobufs::login* fantasy_message::release__l
 
 // -------------------------------------------------------------------
 
-// login
+// ping
 
-// required int64 authentication = 2;
-inline bool login::has_authentication() const {
+// required uint64 timestamp = 1;
+inline bool ping::has_timestamp() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void login::set_has_authentication() {
+inline void ping::set_has_timestamp() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void login::clear_has_authentication() {
+inline void ping::clear_has_timestamp() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void login::clear_authentication() {
-  authentication_ = GOOGLE_LONGLONG(0);
-  clear_has_authentication();
+inline void ping::clear_timestamp() {
+  timestamp_ = GOOGLE_ULONGLONG(0);
+  clear_has_timestamp();
 }
-inline ::google::protobuf::int64 login::authentication() const {
-  return authentication_;
+inline ::google::protobuf::uint64 ping::timestamp() const {
+  return timestamp_;
 }
-inline void login::set_authentication(::google::protobuf::int64 value) {
-  set_has_authentication();
-  authentication_ = value;
+inline void ping::set_timestamp(::google::protobuf::uint64 value) {
+  set_has_timestamp();
+  timestamp_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// login
+
+// required int64 auth = 1;
+inline bool login::has_auth() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void login::set_has_auth() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void login::clear_has_auth() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void login::clear_auth() {
+  auth_ = GOOGLE_LONGLONG(0);
+  clear_has_auth();
+}
+inline ::google::protobuf::int64 login::auth() const {
+  return auth_;
+}
+inline void login::set_auth(::google::protobuf::int64 value) {
+  set_has_auth();
+  auth_ = value;
 }
 
 
