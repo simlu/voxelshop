@@ -59,6 +59,8 @@
     <!-- create ActionManager -->
     <!-- this allows to register and execute action -->
     <bean id="ActionManager" class="com.vitco.util.action.ActionManager"/>
+    <!-- action group manager -->
+    <bean id="ActionGroupManager" class="com.vitco.util.action.ActionGroupManager"/>
 
     <!-- manages threads -->
     <bean id="ThreadManager" class="com.vitco.util.thread.ThreadManager"/>
@@ -95,6 +97,9 @@
         <property name="errorHandler" ref="ErrorHandler"/>
     </bean>
 
+    <!--menu logic-->
+    <bean id="MainMenuLogic" class="com.vitco.logic.menu.MainMenuLogic"/>
+    <bean id="ToolBarLogic" class="com.vitco.logic.menu.ToolBarLogic"/>
 
     <!--ENGINE STUFF-->
     <!-- animation data -->
@@ -118,10 +123,9 @@
     <!-- main view -->
     <bean id="MainView" class="com.vitco.logic.mainview.MainView"/>
 
-
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
-        <constructor-arg value="PS4k - Alpha Version (V1.0.8)"/>
+        <constructor-arg value="PS4k - Alpha Version (V1.0.9)"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
@@ -134,11 +138,15 @@
             <map>
                 <entry>
                     <key><value>mainMenu</value></key>
-                    <bean id="MainMenuLinkage" class="com.vitco.layout.bars.MainMenuLinkage"/>
+                    <bean id="MainMenuLinkage" class="com.vitco.layout.bars.MainMenuLinkage">
+                        <property name="menuLogic" ref="MainMenuLogic"/>
+                    </bean>
                 </entry>
                 <entry>
                     <key><value>toolBar</value></key>
-                    <bean id="ToolBarLinkage" class="com.vitco.layout.bars.ToolBarLinkage"/>
+                    <bean id="ToolBarLinkage" class="com.vitco.layout.bars.ToolBarLinkage">
+                        <property name="menuLogic" ref="ToolBarLogic"/>
+                    </bean>
                 </entry>
             </map>
         </property>

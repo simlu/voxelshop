@@ -40,10 +40,10 @@ public class ThreadManager implements ThreadManagerInterface {
     @Override
     public void init() {
         // close all threads when the program exits
-        actionManager.performWhenActionIsReady("program_closing_action", new Runnable() {
+        actionManager.performWhenActionIsReady("program_closing_event", new Runnable() {
             @Override
             public void run() {
-                ((StateActionPrototype)actionManager.getAction("program_closing_action")).addChangeListener(new ChangeListener() {
+                ((StateActionPrototype)actionManager.getAction("program_closing_event")).addChangeListener(new ChangeListener() {
                     @Override
                     public void actionFired(boolean b) {
                         if (b) {

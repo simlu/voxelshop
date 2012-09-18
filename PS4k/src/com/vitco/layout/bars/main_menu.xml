@@ -6,7 +6,7 @@
         <item caption="import_file_caption" action="import_file_action"/>
         <item caption="quick_save_file_caption" action="quick_save_file_action" grayable="true"/>
         <item caption="save_file_caption" action="save_file_action"/>
-        <!--<item caption="snapshot_caption" action="snapshot_state-action_show" grayable="true"/>-->
+        <item caption="close_program_caption" action="close_program_action"/>
     </menu>
     <!--<menu caption="edit_btn">-->
 

@@ -104,26 +104,20 @@ public class MenuGenerator implements MenuGeneratorInterface {
         } else {
             if (name.equals("item")) {
                 Element e = (Element) node;
-                if (e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true")) {
-                    // check if this is a check menu button
-                    addCheckItem(component, e);
-                } else if (e.hasAttribute("grayable") && e.getAttribute("grayable").equals("true")) {
-                    // check if this is a check menu button
-                    addGrayItem(component, e);
-                } else {
-                    addDefaultItem(component, e);
-                }
+                addItem(component, e,
+                        e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true"),
+                        e.hasAttribute("grayable") && e.getAttribute("grayable").equals("true"),
+                        e.hasAttribute("hideable") && e.getAttribute("hideable").equals("true")
+                );
             } else if (name.equals("separator")) {
                 component.add(new CommandBarSeparator());
             } else if (name.equals("icon-item")) {
                 Element e = (Element) node;
-                if (e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true")) {
-                    addCheckIconItem(component, e);
-                } else if (e.hasAttribute("grayable") && e.getAttribute("grayable").equals("true")) {
-                    addGrayIconItem(component, e);
-                } else {
-                    addIconItem(component, e);
-                }
+                addIconItem(component, e,
+                        e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true"),
+                        e.hasAttribute("grayable") && e.getAttribute("grayable").equals("true"),
+                        e.hasAttribute("hideable") && e.getAttribute("hideable").equals("true")
+                );
             }
         }
     }
@@ -173,31 +167,13 @@ public class MenuGenerator implements MenuGeneratorInterface {
         });
     }
 
-    // adds an item that has an icon and a tooltip
-    private void addIconItem(JComponent component, final Element e) {
-        final JideButton jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src"))
-        )));
-        // to perform validity check we need to register this name
-        actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action linking (the action might not be ready!)
-        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
-            @Override
-            public void run() {
-                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
-            }
-        });
-        jideButton.setFocusable(false);
-        handleButtonShortcutAndTooltip(jideButton, e);
-        component.add(jideButton);
-
-    }
-
+    // =========================
     // adds a default menu item
-    private void addDefaultItem(JComponent component, final Element e) {
-        final JMenuItem item = new JMenuItem();
+    private void addItem(JComponent component, final Element e, final boolean checkable, final boolean grayable, final boolean hideable) {
+        final JMenuItem item = checkable ? new JCheckBoxMenuItem() : new JMenuItem();
+
         // to perform validity check we need to register this name
-        actionManager.registerActionName(e.getAttribute("action"));
+        actionManager.registerActionIsUsed(e.getAttribute("action"));
         // lazy action linking (the action might not be ready!)
         actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
@@ -207,149 +183,99 @@ public class MenuGenerator implements MenuGeneratorInterface {
         });
         handleMenuShortcut(item, e);
         item.setText(langSel.getString(e.getAttribute("caption")));
-        component.add(item);
-    }
 
-    // adds an item that can be checked or unchecked
-    private void addCheckItem(final JComponent component, final Element e) {
-        final JCheckBoxMenuItem item = new JCheckBoxMenuItem();
-        // to perform validity check we need to register this name
-        actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action linking (the action might not be ready!)
-        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
-            @Override
-            public void run() {
-                item.addActionListener(actionManager.getAction(e.getAttribute("action")));
-            }
-        });
-        handleMenuShortcut(item, e);
-        item.setText(langSel.getString(e.getAttribute("caption")));
-        // look up current check status
-        item.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getNewValue() != null) {
-                    item.setSelected(
-                            // triggered when the menu item is show
-                            // this makes sure the "checked" is always current
-                            ((StateActionPrototype) actionManager.getAction(e.getAttribute("action"))).getStatus()
-                    );
-                    if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
-                        item.setSelected(!item.isSelected());
-                    }
-                }
-            }
-        });
-        component.add(item);
-    }
-
-    // adds an item that has an icon and a tooltip and is checkable
-    private void addCheckIconItem(JComponent component, final Element e) {
-        final JideToggleButton jideButton = new JideToggleButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src"))
-        )));
-        // to perform validity check we need to register this name
-        actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action linking (the action might not be ready!)
-        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
-            @Override
-            public void run() {
-                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
-            }
-        });
-        jideButton.setFocusable(false);
-        handleButtonShortcutAndTooltip(jideButton, e);
-        // make sure the action is ready
-        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
-            @Override
-            public void run() {
-                StateActionPrototype stateActionPrototype =
-                        ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
-                stateActionPrototype.addChangeListener(new ChangeListener() {
-                    @Override
-                    public void actionFired(boolean b) {
-                        jideButton.setSelected(b);
-                        if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
-                            jideButton.setSelected(!jideButton.isSelected());
+        if (checkable || grayable || hideable) {
+            // look up current check status
+            item.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if (evt.getNewValue() != null) {
+                        boolean invert = e.hasAttribute("invert") && e.getAttribute("invert").equals("true");
+                        StateActionPrototype action = ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
+                        if (checkable) {
+                            item.setSelected(
+                                    // triggered when the menu item is show
+                                    // this makes sure the "checked" is always current
+                                    invert ? !action.isChecked() : action.isChecked()
+                            );
+                        }
+                        if (grayable) {
+                            item.setEnabled(
+                                    // triggered when the menu item is show
+                                    // this makes sure the "checked" is always current
+                                    invert ? !action.isEnabled() : action.isEnabled()
+                            );
+                        }
+                        if (hideable) {
+                            item.setVisible(
+                                    // triggered when the menu item is show
+                                    // this makes sure the "checked" is always current
+                                    invert ? !action.isVisible() : action.isVisible()
+                            );
                         }
                     }
-                });
-            }
-        });
-        component.add(jideButton);
-    }
-
-    // adds an item that has an icon and a tooltip and is grayable
-    private void addGrayIconItem(JComponent component, final Element e) {
-        final JideButton jideButton = new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src"))
-        )));
-        // to perform validity check we need to register this name
-        actionManager.registerActionName(e.getAttribute("action"));
-        // lazy action linking (the action might not be ready!)
-        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
-            @Override
-            public void run() {
-                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
-            }
-        });
-        jideButton.setFocusable(false);
-        if (e.hasAttribute("src-gray")) {
-            jideButton.setDisabledIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                    ClassLoader.getSystemResource(e.getAttribute("src-gray"))
-            )));
+                }
+            });
         }
-        handleButtonShortcutAndTooltip(jideButton, e);
-        // make sure the action is ready
-        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
-            @Override
-            public void run() {
-                StateActionPrototype stateActionPrototype =
-                        ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
-                stateActionPrototype.addChangeListener(new ChangeListener() {
-                    @Override
-                    public void actionFired(boolean b) {
-                        jideButton.setEnabled(b);
-                        if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
-                            jideButton.setEnabled(!jideButton.isEnabled());
-                        }
-                    }
-                });
-            }
-        });
-        component.add(jideButton);
+
+        component.add(item);
     }
 
-    // adds an item that can be grayed out
-    private void addGrayItem(JComponent component, final Element e) {
-        final JMenuItem item = new JMenuItem();
+    // =========================
+    // adds an item that has an icon and a tooltip
+    private void addIconItem(JComponent component, final Element e, final boolean checkable, final boolean grayable, final boolean hideable) {
+        final JideButton jideButton = checkable
+                ? new JideToggleButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource(e.getAttribute("src")))))
+                : new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource(e.getAttribute("src")))));
         // to perform validity check we need to register this name
-        actionManager.registerActionName(e.getAttribute("action"));
+        actionManager.registerActionIsUsed(e.getAttribute("action"));
         // lazy action linking (the action might not be ready!)
         actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
             public void run() {
-                item.addActionListener(actionManager.getAction(e.getAttribute("action")));
+                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
             }
         });
-        handleMenuShortcut(item, e);
-        item.setText(langSel.getString(e.getAttribute("caption")));
-        // look up current gray status
-        item.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getNewValue() != null) {
-                    item.setEnabled(
-                            // triggered when the menu item is show
-                            // this makes sure the "checked" is always current
-                            ((StateActionPrototype) actionManager.getAction(e.getAttribute("action"))).getStatus()
-                    );
-                    if (e.hasAttribute("invert") && e.getAttribute("invert").equals("true")) {
-                        item.setEnabled(!item.isEnabled());
-                    }
+        jideButton.setFocusable(false);
+        handleButtonShortcutAndTooltip(jideButton, e);
+
+        if (grayable) {
+            // check if there is a custom gray icon defined
+            if (e.hasAttribute("src-gray")) {
+                jideButton.setDisabledIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                        ClassLoader.getSystemResource(e.getAttribute("src-gray"))
+                )));
+            }
+        }
+
+        if (checkable || grayable || hideable) {
+            actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
+                @Override
+                public void run() {
+                    final StateActionPrototype stateActionPrototype =
+                            ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
+                    final boolean invert = e.hasAttribute("invert") && e.getAttribute("invert").equals("true");
+                    stateActionPrototype.addChangeListener(new ChangeListener() {
+                        @Override
+                        public void actionFired(boolean b) {
+                            if (checkable) {
+                                jideButton.setSelected(invert ? !stateActionPrototype.isChecked() : stateActionPrototype.isChecked());
+                            }
+                            if (grayable) {
+                                jideButton.setEnabled(invert ? !stateActionPrototype.isEnabled() : stateActionPrototype.isEnabled());
+                            }
+                            if (hideable) {
+                                jideButton.setVisible(invert ? !stateActionPrototype.isVisible() : stateActionPrototype.isVisible());
+                            }
+                        }
+                    });
                 }
-            }
-        });
-        component.add(item);
+            });
+        }
+
+        component.add(jideButton);
     }
+
 }

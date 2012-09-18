@@ -6,6 +6,7 @@ import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
+import com.vitco.util.Util3D;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PreDestroy;
@@ -13,7 +14,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 
 /**
@@ -51,6 +55,17 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         return result;
     }
 
+    // conversion
+    protected final ExtendedVector convertExt3D2D(ExtendedVector point) {
+        ExtendedVector result = null;
+        SimpleVector point2d = Interact2D.project3D2D(camera, buffer, point);
+        if (point2d != null) {
+            point2d.scalarMul(0.5f);
+            result = new ExtendedVector(point2d, point.id);
+        }
+        return result;
+    }
+
     // the container that we draw on
     protected final MPanel container = new MPanel();
     protected final class MPanel extends JPanel {
@@ -79,8 +94,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             drawVoxelOverlay = b;
         }
 
-        // for the next refresh do not update the
-        // world (OpenGL render)
+        // for the next refresh do not update the world (OpenGL render)
         private boolean skipNextWorldRender = false;
         public void skipNextWorldRender() {
             skipNextWorldRender = true;
@@ -89,19 +103,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         private boolean doNotSkipNextWorldRender = false;
         public void doNotSkipNextWorldRender() {
             doNotSkipNextWorldRender = true;
-        }
-
-        // wrapper
-        private void drawLine(ExtendedVector p1, ExtendedVector p2, Graphics2D ig, Color innerColor, Color outerColor, float size) {
-            G2DUtil.drawLine(convert3D2D(p1), convert3D2D(p2), ig, innerColor, outerColor, size);
-        }
-
-        // wrapper
-        private void drawPoint(ExtendedVector point, Graphics2D ig, Color innerColor, Color outerColor, float radius, float borderSize) {
-            SimpleVector point2d = convert3D2D(point);
-            if (point2d != null) {
-                G2DUtil.drawPoint(point2d, ig, innerColor, outerColor, radius, borderSize);
-            }
         }
 
         // wrapper
@@ -253,45 +254,93 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             // Anti-alias
             ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-            // draw all lines
-            for (ExtendedVector[] line : data.getLines()) { // note: lines and points are buffered internally by AnimationDataCore(!)
-                drawLine(line[0], line[1], ig,
-                        VitcoSettings.ANIMATION_LINE_INNER_COLOR, VitcoSettings.ANIMATION_LINE_OUTER_COLOR,
-                        VitcoSettings.ANIMATION_LINE_SIZE);
-            }
 
-            // draw preview line
+            // store lines and points
+            ArrayList<ExtendedVector[]> objects = new ArrayList<ExtendedVector[]>();
+            // add lines
+            for (ExtendedVector[] line : data.getLines()) {
+                ExtendedVector point2da = convertExt3D2D(line[0]);
+                ExtendedVector point2db = convertExt3D2D(line[1]);
+                ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
+                mid.scalarMul(0.5f);
+                if (point2da != null && point2db != null) {
+                    objects.add(new ExtendedVector[] {point2da, point2db, mid});
+                }
+            }
+            // add preview line
             ExtendedVector[] preview_line = data.getPreviewLine();
-            if (preview_line != null) {
-                boolean connected = data.areConnected(preview_line[0].id, preview_line[1].id);
-                drawLine(preview_line[0], preview_line[1], ig,
-                        connected ? VitcoSettings.ANIMATION_LINE_PREVIEW_REMOVE_COLOR : VitcoSettings.ANIMATION_LINE_PREVIEW_ADD_COLOR,
-                        VitcoSettings.ANIMATION_LINE_OUTER_COLOR,
-                        VitcoSettings.ANIMATION_LINE_SIZE);
+            boolean connected = preview_line != null ? data.areConnected(preview_line[0].id, preview_line[1].id) : false;
+            if (preview_line != null && !connected) {
+                ExtendedVector point2da = convertExt3D2D(preview_line[0]);
+                ExtendedVector point2db = convertExt3D2D(preview_line[1]);
+                ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
+                mid.scalarMul(0.5f);
+                if (point2da != null && point2db != null) {
+                    objects.add(new ExtendedVector[] {point2da, point2db, mid});
+                }
             }
+            // add points
+            for (ExtendedVector point : data.getPoints()) {
+                ExtendedVector point2d = convertExt3D2D(point);
+                if (point2d != null) {
+                    objects.add(new ExtendedVector[] {point2d});
+                }
+            }
+            // sort the data
+            Collections.sort(objects, new Comparator<ExtendedVector[]>() {
+                @Override
+                public int compare(ExtendedVector[] o1, ExtendedVector[] o2) {
+                    if (o1.length == 3 && o2.length == 3) { // two lines
+                        return (int)Math.signum(o1[2].z - o2[2].z);
+                    } else if (o1.length == 1 && o2.length == 1) { // two points
+                        return (int)Math.signum(o1[0].z - o2[0].z);
+                    } else if (o1.length == 1 && o2.length == 3) { // point and line
+                        return (int)Math.signum(o1[0].z - o2[2].z);
+                    } else if (o1.length == 3 && o2.length == 1) { // line and point
+                        return (int)Math.signum(o1[2].z - o2[0].z);
+                    }
+                    return 0;
+                }
+            });
 
-            // draw all points
+            // draw all points and lines
             int selected_point = data.getSelectedPoint();
             int highlighted_point = data.getHighlightedPoint();
-            for (ExtendedVector point : data.getPoints()) {
-                if (point.id == selected_point) { // selected
-                    drawPoint(point, ig,
-                            VitcoSettings.ANIMATION_DOT_SEL_INNER_COLOR,
-                            VitcoSettings.ANIMATION_DOT_SEL_OUTER_COLOR,
-                            VitcoSettings.ANIMATION_CIRCLE_RADIUS,
-                            VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
-                } else if (point.id == highlighted_point) { // highlighted
-                    drawPoint(point, ig,
-                            VitcoSettings.ANIMATION_DOT_HL_INNER_COLOR,
-                            VitcoSettings.ANIMATION_DOT_HL_OUTER_COLOR,
-                            VitcoSettings.ANIMATION_CIRCLE_RADIUS,
-                            VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
-                } else { // default
-                    drawPoint(point, ig,
-                            VitcoSettings.ANIMATION_DOT_INNER_COLOR,
-                            VitcoSettings.ANIMATION_DOT_OUTER_COLOR,
-                            VitcoSettings.ANIMATION_CIRCLE_RADIUS,
-                            VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
+
+            for (ExtendedVector[] object : objects) {
+                if (object.length == 1) {
+                    if (object[0].id == selected_point) { // selected
+                        G2DUtil.drawPoint(object[0], ig,
+                                VitcoSettings.ANIMATION_DOT_SEL_INNER_COLOR,
+                                VitcoSettings.ANIMATION_DOT_SEL_OUTER_COLOR,
+                                VitcoSettings.ANIMATION_CIRCLE_RADIUS,
+                                VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
+                    } else if (object[0].id == highlighted_point) { // highlighted
+                        G2DUtil.drawPoint(object[0], ig,
+                                VitcoSettings.ANIMATION_DOT_HL_INNER_COLOR,
+                                VitcoSettings.ANIMATION_DOT_HL_OUTER_COLOR,
+                                VitcoSettings.ANIMATION_CIRCLE_RADIUS,
+                                VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
+                    } else { // default
+                        G2DUtil.drawPoint(object[0], ig,
+                                VitcoSettings.ANIMATION_DOT_INNER_COLOR,
+                                VitcoSettings.ANIMATION_DOT_OUTER_COLOR,
+                                VitcoSettings.ANIMATION_CIRCLE_RADIUS,
+                                VitcoSettings.ANIMATION_CIRCLE_BORDER_SIZE);
+                    }
+                } else {
+                    if (preview_line != null &&
+                            ((object[0].id == preview_line[0].id && object[1].id == preview_line[1].id)
+                                    || (object[0].id == preview_line[1].id && object[1].id == preview_line[0].id))) {
+                        G2DUtil.drawLine(object[0], object[1], ig,
+                                connected ? VitcoSettings.ANIMATION_LINE_PREVIEW_REMOVE_COLOR : VitcoSettings.ANIMATION_LINE_PREVIEW_ADD_COLOR,
+                                VitcoSettings.ANIMATION_LINE_OUTER_COLOR,
+                                VitcoSettings.ANIMATION_LINE_SIZE);
+                    } else {
+                        G2DUtil.drawLine(object[0], object[1], ig,
+                                VitcoSettings.ANIMATION_LINE_INNER_COLOR, VitcoSettings.ANIMATION_LINE_OUTER_COLOR,
+                                VitcoSettings.ANIMATION_LINE_SIZE);
+                    }
                 }
             }
 
@@ -350,7 +399,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             ig.drawLine(Math.round(center.x), Math.round(center.y - 5), Math.round(center.x), Math.round(center.y + 5));
         }
 
-
         // handle the redrawing of this component
         @Override
         protected final void paintComponent(Graphics g1) {
@@ -403,7 +451,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         world.setCameraTo(camera);
         buffer = new FrameBuffer(100, 100, FrameBuffer.SAMPLINGMODE_OGSS);
 
-        // lighting
+        // lighting (1,1,1) = true color
         world.setAmbientLight(1, 1, 1);
 
         // add a border to our view
@@ -412,10 +460,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // register size change of container and change buffer size accordingly
         container.addComponentListener(new ComponentAdapter() {
             @Override
-            public void
-
-
-            componentResized(ComponentEvent e) {
+            public void componentResized(ComponentEvent e) {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
                     buffer.dispose();
                     buffer = new FrameBuffer(container.getWidth(), container.getHeight(),

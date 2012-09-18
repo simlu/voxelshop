@@ -2,6 +2,7 @@ package com.vitco.logic;
 
 import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.util.action.ActionGroupManagerInterface;
 import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -19,6 +20,13 @@ public abstract class ViewPrototype {
     @Autowired(required=true)
     public void setActionManager(ActionManagerInterface actionManager) {
         this.actionManager = actionManager;
+    }
+
+    // var & setter
+    protected ActionGroupManagerInterface actionGroupManager;
+    @Autowired(required=true)
+    public void setActionGroupManager(ActionGroupManagerInterface actionGroupManager) {
+        this.actionGroupManager = actionGroupManager;
     }
 
     // var & setter

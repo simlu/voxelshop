@@ -1,8 +1,7 @@
 package com.vitco.layout.bars;
 
-import com.jidesoft.action.CommandBar;
-import com.vitco.engine.data.Data;
-import com.vitco.util.action.ActionManagerInterface;
+import com.jidesoft.action.CommandMenuBar;
+import com.vitco.logic.menu.MenuLogicInterface;
 import com.vitco.util.menu.MenuGeneratorInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +12,7 @@ import java.awt.*;
  */
 public abstract class BarLinkagePrototype {
     // constructs the bar (with content)
-    public abstract CommandBar buildBar(String key, Frame frame);
+    public abstract CommandMenuBar buildBar(String key, Frame frame);
     // var & setter
     protected MenuGeneratorInterface menuGenerator;
     @Autowired(required = true)
@@ -21,15 +20,8 @@ public abstract class BarLinkagePrototype {
         this.menuGenerator = menuGenerator;
     }
     // var & setter
-    protected ActionManagerInterface actionManager;
-    @Autowired(required=true)
-    public void setActionManager(ActionManagerInterface actionManager) {
-        this.actionManager = actionManager;
-    }
-    // var & setter (can not be interface!!)
-    protected Data data;
-    @Autowired
-    public void setData(Data data) {
-        this.data = data;
+    protected MenuLogicInterface menuLogic;
+    public void setMenuLogic(MenuLogicInterface menuLogic) {
+        this.menuLogic = menuLogic;
     }
 }

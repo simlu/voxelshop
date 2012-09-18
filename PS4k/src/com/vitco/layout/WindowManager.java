@@ -1,9 +1,6 @@
 package com.vitco.layout;
 
-import com.jidesoft.action.CommandBar;
-import com.jidesoft.action.DefaultDockableBarDockableHolder;
-import com.jidesoft.action.DockableBar;
-import com.jidesoft.action.DockableBarFactory;
+import com.jidesoft.action.*;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.vitco.engine.data.Data;
@@ -118,9 +115,10 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
     // prepare all bars
     @Override
-    public DockableBar prepareBar(String key) {
+    public CommandMenuBar prepareBar(String key) {
 
-        CommandBar bar = null;
+        CommandMenuBar bar = null;
+
         if (barLinkageMap.containsKey(key)) {
             bar = barLinkageMap.get(key).buildBar(key, thisFrame);
         } else {
@@ -149,40 +147,8 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
             @Override
             public void windowClosing(final WindowEvent e) {
-                if (!data.hasChanged() || JOptionPane.showConfirmDialog(thisFrame,
-                        langSelector.getString("unsaved_changes_on_exit"),
-                        langSelector.getString("unsaved_changes_on_exit_title"),
-                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                    // fire closing action
-                    actionManager.performWhenActionIsReady("program_closing_action", new Runnable() {
-                        @Override
-                        public void run() {
-                            actionManager.getAction("program_closing_action").actionPerformed(
-                                    new ActionEvent(e.getSource(), e.getID(), e.paramString())
-                            );
-                        }
-                    });
-                    // save layout data
-                    preferences.storeObject("custom_raw_layout_data", getLayoutPersistence().getLayoutRawData());
-
-                    // do not print any thread errors (JFileChooser thread can cause this!)
-                    PrintStream nullStream = new PrintStream(new OutputStream() {
-                        public void write(int b) throws IOException {
-                        }
-
-                        public void write(byte b[]) throws IOException {
-                        }
-
-                        public void write(byte b[], int off, int len) throws IOException {
-                        }
-                    });
-                    System.setErr(nullStream);
-                    System.setOut(nullStream);
-
-                    // and exit
-                    thisFrame.dispose();
-                    System.exit(0);
-                }
+                actionManager.tryExecuteAction("close_program_action",
+                        new ActionEvent(e.getSource(), e.getID(), e.paramString()));
             }
         });
 
@@ -199,21 +165,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     @Override
     public void init() {
 
-        // register close event
-        actionManager.registerActionName("program_closing_action");
-        actionManager.registerAction("program_closing_action", new StateActionPrototype() {
-            boolean shutdown = false;
-            @Override
-            public void action(ActionEvent actionEvent) {
-                shutdown = true;
-            }
-
-            @Override
-            public boolean getStatus() {
-                return shutdown;
-            }
-        });
-
         if (preferences.contains("program_boundary_rect")) {
             // load the boundary of the program (current window position)
             this.setBounds((Rectangle)preferences.loadObject("program_boundary_rect"));
@@ -223,7 +174,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
         // set the icon
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/application/paintbucket.png")
+            ClassLoader.getSystemResource("resource/img/icons/application/paintbucket.png")
         ));
 
         try {
@@ -276,6 +227,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
                 this.getLayoutPersistence().loadLayoutData();
             }
             this.toFront();
+
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
         } catch (SAXException e) {

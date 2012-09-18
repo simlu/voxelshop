@@ -18,6 +18,16 @@ public class ActionManager implements ActionManagerInterface {
     private final Map<String, ArrayList<Runnable>> actionQueStack = new HashMap<String, ArrayList<Runnable>>();
 
     @Override
+    public boolean tryExecuteAction(String actionName, ActionEvent e) {
+        boolean result = false;
+        if (map.containsKey(actionName)) {
+            map.get(actionName).actionPerformed(e);
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
     public void performWhenActionIsReady(String action, Runnable thread) {
         if (map.containsKey(action)) {
             thread.run(); // the action is already ready
@@ -102,7 +112,7 @@ public class ActionManager implements ActionManagerInterface {
         return result;
     }
     @Override
-    public void registerActionName(String key) {
+    public void registerActionIsUsed(String key) {
         // only need to register this action name one (several pieces of code
         // might be executing this action!)
         if (!actionNames.contains(key)) {

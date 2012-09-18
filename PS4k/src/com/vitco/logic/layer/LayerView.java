@@ -204,26 +204,8 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 // todo can optimize this further (only execute when layer updated!)
                 selectedLayer = data.getSelectedLayer();
                 layers = data.getLayers();
-                // refresh "move up" and "move down" button
-                actionManager.performWhenActionIsReady("layer-frame_move-layer-up", new Runnable() {
-                    @Override
-                    public void run() {
-                        ((StateActionPrototype)actionManager.getAction("layer-frame_move-layer-up")).refresh();
-                    }
-                });
-                actionManager.performWhenActionIsReady("layer-frame_move-layer-down", new Runnable() {
-                    @Override
-                    public void run() {
-                        ((StateActionPrototype)actionManager.getAction("layer-frame_move-layer-down")).refresh();
-                    }
-                });
-                // refresh merge layers
-                actionManager.performWhenActionIsReady("layer-frame_layer-merge", new Runnable() {
-                    @Override
-                    public void run() {
-                        ((StateActionPrototype)actionManager.getAction("layer-frame_layer-merge")).refresh();
-                    }
-                });
+                // refresh this group
+                actionGroupManager.refreshGroup("voxel_layer_interaction");
                 // refresh table
                 table.updateUI();
             }
@@ -266,21 +248,34 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         result.add(menuPanel, BorderLayout.SOUTH);
 
         // register the menu actions
-        actionManager.registerAction("layer-frame_add-layer", new AbstractAction() {
+        actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_add-layer", new StateActionPrototype() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                finishCellEditing(table);
-                data.createLayer("Layer");
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    finishCellEditing(table);
+                    data.selectLayer(data.createLayer("Layer"));
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return data.getLayers().length < VitcoSettings.MAX_LAYER_COUNT;
             }
         });
-        actionManager.registerAction("layer-frame_remove-layer", new AbstractAction() {
+        actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_remove-layer", new StateActionPrototype() {
+
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void action(ActionEvent actionEvent) {
                 finishCellEditing(table);
                 data.deleteLayer(data.getSelectedLayer());
             }
+
+            @Override
+            public boolean getStatus() {
+                return data.getSelectedLayer() != -1;
+            }
         });
-        actionManager.registerAction("layer-frame_move-layer-up", new StateActionPrototype() {
+        actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_move-layer-up", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 finishCellEditing(table);
@@ -292,7 +287,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 return data.canMoveLayerUp(data.getSelectedLayer());
             }
         });
-        actionManager.registerAction("layer-frame_move-layer-down", new StateActionPrototype() {
+        actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_move-layer-down", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 finishCellEditing(table);
@@ -304,7 +299,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 return data.canMoveLayerDown(data.getSelectedLayer());
             }
         });
-        actionManager.registerAction("layer-frame_layer-merge", new StateActionPrototype() {
+        actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_layer-merge", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 finishCellEditing(table);
@@ -316,6 +311,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 return data.canMergeVisibleLayers();
             }
         });
+        actionGroupManager.registerGroup("voxel_layer_interaction");
 
         return result;
     }

@@ -544,7 +544,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     @Override
     public void registerGlobalShortcutActions() {
         for (ShortcutObject shortcutObject : global) {
-            actionManager.registerActionName(shortcutObject.actionName);
+            actionManager.registerActionIsUsed(shortcutObject.actionName);
         }
     }
 
@@ -567,7 +567,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
             ArrayList<ShortcutObject> shortcutObjectArray = map.get(frame.getName());
             for (final ShortcutObject entry : shortcutObjectArray) {
                 // to perform validity check we need to register this name
-                actionManager.registerActionName(entry.actionName);
+                actionManager.registerActionIsUsed(entry.actionName);
                 // lazy shortcut registration (the action might not be ready!)
                 actionManager.performWhenActionIsReady(entry.actionName, new Runnable() {
                     @Override

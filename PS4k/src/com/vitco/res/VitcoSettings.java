@@ -60,6 +60,7 @@ public final class VitcoSettings {
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
     public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 500;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
+    public static final float MAIN_VIEW_ZOOM_FOV = 1.25f;
     public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-30, -200, -200);
     public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // "drag" move content
     public static final float MAIN_VIEW_ROTATION_X_FACTOR = 0.02f;
@@ -74,6 +75,7 @@ public final class VitcoSettings {
     public static final Color HIDDEN_LAYER_BG = new Color(120, 85, 85);
     public static final Color VISIBLE_SELECTED_LAYER_BG = new Color(56, 77, 115);
     public static final Color HIDDEN_SELECTED_LAYER_BG = new Color(127, 48, 43);
+    public static final Integer MAX_LAYER_COUNT = 50;
 
     // general table
     public static final Font TABLE_FONT = new Font(

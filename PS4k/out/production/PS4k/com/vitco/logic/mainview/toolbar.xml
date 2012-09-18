@@ -10,7 +10,4 @@
     <icon-item src="resource/img/framebars/mainview/reset.png"
                tool-tip="reset_camera_main-view_tooltip"
                action="reset_main_view_camera"/>
-    <icon-item src="resource/img/framebars/mainview/snap.png"
-               tool-tip="mainview_toggle_voxel_snap_tooltip"
-               action="mainview_toggle_voxel_snap" checkable="true"/>
 </head>

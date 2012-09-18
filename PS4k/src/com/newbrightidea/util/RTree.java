@@ -15,14 +15,20 @@ import java.util.*;
  * @param <T>
  *          the type of entry to store in this RTree.
  */
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"unchecked", "JavaDoc", "ConstantConditions"})
 public class RTree<T> implements Serializable
 {
   private static final long serialVersionUID = 1L;
 
+  public enum SeedPicker { LINEAR, QUADRATIC }
+
   private final int maxEntries;
   private final int minEntries;
   private final int numDims;
+
+  private final float[] pointDims;
+
+  private final SeedPicker seedPicker;
 
   private Node root;
 
@@ -38,13 +44,20 @@ public class RTree<T> implements Serializable
    * @param numDims
    *          the number of dimensions of the RTree.
    */
-  public RTree(int maxEntries, int minEntries, int numDims)
+  public RTree(int maxEntries, int minEntries, int numDims, SeedPicker seedPicker)
   {
     assert (minEntries <= (maxEntries / 2));
     this.numDims = numDims;
     this.maxEntries = maxEntries;
     this.minEntries = minEntries;
+    this.seedPicker = seedPicker;
+    pointDims = new float[numDims];
     root = buildRoot(true);
+  }
+
+  public RTree(int maxEntries, int minEntries, int numDims)
+  {
+    this(maxEntries, minEntries, numDims, SeedPicker.LINEAR);
   }
 
   private Node buildRoot(boolean asLeaf)
@@ -65,7 +78,7 @@ public class RTree<T> implements Serializable
    */
   public RTree()
   {
-    this(50, 2, 2);
+    this(50, 2, 2, SeedPicker.LINEAR);
   }
 
   /**
@@ -114,10 +127,6 @@ public class RTree<T> implements Serializable
    */
   public List<T> search(float[] coords, float[] dimensions)
   {
-//      if (coords.length == 3) {
-//          System.out.println("tree.search(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
-//                  "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f});");
-//      }
     assert (coords.length == numDims);
     assert (dimensions.length == numDims);
     LinkedList<T> results = new LinkedList<T>();
@@ -134,8 +143,7 @@ public class RTree<T> implements Serializable
       {
         if (isOverlap(coords, dimensions, e.coords, e.dimensions))
         {
-            //noinspection unchecked
-            results.add(((Entry) e).entry);
+          results.add(((Entry) e).entry);
         }
       }
     }
@@ -165,13 +173,13 @@ public class RTree<T> implements Serializable
    */
   public boolean delete(float[] coords, float[] dimensions, T entry)
   {
-//      if (coords.length == 3) {
-//          System.out.println("tree.delete(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
-//                  "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f},"  + " " + entry + ");");
-//      }
     assert (coords.length == numDims);
     assert (dimensions.length == numDims);
     Node l = findLeaf(root, coords, dimensions, entry);
+    if ( l == null ) {
+      System.out.println("WTF?");
+      findLeaf(root, coords, dimensions, entry);
+    }
     assert (l != null) : "Could not find leaf for entry to delete";
     assert (l.leaf) : "Entry is not found at leaf?!?";
     ListIterator<Node> li = l.children.listIterator();
@@ -199,14 +207,18 @@ public class RTree<T> implements Serializable
     return (removed != null);
   }
 
+  public boolean delete(float[] coords, T entry)
+  {
+    return delete(coords, pointDims, entry);
+  }
+
   private Node findLeaf(Node n, float[] coords, float[] dimensions, T entry)
   {
     if (n.leaf)
     {
       for (Node c : n.children)
       {
-          //noinspection unchecked
-          if (((Entry) c).entry.equals(entry))
+        if (((Entry) c).entry.equals(entry))
         {
           return n;
         }
@@ -309,10 +321,6 @@ public class RTree<T> implements Serializable
    */
   public void insert(float[] coords, float[] dimensions, T entry)
   {
-//    if (coords.length == 3) {
-//        System.out.println("tree.insert(new float[] {" + coords[0] + "f, " + coords[1] + "f, " + coords[2] + "f}, " +
-//                "new float[] {" + dimensions[0] + "f, " + dimensions[1] + "f, " + dimensions[2] + "f},"  + " " + entry + ");");
-//    }
     assert (coords.length == numDims);
     assert (dimensions.length == numDims);
     Entry e = new Entry(coords, dimensions, entry);
@@ -329,6 +337,16 @@ public class RTree<T> implements Serializable
     {
       adjustTree(l, null);
     }
+  }
+
+  /**
+   * Convenience method for inserting a point
+   * @param coords
+   * @param entry
+   */
+  public void insert(float[] coords, T entry)
+  {
+    insert(coords, pointDims, entry);
   }
 
   private void adjustTree(Node n, Node nn)
@@ -365,8 +383,12 @@ public class RTree<T> implements Serializable
 
   private Node[] splitNode(Node n)
   {
+    // TODO: this class probably calls "tighten" a little too often.
+    // For instance the call at the end of the "while (!cc.isEmpty())" loop
+    // could be modified and inlined because it's only adjusting for the addition
+    // of a single node.  Left as-is for now for readability.
     @SuppressWarnings("unchecked")
-    Node[] nn = new RTree.Node[]
+    Node[] nn = new Node[]
     { n, new Node(n.coords, n.dimensions, n.leaf) };
     nn[1].parent = n.parent;
     if (nn[1].parent != null)
@@ -375,9 +397,10 @@ public class RTree<T> implements Serializable
     }
     LinkedList<Node> cc = new LinkedList<Node>(n.children);
     n.children.clear();
-    Node[] ss = pickSeeds(cc);
+    Node[] ss = seedPicker == SeedPicker.LINEAR ? lPickSeeds(cc) : qPickSeeds(cc);
     nn[0].children.add(ss[0]);
     nn[1].children.add(ss[1]);
+    tighten(nn);
     while (!cc.isEmpty())
     {
       if ((nn[0].children.size() >= minEntries)
@@ -385,8 +408,7 @@ public class RTree<T> implements Serializable
       {
         nn[1].children.addAll(cc);
         cc.clear();
-        tighten(nn[0]); // Not sure this is required.
-        tighten(nn[1]);
+        tighten(nn); // Not sure this is required.
         return nn;
       }
       else if ((nn[1].children.size() >= minEntries)
@@ -394,13 +416,11 @@ public class RTree<T> implements Serializable
       {
         nn[0].children.addAll(cc);
         cc.clear();
-        tighten(nn[0]); // Not sure this is required.
-        tighten(nn[1]);
+        tighten(nn); // Not sure this is required.
         return nn;
       }
-      Node c = cc.pop();
+      Node c = seedPicker == SeedPicker.LINEAR ? lPickNext(cc) : qPickNext(cc, nn);
       Node preferred;
-      // Implementation of linear PickNext
       float e0 = getRequiredExpansion(nn[0].coords, nn[0].dimensions, c);
       float e1 = getRequiredExpansion(nn[1].coords, nn[1].dimensions, c);
       if (e0 < e1)
@@ -440,16 +460,75 @@ public class RTree<T> implements Serializable
         }
       }
       preferred.children.add(c);
+      tighten(preferred);
     }
-    tighten(nn[0]);
-    tighten(nn[1]);
     return nn;
   }
 
-  // Implementation of LinearPickSeeds
-  private Node[] pickSeeds(LinkedList<Node> nn)
+  // Implementation of Quadratic PickSeeds
+  private Node[] qPickSeeds(LinkedList<Node> nn)
   {
-    Node[] bestPair = null;
+    @SuppressWarnings("unchecked")
+    Node[] bestPair = new Node[2];
+    float maxWaste = -1.0f * Float.MAX_VALUE;
+    for (Node n1: nn)
+    {
+      for (Node n2: nn)
+      {
+        if (n1 == n2) continue;
+        float n1a = getArea(n1.dimensions);
+        float n2a = getArea(n2.dimensions);
+        float ja = 1.0f;
+        for ( int i = 0; i < numDims; i++ )
+        {
+          float jc0 = Math.min(n1.coords[i], n2.coords[i]);
+          float jc1 = Math.max(n1.coords[i] + n1.dimensions[i], n2.coords[i] + n2.dimensions[i]);
+          ja *= (jc1 - jc0);
+        }
+        float waste = ja - n1a - n2a;
+        if ( waste > maxWaste )
+        {
+          maxWaste = waste;
+          bestPair[0] = n1;
+          bestPair[1] = n2;
+        }
+      }
+    }
+    nn.remove(bestPair[0]);
+    nn.remove(bestPair[1]);
+    return bestPair;
+  }
+
+  /**
+   * Implementation of QuadraticPickNext
+   * @param cc the children to be divided between the new nodes, one item will be removed from this list.
+   * @param nn the candidate nodes for the children to be added to.
+   */
+  private Node qPickNext(LinkedList<Node> cc, Node[] nn)
+  {
+    float maxDiff = -1.0f * Float.MAX_VALUE;
+    Node nextC = null;
+    for ( Node c: cc )
+    {
+      float n0Exp = getRequiredExpansion(nn[0].coords, nn[0].dimensions, c);
+      float n1Exp = getRequiredExpansion(nn[1].coords, nn[1].dimensions, c);
+      float diff = Math.abs(n1Exp - n0Exp);
+      if (diff > maxDiff)
+      {
+        maxDiff = diff;
+        nextC = c;
+      }
+    }
+    assert (nextC != null) : "No node selected from qPickNext";
+    cc.remove(nextC);
+    return nextC;
+  }
+
+  // Implementation of LinearPickSeeds
+  private Node[] lPickSeeds(LinkedList<Node> nn)
+  {
+    @SuppressWarnings("unchecked")
+    Node[] bestPair = new Node[2];
     float bestSep = 0.0f;
     for (int i = 0; i < numDims; i++)
     {
@@ -481,9 +560,8 @@ public class RTree<T> implements Serializable
                   Math.abs((dimMinUb - dimMaxLb) / (dimUb - dimLb));
       if (sep >= bestSep)
       {
-          //noinspection unchecked
-          bestPair = new RTree.Node[]
-        { nMaxLb, nMinUb };
+        bestPair[0] = nMaxLb;
+        bestPair[1] = nMinUb;
         bestSep = sep;
       }
     }
@@ -492,47 +570,58 @@ public class RTree<T> implements Serializable
     // children.
     if ( bestPair == null )
     {
-        //noinspection unchecked
-        bestPair = new RTree.Node[] { nn.get(0), nn.get(1) };
+      bestPair = new Node[] { nn.get(0), nn.get(1) };
     }
     nn.remove(bestPair[0]);
     nn.remove(bestPair[1]);
     return bestPair;
   }
 
-  private void tighten(Node n)
+  /**
+   * Implementation of LinearPickNext
+   * @param cc the children to be divided between the new nodes, one item will be removed from this list.
+   */
+  private Node lPickNext(LinkedList<Node> cc)
   {
-    assert(n.children.size() > 0) : "tighten() called on empty node!";
-    float[] minCoords = new float[numDims];
-    float[] maxCoords = new float[numDims];
-    for (int i = 0; i < numDims; i++)
-    {
-      minCoords[i] = Float.MAX_VALUE;
-      maxCoords[i] = Float.MIN_VALUE;
+    return cc.pop();
+  }
 
-      for (Node c : n.children)
+  private void tighten(Node... nodes)
+  {
+    assert(nodes.length >= 1): "Pass some nodes to tighten!";
+    for (Node n: nodes) {
+      assert(n.children.size() > 0) : "tighten() called on empty node!";
+      float[] minCoords = new float[numDims];
+      float[] maxCoords = new float[numDims];
+      for (int i = 0; i < numDims; i++)
       {
-        // we may have bulk-added a bunch of children to a node (eg. in
-        // splitNode)
-        // so here we just enforce the child->parent relationship.
-        c.parent = n;
-        if (c.coords[i] < minCoords[i])
+        minCoords[i] = Float.MAX_VALUE;
+        maxCoords[i] = Float.MIN_VALUE;
+
+        for (Node c : n.children)
         {
-          minCoords[i] = c.coords[i];
-        }
-        if ((c.coords[i] + c.dimensions[i]) > maxCoords[i])
-        {
-          maxCoords[i] = (c.coords[i] + c.dimensions[i]);
+          // we may have bulk-added a bunch of children to a node (eg. in
+          // splitNode)
+          // so here we just enforce the child->parent relationship.
+          c.parent = n;
+          if (c.coords[i] < minCoords[i])
+          {
+            minCoords[i] = c.coords[i];
+          }
+          if ((c.coords[i] + c.dimensions[i]) > maxCoords[i])
+          {
+            maxCoords[i] = (c.coords[i] + c.dimensions[i]);
+          }
         }
       }
+      for (int i = 0; i < numDims; i++)
+      {
+        // Convert max coords to dimensions
+        maxCoords[i] -= minCoords[i];
+      }
+      System.arraycopy(minCoords, 0, n.coords, 0, numDims);
+      System.arraycopy(maxCoords, 0, n.dimensions, 0, numDims);
     }
-    for (int i = 0; i < numDims; i++)
-    {
-      // Convert max coords to dimensions
-      maxCoords[i] -= minCoords[i];
-    }
-    System.arraycopy(minCoords, 0, n.coords, 0, numDims);
-    System.arraycopy(maxCoords, 0, n.dimensions, 0, numDims);
   }
 
   private Node chooseLeaf(Node n, Entry e)
@@ -557,8 +646,8 @@ public class RTree<T> implements Serializable
         float thisArea = 1.0f;
         for (int i = 0; i < c.dimensions.length; i++)
         {
-            assert next != null;
-            curArea *= next.dimensions[i];
+          assert next != null;
+          curArea *= next.dimensions[i];
           thisArea *= c.dimensions[i];
         }
         if (thisArea < curArea)
@@ -606,43 +695,43 @@ public class RTree<T> implements Serializable
     return area;
   }
 
-    private boolean isOverlap(float[] scoords, float[] sdimensions,
-                              float[] coords, float[] dimensions)
+  private boolean isOverlap(float[] scoords, float[] sdimensions,
+      float[] coords, float[] dimensions)
+  {
+    final float FUDGE_FACTOR=1.001f;
+    for (int i = 0; i < scoords.length; i++)
     {
-        final float FUDGE_FACTOR=1.001f;
-        for (int i = 0; i < scoords.length; i++)
+      boolean overlapInThisDimension = false;
+      if (scoords[i] == coords[i])
+      {
+        overlapInThisDimension = true;
+      }
+      else if (scoords[i] < coords[i])
+      {
+        if (scoords[i] + FUDGE_FACTOR*sdimensions[i] >= coords[i])
         {
-            boolean overlapInThisDimension = false;
-            if (scoords[i] == coords[i])
-            {
-                overlapInThisDimension = true;
-            }
-            else if (scoords[i] < coords[i])
-            {
-                if (scoords[i] + FUDGE_FACTOR*sdimensions[i] >= coords[i])
-                {
-                    overlapInThisDimension = true;
-                }
-            }
-            else if (scoords[i] > coords[i])
-            {
-                if (coords[i] + FUDGE_FACTOR*dimensions[i] >= scoords[i])
-                {
-                    overlapInThisDimension = true;
-                }
-            }
-            if (!overlapInThisDimension)
-            {
-                return false;
-            }
+          overlapInThisDimension = true;
         }
-        return true;
+      }
+      else if (scoords[i] > coords[i])
+      {
+        if (coords[i] + FUDGE_FACTOR*dimensions[i] >= scoords[i])
+        {
+          overlapInThisDimension = true;
+        }
+      }
+      if (!overlapInThisDimension)
+      {
+        return false;
+      }
     }
-
+    return true;
+  }
  
   private static class Node implements Serializable
   {
     private static final long serialVersionUID = 1L;
+
     final float[] coords;
     final float[] dimensions;
     final LinkedList<Node> children;

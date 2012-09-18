@@ -12,6 +12,7 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
         <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="I" action="import_file_action" caption="import_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F1" action="voxel_mode_select_type_view" caption="voxel_mode_select_type_view_caption" />
@@ -19,11 +20,11 @@
         <shortcut ctrl="no" alt="no" shift="no" key="F3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F5" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="T" action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
     </global>
 
     <frame name="mainView">
         <shortcut ctrl="yes" alt="no" shift="no" key="X" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="T" action="mainview_toggle_voxel_snap" caption="mainview_toggle_voxel_snap_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
     </frame>

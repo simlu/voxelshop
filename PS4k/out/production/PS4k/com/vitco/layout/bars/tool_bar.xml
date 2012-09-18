@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <head xmlns="http://www.unfine.de/schema/menu">
-    <!--<icon-item src="resource/img/icons/tools/draw.png"-->
-          <!--tool-tip="draw_tooltip"-->
-          <!--action="toggle_animation_mode"-->
-          <!--checkable="true"/>-->
     <icon-item src="resource/img/bars/tool_bar/animate.png"
                tool-tip="animate_tooltip"
                checkable="true"
@@ -26,24 +22,31 @@
                action="clear_history_action"/>
     <separator/>
 
+    <!--voxel mode-->
     <icon-item src="resource/img/bars/tool_bar/view.png"
                tool-tip="voxel_mode_select_type_view_tooltip"
-               checkable="true"
+               checkable="true" hideable="true"
                action="voxel_mode_select_type_view"/>
     <icon-item src="resource/img/bars/tool_bar/draw.png"
                tool-tip="voxel_mode_select_type_draw_tooltip"
-               checkable="true"
+               checkable="true" hideable="true"
                action="voxel_mode_select_type_draw"/>
     <icon-item src="resource/img/bars/tool_bar/erase.png"
                tool-tip="voxel_mode_select_type_erase_tooltip"
-               checkable="true"
+               checkable="true" hideable="true"
                action="voxel_mode_select_type_erase"/>
     <icon-item src="resource/img/bars/tool_bar/color_picker.png"
                tool-tip="voxel_mode_select_type_picker_tooltip"
-               checkable="true"
+               checkable="true" hideable="true"
                action="voxel_mode_select_type_picker"/>
     <icon-item src="resource/img/bars/tool_bar/color_changer.png"
                tool-tip="voxel_mode_select_type_color_changer_tooltip"
-               checkable="true"
+               checkable="true" hideable="true"
                action="voxel_mode_select_type_color_changer"/>
+    <!--animation mode-->
+    <icon-item src="resource/img/framebars/mainview/snap.png"
+               tool-tip="toggle_voxel_snap_tooltip"
+               checkable="true" hideable="true"
+               action="toggle_voxel_snap"/>
+
 </head>

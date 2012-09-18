@@ -11,14 +11,13 @@ import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.BiMap;
 import com.vitco.util.WorldUtil;
+import com.vitco.util.action.ChangeListener;
+import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -27,20 +26,42 @@ import java.util.List;
  */
 public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
+    // constructor
+    protected EngineInteractionPrototype() {
+        super();
+        // refresh the 2D index when the camera changes
+        camera.addCameraChangeListener(new CameraChangeListener() {
+            @Override
+            public void onCameraChange() {
+                animationAdapter.refresh2DIndex();
+            }
+        });
+    }
+
+    // current mode
+    protected VOXELMODE voxelMode;
+
+    // ===============================
+    // Animation
+    // ===============================
+
+    // animation adapter
     protected final AnimationMouseAdapter animationAdapter = new AnimationMouseAdapter();
     protected class AnimationMouseAdapter extends MouseAdapter {
         private int dragPoint = -1; // the point that is dragged
         private long wasDragged = -1; // -1 if not dragged or the time in ms of first drag event
 
         // rebuild 2d index to do hit test when mouse is moving
-        private final RTree<Integer> points2D = new RTree<Integer>(50, 2, 2); //2D Rtree
+        private final RTree<ExtendedVector> points2D = new RTree<ExtendedVector>(50, 2, 2); //2D Rtree
         private boolean needToRebuild = true;
         private void rebuild2DIndex() {
             if (needToRebuild) {
                 points2D.clear();
                 for (ExtendedVector point : data.getPoints()) {
-                    SimpleVector tmp = convert3D2D(point);
-                    points2D.insert(new float[]{tmp.x, tmp.y}, new float[] {0,0}, point.id);
+                    ExtendedVector tmp = convertExt3D2D(point);
+                    if (tmp != null) {
+                        points2D.insert(new float[]{tmp.x, tmp.y}, new float[] {0,0}, tmp);
+                    }
                 }
                 needToRebuild = false;
             }
@@ -51,7 +72,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             SimpleVector result;
             if (voxelSnap) {
                 SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX()*2, e.getY()*2).normalize();
-                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
+                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 1000000);
                 if (res[1] != null) {
                     Object3D obj3D = ((Object3D)res[1]);
                     result = obj3D.getOrigin();
@@ -100,19 +121,39 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            rebuild2DIndex();
-            final int highlighted_point = data.getHighlightedPoint();
-            final int selected_point = data.getSelectedPoint();
-            //SimpleVector realPoint = convert2D3D(e.getX(), e.getY());
+            rebuild2DIndex(); // only recomputes if necessary
+            int highlighted_point = data.getHighlightedPoint();
+            int selected_point = data.getSelectedPoint();
+
             // find if there is a point nearby
-            List<Integer> search = points2D.search(new float[]{e.getX() - VitcoSettings.ANIMATION_CIRCLE_RADIUS,e.getY() - VitcoSettings.ANIMATION_CIRCLE_RADIUS},
+            List<ExtendedVector> search = points2D.search(new float[]{e.getX() - VitcoSettings.ANIMATION_CIRCLE_RADIUS,e.getY() - VitcoSettings.ANIMATION_CIRCLE_RADIUS},
                     new float[]{VitcoSettings.ANIMATION_CIRCLE_RADIUS * 2, VitcoSettings.ANIMATION_CIRCLE_RADIUS * 2});
-            float tmp = -1;
-            if (search.size() > 0) {
-                tmp = search.get(0);
+
+            // make sure this is in circle (and not just in square!)
+            for (int i = 0, len = search.size(); i < len; i++) {
+                if ( Math.pow(search.get(i).x - e.getX(),2.0) + Math.pow(search.get(i).y - e.getY(),2.0)
+                        > Math.pow((double)VitcoSettings.ANIMATION_CIRCLE_RADIUS,2.0)) {
+                    search.remove(i);
+                    i--;
+                    len--;
+                }
             }
 
-            data.highlightPoint((int)tmp); // highlight that point
+            int tmp = -1;
+            if (search.size() > 0) {
+                // get the circle on top
+                Collections.sort(search, new Comparator<ExtendedVector>() {
+                    @Override
+                    public int compare(ExtendedVector o1, ExtendedVector o2) {
+                        return (int)Math.signum(o2.z - o1.z);
+                    }
+                });
+                // remember id
+                tmp = search.get(0).id;
+            }
+
+            data.highlightPoint(tmp); // highlight that point
+            highlighted_point = data.getHighlightedPoint();
 
             // set the preview line iff highlighted and selected point exist and are different
             if (selected_point != -1 && highlighted_point != selected_point && highlighted_point != -1) {
@@ -178,24 +219,24 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             }
             switch (e.getButton()) {
                 case 3: if (highlighted_point != -1) {
-                        // highlighted point -> ask to remove
-                        JPopupMenu popup = new JPopupMenu();
-                        JMenuItem remove = new JMenuItem(langSelector.getString("remove_point"));
-                        remove.addActionListener(new ActionListener() {
-                            private final int tmp_point = highlighted_point; // store point for later access
-                            @Override
-                            public void actionPerformed(ActionEvent evt) {
-                                // add a point
-                                data.removePoint(tmp_point);
-                                data.highlightPoint(-1);
-                            }
-                        });
-                        popup.add(remove);
-                        popup.show(e.getComponent(), e.getX(), e.getY());
-                    } else {
-                        // right click on background -> deselect
-                        data.selectPoint(-1);
-                    }
+                    // highlighted point -> ask to remove
+                    JPopupMenu popup = new JPopupMenu();
+                    JMenuItem remove = new JMenuItem(langSelector.getString("remove_point"));
+                    remove.addActionListener(new ActionListener() {
+                        private final int tmp_point = highlighted_point; // store point for later access
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+                            // add a point
+                            data.removePoint(tmp_point);
+                            data.highlightPoint(-1);
+                        }
+                    });
+                    popup.add(remove);
+                    popup.show(e.getComponent(), e.getX(), e.getY());
+                } else {
+                    // right click on background -> deselect
+                    data.selectPoint(-1);
+                }
                     break;
                 case 1: // if left mouse
                     if (highlighted_point != -1) { // highlighted -> select point
@@ -204,7 +245,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else if (e.getClickCount() == 2) {
                         // not highlighted and double-click -> add a point
                         // check if we hit something
-                        SimpleVector point = getPoint(e, SimpleVector.ORIGIN);
+                        SimpleVector point = getPoint(e, getRefPoint());
                         int added = data.addPoint(point);
                         if (selected_point != -1) { // connect if possible
                             data.connect(added, selected_point);
@@ -216,20 +257,14 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
     }
 
-    // constructor
-    protected EngineInteractionPrototype() {
-        super();
-        // refresh the 2D index when the camera changes
-        camera.addCameraChangeListener(new CameraChangeListener() {
-            @Override
-            public void onCameraChange() {
-                animationAdapter.refresh2DIndex();
-            }
-        });
+    // return reference point (for new points to add - same distance)
+    protected SimpleVector getRefPoint() {
+        return SimpleVector.ORIGIN;
     }
 
-    // current mode
-    protected VOXELMODE voxelMode;
+    // ===============================
+    // Voxel
+    // ===============================
 
     // voxel data getter to be defined
     protected abstract Voxel[] getVoxels();
@@ -298,12 +333,22 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         // execute on mouse event
-        protected void execute() {
+        protected void execute(MouseEvent e) {
             if (data.getHighlightedVoxel() != null) { // something highlighted
                 camera.setEnabled(voxelMode == VOXELMODE.VIEW);
                 if (voxelMode == VOXELMODE.DRAW) { // add voxel
                     if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
-                        data.addVoxel(data.getCurrentColor(), data.getHighlightedVoxel());
+                        switch (e.getModifiersEx()) {
+                            case InputEvent.BUTTON1_DOWN_MASK: // left click
+                                data.addVoxel(data.getCurrentColor(), data.getHighlightedVoxel());
+                                break;
+                            case InputEvent.BUTTON3_DOWN_MASK: // right click
+                                Voxel voxel = data.searchVoxel(data.getHighlightedVoxel(), true);
+                                if (null != voxel) {
+                                    data.removeVoxel(voxel.id);
+                                }
+                                break;
+                        }
                     }
                 } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
                     Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
@@ -352,33 +397,6 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             return (int) Math.signum(o1[1] - o2[1]);
                         }
                     });
-                    // todo remove
-//                    switch ((int)planes.get(0)[0]) {
-//                        case 1:
-//                            voxelPos[1] -= 1;
-//                            data.setPreviewPlane(2);
-//                            break;
-//                        case 2:
-//                            voxelPos[1] += 1;
-//                            data.setPreviewPlane(3);
-//                            break;
-//                        case 3:
-//                            voxelPos[0] -= 1;
-//                            data.setPreviewPlane(4);
-//                            break;
-//                        case 4:
-//                            voxelPos[0] += 1;
-//                            data.setPreviewPlane(5);
-//                            break;
-//                        case 5:
-//                            voxelPos[2] -= 1;
-//                            data.setPreviewPlane(0);
-//                            break;
-//                        case 6:
-//                            voxelPos[2] += 1;
-//                            data.setPreviewPlane(1);
-//                            break;
-//                    }
                     switch ((int)planes.get(0)[0]) {
                         case 1: voxelPos[1] -= 1; break;
                         case 2: voxelPos[1] += 1; break;
@@ -416,41 +434,50 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            execute();
+        public final void mousePressed(MouseEvent e) {
+            // make sure there is a layer selected or display a warning
+            if (data.getSelectedLayer() == -1) {
+                Integer[] layers = data.getLayers();
+                if (layers.length > 0) {
+                    data.selectLayer(layers[0]);
+                } else {
+                    console.addLine(langSelector.getString("no_layer_warning"));
+                }
+            }
+            execute(e);
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
+        public final void mouseReleased(MouseEvent e) {
             massVoxel = false;
             hover(e.getPoint());
             camera.setEnabled(true);
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
+        public final void mouseEntered(MouseEvent e) {
             mouseInside = true;
         }
 
         @Override
-        public void mouseExited(MouseEvent e) {
+        public final void mouseExited(MouseEvent e) {
             mouseInside = false;
             data.removeVoxelHighlights();
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
+        public final void mouseDragged(MouseEvent e) {
             lastMovePos = new Point(e.getPoint());
             if (massVoxel) {
                 hover(e.getPoint());
-                execute();
+                execute(e);
             } else {
                 data.removeVoxelHighlights();
             }
         }
 
         @Override
-        public void mouseMoved(MouseEvent e) {
+        public final void mouseMoved(MouseEvent e) {
             lastMovePos = new Point(e.getPoint());
             hover(e.getPoint());
         }
@@ -459,6 +486,20 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     @PostConstruct
     protected final void init() {
 
+        // enable/disable snap
+        actionManager.performWhenActionIsReady("toggle_voxel_snap", new Runnable() {
+            @Override
+            public void run() {
+                ((StateActionPrototype) actionManager.getAction("toggle_voxel_snap")).addChangeListener(new ChangeListener() {
+                    @Override
+                    public void actionFired(boolean b) {
+                        animationAdapter.setVoxelSnap(b);
+                    }
+                });
+            }
+        });
+
+        // what to do when data changes
         DataChangeAdapter dca = new DataChangeAdapter() {
 
             @Override

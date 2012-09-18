@@ -50,6 +50,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     // the current depth of the plane that is shown
     private int currentplane = 0;
 
+    // get the voxels to render
     @Override
     protected Voxel[] getVoxels() {
         // get the current voxels
@@ -68,7 +69,17 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         return voxels;
     }
 
-    // alter the behavior
+    // get the reference point depending on the selected layer
+    @Override
+    protected SimpleVector getRefPoint() {
+        return new SimpleVector(
+                side == 2 ? currentplane*VitcoSettings.VOXEL_SIZE : 0,
+                side == 1 ? currentplane*VitcoSettings.VOXEL_SIZE : 0,
+                side == 0 ? currentplane*VitcoSettings.VOXEL_SIZE : 0
+        );
+    }
+
+    // alter the behavior (always use position - not next to voxel)
     private final class VoxelAdapterSideView extends EngineInteractionPrototype.VoxelAdapter {
         // hover on mouse event
         @Override
@@ -99,6 +110,9 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
 
     @Override
     public final JPanel build() {
+
+        // enable snap
+        //animationAdapter.setVoxelSnap(true);
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);

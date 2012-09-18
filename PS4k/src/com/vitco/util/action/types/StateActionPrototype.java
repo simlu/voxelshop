@@ -33,4 +33,14 @@ public abstract class StateActionPrototype extends AbstractAction {
 
     public abstract void action(ActionEvent e);
     public abstract boolean getStatus();
+
+    public boolean isEnabled() {
+        return getStatus();
+    }
+    public boolean isChecked() {
+        return getStatus();
+    }
+    public boolean isVisible() {
+        return getStatus();
+    }
 }

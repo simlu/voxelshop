@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Class-Path: lib\commons-logging-1.1.1.jar lib\jide-action.jar lib\jide
- -common.jar lib\jide-dock.jar lib\org.springframework.asm-3.1.2.RELEA
- SE.jar lib\org.springframework.aspects-3.1.2.RELEASE.jar lib\org.spri
- ngframework.beans-3.1.2.RELEASE.jar lib\org.springframework.context-3
- .1.2.RELEASE.jar lib\org.springframework.core-3.1.2.RELEASE.jar lib\o
- rg.springframework.expression-3.1.2.RELEASE.jar lib\org.springframewo
- rk.orm-3.1.2.RELEASE.jar lib\commons-codec-1.6.jar lib\httpcore-4.2.1
- .jar lib\httpclient-4.2.1.jar lib\httpmime-4.2.1.jar lib\log4j-1.2.6.
- jar lib\jpct.jar
+ -common.jar lib\jide-dock.jar lib\retroweaver-rt-2.0.7.jar lib\org.sp
+ ringframework.asm-3.1.2.RELEASE.jar lib\org.springframework.aspects-3
+ .1.2.RELEASE.jar lib\org.springframework.beans-3.1.2.RELEASE.jar lib\
+ org.springframework.context-3.1.2.RELEASE.jar lib\org.springframework
+ .core-3.1.2.RELEASE.jar lib\org.springframework.expression-3.1.2.RELE
+ ASE.jar lib\org.springframework.orm-3.1.2.RELEASE.jar lib\commons-cod
+ ec-1.6.jar lib\httpcore-4.2.1.jar lib\httpclient-4.2.1.jar lib\httpmi
+ me-4.2.1.jar lib\log4j-1.2.6.jar lib\jpct.jar
 Main-Class: com.vitco.Main
 

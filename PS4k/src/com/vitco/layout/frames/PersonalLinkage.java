@@ -25,7 +25,7 @@ public class PersonalLinkage extends FrameLinkagePrototype {
         actionManager.registerAction("personal_state-action_show", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
-                return isVisible();
+                return frame.isVisible();
             }
 
             @Override

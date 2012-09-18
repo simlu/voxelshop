@@ -33,7 +33,7 @@ public class LayerLinkage extends FrameLinkagePrototype {
         actionManager.registerAction("layer_state-action_show", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
-                return isVisible();
+                return frame.isVisible();
             }
 
             @Override
