@@ -1,6 +1,8 @@
 package com.vitco.logic.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.threed.jpct.Camera;
+import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
@@ -31,6 +33,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
     @Override
     public final JPanel build() {
+
+        // make sure we can see into the distance
+        world.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
 
         // camera settings
         camera.setFOVLimits(VitcoSettings.MAIN_VIEW_ZOOM_FOV,VitcoSettings.MAIN_VIEW_ZOOM_FOV);
@@ -63,7 +68,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 } else {
                     camera.zoomOut(VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
                 }
-                container.repaint();
+                forceRepaint();
             }
 
             private Point leftMouseDown = null;
@@ -91,12 +96,12 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                     camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
                     leftMouseDown.x = e.getX();
                     leftMouseDown.y = e.getY();
-                    container.repaint();
+                    forceRepaint();
                 } else if (rightMouseDown != null) {
                     camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
                     rightMouseDown.x = e.getX();
                     rightMouseDown.y = e.getY();
-                    container.repaint();
+                    forceRepaint();
                 }
             }
         };
@@ -109,14 +114,14 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 camera.zoomIn(VitcoSettings.MAIN_VIEW_ZOOM_SPEED_FAST);
-                container.repaint();
+                forceRepaint();
             }
         });
         actionManager.registerAction("mainview_zoom_out", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 camera.zoomOut(VitcoSettings.MAIN_VIEW_ZOOM_SPEED_FAST);
-                container.repaint();
+                forceRepaint();
             }
         });
 
@@ -125,7 +130,36 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION);
-                container.repaint();
+                forceRepaint();
+            }
+        });
+
+        // register "align view to side plane" actions
+        actionManager.registerAction("align_main_to_sideview1", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SimpleVector pos = new SimpleVector(VitcoSettings.SIDE_VIEW1_CAMERA_POSITION);
+                pos.makeEqualLength(camera.getPosition());
+                camera.setView(pos);
+                forceRepaint();
+            }
+        });
+        actionManager.registerAction("align_main_to_sideview2", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SimpleVector pos = new SimpleVector(VitcoSettings.SIDE_VIEW2_CAMERA_POSITION);
+                pos.makeEqualLength(camera.getPosition());
+                camera.setView(pos);
+                forceRepaint();
+            }
+        });
+        actionManager.registerAction("align_main_to_sideview3", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SimpleVector pos = new SimpleVector(VitcoSettings.SIDE_VIEW3_CAMERA_POSITION);
+                pos.makeEqualLength(camera.getPosition());
+                camera.setView(pos);
+                forceRepaint();
             }
         });
 

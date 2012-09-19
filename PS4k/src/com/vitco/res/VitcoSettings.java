@@ -46,6 +46,9 @@ public final class VitcoSettings {
     public static final float SIDE_VIEW_ZOOM_START = 20000f;
     public static final float SIDE_VIEW_ZOOM_FOV = 0.015f;
     public static final float SIDE_VIEW_SIDE_MOVE_FACTOR = 1f; // "drag" move content
+    public static final SimpleVector SIDE_VIEW1_CAMERA_POSITION = new SimpleVector(0,-1,-VitcoSettings.SIDE_VIEW_ZOOM_START);
+    public static final SimpleVector SIDE_VIEW2_CAMERA_POSITION = new SimpleVector(0,-VitcoSettings.SIDE_VIEW_ZOOM_START,-1);
+    public static final SimpleVector SIDE_VIEW3_CAMERA_POSITION = new SimpleVector(-VitcoSettings.SIDE_VIEW_ZOOM_START,0,-1);
 
     // xyz orientation
     public static final Color ANIMATION_AXIS_OUTER_COLOR = new Color(0, 0, 0, 255);
@@ -56,9 +59,9 @@ public final class VitcoSettings {
     public static final Color ANIMATION_CENTER_CROSS_COLOR = new Color(0, 0, 0, 255); // cross in the center
 
     // main view
-    public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 10;
+    public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 15;
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
-    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 500;
+    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1000;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
     public static final float MAIN_VIEW_ZOOM_FOV = 1.25f;
     public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-30, -200, -200);

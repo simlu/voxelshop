@@ -506,26 +506,26 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             public void onAnimationDataChanged() {
                 container.skipNextWorldRender(); // no need to re-render scene
                 animationAdapter.refresh2DIndex(); // refresh 2D index when data changes
-                container.repaint();
+                forceRepaint();
             }
 
             @Override
             public void onAnimationSelectionChanged() {
                 container.skipNextWorldRender(); // no need to re-render scene
-                container.repaint();
+                forceRepaint();
             }
 
             @Override
             public void onVoxelDataChanged() {
                 updateWorldWithVoxels();
                 container.doNotSkipNextWorldRender();
-                container.repaint();
+                forceRepaint();
             }
 
             @Override
             public void onVoxelSelectionChanged() {
                 container.skipNextWorldRender();
-                container.repaint();
+                forceRepaint();
             }
 
             @Override
@@ -545,14 +545,14 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     voxelAdapter.replayHover();
                 }
                 container.setDrawAnimationOverlay(data.isAnimate());
-                container.repaint();
+                forceRepaint();
             }
 
             @Override
             public void onVoxelModeChanged() {
                 voxelMode = data.getVoxelMode();
                 voxelAdapter.replayHover();
-                container.repaint();
+                forceRepaint();
             }
         };
         data.addDataChangeListener(dca);

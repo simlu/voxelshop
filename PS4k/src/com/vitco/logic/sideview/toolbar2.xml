@@ -16,4 +16,8 @@
     <icon-item src="resource/img/framebars/sideview/move_out.png"
                tool-tip="sideview_move_plane_out_caption"
                action="sideview_move_plane_out2"/>
+    <separator/>
+    <icon-item src="resource/img/framebars/sideview/align.png"
+               tool-tip="sideview_align_main_view_tooltip"
+               action="align_main_to_sideview2"/>
 </head>

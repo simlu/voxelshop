@@ -6,19 +6,19 @@ import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
-import com.vitco.util.Util3D;
+import com.vitco.util.thread.LifeTimeThread;
+import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.*;
 
 /**
  * Rendering functionality of this World (data + overlay)
@@ -31,6 +31,13 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     @Autowired
     public void setData(Data data) {
         this.data = data;
+    }
+
+    private ThreadManagerInterface threadManager;
+    // set the action handler
+    @Autowired
+    public void setThreadManager(ThreadManagerInterface threadManager) {
+        this.threadManager = threadManager;
     }
 
     // the world-required objects
@@ -261,21 +268,21 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             for (ExtendedVector[] line : data.getLines()) {
                 ExtendedVector point2da = convertExt3D2D(line[0]);
                 ExtendedVector point2db = convertExt3D2D(line[1]);
-                ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                mid.scalarMul(0.5f);
                 if (point2da != null && point2db != null) {
+                    ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
+                    mid.scalarMul(0.5f);
                     objects.add(new ExtendedVector[] {point2da, point2db, mid});
                 }
             }
             // add preview line
             ExtendedVector[] preview_line = data.getPreviewLine();
-            boolean connected = preview_line != null ? data.areConnected(preview_line[0].id, preview_line[1].id) : false;
+            boolean connected = preview_line != null && data.areConnected(preview_line[0].id, preview_line[1].id);
             if (preview_line != null && !connected) {
                 ExtendedVector point2da = convertExt3D2D(preview_line[0]);
                 ExtendedVector point2db = convertExt3D2D(preview_line[1]);
-                ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                mid.scalarMul(0.5f);
                 if (point2da != null && point2db != null) {
+                    ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
+                    mid.scalarMul(0.5f);
                     objects.add(new ExtendedVector[] {point2da, point2db, mid});
                 }
             }
@@ -395,8 +402,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             ig.setColor(VitcoSettings.ANIMATION_CENTER_CROSS_COLOR);
             ig.setStroke(new BasicStroke(1.0f));
             SimpleVector center = convert3D2D(new SimpleVector(0,0,0));
-            ig.drawLine(Math.round(center.x - 5), Math.round(center.y), Math.round(center.x + 5), Math.round(center.y));
-            ig.drawLine(Math.round(center.x), Math.round(center.y - 5), Math.round(center.x), Math.round(center.y + 5));
+            if (center != null) {
+                ig.drawLine(Math.round(center.x - 5), Math.round(center.y), Math.round(center.x + 5), Math.round(center.y));
+                ig.drawLine(Math.round(center.x), Math.round(center.y - 5), Math.round(center.x), Math.round(center.y + 5));
+            }
         }
 
         // handle the redrawing of this component
@@ -429,12 +438,37 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
     }
 
+    private boolean needRepaint = true;
+    protected final void forceRepaint() {
+        needRepaint = true;
+    }
+
+    @PostConstruct
+    public final void startup() {
+        // manages the repainting of this container instance
+        threadManager.manage(new LifeTimeThread() {
+            @Override
+            public void loop() throws InterruptedException {
+                if (needRepaint) {
+                    needRepaint = false;
+                    container.repaint();
+                }
+                sleep(33); // about 25 fps
+                while (globalMouseDown && !localMouseDown) {
+                    sleep(50);
+                }
+            }
+        });
+    }
+
     @PreDestroy
     public final void cleanup() {
         buffer.disableRenderer(IRenderer.RENDERER_OPENGL);
         buffer.dispose();
     }
 
+    private boolean localMouseDown = false;
+    private static boolean globalMouseDown = false;
     private static boolean initialized = false;
     protected EngineViewPrototype() {
 
@@ -444,6 +478,20 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }
+
+        container.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                globalMouseDown = true;
+                localMouseDown = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                globalMouseDown = false;
+                localMouseDown = false;
+            }
+        });
 
         // set up world objects
         world = new World();
@@ -463,10 +511,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             public void componentResized(ComponentEvent e) {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
                     buffer.dispose();
-                    buffer = new FrameBuffer(container.getWidth(), container.getHeight(),
-                            FrameBuffer.SAMPLINGMODE_OGSS);
+                    buffer = new FrameBuffer(container.getWidth(), container.getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
                     buffer.clear(VitcoSettings.ANIMATION_BG_COLOR); // init the buffer
-                    container.repaint();
+                    forceRepaint();
                 }
             }
         });

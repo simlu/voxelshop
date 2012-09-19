@@ -26,13 +26,13 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     private void resetView() {
         switch (side) {
             case 0:
-                camera.setView(new SimpleVector(0,-1,-VitcoSettings.SIDE_VIEW_ZOOM_START));
+                camera.setView(VitcoSettings.SIDE_VIEW1_CAMERA_POSITION);
                 break;
             case 1:
-                camera.setView(new SimpleVector(0,-VitcoSettings.SIDE_VIEW_ZOOM_START,-1));
+                camera.setView(VitcoSettings.SIDE_VIEW2_CAMERA_POSITION);
                 break;
             case 2:
-                camera.setView(new SimpleVector(-VitcoSettings.SIDE_VIEW_ZOOM_START,0,-1));
+                camera.setView(VitcoSettings.SIDE_VIEW3_CAMERA_POSITION);
                 break;
         }
         camera.setFOVLimits(VitcoSettings.SIDE_VIEW_ZOOM_FOV,VitcoSettings.SIDE_VIEW_ZOOM_FOV);
@@ -111,9 +111,6 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     @Override
     public final JPanel build() {
 
-        // enable snap
-        //animationAdapter.setVoxelSnap(true);
-
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
 
@@ -123,7 +120,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             public void actionPerformed(ActionEvent e) {
                 currentplane--;
                 updateWorldWithVoxels();
-                container.repaint();
+                forceRepaint();
             }
         });
         actionManager.registerAction("sideview_move_plane_out" + (side + 1), new AbstractAction() {
@@ -131,7 +128,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             public void actionPerformed(ActionEvent e) {
                 currentplane++;
                 updateWorldWithVoxels();
-                container.repaint();
+                forceRepaint();
             }
         });
 
@@ -140,14 +137,14 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 camera.zoomIn(VitcoSettings.SIDE_VIEW_COARSE_ZOOM_SPEED);
-                container.repaint();
+                forceRepaint();
             }
         });
         actionManager.registerAction("sideview_zoom_out_tb" + (side + 1), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 camera.zoomOut(VitcoSettings.SIDE_VIEW_COARSE_ZOOM_SPEED);
-                container.repaint();
+                forceRepaint();
             }
         });
 
@@ -156,7 +153,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 resetView();
-                container.repaint();
+                forceRepaint();
             }
         });
 
@@ -171,7 +168,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                     camera.zoomOut(VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
                 }
                 animationAdapter.mouseMoved(e); // keep selection refreshed (zoom ~ mouse move)
-                container.repaint();
+                forceRepaint();
             }
         });
 
@@ -213,7 +210,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                             (float)(e.getY() - mouse_down_point.getY()),
                             VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
                     mouse_down_point = e.getPoint();
-                    container.repaint();
+                    forceRepaint();
                 }
             }
         };
