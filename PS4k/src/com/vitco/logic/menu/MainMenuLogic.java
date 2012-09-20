@@ -151,11 +151,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             y + Math.round(VitcoSettings.VOXEL_GROUND_DISTANCE / VitcoSettings.VOXEL_SIZE) - img.getHeight(),
                             0
                     });
-                    if (voxelCount >= VitcoSettings.VOXEL_COUNT_FILE_IMPORT_LIMIT) {
+                    if (voxelCount >= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
                         stop = true;
                         console.addLine(
                                 langSelector.getString("import_voxel_limit_reached_pre") + " " +
-                                        VitcoSettings.VOXEL_COUNT_FILE_IMPORT_LIMIT +
+                                        VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER +
                                         " " + langSelector.getString("import_voxel_limit_reached_post"));
                     }
                     voxelCount++;
@@ -270,7 +270,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             public void actionPerformed(final ActionEvent e) {
                 if (checkUnsavedChanges(frame)) {
                     // fire closing action
-                    actionManager.tryExecuteAction("program_closing_event", e);
+                    actionManager.performWhenActionIsReady("program_closing_event", new Runnable() {
+                        @Override
+                        public void run() {
+                            actionManager.getAction("program_closing_event").actionPerformed(e);
+                        }
+                    });
                     // save layout data
                     preferences.storeObject("custom_raw_layout_data",
                             ((DefaultDockableBarDockableHolder) frame).getLayoutPersistence().getLayoutRawData());
@@ -290,7 +295,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                     System.setOut(nullStream);
 
                     // and exit
-                    ((DefaultDockableBarDockableHolder) frame).setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    ((DefaultDockableBarDockableHolder) frame).setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                     frame.dispose();
                 }
             }

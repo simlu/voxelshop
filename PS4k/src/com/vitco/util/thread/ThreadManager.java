@@ -1,5 +1,6 @@
 package com.vitco.util.thread;
 
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
@@ -13,11 +14,11 @@ import java.util.ArrayList;
  */
 public class ThreadManager implements ThreadManagerInterface {
 
-    private ActionManagerInterface actionManager;
+    private ActionManager actionManager;
     // set the action handler
     @Override
     @Autowired
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 

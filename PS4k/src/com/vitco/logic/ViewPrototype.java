@@ -3,7 +3,7 @@ package com.vitco.logic;
 import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
 import com.vitco.util.action.ActionGroupManagerInterface;
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.menu.MenuGeneratorInterface;
@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class ViewPrototype {
 
     // var & setter
-    protected ActionManagerInterface actionManager;
+    protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 

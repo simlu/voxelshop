@@ -1,6 +1,6 @@
 package com.vitco.util.thread;
 
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ActionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 public interface ThreadManagerInterface {
     // set the action handler
     @Autowired
-    void setActionManager(ActionManagerInterface actionManager);
+    void setActionManager(ActionManager actionManager);
 
     void manage(LifeTimeThread thread);
 

@@ -13,14 +13,14 @@ import java.util.Map;
  */
 public class ActionGroupManager implements ActionGroupManagerInterface {
     // var & setter
-    protected ActionManagerInterface actionManager;
+    protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // maps group names to the actions in that group
-    private HashMap<String, HashMap<String, StateActionPrototype>> map = new HashMap<String, HashMap<String, StateActionPrototype>>();
+    private final HashMap<String, HashMap<String, StateActionPrototype>> map = new HashMap<String, HashMap<String, StateActionPrototype>>();
 
     // refresh all action states
     @Override

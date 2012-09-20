@@ -103,7 +103,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         @Override
         public void mouseDragged(MouseEvent e) {
             if (dragPoint != -1) { // there is a point dragged
-                if (buffer.getOutputWidth() > e.getX() && buffer.getOutputHeight() > e.getY() && e.getX() > 0 && e.getY() > 0) {
+                if (container.getBounds().contains(e.getPoint())) {
                     if (wasDragged == -1) { // remember that this point was dragged
                         wasDragged = System.currentTimeMillis();
                     } else {
@@ -122,7 +122,6 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         @Override
         public void mouseMoved(MouseEvent e) {
             rebuild2DIndex(); // only recomputes if necessary
-            int highlighted_point = data.getHighlightedPoint();
             int selected_point = data.getSelectedPoint();
 
             // find if there is a point nearby
@@ -153,7 +152,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             }
 
             data.highlightPoint(tmp); // highlight that point
-            highlighted_point = data.getHighlightedPoint();
+            int highlighted_point = data.getHighlightedPoint();
 
             // set the preview line iff highlighted and selected point exist and are different
             if (selected_point != -1 && highlighted_point != selected_point && highlighted_point != -1) {
@@ -286,6 +285,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     }
 
     // helper - make sure the voxel objects in the world are up to date
+    @Override
     protected final void updateWorldWithVoxels() {
         Voxel[] voxels = getVoxels();
 
@@ -334,39 +334,41 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         // execute on mouse event
         protected void execute(MouseEvent e) {
-            if (data.getHighlightedVoxel() != null) { // something highlighted
-                camera.setEnabled(voxelMode == VOXELMODE.VIEW);
-                if (voxelMode == VOXELMODE.DRAW) { // add voxel
-                    if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
-                        switch (e.getModifiersEx()) {
-                            case InputEvent.BUTTON1_DOWN_MASK: // left click
-                                data.addVoxel(data.getCurrentColor(), data.getHighlightedVoxel());
-                                break;
-                            case InputEvent.BUTTON3_DOWN_MASK: // right click
-                                Voxel voxel = data.searchVoxel(data.getHighlightedVoxel(), true);
-                                if (null != voxel) {
-                                    data.removeVoxel(voxel.id);
-                                }
-                                break;
+            if (container.getBounds().contains(e.getPoint())) {
+                if (data.getHighlightedVoxel() != null) { // something highlighted
+                    camera.setEnabled(voxelMode == VOXELMODE.VIEW);
+                    if (voxelMode == VOXELMODE.DRAW) { // add voxel
+                        if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
+                            switch (e.getModifiersEx()) {
+                                case InputEvent.BUTTON1_DOWN_MASK: // left click
+                                    data.addVoxel(data.getCurrentColor(), data.getHighlightedVoxel());
+                                    break;
+                                case InputEvent.BUTTON3_DOWN_MASK: // right click
+                                    Voxel voxel = data.searchVoxel(data.getHighlightedVoxel(), true);
+                                    if (null != voxel) {
+                                        data.removeVoxel(voxel.id);
+                                    }
+                                    break;
+                            }
+                        }
+                    } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
+                        Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
+                        if (highlightedVoxel != null) {
+                            data.removeVoxel(highlightedVoxel.id);
+                        }
+                    } else if (voxelMode == VOXELMODE.PICKER) {
+                        Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), false);
+                        if (highlightedVoxel != null) {
+                            data.setCurrentColor(highlightedVoxel.getColor());
+                        }
+                    } else if (voxelMode == VOXELMODE.COLORCHANGER) {
+                        Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
+                        if (highlightedVoxel != null) {
+                            data.setColor(highlightedVoxel.id, data.getCurrentColor());
                         }
                     }
-                } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
-                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
-                    if (highlightedVoxel != null) {
-                        data.removeVoxel(highlightedVoxel.id);
-                    }
-                } else if (voxelMode == VOXELMODE.PICKER) {
-                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), false);
-                    if (highlightedVoxel != null) {
-                        data.setCurrentColor(highlightedVoxel.getColor());
-                    }
-                } else if (voxelMode == VOXELMODE.COLORCHANGER) {
-                    Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
-                    if (highlightedVoxel != null) {
-                        data.setColor(highlightedVoxel.id, data.getCurrentColor());
-                    }
+                    massVoxel = true;
                 }
-                massVoxel = true;
             }
         }
 
@@ -377,37 +379,40 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
             if (res[1] != null && voxelMode != VOXELMODE.VIEW) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
-                int[] voxelPos = data.getVoxel(voxelToObject.getKey(obj3D.getID())).getPosAsInt();
-                if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
-                    // find collision point
-                    SimpleVector colPoint = camera.getPosition();
-                    dir.scalarMul((Float)res[0]);
-                    colPoint.add(dir);
-                    // find side that it hits
-                    ArrayList<float[]> planes = new ArrayList<float[]>();
-                    planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
-                    planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
-                    planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
-                    planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
-                    planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
-                    planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
-                    Collections.sort(planes, new Comparator<float[]>() {
-                        @Override
-                        public int compare(float[] o1, float[] o2) {
-                            return (int) Math.signum(o1[1] - o2[1]);
+                Voxel hitVoxel = data.getVoxel(voxelToObject.getKey(obj3D.getID()));
+                if (hitVoxel != null) {
+                    int[] voxelPos = hitVoxel.getPosAsInt();
+                    if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
+                        // find collision point
+                        SimpleVector colPoint = camera.getPosition();
+                        dir.scalarMul((Float)res[0]);
+                        colPoint.add(dir);
+                        // find side that it hits
+                        ArrayList<float[]> planes = new ArrayList<float[]>();
+                        planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
+                        planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
+                        planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
+                        planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
+                        planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
+                        planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
+                        Collections.sort(planes, new Comparator<float[]>() {
+                            @Override
+                            public int compare(float[] o1, float[] o2) {
+                                return (int) Math.signum(o1[1] - o2[1]);
+                            }
+                        });
+                        switch ((int)planes.get(0)[0]) {
+                            case 1: voxelPos[1] -= 1; break;
+                            case 2: voxelPos[1] += 1; break;
+                            case 3: voxelPos[0] -= 1; break;
+                            case 4: voxelPos[0] += 1; break;
+                            case 5: voxelPos[2] -= 1; break;
+                            case 6: voxelPos[2] += 1; break;
                         }
-                    });
-                    switch ((int)planes.get(0)[0]) {
-                        case 1: voxelPos[1] -= 1; break;
-                        case 2: voxelPos[1] += 1; break;
-                        case 3: voxelPos[0] -= 1; break;
-                        case 4: voxelPos[0] += 1; break;
-                        case 5: voxelPos[2] -= 1; break;
-                        case 6: voxelPos[2] += 1; break;
                     }
+                    // highlight the voxel (position)
+                    data.highlightVoxel(voxelPos);
                 }
-                // highlight the voxel (position)
-                data.highlightVoxel(voxelPos);
             } else { // hit nothing
                 if (voxelMode == VOXELMODE.DRAW) { // trying to draw
                     // hit nothing, draw preview on zero level
@@ -517,7 +522,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             @Override
             public void onVoxelDataChanged() {
-                updateWorldWithVoxels();
+                invalidateVoxels();
                 container.doNotSkipNextWorldRender();
                 forceRepaint();
             }

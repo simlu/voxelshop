@@ -1,13 +1,16 @@
 package com.vitco.util.menu;
 
 import com.jidesoft.action.CommandBarSeparator;
+import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideMenu;
+import com.jidesoft.swing.JideSplitButton;
 import com.jidesoft.swing.JideToggleButton;
 import com.vitco.logic.shortcut.GlobalShortcutChangeListener;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.action.ChangeListener;
+import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -53,14 +56,24 @@ public class MenuGenerator implements MenuGeneratorInterface {
     }
 
     // var & setter
-    private ActionManagerInterface actionManager;
+    private ActionManager actionManager;
     @Override
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
+    }
+
+    // var & setter
+    private ComplexActionManager complexActionManager;
+    @Override
+    public void setComplexActionManager(ComplexActionManager complexActionManager) {
+        this.complexActionManager = complexActionManager;
     }
 
     @Override
     public void buildMenuFromXML(JComponent jComponent, String xmlFile) {
+        if (jComponent instanceof CommandMenuBar) { // disable the chevron by default
+            ((CommandMenuBar)jComponent).setChevronAlwaysVisible(false);
+        }
         try {
             // load the xml document
             DocumentBuilderFactory factory = DocumentBuilderFactory
@@ -118,6 +131,13 @@ public class MenuGenerator implements MenuGeneratorInterface {
                         e.hasAttribute("grayable") && e.getAttribute("grayable").equals("true"),
                         e.hasAttribute("hideable") && e.getAttribute("hideable").equals("true")
                 );
+            } else if (name.equals("split-item")) {
+                Element e = (Element) node;
+                addSplitItem(component, e,
+                        e.hasAttribute("checkable") && e.getAttribute("checkable").equals("true"),
+                        e.hasAttribute("grayable") && e.getAttribute("grayable").equals("true"),
+                        e.hasAttribute("hideable") && e.getAttribute("hideable").equals("true")
+                );
             }
         }
     }
@@ -139,17 +159,17 @@ public class MenuGenerator implements MenuGeneratorInterface {
         });
     }
 
-    private void handleButtonShortcutAndTooltip(final JideButton jideButton, final Element e) {
+    private void handleButtonShortcutAndTooltip(final JComponent button, final Element e) {
         // shortcut change events
         KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
         if (accelerator != null) {
-            jideButton.setToolTipText(
+            button.setToolTipText(
                     langSel.getString(e.getAttribute("tool-tip"))
                             + " (" + shortcutManager.asString(accelerator) + ")"
             );
         } else {
             // might still have a frame shortcut, we don't know
-            jideButton.setToolTipText(
+            button.setToolTipText(
                     langSel.getString(e.getAttribute("tool-tip"))
             );
         }
@@ -158,7 +178,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
             public void onChange() {
                 KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
                 if (accelerator != null) {
-                    jideButton.setToolTipText(
+                    button.setToolTipText(
                             langSel.getString(e.getAttribute("tool-tip"))
                                     + " (" + shortcutManager.asString(accelerator) + ")"
                     );
@@ -169,7 +189,8 @@ public class MenuGenerator implements MenuGeneratorInterface {
 
     // =========================
     // adds a default menu item
-    private void addItem(JComponent component, final Element e, final boolean checkable, final boolean grayable, final boolean hideable) {
+    private void addItem(JComponent component, final Element e,
+                         final boolean checkable, final boolean grayable, final boolean hideable) {
         final JMenuItem item = checkable ? new JCheckBoxMenuItem() : new JMenuItem();
 
         // to perform validity check we need to register this name
@@ -221,30 +242,15 @@ public class MenuGenerator implements MenuGeneratorInterface {
         component.add(item);
     }
 
-    // =========================
-    // adds an item that has an icon and a tooltip
-    private void addIconItem(JComponent component, final Element e, final boolean checkable, final boolean grayable, final boolean hideable) {
-        final JideButton jideButton = checkable
-                ? new JideToggleButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src")))))
-                : new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src")))));
-        // to perform validity check we need to register this name
-        actionManager.registerActionIsUsed(e.getAttribute("action"));
-        // lazy action linking (the action might not be ready!)
-        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
-            @Override
-            public void run() {
-                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
-            }
-        });
-        jideButton.setFocusable(false);
-        handleButtonShortcutAndTooltip(jideButton, e);
+    // handles correct states of gray, checked, hide button
+    private void handleAbstractButton(final AbstractButton abstractButton, final Element e, final boolean checkable, final boolean grayable, final boolean hideable) {
+        abstractButton.setFocusable(false);
+        handleButtonShortcutAndTooltip(abstractButton, e);
 
         if (grayable) {
             // check if there is a custom gray icon defined
             if (e.hasAttribute("src-gray")) {
-                jideButton.setDisabledIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                abstractButton.setDisabledIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                         ClassLoader.getSystemResource(e.getAttribute("src-gray"))
                 )));
             }
@@ -261,21 +267,87 @@ public class MenuGenerator implements MenuGeneratorInterface {
                         @Override
                         public void actionFired(boolean b) {
                             if (checkable) {
-                                jideButton.setSelected(invert ? !stateActionPrototype.isChecked() : stateActionPrototype.isChecked());
+                                abstractButton.setSelected(invert ? !stateActionPrototype.isChecked() : stateActionPrototype.isChecked());
                             }
                             if (grayable) {
-                                jideButton.setEnabled(invert ? !stateActionPrototype.isEnabled() : stateActionPrototype.isEnabled());
+                                abstractButton.setEnabled(invert ? !stateActionPrototype.isEnabled() : stateActionPrototype.isEnabled());
                             }
                             if (hideable) {
-                                jideButton.setVisible(invert ? !stateActionPrototype.isVisible() : stateActionPrototype.isVisible());
+                                abstractButton.setVisible(invert ? !stateActionPrototype.isVisible() : stateActionPrototype.isVisible());
                             }
                         }
                     });
                 }
             });
         }
+    }
+
+    // =========================
+    // adds an item that has an icon and a tooltip
+    private void addIconItem(JComponent component, final Element e,
+                             final boolean checkable, final boolean grayable, final boolean hideable) {
+        final JideButton jideButton = checkable
+                ? new JideToggleButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource(e.getAttribute("src")))))
+                : new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource(e.getAttribute("src")))));
+
+        // to perform validity check we need to register this name
+        actionManager.registerActionIsUsed(e.getAttribute("action"));
+        // lazy action linking (the action might not be ready!)
+        actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
+            @Override
+            public void run() {
+                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
+            }
+        });
+
+        handleAbstractButton(jideButton, e, checkable, grayable, hideable);
 
         component.add(jideButton);
+    }
+
+    // =========================
+    // adds a split item (submenu)
+    private void addSplitItem(JComponent component, final Element e,
+                              final boolean checkable, final boolean grayable, final boolean hideable) {
+
+        final JideSplitButton splitButton = new JideSplitButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource(e.getAttribute("src")))));
+
+        // check if we have an action
+        if (e.hasAttribute("action") && !(e.hasAttribute("disable-action") && e.getAttribute("disable-action").equals("true"))) {
+            // to perform validity check we need to register this name
+            actionManager.registerActionIsUsed(e.getAttribute("action"));
+            // lazy action linking (the action might not be ready!)
+            actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
+                @Override
+                public void run() {
+                    splitButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
+                }
+            });
+        } else {
+            // the whole button is now used to open the dropdown menu
+            splitButton.setAlwaysDropdown(true);
+        }
+
+        // disable the border of the shown dialog
+        splitButton.getPopupMenu().setBorder(BorderFactory.createEmptyBorder());
+
+        // to perform validity check we need to register this name
+        complexActionManager.registerActionIsUsed(e.getAttribute("complex-action"));
+        // lazy action linking (the action might not be ready!)
+        complexActionManager.performWhenActionIsReady(e.getAttribute("complex-action"), new Runnable() {
+            @Override
+            public void run() {
+                splitButton.add(complexActionManager.getAction(e.getAttribute("complex-action")));
+            }
+        });
+
+        handleAbstractButton(splitButton, e, checkable, grayable, hideable);
+
+        component.add(splitButton);
+
     }
 
 }

@@ -1,14 +1,16 @@
 package com.vitco.layout;
 
-import com.jidesoft.action.*;
+import com.jidesoft.action.CommandMenuBar;
+import com.jidesoft.action.DefaultDockableBarDockableHolder;
+import com.jidesoft.action.DockableBar;
+import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
-import com.vitco.util.action.ActionManagerInterface;
-import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
@@ -26,8 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Map;
 
 /*
@@ -83,10 +83,10 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.shortcutManager = shortcutManager;
     }
 
-    private ActionManagerInterface actionManager;
+    private ActionManager actionManager;
     // set the action handler
     @Override
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
@@ -147,8 +147,15 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
             @Override
             public void windowClosing(final WindowEvent e) {
-                actionManager.tryExecuteAction("close_program_action",
-                        new ActionEvent(e.getSource(), e.getID(), e.paramString()));
+                // execute closing action
+                actionManager.performWhenActionIsReady("close_program_action", new Runnable() {
+                    @Override
+                    public void run() {
+                        actionManager.getAction("close_program_action").actionPerformed(
+                                new ActionEvent(e.getSource(), e.getID(), e.paramString())
+                        );
+                    }
+                });
             }
         });
 

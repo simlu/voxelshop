@@ -53,8 +53,11 @@ public class HistoryManager {
         historyPosition++;
         // and add it to the history
         history.add(actionIntent);
-        // invalidate the cache
-        notifyListener();
+        // invalidate the cache if the intent is not attached
+        // (for the main intent)
+        if (!actionIntent.attach) {
+            notifyListener();
+        }
     }
 
     // apply the next history intent

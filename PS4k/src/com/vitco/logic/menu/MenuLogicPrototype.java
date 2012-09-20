@@ -3,7 +3,7 @@ package com.vitco.logic.menu;
 import com.vitco.engine.data.Data;
 import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.util.action.ActionGroupManagerInterface;
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
@@ -35,9 +35,9 @@ public abstract class MenuLogicPrototype {
     }
 
     // var & setter
-    protected ActionManagerInterface actionManager;
+    protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 

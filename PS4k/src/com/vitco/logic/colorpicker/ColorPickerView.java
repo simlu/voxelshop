@@ -8,14 +8,15 @@ import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 /**
@@ -231,20 +232,6 @@ public class ColorPickerView implements ColorPickerViewInterface {
         wrapper.add(slider, BorderLayout.EAST);
 
         return wrapper;
-    }
-
-    @Override
-    @PostConstruct
-    public void init() { // load color from pref
-        if (preferences.contains("previous_current_color")) {
-            data.setCurrentColor((Color) preferences.loadObject("previous_current_color"));
-        }
-    }
-
-    @Override
-    @PreDestroy
-    public void finish() { // store color to pref
-        preferences.storeObject("previous_current_color", data.getCurrentColor());
     }
 
 }

@@ -29,4 +29,8 @@ public interface GeneralDataInterface {
     int getPreviewPlane();
     // reset the changed of data (nothing has changed after this is called)
     void resetHasChanged();
+    // getter bg color for all views
+    Color getViewBgColor();
+    // setter bg color for all views
+    void setViewBgColor(Color color);
 }

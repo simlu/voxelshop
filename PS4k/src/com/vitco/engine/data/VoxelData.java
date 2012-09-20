@@ -5,6 +5,7 @@ import com.vitco.engine.data.container.VoxelLayer;
 import com.vitco.engine.data.history.BasicActionIntent;
 import com.vitco.engine.data.history.HistoryChangeListener;
 import com.vitco.engine.data.history.HistoryManager;
+import com.vitco.res.VitcoSettings;
 
 import java.awt.*;
 import java.util.Collections;
@@ -507,7 +508,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final int addVoxel(Color color, int[] pos) {
         int result = -1;
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
-        if (layer != null && layer.voxelPositionFree(pos)) {
+        if (layer != null && layer.getSize() < VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER && layer.voxelPositionFree(pos)) {
             result = getFreeVoxelId();
             historyManagerV.applyIntent(new AddVoxelIntent(result, pos, color, dataContainer.selectedLayer, false));
         }
@@ -662,6 +663,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             VoxelLayer layer = dataContainer.layers.get(layerId);
             if (layer != null) {
                 layerVoxelBuffer = layer.getVoxels();
+            } else {
+                layerVoxelBuffer = new Voxel[0];
             }
             layerVoxelBufferValid = true;
             layerVoxelBufferLastLayer = layerId;
@@ -703,6 +706,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                         new float[] {Integer.MIN_VALUE/2, Integer.MIN_VALUE/2, z},
                         new float[] {Integer.MAX_VALUE, Integer.MAX_VALUE, 0}
                 );
+            } else {
+                layerVoxelXYBuffer = new Voxel[0];
             }
             layerVoxelXYBufferValid = true;
             lastVoxelXYBufferZValue = z;
@@ -721,6 +726,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                         new float[] {Integer.MIN_VALUE/2, y, Integer.MIN_VALUE/2},
                         new float[] {Integer.MAX_VALUE, 0, Integer.MAX_VALUE}
                 );
+            } else {
+                layerVoxelXZBuffer = new Voxel[0];
             }
             layerVoxelXZBufferValid = true;
             lastVoxelXZBufferYValue = y;
@@ -739,6 +746,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                         new float[] {x, Integer.MIN_VALUE/2, Integer.MIN_VALUE/2},
                         new float[] {0, Integer.MAX_VALUE, Integer.MAX_VALUE}
                 );
+            } else {
+                layerVoxelYZBuffer = new Voxel[0];
             }
             layerVoxelYZBufferValid = true;
             lastVoxelYZBufferXValue = x;

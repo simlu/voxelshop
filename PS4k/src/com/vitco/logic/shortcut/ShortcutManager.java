@@ -1,6 +1,7 @@
 package com.vitco.logic.shortcut;
 
 import com.vitco.util.FileTools;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -121,9 +122,9 @@ public class ShortcutManager implements ShortcutManagerInterface {
     }
 
     // var & setter
-    private ActionManagerInterface actionManager;
+    private ActionManager actionManager;
     @Override
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 

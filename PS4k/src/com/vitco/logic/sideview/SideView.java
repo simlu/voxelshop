@@ -54,7 +54,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     @Override
     protected Voxel[] getVoxels() {
         // get the current voxels
-        Voxel[] voxels = data.getVisibleLayerVoxel();
+        Voxel[] voxels = null;
         switch (side) {
             case 0:
                 voxels = data.getVoxelsXY(currentplane);
@@ -119,7 +119,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentplane--;
-                updateWorldWithVoxels();
+                invalidateVoxels();
                 forceRepaint();
             }
         });
@@ -127,7 +127,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentplane++;
-                updateWorldWithVoxels();
+                invalidateVoxels();
                 forceRepaint();
             }
         });

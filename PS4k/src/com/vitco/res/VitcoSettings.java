@@ -105,11 +105,17 @@ public final class VitcoSettings {
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
 
-    // preview plane
-    public static final Float VOXEL_PREVIEW_PLANE_SIZE = 5 * VOXEL_SIZE;
-    public static final Color VOXEL_PREVIEW_PLANE_COLOR = new Color(70, 122, 255);
+    public static final Color[] GRAYSCALE_COLOR_SWATCH = new Color[] {
+            new Color(0, 0, 0), new Color(14, 14, 14), new Color(27, 27, 27),
+            new Color(41, 41, 41), new Color(54, 54, 54), new Color(68, 68, 68),
+            new Color(81, 81, 81), new Color(95, 95, 95), new Color(108, 108, 108),
+            new Color(122, 122, 122), new Color(135, 135, 135), new Color(149, 149, 149),
+            new Color(162, 162, 162), new Color(176, 176, 176), new Color(189, 189, 189),
+            new Color(203, 203, 203), new Color(216, 216, 216), new Color(230, 230, 230),
+            new Color(243, 243, 243), new Color(255, 255, 255)
+    };
 
     // file import
-    public static final Integer VOXEL_COUNT_FILE_IMPORT_LIMIT = 1000;
+    public static final Integer MAX_VOXEL_COUNT_PER_LAYER = 500;
 
 }

@@ -45,6 +45,19 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected FrameBuffer buffer;
     protected final CCamera camera;
 
+    // holds all the instances of this class
+    private static final ArrayList<EngineViewPrototype> derived = new ArrayList<EngineViewPrototype>();
+    // repaints all instances of this class
+    protected final void repaintAll() {
+        for (EngineViewPrototype evp : derived) {
+            evp.forceRepaint();
+        }
+    }
+    public final void setBGColor(Color color) {
+        data.setViewBgColor(color);
+        repaintAll();
+    }
+
     // conversion
     protected final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
         SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer, x*2, y*2).normalize();
@@ -71,6 +84,20 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             result = new ExtendedVector(point2d, point.id);
         }
         return result;
+    }
+
+    // updates the world with voxels
+    protected abstract void updateWorldWithVoxels();
+    // true iff the world does not need to be updated with voxels
+    private boolean worldVoxelCurrent = false;
+    // force update of world before next draw
+    protected final void invalidateVoxels() {
+        if (localMouseDown) { // instant update needed for interaction
+            updateWorldWithVoxels();
+            worldVoxelCurrent = true;
+        } else {
+            worldVoxelCurrent = false;
+        }
     }
 
     // the container that we draw on
@@ -418,8 +445,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     doNotSkipNextWorldRender = false;
                     skipNextWorldRender = false;
                 }
-                buffer.clear(VitcoSettings.ANIMATION_BG_COLOR);
+                buffer.clear(data.getViewBgColor());
                 if (drawWorld) {
+                    if (!worldVoxelCurrent) {
+                        updateWorldWithVoxels();
+                        worldVoxelCurrent = true;
+                    }
                     world.renderScene(buffer);
                     world.draw(buffer);
                 }
@@ -454,6 +485,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     container.repaint();
                 }
                 sleep(33); // about 25 fps
+                // stop repaint when mouse is down on another view
                 while (globalMouseDown && !localMouseDown) {
                     sleep(50);
                 }
@@ -478,6 +510,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }
+
+        // register this instance
+        derived.add(this);
 
         container.addMouseListener(new MouseAdapter() {
             @Override
@@ -512,7 +547,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
                     buffer.dispose();
                     buffer = new FrameBuffer(container.getWidth(), container.getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
-                    buffer.clear(VitcoSettings.ANIMATION_BG_COLOR); // init the buffer
                     forceRepaint();
                 }
             }

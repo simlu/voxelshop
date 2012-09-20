@@ -4,6 +4,10 @@
                tool-tip="animate_tooltip"
                checkable="true"
                action="toggle_animation_mode"/>
+
+    <split-item src="resource/img/bars/tool_bar/settings.png"
+                tool-tip="settings_menubar_tooltip"
+                complex-action="settings_menubar"/>
     <separator/>
 
     <icon-item src="resource/img/bars/tool_bar/undo.png"
@@ -43,6 +47,7 @@
                tool-tip="voxel_mode_select_type_color_changer_tooltip"
                checkable="true" hideable="true"
                action="voxel_mode_select_type_color_changer"/>
+
     <!--animation mode-->
     <icon-item src="resource/img/framebars/mainview/snap.png"
                tool-tip="toggle_voxel_snap_tooltip"

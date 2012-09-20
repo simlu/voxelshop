@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.lang.LangSelectorInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,9 +19,9 @@ public abstract class FrameLinkagePrototype {
     }
 
     // var & setter
-    protected ActionManagerInterface actionManager;
+    protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 

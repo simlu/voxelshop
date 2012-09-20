@@ -1,6 +1,6 @@
 package com.vitco.logic.shortcut;
 
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
@@ -14,7 +14,7 @@ public interface ShortcutManagerInterface {
     void setConfigFile(String filename);
     void loadConfig();
     void registerFrame(final JComponent frame);
-    void setActionManager(ActionManagerInterface actionManager);
+    void setActionManager(ActionManager actionManager);
     String[][] getFrames();
     void setLangSelector(LangSelectorInterface langSel);
     String[][] getShortcuts(String frameKey);

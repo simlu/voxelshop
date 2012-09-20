@@ -61,6 +61,8 @@
     <bean id="ActionManager" class="com.vitco.util.action.ActionManager"/>
     <!-- action group manager -->
     <bean id="ActionGroupManager" class="com.vitco.util.action.ActionGroupManager"/>
+    <!-- complex action manager -->
+    <bean id="ComplexActionManager" class="com.vitco.util.action.ComplexActionManager"/>
 
     <!-- manages threads -->
     <bean id="ThreadManager" class="com.vitco.util.thread.ThreadManager"/>
@@ -94,6 +96,7 @@
         <property name="shortcutManager" ref="ShortcutManager"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
+        <property name="complexActionManager" ref="ComplexActionManager"/>
         <property name="errorHandler" ref="ErrorHandler"/>
     </bean>
 
@@ -125,7 +128,7 @@
 
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
-        <constructor-arg value="PS4k - Alpha Version (V1.0.10)"/>
+        <constructor-arg value="PS4k - Alpha Version (V1.0.11)"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
