@@ -13,6 +13,7 @@ import com.vitco.util.BiMap;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.util.pref.PrefChangeListener;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
@@ -39,7 +40,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     }
 
     // current mode
-    protected VOXELMODE voxelMode;
+    protected VOXELMODE voxelMode = VitcoSettings.INITIAL_VOXEL_MODE;
 
     // ===============================
     // Animation
@@ -323,6 +324,20 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         // true means we're currently adding/removing voxels on drag
         private boolean massVoxel = false;
 
+        // the current color (to draw)
+        private Color currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
+
+        // initialize
+        public void init() {
+            // register change of current color
+            preferences.addPrefChangeListener("previous_current_color", new PrefChangeListener() {
+                @Override
+                public void onPrefChange(Object newValue) {
+                    currentColor = (Color)newValue;
+                }
+            });
+        }
+
         private Point lastMovePos = new Point(0,0);
         private boolean mouseInside = false;
         // replay the last hover
@@ -341,7 +356,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
                             switch (e.getModifiersEx()) {
                                 case InputEvent.BUTTON1_DOWN_MASK: // left click
-                                    data.addVoxel(data.getCurrentColor(), data.getHighlightedVoxel());
+                                    data.addVoxel(currentColor, data.getHighlightedVoxel());
                                     break;
                                 case InputEvent.BUTTON3_DOWN_MASK: // right click
                                     Voxel voxel = data.searchVoxel(data.getHighlightedVoxel(), true);
@@ -359,12 +374,12 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else if (voxelMode == VOXELMODE.PICKER) {
                         Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), false);
                         if (highlightedVoxel != null) {
-                            data.setCurrentColor(highlightedVoxel.getColor());
+                            preferences.storeObject("previous_current_color", highlightedVoxel.getColor());
                         }
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {
                         Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
                         if (highlightedVoxel != null) {
-                            data.setColor(highlightedVoxel.id, data.getCurrentColor());
+                            data.setColor(highlightedVoxel.id, currentColor);
                         }
                     }
                     massVoxel = true;
@@ -491,6 +506,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     @PostConstruct
     protected final void init() {
 
+        // init the voxel adapter
+        voxelAdapter.init();
+
         // enable/disable snap
         actionManager.performWhenActionIsReady("toggle_voxel_snap", new Runnable() {
             @Override
@@ -533,36 +551,51 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 forceRepaint();
             }
 
+        };
+        data.addDataChangeListener(dca);
+
+        preferences.addPrefChangeListener("is_animation_mode_active", new PrefChangeListener() {
             @Override
-            public void onAnimateChanged() {
-                if (data.isAnimate()) {
+            public void onPrefChange(Object newValue) {
+                boolean isAnimate = (Boolean)newValue;
+                if (isAnimate) {
                     data.removeVoxelHighlights();
-                    container.removeMouseMotionListener(voxelAdapter);
-                    container.removeMouseListener(voxelAdapter);
+                    removeAll();
                     container.addMouseMotionListener(animationAdapter);
                     container.addMouseListener(animationAdapter);
                 } else {
                     data.removeAnimationHighlights();
-                    container.removeMouseMotionListener(animationAdapter);
-                    container.removeMouseListener(animationAdapter);
+                    removeAll();
                     container.addMouseMotionListener(voxelAdapter);
                     container.addMouseListener(voxelAdapter);
                     voxelAdapter.replayHover();
                 }
-                container.setDrawAnimationOverlay(data.isAnimate());
+                container.setDrawAnimationOverlay(isAnimate);
                 forceRepaint();
             }
 
+            private void removeAll() {
+                // just to be sure there are no listeners left
+                container.removeMouseMotionListener(voxelAdapter);
+                container.removeMouseListener(voxelAdapter);
+                container.removeMouseMotionListener(animationAdapter);
+                container.removeMouseListener(animationAdapter);
+            }
+        });
+        // initialize listener adapter
+        if (!preferences.contains("is_animation_mode_active")) {
+            preferences.storeObject("is_animation_mode_active", VitcoSettings.INITIAL_MODE_IS_ANIMATION);
+        }
+
+        // register change of voxel mode
+        preferences.addPrefChangeListener("active_voxel_submode", new PrefChangeListener() {
             @Override
-            public void onVoxelModeChanged() {
-                voxelMode = data.getVoxelMode();
+            public void onPrefChange(Object newValue) {
+                voxelMode = (VOXELMODE)newValue;
                 voxelAdapter.replayHover();
                 forceRepaint();
             }
-        };
-        data.addDataChangeListener(dca);
-        // initialize modes
-        dca.onAnimateChanged();
-        dca.onVoxelModeChanged();
+        });
+
     }
 }

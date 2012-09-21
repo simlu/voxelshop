@@ -10,6 +10,7 @@ import com.vitco.util.colors.ColorChangeListener;
 import com.vitco.util.colors.SimpleColorChooser;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.ComplexActionManager;
+import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -26,19 +27,10 @@ import java.awt.event.MouseWheelEvent;
  */
 public class MainView extends EngineInteractionPrototype implements MainViewInterface {
 
-    // var & setter
-    private ComplexActionManager complexActionManager;
-    @Autowired
-    public void setComplexActionManager(ComplexActionManager complexActionManager) {
-        this.complexActionManager = complexActionManager;
-    }
-
     @Override
     protected Voxel[] getVoxels() {
         return data.getVisibleLayerVoxel();
     }
-
-    private Color groundPlaneColor = VitcoSettings.VOXEL_GROUND_PLANE_COLOR;
 
     @Override
     public final JPanel build() {
@@ -58,18 +50,13 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         WorldUtil.addLight(world, new SimpleVector(1300, 200, 200), 1);
         WorldUtil.addLight(world, new SimpleVector(-1300, -200, -200), 1);
 
-        // load the bg color if stored
-        if (preferences.contains("main_view_ground_plane_color")) {
-            groundPlaneColor = (Color)preferences.loadObject("main_view_ground_plane_color");
-        }
-
         // add ground plane
         final int worldPlane = WorldUtil.addPlane(
                 world,
                 new SimpleVector(0, VitcoSettings.VOXEL_GROUND_DISTANCE, 0),
                 new SimpleVector(0, 0, 0),
                 VitcoSettings.VOXEL_GROUND_PLANE_SIZE,
-                groundPlaneColor,
+                VitcoSettings.VOXEL_GROUND_PLANE_COLOR,
                 0
         );
 
@@ -187,39 +174,20 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/logic/mainview/toolbar.xml");
         menuPanel.setBorder(BorderFactory.createMatteBorder(1,0,1,1,VitcoSettings.DEFAULT_BORDER_COLOR));
 
-        // create the complex action to select the color of the background plane
-        SimpleColorChooser bgPlaneColorChooser = new SimpleColorChooser();
-        bgPlaneColorChooser.addColorChangeListener(new ColorChangeListener() {
+        // register color change event of ground plane
+        preferences.addPrefChangeListener("main_view_ground_plane_color", new PrefChangeListener() {
             @Override
-            public void colorChanged(Color newColor) {
-                groundPlaneColor = newColor;
-                world.getObject(worldPlane).setAdditionalColor(groundPlaneColor);
+            public void onPrefChange(Object o) {
+                world.getObject(worldPlane).setAdditionalColor((Color)o);
                 forceRepaint();
             }
         });
-        complexActionManager.registerAction("pick_color_voxel_ground_plane", bgPlaneColorChooser);
-
-        // create the complex action to select the color of the background
-        SimpleColorChooser bgColorChooser = new SimpleColorChooser();
-        bgColorChooser.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(Color newColor) {
-            setBGColor(newColor);
-            }
-        });
-        complexActionManager.registerAction("pick_color_voxel_bg", bgColorChooser);
 
         // add to wrapper
         wrapper.add(menuPanel, BorderLayout.EAST);
         wrapper.add(container, BorderLayout.CENTER);
 
         return wrapper;
-    }
-
-    @PreDestroy
-    protected void store() {
-        // store the plane color
-        preferences.storeObject("main_view_ground_plane_color", groundPlaneColor);
     }
 
 }

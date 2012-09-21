@@ -6,6 +6,7 @@ import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
+import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,19 +45,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected final World world;
     protected FrameBuffer buffer;
     protected final CCamera camera;
-
-    // holds all the instances of this class
-    private static final ArrayList<EngineViewPrototype> derived = new ArrayList<EngineViewPrototype>();
-    // repaints all instances of this class
-    protected final void repaintAll() {
-        for (EngineViewPrototype evp : derived) {
-            evp.forceRepaint();
-        }
-    }
-    public final void setBGColor(Color color) {
-        data.setViewBgColor(color);
-        repaintAll();
-    }
 
     // conversion
     protected final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
@@ -103,6 +91,30 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // the container that we draw on
     protected final MPanel container = new MPanel();
     protected final class MPanel extends JPanel {
+
+        // bg color of this panel
+        private Color bgColor = VitcoSettings.ANIMATION_BG_COLOR;
+        // the current preview plane
+        private int previewPlane = 0;
+
+        // initialize
+        public void init() {
+            // register bg color change
+            preferences.addPrefChangeListener("engine_view_bg_color", new PrefChangeListener() {
+                @Override
+                public void onPrefChange(Object newValue) {
+                    bgColor = (Color)newValue;
+                    forceRepaint();
+                }
+            });
+            // register preview plane change
+            preferences.addPrefChangeListener("engine_view_voxel_preview_plane", new PrefChangeListener() {
+                @Override
+                public void onPrefChange(Object newValue) {
+                    previewPlane = (Integer)newValue;
+                }
+            });
+        }
 
         // this draws opengl content if enabled
         private boolean drawWorld = true;
@@ -204,12 +216,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     }
 
                     // draw the highlighted side
-                    int side = data.getPreviewPlane();
-                    if (side != -1) {
+                    if (previewPlane != -1) {
                         // calculate center and some variables
                         int RANGE = 4;
-                        float shift = (side%2 == 0 ? 0.5f : -0.5f);
-                        int plane = side / 2;
+                        float shift = (previewPlane%2 == 0 ? 0.5f : -0.5f);
+                        int plane = previewPlane / 2;
                         SimpleVector center = new SimpleVector(
                                 voxel[0] + (plane == 2 ? shift : 0),
                                 voxel[1] + (plane == 1 ? shift : 0),
@@ -445,7 +456,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     doNotSkipNextWorldRender = false;
                     skipNextWorldRender = false;
                 }
-                buffer.clear(data.getViewBgColor());
+                buffer.clear(bgColor);
                 if (drawWorld) {
                     if (!worldVoxelCurrent) {
                         updateWorldWithVoxels();
@@ -491,6 +502,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 }
             }
         });
+        // initialize the conainer
+        container.init();
     }
 
     @PreDestroy
@@ -506,13 +519,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // only perform these actions once (even if the class is instantiated several times)
         if (!initialized) {
-            Config.maxPolysVisible = 10000;
+            Config.maxPolysVisible = 100000;
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }
-
-        // register this instance
-        derived.add(this);
 
         container.addMouseListener(new MouseAdapter() {
             @Override

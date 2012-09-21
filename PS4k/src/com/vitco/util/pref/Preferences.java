@@ -4,6 +4,7 @@ import com.vitco.util.FileTools;
 import com.vitco.util.error.ErrorHandlerInterface;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,7 +13,33 @@ import java.util.HashMap;
  */
 public class Preferences implements PreferencesInterface {
 
+    // preferences
     private HashMap<String, Object> map = new HashMap<String, Object>();
+
+    // listeners
+    private final HashMap<String, ArrayList<PrefChangeListener>> listeners = new HashMap<String, ArrayList<PrefChangeListener>>();
+
+    @Override
+    public void notifyListeners(String key, Object value) {
+        if (listeners.containsKey(key)) {
+            for (PrefChangeListener pcl : listeners.get(key)) {
+                pcl.onPrefChange(value);
+            }
+        }
+    }
+
+    @Override
+    public void addPrefChangeListener(String key, PrefChangeListener pcl) {
+        if (!listeners.containsKey(key)) { // make sure this is init
+            listeners.put(key, new ArrayList<PrefChangeListener>());
+        }
+        // add the listener
+        listeners.get(key).add(pcl);
+        // call it if value is known
+        if (map.containsKey(key)) {
+            pcl.onPrefChange(map.get(key));
+        }
+    }
 
     @Override
     public boolean contains(String key) {
@@ -28,7 +55,10 @@ public class Preferences implements PreferencesInterface {
 
     @Override
     public void storeObject(String key, Object value) {
-        map.put(key, value);
+        if (!map.containsKey(key) || !map.get(key).equals(value)) {
+            map.put(key, value);
+            notifyListeners(key, value);
+        }
     }
 
     @Override
@@ -38,17 +68,17 @@ public class Preferences implements PreferencesInterface {
 
     @Override
     public void storeBoolean(String key, boolean value) {
-        map.put(key, value);
+        storeObject(key, value);
     }
 
     @Override
     public void storeInteger(String key, int value) {
-        map.put(key, value);
+        storeObject(key, value);
     }
 
     @Override
     public void storeString(String key, String value) {
-        map.put(key, value);
+        storeObject(key, value);
     }
 
     @Override

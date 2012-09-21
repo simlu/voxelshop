@@ -1,6 +1,7 @@
 package com.vitco.res;
 
 import com.threed.jpct.SimpleVector;
+import com.vitco.engine.data.container.VOXELMODE;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -10,8 +11,13 @@ import java.awt.*;
  * Hold all used colors. Aids in keeping a consistent color schema.
  */
 public final class VitcoSettings {
-    // color picker slider
+    // color picker
     public static final Color COLOR_PICKER_SLIDER_KNOB_COLOR = new Color(110, 143, 163);
+
+    // initial settings
+    public static final Color INITIAL_CURRENT_COLOR = new Color(255, 105, 40);
+    public static final VOXELMODE INITIAL_VOXEL_MODE = VOXELMODE.DRAW;
+    public static final boolean INITIAL_MODE_IS_ANIMATION = false;
 
     // e.g. for shortcut manager
     public static final Color EDIT_BG_COLOR = new Color(250, 250, 250); // new Color(187, 209, 255);

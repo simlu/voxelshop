@@ -1,8 +1,8 @@
 package com.vitco.logic.colorpicker;
 
 import com.vitco.engine.data.Data;
-import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.pref.PreferencesInterface;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
@@ -53,6 +53,9 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // the current position of the selected color
     private Point crossPosition = new Point(0,0);
 
+    // currently selected color
+    private Color currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
+
     // manages a complete repaint of the image buffer (several iterations)
     // and then stops itself (can also be stopped from outside)
     private final class PaintThread extends LifeTimeThread {
@@ -93,20 +96,20 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // panel makes sure everything is up-to-date and repaints (image + cross position)
     private final MPanel panel = new MPanel();
     private final class MPanel extends JPanel {
-        private Color colorRef = null;
 
+        // to check if the currentColor has changed
+        private Color prevCurrentColor = null;
         @Override
         protected final void paintComponent(Graphics g1) {
-            Color color = data.getCurrentColor();
-            if (color != colorRef) {
-                float[] val = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+            if (currentColor != prevCurrentColor) {
+                float[] val = Color.RGBtoHSB(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), null);
                 crossPosition = new Point(
                         Math.round(val[0]*panel.getWidth()),
                         Math.round((1-val[1])*panel.getHeight())
                 );
                 brightness = val[2];
                 slider.setValue(Math.round(brightness*255));
-                colorRef = color;
+                prevCurrentColor = currentColor;
             }
 
             Graphics2D ig = (Graphics2D) g1;
@@ -147,9 +150,8 @@ public class ColorPickerView implements ColorPickerViewInterface {
             JSlider source = (JSlider) e.getSource();
             if (!source.getValueIsAdjusting()) {
                 brightness = source.getValue()/(float)255;
-                Color color = data.getCurrentColor();
-                float[] val = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-                data.setCurrentColor(Color.getHSBColor(val[0],val[1],brightness));
+                float[] val = Color.RGBtoHSB(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), null);
+                preferences.storeObject("previous_current_color", Color.getHSBColor(val[0],val[1],brightness));
                 computeColorPicker();
                 panel.repaint();
             }
@@ -165,7 +167,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
                     Math.max(0, Math.min(1, 1-(float)((pos.getY() / (double) panel.getHeight())))),
                     Math.max(0, Math.min(1, brightness))
             };
-            data.setCurrentColor(Color.getHSBColor(val[0], val[1], val[2]));
+            preferences.storeObject("previous_current_color", Color.getHSBColor(val[0], val[1], val[2]));
         }
 
         private void setColor(MouseEvent e) {
@@ -193,10 +195,11 @@ public class ColorPickerView implements ColorPickerViewInterface {
         panel.addMouseListener(mouseAdapter);
         panel.addMouseMotionListener(mouseAdapter);
 
-        // reset (redraw) when color data has changed
-        data.addDataChangeListener(new DataChangeAdapter() {
+        // register change of current color
+        preferences.addPrefChangeListener("previous_current_color", new PrefChangeListener() {
             @Override
-            public void onColorDataChanged() {
+            public void onPrefChange(Object newValue) {
+                currentColor = (Color)newValue;
                 panel.repaint();
             }
         });

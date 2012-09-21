@@ -5,7 +5,6 @@ import com.vitco.util.FileTools;
 import com.vitco.util.error.ErrorHandlerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.awt.*;
 import java.io.File;
 
 /**
@@ -37,10 +36,8 @@ public final class Data extends VoxelHighlight implements DataInterface {
 
     @Override
     public final void freshStart() {
-        // reset, but save current color
-        Color currentColor = CURRENT_COLOR;
+        // reset
         dataContainer = new DataContainer();
-        CURRENT_COLOR = currentColor;
         // create initial layer and select it
         selectLayerSoft(createLayer("Layer"));
         // remove history

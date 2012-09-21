@@ -178,11 +178,11 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             // =======================
             @Override
             public void mouseEntered(MouseEvent e) {
-                data.setPreviewPlane(side*2);
+                preferences.storeObject("engine_view_voxel_preview_plane", side*2);
             }
             @Override
             public void mouseExited(MouseEvent e) {
-                data.setPreviewPlane(-1);
+                preferences.storeObject("engine_view_voxel_preview_plane", -1);
             }
 
             // shifting

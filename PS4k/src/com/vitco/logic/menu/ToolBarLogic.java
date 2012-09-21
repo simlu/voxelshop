@@ -2,10 +2,15 @@ package com.vitco.logic.menu;
 
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.notification.DataChangeAdapter;
+import com.vitco.res.VitcoSettings;
+import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.util.colors.ColorChangeListener;
+import com.vitco.util.colors.SimpleColorChooser;
+import com.vitco.util.pref.PrefChangeListener;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -13,6 +18,19 @@ import java.awt.event.ActionEvent;
  * Handles the toolbar logic.
  */
 public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterface {
+
+    // var & setter
+    private ComplexActionManager complexActionManager;
+    @Autowired
+    public void setComplexActionManager(ComplexActionManager complexActionManager) {
+        this.complexActionManager = complexActionManager;
+    }
+
+    private boolean isAnimate = VitcoSettings.INITIAL_MODE_IS_ANIMATION;
+    private VOXELMODE voxelmode = VitcoSettings.INITIAL_VOXEL_MODE;
+
+    // status of voxel snap
+    private boolean voxelSnap = true;
 
     // basic tool action to be reused
     private class ToolAction extends StateActionPrototype {
@@ -25,18 +43,18 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         @Override
         public void action(ActionEvent actionEvent) {
             if (isVisible()) { // only if visible
-                data.setVoxelMode(tool);
+                preferences.storeObject("active_voxel_submode", tool);
             }
         }
 
         @Override
         public boolean getStatus() {
-            return data.getVoxelMode() == tool;
+            return voxelmode == tool;
         }
 
         @Override
         public boolean isVisible() {
-            return !data.isAnimate();
+            return !isAnimate;
         }
     }
 
@@ -57,7 +75,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    if (data.isAnimate()) {
+                    if (isAnimate) {
                         data.removeAnimationHighlights();
                         data.undoA();
                     } else {
@@ -69,7 +87,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
 
             @Override
             public boolean getStatus() {
-                if (data.isAnimate()) {
+                if (isAnimate) {
                     return data.canUndoA();
                 } else {
                     return data.canUndoV();
@@ -80,7 +98,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    if (data.isAnimate()) {
+                    if (isAnimate) {
                         data.removeAnimationHighlights();
                         data.redoA();
                     } else {
@@ -92,7 +110,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
 
             @Override
             public boolean getStatus() {
-                if (data.isAnimate()) {
+                if (isAnimate) {
                     return data.canRedoA();
                 } else {
                     return data.canRedoV();
@@ -102,7 +120,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         actionGroupManager.addAction("history_actions", "clear_history_action", new StateActionPrototype() {
             @Override
             public void action(ActionEvent e) {
-                if (data.isAnimate()) {
+                if (isAnimate) {
                     data.clearHistoryA();
                 } else {
                     data.clearHistoryV();
@@ -111,7 +129,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
 
             @Override
             public boolean getStatus() {
-                if (data.isAnimate()) {
+                if (isAnimate) {
                     return data.canUndoA() || data.canRedoA();
                 } else {
                     return data.canUndoV() || data.canRedoV();
@@ -121,25 +139,12 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         actionGroupManager.registerGroup("history_actions");
         // =====================================
 
-        // register the toggle animate mode action (always possible)
-        actionManager.registerAction("toggle_animation_mode", new StateActionPrototype() {
-            @Override
-            public void action(ActionEvent actionEvent) {
-                data.setAnimate(!data.isAnimate());
-            }
-
-            @Override
-            public boolean getStatus() {
-                return data.isAnimate();
-            }
-        });
-
         // register voxel snap toggle action
-        final StateActionPrototype toggleVoxelSnapAction = new StateActionPrototype() {
+        actionGroupManager.addAction("animation_paint_modes", "toggle_voxel_snap", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 if (isVisible()) { // only if visible
-                    voxelSnap = !voxelSnap;
+                    preferences.storeObject("voxel_snap_enabled", !voxelSnap);
                 }
             }
 
@@ -150,14 +155,27 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
 
             @Override
             public boolean isVisible() {
-                return data.isAnimate();
+                return isAnimate;
             }
-        };
-        actionManager.registerAction("toggle_voxel_snap", toggleVoxelSnapAction);
+        });
+        actionGroupManager.registerGroup("animation_paint_modes");
+        // =====================================
+
+        // register the toggle animate mode action (always possible)
+        actionManager.registerAction("toggle_animation_mode", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                preferences.storeObject("is_animation_mode_active", !isAnimate);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return isAnimate;
+            }
+        });
 
         // make sure the buttons are correctly enabled when modes change
         data.addDataChangeListener(new DataChangeAdapter() {
-
             @Override
             public void onAnimationDataChanged() {
                 actionGroupManager.refreshGroup("history_actions");
@@ -167,35 +185,60 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
             public void onVoxelDataChanged() {
                 actionGroupManager.refreshGroup("history_actions");
             }
-
-            @Override
-            public void onAnimateChanged() {
-                actionGroupManager.refreshGroup("history_actions");
-                actionGroupManager.refreshGroup("voxel_paint_modes");
-                toggleVoxelSnapAction.refresh();
-            }
-
-            @Override
-            public void onVoxelModeChanged() {
-                actionGroupManager.refreshGroup("voxel_paint_modes");
-            }
         });
-    }
-
-    // status of voxel snap
-    private boolean voxelSnap = true;
-
-    @PreDestroy
-    public final void savePref() {
-        // store "point snap on voxels" setting
-        preferences.storeBoolean("voxel_snap_enabled", voxelSnap);
     }
 
     @PostConstruct
     public final void init() {
-        if (preferences.contains("voxel_snap_enabled")) { // load previous settings
-            voxelSnap = preferences.loadBoolean("voxel_snap_enabled");
-        }
+        // register change of animation mode
+        preferences.addPrefChangeListener("voxel_snap_enabled", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object newValue) {
+                voxelSnap = (Boolean) newValue;
+            }
+        });
+
+        // register change of animation mode
+        preferences.addPrefChangeListener("is_animation_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object newValue) {
+                isAnimate = (Boolean) newValue;
+                actionGroupManager.refreshGroup("history_actions");
+                actionGroupManager.refreshGroup("voxel_paint_modes");
+                actionGroupManager.refreshGroup("animation_paint_modes");
+            }
+        });
+
+        // register change of voxel mode
+        preferences.addPrefChangeListener("active_voxel_submode", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object newValue) {
+                voxelmode = (VOXELMODE) newValue;
+                actionGroupManager.refreshGroup("voxel_paint_modes");
+            }
+        });
+
+        // create the complex action to select the color of the background plane
+        SimpleColorChooser bgPlaneColorChooser = new SimpleColorChooser();
+        bgPlaneColorChooser.addColorChangeListener(new ColorChangeListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                preferences.storeObject("main_view_ground_plane_color", newColor);
+
+            }
+        });
+        complexActionManager.registerAction("pick_color_voxel_ground_plane", bgPlaneColorChooser);
+
+        // create the complex action to select the color of the background
+        SimpleColorChooser bgColorChooser = new SimpleColorChooser();
+        bgColorChooser.addColorChangeListener(new ColorChangeListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                preferences.storeObject("engine_view_bg_color", newColor);
+            }
+        });
+        complexActionManager.registerAction("pick_color_voxel_bg", bgColorChooser);
+
     }
 
 }
