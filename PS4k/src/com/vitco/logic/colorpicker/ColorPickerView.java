@@ -2,6 +2,7 @@ package com.vitco.logic.colorpicker;
 
 import com.vitco.engine.data.Data;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.ColorTools;
 import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.pref.PreferencesInterface;
 import com.vitco.util.thread.LifeTimeThread;
@@ -49,20 +50,20 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // image that serves as a buffer for the color picker panel background
     private BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
     // the current brightness
-    private float brightness = 1;
-    // the current position of the selected color
-    private Point crossPosition = new Point(0,0);
+    private float hue = 1;
+
+    private static final int HUE_STEPSIZE = 1000;
 
     // currently selected color
-    private Color currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
+    private float[] currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
 
     // manages a complete repaint of the image buffer (several iterations)
     // and then stops itself (can also be stopped from outside)
     private final class PaintThread extends LifeTimeThread {
         // get some needed components/settings
         private static final int SUBFRAMES = 30;
-        final int width = image.getWidth();
-        final int height = image.getHeight();
+        final int width = image.getWidth() - 1;
+        final int height = image.getHeight() - 1;
         int curPos = 0;
         final Graphics2D ig = (Graphics2D)image.getGraphics();
         final int count = width/SUBFRAMES + 1;
@@ -74,9 +75,9 @@ public class ColorPickerView implements ColorPickerViewInterface {
                 int pos = (curPos + count*i);
                 ig.setPaint(new GradientPaint(
                         pos, 0,
-                        Color.getHSBColor((pos/(float)width), 1, brightness),
+                        Color.getHSBColor(hue, (pos/(float)width), 1),
                         pos, height,
-                        Color.getHSBColor((pos/(float)width), 0, brightness),
+                        Color.getHSBColor(hue, (pos/(float)width), 0),
                         false));
                 ig.fillRect(pos, 0, count - curPos, height);
             }
@@ -96,29 +97,32 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // panel makes sure everything is up-to-date and repaints (image + cross position)
     private final MPanel panel = new MPanel();
     private final class MPanel extends JPanel {
-
+        // the current position of the selected color
+        private Point crossPosition = new Point(0,0);
         // to check if the currentColor has changed
-        private Color prevCurrentColor = null;
+        private float[] prevCurrentColor = new float[] {-1, -1, -1};
         @Override
         protected final void paintComponent(Graphics g1) {
-            if (currentColor != prevCurrentColor) {
-                float[] val = Color.RGBtoHSB(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), null);
+            if (currentColor[0] != prevCurrentColor[0] || currentColor[1] != prevCurrentColor[1] || currentColor[2] != prevCurrentColor[2]) {
                 crossPosition = new Point(
-                        Math.round(val[0]*panel.getWidth()),
-                        Math.round((1-val[1])*panel.getHeight())
+                        Math.round(currentColor[1]*panel.getWidth()),
+                        Math.round((1-currentColor[2])*panel.getHeight())
                 );
-                brightness = val[2];
-                slider.setValue(Math.round(brightness*255));
-                prevCurrentColor = currentColor;
+                hue = currentColor[0];
+                slider.setValue(Math.round(hue * HUE_STEPSIZE));
+                prevCurrentColor = currentColor.clone();
             }
 
             Graphics2D ig = (Graphics2D) g1;
-            ig.drawImage(image, 0, 0, null); // draw colors
-
-            // draw cross
-            ig.setColor(brightness > 0.7 ? Color.BLACK : Color.WHITE);
-            ig.drawLine(crossPosition.x - 4, crossPosition.y, crossPosition.x + 4, crossPosition.y);
-            ig.drawLine(crossPosition.x, crossPosition.y - 4, crossPosition.x, crossPosition.y + 4);
+            // draw colors
+            ig.drawImage(image, 0, 0, null);
+            // Anti-alias
+            ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            // draw cirlce (selected color)
+            ig.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+            ig.setColor(ColorTools.perceivedBrightness(currentColor) > 127 ? Color.BLACK : Color.WHITE);
+            ig.drawOval(crossPosition.x - 5, crossPosition.y - 5, 10, 10);
 
         }
     }
@@ -149,9 +153,8 @@ public class ColorPickerView implements ColorPickerViewInterface {
         public void stateChanged(ChangeEvent e) {
             JSlider source = (JSlider) e.getSource();
             if (!source.getValueIsAdjusting()) {
-                brightness = source.getValue()/(float)255;
-                float[] val = Color.RGBtoHSB(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), null);
-                preferences.storeObject("previous_current_color", Color.getHSBColor(val[0],val[1],brightness));
+                hue = source.getValue()/(float)HUE_STEPSIZE;
+                preferences.storeObject("previous_current_color", new float[] {hue, currentColor[1], currentColor[2]});
                 computeColorPicker();
                 panel.repaint();
             }
@@ -163,26 +166,34 @@ public class ColorPickerView implements ColorPickerViewInterface {
     private final class MAdapter extends MouseAdapter {
         private void updateCurrentColor(Point pos) {
             float[] val = new float[] {
+                    Math.max(0, Math.min(1, hue)),
                     Math.max(0, Math.min(1, (float)((pos.getX() / (double) panel.getWidth())))),
-                    Math.max(0, Math.min(1, 1-(float)((pos.getY() / (double) panel.getHeight())))),
-                    Math.max(0, Math.min(1, brightness))
+                    Math.max(0, Math.min(1, 1-(float)((pos.getY() / (double) panel.getHeight()))))
             };
-            preferences.storeObject("previous_current_color", Color.getHSBColor(val[0], val[1], val[2]));
+            preferences.storeObject("previous_current_color", val);
         }
 
-        private void setColor(MouseEvent e) {
-            updateCurrentColor(e.getPoint());
-            crossPosition = e.getPoint();
+        private void setColor(Point point) {
+            updateCurrentColor(point);
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            setColor(e);
+            setColor(e.getPoint());
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Point point = new Point(
+                    Math.max(0, Math.min(panel.getWidth()-1, e.getX())),
+                    Math.max(0, Math.min(panel.getHeight()-1, e.getY()))
+            );
+            setColor(point);
         }
     }
 
     // Create the slider
-    final JSlider slider = new JSlider(JSlider.VERTICAL, 0, 255, Math.round(brightness*255));
+    final JSlider slider = new JSlider(JSlider.VERTICAL, 0, HUE_STEPSIZE, Math.round(hue * HUE_STEPSIZE));
 
     @Override
     public final JPanel build() {
@@ -199,7 +210,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
         preferences.addPrefChangeListener("previous_current_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object newValue) {
-                currentColor = (Color)newValue;
+                currentColor = (float[])newValue;
                 panel.repaint();
             }
         });
@@ -207,29 +218,74 @@ public class ColorPickerView implements ColorPickerViewInterface {
         wrapper.add(panel, BorderLayout.CENTER);
 
         // slider settings
-        slider.setPreferredSize(new Dimension(20, slider.getPreferredSize().height));
+        slider.setPreferredSize(new Dimension(30, slider.getPreferredSize().height));
         slider.setBackground(VitcoSettings.COLOR_PICKER_SLIDER_KNOB_COLOR);
-        slider.setUI(new BasicSliderUI(slider) {
+        final BasicSliderUI sliderUI = new BasicSliderUI(slider) {
+
+            BufferedImage bgBuffer = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+
+            BufferedImage thumbBuffer = null;
+
             @Override
             public void paint(Graphics g, JComponent c) {
                 super.paint(g, c);
 
-                Graphics2D ig = (Graphics2D)g;
-                ig.setPaint(new GradientPaint(
-                        1, 1,
-                        Color.WHITE,
-                        1, slider.getHeight()-2,
-                        Color.BLACK,
-                        false));
-                ig.fillRect(1, 0, slider.getWidth(), slider.getHeight());
-                ig.setColor(VitcoSettings.DEFAULT_BORDER_COLOR);
-                ig.drawLine(0, 0, 0, slider.getHeight());
+                // only generate background on resize
+                if (slider.getWidth() != bgBuffer.getWidth() || slider.getHeight() != bgBuffer.getHeight()) {
+                    bgBuffer = new BufferedImage(slider.getWidth(), slider.getHeight(), BufferedImage.TYPE_INT_RGB);
+                    Graphics2D ig = (Graphics2D)bgBuffer.getGraphics();
+                    ig.setColor(Color.GRAY);
+                    ig.fillRect(0, 0, bgBuffer.getWidth(), bgBuffer.getHeight());
+
+                    for (int i = 0, height = bgBuffer.getHeight(); i < height; i++) {
+                        ig.setColor(ColorTools.hsbToColor(new float[] {(float)valueForYPosition(i) / HUE_STEPSIZE, 1, 1}));
+                        ig.drawLine(1, i, slider.getWidth(), i);
+                    }
+
+                    ig.setColor(VitcoSettings.DEFAULT_BORDER_COLOR);
+                    ig.drawLine(0, 0, 0, slider.getHeight());
+                }
+
+                // draw the background
+                g.drawImage(bgBuffer, 0, 0, null);
 
                 if (g.getClipBounds().intersects(thumbRect)) {
-                    paintThumb(g);
+                    // make sure the thumbRect covers the whole width
+                    thumbRect.x = 0;
+                    thumbRect.width = slider.getWidth();
+                    // only create the thumb once
+                    if (thumbBuffer == null) {
+                        thumbBuffer = new BufferedImage(slider.getWidth(), 11, BufferedImage.TYPE_INT_ARGB);
+                        Graphics2D ig = (Graphics2D)thumbBuffer.getGraphics();
+                        // Anti-alias
+                        ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+
+                        int[] yPos = new int[] {0, 5, 10};
+
+                        ig.setColor(Color.GRAY);
+                        ig.fillPolygon( new int[] {1, 11, 1}, yPos, 3);
+                        ig.setColor(Color.WHITE);
+                        ig.drawPolygon( new int[] {1, 11, 1}, yPos, 3);
+
+                        ig.setColor(Color.GRAY);
+                        ig.fillPolygon( new int[] {slider.getWidth() - 1, slider.getWidth() - 11, slider.getWidth() - 1}, yPos, 3);
+                        ig.setColor(Color.WHITE);
+                        ig.drawPolygon( new int[] {slider.getWidth() - 1, slider.getWidth() - 11, slider.getWidth() - 1}, yPos, 3);
+                    }
+                    // draw the thumb
+                    g.drawImage(thumbBuffer, 0, yPositionForValue(slider.getValue()) - 5, null);
                 }
             }
+        };
+        // move the thumb to the position we pressed instantly
+        slider.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                slider.setValue(sliderUI.valueForYPosition(e.getY()));
+            }
         });
+        slider.setUI(sliderUI);
         slider.addChangeListener(adapter);
 
         wrapper.add(slider, BorderLayout.EAST);

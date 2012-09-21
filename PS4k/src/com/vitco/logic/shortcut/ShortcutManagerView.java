@@ -82,7 +82,9 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
 
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+                    KeyStroke keyStroke = e.getKeyCode() == 27
+                            ? null // escape
+                            : KeyStroke.getKeyStrokeForEvent(e); // else
                     if (shortcutManager.isValidShortcut(keyStroke)) {
                         if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
                             // update the shortcut

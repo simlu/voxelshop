@@ -190,7 +190,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
 
     @PostConstruct
     public final void init() {
-        // register change of animation mode
+        // register change of voxel snap
         preferences.addPrefChangeListener("voxel_snap_enabled", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object newValue) {

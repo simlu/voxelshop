@@ -10,6 +10,7 @@ import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.BiMap;
+import com.vitco.util.ColorTools;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
@@ -325,7 +326,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private boolean massVoxel = false;
 
         // the current color (to draw)
-        private Color currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
+        private float[] currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
 
         // initialize
         public void init() {
@@ -333,7 +334,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             preferences.addPrefChangeListener("previous_current_color", new PrefChangeListener() {
                 @Override
                 public void onPrefChange(Object newValue) {
-                    currentColor = (Color)newValue;
+                    currentColor = (float[])newValue;
                 }
             });
         }
@@ -356,7 +357,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
                             switch (e.getModifiersEx()) {
                                 case InputEvent.BUTTON1_DOWN_MASK: // left click
-                                    data.addVoxel(currentColor, data.getHighlightedVoxel());
+                                    data.addVoxel(ColorTools.hsbToColor(currentColor), data.getHighlightedVoxel());
                                     break;
                                 case InputEvent.BUTTON3_DOWN_MASK: // right click
                                     Voxel voxel = data.searchVoxel(data.getHighlightedVoxel(), true);
@@ -374,12 +375,21 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else if (voxelMode == VOXELMODE.PICKER) {
                         Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), false);
                         if (highlightedVoxel != null) {
-                            preferences.storeObject("previous_current_color", highlightedVoxel.getColor());
+                            preferences.storeObject("previous_current_color",
+                                    ColorTools.colorToHSB(highlightedVoxel.getColor()));
                         }
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {
                         Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
                         if (highlightedVoxel != null) {
-                            data.setColor(highlightedVoxel.id, currentColor);
+                            data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
+                        }
+                    } else if (VOXELMODE.VIEW == voxelMode) {
+                        // quick select for side view "current" planes
+                        int[] voxel = data.getHighlightedVoxel();
+                        if (voxel != null) {
+                            preferences.storeObject("currentplane_sideview1", voxel[2]);
+                            preferences.storeObject("currentplane_sideview2", voxel[1]);
+                            preferences.storeObject("currentplane_sideview3", voxel[0]);
                         }
                     }
                     massVoxel = true;
@@ -392,7 +402,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             // check if we hit something
             SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
             Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
-            if (res[1] != null && voxelMode != VOXELMODE.VIEW) { // something hit
+            if (res[1] != null) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
                 Voxel hitVoxel = data.getVoxel(voxelToObject.getKey(obj3D.getID()));
                 if (hitVoxel != null) {
@@ -464,6 +474,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     console.addLine(langSelector.getString("no_layer_warning"));
                 }
             }
+            // execute action
             execute(e);
         }
 

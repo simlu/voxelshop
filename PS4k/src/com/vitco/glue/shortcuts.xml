@@ -20,7 +20,7 @@
         <shortcut ctrl="no" alt="no" shift="no" key="F3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F5" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="T" action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
+        <shortcut action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
     </global>
 
     <frame name="mainView">

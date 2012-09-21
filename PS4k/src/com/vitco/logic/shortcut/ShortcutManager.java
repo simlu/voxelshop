@@ -2,7 +2,6 @@ package com.vitco.logic.shortcut;
 
 import com.vitco.util.FileTools;
 import com.vitco.util.action.ActionManager;
-import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
@@ -210,20 +209,25 @@ public class ShortcutManager implements ShortcutManagerInterface {
             if (map.containsKey(frame)) {
                 if (map.get(frame).size() > id) {
                     final ShortcutObject shortcutObject = map.get(frame).get(id);
-                    shortcutObject.linkedFrame.unregisterKeyboardAction(shortcutObject.keyStroke); // un-register old
+                    if (shortcutObject.keyStroke != null) {
+                        shortcutObject.linkedFrame.unregisterKeyboardAction(shortcutObject.keyStroke); // un-register old
+                    }
                     shortcutObject.keyStroke = keyStroke;
-                    final String actionName = shortcutObject.actionName;
-                    // lazy shortcut registration (the action might not be ready!)
-                    actionManager.performWhenActionIsReady(actionName, new Runnable() {
-                        @Override
-                        public void run() {
-                            shortcutObject.linkedFrame.registerKeyboardAction(
-                                    actionManager.getAction(actionName),
-                                    shortcutObject.keyStroke,
-                                    JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
-                            );
-                        }
-                    });
+                    if (shortcutObject.keyStroke != null) {
+                        // remember *this* action name
+                        final String actionName = shortcutObject.actionName;
+                        // lazy shortcut registration (the action might not be ready!)
+                        actionManager.performWhenActionIsReady(actionName, new Runnable() {
+                            @Override
+                            public void run() {
+                                shortcutObject.linkedFrame.registerKeyboardAction(
+                                        actionManager.getAction(actionName),
+                                        shortcutObject.keyStroke,
+                                        JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+                                );
+                            }
+                        });
+                    }
                     result = true;
                 }
             } else {
@@ -244,7 +248,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // convert KeyStroke to string representation
     @Override
     public String asString(KeyStroke keyStroke) {
-        return keyStroke.toString()
+        return keyStroke == null ? "-" : keyStroke.toString()
                 .replaceFirst("^pressed ", "") // remove if at very beginning (e.g. for f-keys)
                 .replace("pressed", "+")
                 .toUpperCase();
@@ -253,44 +257,48 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // check if this shortcut is not already used
     // if frame == null this will treat it as a global shortcut
     // otherwise as a shortcut for the frame
+    // null is always a valid keyStroke
     @Override
     public boolean isFreeShortcut(String frame, KeyStroke keyStroke) {
         boolean result = true;
-        if (frame != null) { // check for this frame
-            // check that this shortcut is not already set for an action in this frame
-            if (map.containsKey(frame)) {
-                for (ShortcutObject shortcutObject : map.get(frame)) {
-                    if (shortcutObject.keyStroke.equals(keyStroke)) {
-                        result = false;
+        if (keyStroke != null) { // null is valid
+            if (frame != null) { // check for this frame
+                // check that this shortcut is not already set for an action in this frame
+                if (map.containsKey(frame)) {
+                    for (ShortcutObject shortcutObject : map.get(frame)) {
+                        if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                            result = false;
+                        }
+                    }
+                } else {
+                    System.err.println("Error: Can not find frame \"" + frame + "\".");
+                }
+            } else { // check for all frames
+                // check that this shortcut is not already set in any frame
+                for (String key : map.keySet()) {
+                    for (ShortcutObject shortcutObject : map.get(key)) {
+                        if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                            result = false;
+                        }
                     }
                 }
-            } else {
-                System.err.println("Error: Can not find frame \"" + frame + "\".");
             }
-        } else { // check for all frames
-            // check that this shortcut is not already set in any frame
-            for (String key : map.keySet()) {
-                for (ShortcutObject shortcutObject : map.get(key)) {
-                    if (shortcutObject.keyStroke.equals(keyStroke)) {
-                        result = false;
-                    }
+            // check for global shortcuts
+            for (ShortcutObject shortcutObject : global) {
+                if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                    result = false;
                 }
-            }
-        }
-        // check for global shortcuts
-        for (ShortcutObject shortcutObject : global) {
-            if (shortcutObject.keyStroke.equals(keyStroke)) {
-                result = false;
             }
         }
         return result;
     }
 
     // check if this is a KeyStroke that has a valid format
+    // null is a valid shortcut
     @Override
     public boolean isValidShortcut(KeyStroke keyStroke) {
         // check that this is a format that is allowed as shortcut
-        return ((keyStroke.getModifiers() == (InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK)) ||
+        return keyStroke == null || ((keyStroke.getModifiers() == (InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK)) ||
                 (keyStroke.getModifiers() == (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK)) ||
                 (keyStroke.getModifiers() == (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK)) ||
                 (keyStroke.getModifiers() == ((InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK) | (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK))) ||
@@ -465,17 +473,20 @@ public class ShortcutManager implements ShortcutManagerInterface {
         shortcutObject.actionName = e.getAttribute("action");
         shortcutObject.caption = e.getAttribute("caption");
         // build the keystroke
-        int controller = 0;
-        if (e.getAttribute("ctrl").equals("yes")) {
-            controller = controller | InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK;
+        KeyStroke keyStroke = null;
+        if (e.hasAttribute("key")) {
+            int controller = 0;
+            if (e.getAttribute("ctrl").equals("yes")) {
+                controller = controller | InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK;
+            }
+            if (e.getAttribute("alt").equals("yes")) {
+                controller = controller | InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK;
+            }
+            if (e.getAttribute("shift").equals("yes")) {
+                controller = controller | InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK;
+            }
+            keyStroke = KeyStroke.getKeyStroke(strToKeyCode(e.getAttribute("key")), controller);
         }
-        if (e.getAttribute("alt").equals("yes")) {
-            controller = controller | InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK;
-        }
-        if (e.getAttribute("shift").equals("yes")) {
-            controller = controller | InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK;
-        }
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(strToKeyCode(e.getAttribute("key")), controller);
         shortcutObject.keyStroke = keyStroke;
         // check if this keystroke is valid
         if (!isValidShortcut(keyStroke)) {
@@ -569,23 +580,21 @@ public class ShortcutManager implements ShortcutManagerInterface {
             for (final ShortcutObject entry : shortcutObjectArray) {
                 // to perform validity check we need to register this name
                 actionManager.registerActionIsUsed(entry.actionName);
-                // lazy shortcut registration (the action might not be ready!)
-                actionManager.performWhenActionIsReady(entry.actionName, new Runnable() {
-                    @Override
-                    public void run() {
-                        frame.registerKeyboardAction(
-                                actionManager.getAction(entry.actionName),
-                                entry.keyStroke,
-                                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
-                        );
-                    }
-                });
+                if (entry.keyStroke != null) {
+                    // lazy shortcut registration (the action might not be ready!)
+                    actionManager.performWhenActionIsReady(entry.actionName, new Runnable() {
+                        @Override
+                        public void run() {
+                            frame.registerKeyboardAction(
+                                    actionManager.getAction(entry.actionName),
+                                    entry.keyStroke,
+                                    JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+                            );
+                        }
+                    });
+                }
                 // store reference to frame
                 entry.linkedFrame = frame;
-
-                // to unregister
-                // frame.unregisterKeyboardAction(keyStroke);
-
             }
         } else {
             System.err.println(

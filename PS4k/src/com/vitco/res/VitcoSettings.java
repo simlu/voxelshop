@@ -15,7 +15,7 @@ public final class VitcoSettings {
     public static final Color COLOR_PICKER_SLIDER_KNOB_COLOR = new Color(110, 143, 163);
 
     // initial settings
-    public static final Color INITIAL_CURRENT_COLOR = new Color(255, 105, 40);
+    public static final float[] INITIAL_CURRENT_COLOR = new float[] {0.5f, 0.5f, 0.5f};
     public static final VOXELMODE INITIAL_VOXEL_MODE = VOXELMODE.DRAW;
     public static final boolean INITIAL_MODE_IS_ANIMATION = false;
 

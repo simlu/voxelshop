@@ -7,6 +7,7 @@ import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.pref.PrefChangeListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,26 +85,24 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         // hover on mouse event
         @Override
         protected void hover(Point point) {
-            if (voxelMode != VOXELMODE.VIEW) {
-                // calculate position
-                SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
-                        new SimpleVector(
-                                side == 2 ? currentplane : 0,
-                                side == 1 ? currentplane : 0,
-                                side == 0 ? currentplane : 0
-                        )
-                );
-                int[] pos = new int[]{
-                        side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
-                        side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
-                        side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
-                };
-                Voxel voxel = data.searchVoxel(pos, true);
-                if (voxel != null || VOXELMODE.DRAW == voxelMode) {
-                    data.highlightVoxel(pos);
-                } else {
-                    data.highlightVoxel(null);
-                }
+            // calculate position
+            SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
+                    new SimpleVector(
+                            side == 2 ? currentplane : 0,
+                            side == 1 ? currentplane : 0,
+                            side == 0 ? currentplane : 0
+                    )
+            );
+            int[] pos = new int[]{
+                    side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
+                    side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
+                    side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
+            };
+            Voxel voxel = data.searchVoxel(pos, true);
+            if (voxel != null || VOXELMODE.DRAW == voxelMode) {
+                data.highlightVoxel(pos);
+            } else {
+                data.highlightVoxel(null);
             }
         }
     }
@@ -114,21 +113,29 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
 
+        // set initial current plane
+        preferences.storeObject("currentplane_sideview" + (side + 1), 0);
+        // register change of current plane of this sideview
+        preferences.addPrefChangeListener("currentplane_sideview" + (side + 1), new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                currentplane = (Integer)o;
+                invalidateVoxels();
+                forceRepaint();
+            }
+        });
+
         // register clip buttons
         actionManager.registerAction("sideview_move_plane_in" + (side + 1), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentplane--;
-                invalidateVoxels();
-                forceRepaint();
+                preferences.storeObject("currentplane_sideview" + (side + 1), currentplane-1);
             }
         });
         actionManager.registerAction("sideview_move_plane_out" + (side + 1), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentplane++;
-                invalidateVoxels();
-                forceRepaint();
+                preferences.storeObject("currentplane_sideview" + (side + 1), currentplane+1);
             }
         });
 
@@ -171,6 +178,9 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 forceRepaint();
             }
         });
+
+        // make sure there is no plane selected
+        preferences.storeObject("engine_view_voxel_preview_plane", -1);
 
         // register shifting and preview plane
         MouseAdapter shiftingMouseAdapter = new MouseAdapter() {
