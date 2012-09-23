@@ -519,7 +519,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // only perform these actions once (even if the class is instantiated several times)
         if (!initialized) {
-            Config.maxPolysVisible = 100000;
+            Config.fadeoutLight=false;
+            Config.maxPolysVisible = 30000;
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }
@@ -556,6 +557,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             public void componentResized(ComponentEvent e) {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
                     buffer.dispose();
+                    buffer = null; // so the gc can collect before creation if necessary
                     buffer = new FrameBuffer(container.getWidth(), container.getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
                     forceRepaint();
                 }

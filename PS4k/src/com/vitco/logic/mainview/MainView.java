@@ -45,10 +45,8 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION); // camera initial position
 
         world.setAmbientLight(0, 0, 0); // compensate a bit for the lights
-        WorldUtil.addLight(world, new SimpleVector(-200, -1300, -200), 3);
-        WorldUtil.addLight(world, new SimpleVector(200, 1300, 200), 3);
-        WorldUtil.addLight(world, new SimpleVector(1300, 200, 200), 1);
-        WorldUtil.addLight(world, new SimpleVector(-1300, -200, -200), 1);
+        WorldUtil.addLight(world, new SimpleVector(-1500, -2000, -1000), 3);
+        WorldUtil.addLight(world, new SimpleVector(1500, 2000, 1000), 3);
 
         // add ground plane
         final int worldPlane = WorldUtil.addPlane(

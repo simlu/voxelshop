@@ -223,7 +223,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             shortcutManager.registerGlobalShortcutActions();
 
             // load the global hotkeys
-            shortcutManager.activateGlobalShortcuts();
+            shortcutManager.registerShortcuts(thisFrame);
 
             // try to load the saved layout
             this.getLayoutPersistence().beginLoadLayoutData();

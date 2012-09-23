@@ -52,10 +52,10 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // the current brightness
     private float hue = 1;
 
-    private static final int HUE_STEPSIZE = 1000;
+    private static final int HUE_STEPS = 1000;
 
     // currently selected color
-    private float[] currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
+    private float[] currentColor = ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR);
 
     // manages a complete repaint of the image buffer (several iterations)
     // and then stops itself (can also be stopped from outside)
@@ -109,7 +109,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
                         Math.round((1-currentColor[2])*panel.getHeight())
                 );
                 hue = currentColor[0];
-                slider.setValue(Math.round(hue * HUE_STEPSIZE));
+                slider.setValue(Math.round(hue * HUE_STEPS));
                 prevCurrentColor = currentColor.clone();
             }
 
@@ -153,7 +153,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
         public void stateChanged(ChangeEvent e) {
             JSlider source = (JSlider) e.getSource();
             if (!source.getValueIsAdjusting()) {
-                hue = source.getValue()/(float)HUE_STEPSIZE;
+                hue = source.getValue()/(float) HUE_STEPS;
                 preferences.storeObject("previous_current_color", new float[] {hue, currentColor[1], currentColor[2]});
                 computeColorPicker();
                 panel.repaint();
@@ -193,7 +193,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
     }
 
     // Create the slider
-    final JSlider slider = new JSlider(JSlider.VERTICAL, 0, HUE_STEPSIZE, Math.round(hue * HUE_STEPSIZE));
+    final JSlider slider = new JSlider(JSlider.VERTICAL, 0, HUE_STEPS, Math.round(hue * HUE_STEPS));
 
     @Override
     public final JPanel build() {
@@ -218,32 +218,39 @@ public class ColorPickerView implements ColorPickerViewInterface {
         wrapper.add(panel, BorderLayout.CENTER);
 
         // slider settings
-        slider.setPreferredSize(new Dimension(30, slider.getPreferredSize().height));
+        slider.setPreferredSize(new Dimension(25, slider.getPreferredSize().height));
         slider.setBackground(VitcoSettings.COLOR_PICKER_SLIDER_KNOB_COLOR);
         final BasicSliderUI sliderUI = new BasicSliderUI(slider) {
 
             BufferedImage bgBuffer = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-
             BufferedImage thumbBuffer = null;
+            Point prevContentRect = new Point(0,0);
+
+            private final int SIZE = 5;
+            //private final int INNER_WIDTH = 9;
 
             @Override
             public void paint(Graphics g, JComponent c) {
                 super.paint(g, c);
 
                 // only generate background on resize
-                if (slider.getWidth() != bgBuffer.getWidth() || slider.getHeight() != bgBuffer.getHeight()) {
-                    bgBuffer = new BufferedImage(slider.getWidth(), slider.getHeight(), BufferedImage.TYPE_INT_RGB);
+                if (prevContentRect.x != contentRect.width || prevContentRect.y != contentRect.height) {
+                    prevContentRect = new Point(contentRect.width, contentRect.height);
+                    int w = slider.getWidth();
+                    int h = slider.getHeight();
+                    bgBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
                     Graphics2D ig = (Graphics2D)bgBuffer.getGraphics();
                     ig.setColor(Color.GRAY);
-                    ig.fillRect(0, 0, bgBuffer.getWidth(), bgBuffer.getHeight());
+                    ig.fillRect(0, 0, w, h);
 
-                    for (int i = 0, height = bgBuffer.getHeight(); i < height; i++) {
-                        ig.setColor(ColorTools.hsbToColor(new float[] {(float)valueForYPosition(i) / HUE_STEPSIZE, 1, 1}));
-                        ig.drawLine(1, i, slider.getWidth(), i);
+                    for (int i = 0; i < h; i++) {
+                        // 1 - (float)(i-7) / (height - 15)
+                        ig.setColor(ColorTools.hsbToColor(new float[] {(float)valueForYPosition(i)/ HUE_STEPS, 1, 1}));
+                        ig.drawLine(1, i, w, i);
                     }
 
                     ig.setColor(VitcoSettings.DEFAULT_BORDER_COLOR);
-                    ig.drawLine(0, 0, 0, slider.getHeight());
+                    ig.drawLine(0, 0, 0, h);
                 }
 
                 // draw the background
@@ -261,20 +268,28 @@ public class ColorPickerView implements ColorPickerViewInterface {
                         ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-                        int[] yPos = new int[] {0, 5, 10};
 
-                        ig.setColor(Color.GRAY);
-                        ig.fillPolygon( new int[] {1, 11, 1}, yPos, 3);
+                        ig.setColor(Color.BLACK);
+                        ig.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                        ig.drawRect(1, SIZE - 4, slider.getWidth() - 2, 8);
                         ig.setColor(Color.WHITE);
-                        ig.drawPolygon( new int[] {1, 11, 1}, yPos, 3);
+                        ig.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                        ig.drawRect(1, SIZE - 4, slider.getWidth() - 2, 8);
 
-                        ig.setColor(Color.GRAY);
-                        ig.fillPolygon( new int[] {slider.getWidth() - 1, slider.getWidth() - 11, slider.getWidth() - 1}, yPos, 3);
-                        ig.setColor(Color.WHITE);
-                        ig.drawPolygon( new int[] {slider.getWidth() - 1, slider.getWidth() - 11, slider.getWidth() - 1}, yPos, 3);
+//                        ig.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+//                        int[] yPos = new int[] {0, SIZE, SIZE*2};
+//                        ig.setColor(Color.WHITE);
+//                        ig.fillPolygon( new int[] {1, INNER_WIDTH, 1}, yPos, 3);
+//                        ig.setColor(Color.BLACK);
+//                        ig.drawPolygon( new int[] {1, INNER_WIDTH, 1}, yPos, 3);
+//
+//                        ig.setColor(Color.WHITE);
+//                        ig.fillPolygon( new int[] {slider.getWidth() - 1, slider.getWidth() - INNER_WIDTH, slider.getWidth() - 1}, yPos, 3);
+//                        ig.setColor(Color.BLACK);
+//                        ig.drawPolygon( new int[] {slider.getWidth() - 1, slider.getWidth() - INNER_WIDTH, slider.getWidth() - 1}, yPos, 3);
                     }
                     // draw the thumb
-                    g.drawImage(thumbBuffer, 0, yPositionForValue(slider.getValue()) - 5, null);
+                    g.drawImage(thumbBuffer, 0, yPositionForValue(slider.getValue()) - SIZE, null);
                 }
             }
         };
@@ -283,6 +298,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
             @Override
             public void mousePressed(MouseEvent e) {
                 slider.setValue(sliderUI.valueForYPosition(e.getY()));
+                slider.repaint();
             }
         });
         slider.setUI(sliderUI);

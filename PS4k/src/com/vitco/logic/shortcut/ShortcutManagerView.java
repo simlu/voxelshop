@@ -12,8 +12,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.EventObject;
 
 /**
@@ -92,7 +90,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                                 String shortcutText = shortcutManager.asString(keyStroke);
                                 component.setText(shortcutText);
                                 // make sure the table is up to date
-                                // note: workaround for resize bug (part 1)
+                                // note: workaround for resize bug
                                 table.setValueAt(shortcutText, rowIndex, vColIndex);
                             }
                             component.setBackground(VitcoSettings.EDIT_BG_COLOR);
@@ -171,20 +169,6 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                     curRow = -1;
                     curCol = -1;
                     ((JTable)e.getSource()).repaint();
-                }
-            });
-
-            // note: workaround for resize bug (part 2)
-            shortcut_table.addPropertyChangeListener("tableCellEditor", new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if (evt.getNewValue() == null) {
-                        // finished editing shortcuts
-                        shortcutManager.activateGlobalShortcuts();
-                    } else {
-                        // editing shortcuts
-                        shortcutManager.deactivateGlobalShortcuts();
-                    }
                 }
             });
             // custom layout for the cells

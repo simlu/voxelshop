@@ -15,7 +15,7 @@ public final class VitcoSettings {
     public static final Color COLOR_PICKER_SLIDER_KNOB_COLOR = new Color(110, 143, 163);
 
     // initial settings
-    public static final float[] INITIAL_CURRENT_COLOR = new float[] {0.5f, 0.5f, 0.5f};
+    public static final Color INITIAL_CURRENT_COLOR = new Color(199, 89, 68);
     public static final VOXELMODE INITIAL_VOXEL_MODE = VOXELMODE.DRAW;
     public static final boolean INITIAL_MODE_IS_ANIMATION = false;
 
@@ -105,7 +105,7 @@ public final class VitcoSettings {
 
     // general config
     public static final Float VOXEL_SIZE = 10f;
-    public static final Float VOXEL_GROUND_DISTANCE = 10f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
+    public static final Float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
     public static final Float VOXEL_GROUND_PLANE_SIZE = 25 * VOXEL_SIZE; // when changing this make sure the edges are ok
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);

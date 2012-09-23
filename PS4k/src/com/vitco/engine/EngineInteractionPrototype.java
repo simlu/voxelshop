@@ -326,7 +326,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private boolean massVoxel = false;
 
         // the current color (to draw)
-        private float[] currentColor = VitcoSettings.INITIAL_CURRENT_COLOR;
+        private float[] currentColor = ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR);
 
         // initialize
         public void init() {

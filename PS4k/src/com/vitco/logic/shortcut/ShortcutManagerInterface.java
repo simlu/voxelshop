@@ -6,6 +6,7 @@ import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Handles shortcut linking (logic)
@@ -25,8 +26,8 @@ public interface ShortcutManagerInterface {
     String asString(KeyStroke keyStroke);
     void setErrorHandler(ErrorHandlerInterface errorHandler);
     void setPreferences(PreferencesInterface preferences);
-    void activateGlobalShortcuts();
-    void deactivateGlobalShortcuts();
+    void activateShortcuts();
+    void deactivateShortcuts();
 
     // get global KeyStroke by action
     KeyStroke getGlobalShortcutByAction(String actionName);
@@ -37,4 +38,7 @@ public interface ShortcutManagerInterface {
 
     // register all actions of global shortcuts, to perform validity check
     void registerGlobalShortcutActions();
+
+    // register global shortcuts and make sure all shortcuts are correctly enabled
+    void registerShortcuts(Frame frame);
 }

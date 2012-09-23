@@ -550,7 +550,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean setColor(int voxelId, Color color) {
         boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).getColor() != color) {
+        if (dataContainer.voxels.containsKey(voxelId) && !dataContainer.voxels.get(voxelId).getColor().equals(color)) {
             historyManagerV.applyIntent(new ColorVoxelIntent(voxelId, color, false));
             result = true;
         }

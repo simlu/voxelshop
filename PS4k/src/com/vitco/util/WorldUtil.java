@@ -15,7 +15,6 @@ public class WorldUtil {
     // add a light-source
     public static void addLight (World world, SimpleVector position, float strength) {
         Light light = new Light(world);
-        light.setAttenuation(1000); // high ~ light shines far
         light.setDiscardDistance(-1);
         light.setIntensity(strength, strength, strength);
         light.setPosition(position);

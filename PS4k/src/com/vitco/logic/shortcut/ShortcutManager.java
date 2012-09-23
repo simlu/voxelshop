@@ -14,6 +14,8 @@ import org.xml.sax.SAXException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.swing.*;
+import javax.swing.FocusManager;
+import javax.swing.text.JTextComponent;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,6 +23,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,11 +51,34 @@ public class ShortcutManager implements ShortcutManagerInterface {
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
+                    // A-Z
+                    65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77,
+                    78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
+                    // 0-9
+                    48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
                     // delete
                     127
             }));
+
+    // global setting for all activatable actions
+    boolean enableAllActivatableActions = true;
+
+    // prototype of an action that can be disabled
+    private final class ActivatableAction extends AbstractAction {
+        private final AbstractAction action;
+        private ActivatableAction(AbstractAction action) {
+            this.action = action;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (enableAllActivatableActions) {
+                action.actionPerformed(e);
+            }
+        }
+    }
 
     // holds the mapping: frame -> (KeyStroke, actionName)
     private final Map<String, ArrayList<ShortcutObject>> map = new HashMap<String, ArrayList<ShortcutObject>>();
@@ -69,10 +96,13 @@ public class ShortcutManager implements ShortcutManagerInterface {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
             KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
-            if (globalByKeyStroke.containsKey(keyStroke)) {
+            if (globalByKeyStroke.containsKey(keyStroke)
+                    // only fire if all actions are activated
+                    && enableAllActivatableActions) {
                 // fire new action
                 actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                        new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
+                        new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {
+                        }
                 );
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
@@ -80,6 +110,38 @@ public class ShortcutManager implements ShortcutManagerInterface {
             return false; // might need further action
         }
     };
+
+    // register global shortcuts and make sure all shortcuts are correctly enabled
+    @Override
+    public void registerShortcuts(final Frame frame) {
+        // register global actions
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(globalProcessor);
+        // update activity / inactivity of shortcuts
+        FocusManager.getCurrentManager().addPropertyChangeListener(new PropertyChangeListener() {
+            private Object activeWindow = null;
+            private Object focusOwner = null;
+
+            private final void update() {
+                if (activeWindow != frame || focusOwner instanceof JTextComponent) {
+                    deactivateShortcuts();
+                } else {
+                    activateShortcuts();
+                }
+            }
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals("focusOwner")) {
+                    focusOwner = evt.getNewValue();
+                    update();
+                }
+                if (evt.getPropertyName().equals("activeWindow")) {
+                    activeWindow = evt.getNewValue();
+                    update();
+                }
+            }
+        });
+    }
 
     // executed when "global" changes
     private void handleGlobalUpdate() {
@@ -221,7 +283,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                             @Override
                             public void run() {
                                 shortcutObject.linkedFrame.registerKeyboardAction(
-                                        actionManager.getAction(actionName),
+                                        new ActivatableAction(actionManager.getAction(actionName)),
                                         shortcutObject.keyStroke,
                                         JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                                 );
@@ -562,14 +624,14 @@ public class ShortcutManager implements ShortcutManagerInterface {
 
     // activate global shortcuts
     @Override
-    public void activateGlobalShortcuts() {
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(globalProcessor);
+    public void activateShortcuts() {
+        enableAllActivatableActions = true;
     }
 
     // deactivate global shortcuts
     @Override
-    public void deactivateGlobalShortcuts() {
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(globalProcessor);
+    public void deactivateShortcuts() {
+        enableAllActivatableActions = false;
     }
 
     // initial registration of frames
@@ -586,7 +648,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                         @Override
                         public void run() {
                             frame.registerKeyboardAction(
-                                    actionManager.getAction(entry.actionName),
+                                    new ActivatableAction(actionManager.getAction(entry.actionName)),
                                     entry.keyStroke,
                                     JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                             );
