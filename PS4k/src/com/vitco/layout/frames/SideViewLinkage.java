@@ -15,7 +15,7 @@ public class SideViewLinkage extends FrameLinkagePrototype {
 
     // var & setter
     private SideViewsInterface sideView;
-    public void setSideView(SideViewsInterface sideView) {
+    public final void setSideView(SideViewsInterface sideView) {
         this.sideView = sideView;
     }
 

@@ -19,7 +19,7 @@ public class Console implements ConsoleInterface {
     // var & setter
     protected PreferencesInterface preferences;
     @Autowired(required=true)
-    public void setPreferences(PreferencesInterface preferences) {
+    public final void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
 

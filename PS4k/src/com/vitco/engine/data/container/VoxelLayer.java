@@ -63,22 +63,22 @@ public final class VoxelLayer implements Serializable {
     }
 
     // set the color of a voxel
-    public void setVoxelColor(Voxel voxel, Color color) {
+    public final void setVoxelColor(Voxel voxel, Color color) {
         voxel.setColor(color);
     }
 
     // set the alpha of a voxel
-    public void setVoxelAlpha(Voxel voxel, int alpha) {
+    public final void setVoxelAlpha(Voxel voxel, int alpha) {
         voxel.setAlpha(alpha);
     }
 
     // remove a voxel
-    public boolean removeVoxel(Voxel voxel) {
+    public final boolean removeVoxel(Voxel voxel) {
         return voxelList.remove(voxel) && voxelIndex.delete(voxel.getPosAsFloat(), ZEROS, voxel);
     }
 
     // get all voxels of this layer
-    public Voxel[] getVoxels() {
+    public final Voxel[] getVoxels() {
         Voxel[] result = new Voxel[voxelList.size()];
         voxelList.toArray(result);
         return result;

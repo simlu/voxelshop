@@ -16,12 +16,12 @@ public class ToolBarLinkage extends BarLinkagePrototype {
     // var & setter
     private ComplexActionManager complexActionManager;
     @Autowired
-    public void setComplexActionManager(ComplexActionManager complexActionManager) {
+    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
         this.complexActionManager = complexActionManager;
     }
 
     @Override
-    public CommandMenuBar buildBar(String key, final Frame frame) {
+    public final CommandMenuBar buildBar(String key, final Frame frame) {
         CommandMenuBar bar = new CommandMenuBar(key);
 
         // build the toolbar

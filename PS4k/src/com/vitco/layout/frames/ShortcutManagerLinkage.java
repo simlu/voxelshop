@@ -15,7 +15,7 @@ public class ShortcutManagerLinkage extends FrameLinkagePrototype {
 
     // var & setter (we only need the shortcutManager in this frame!)
     private ShortcutManagerViewInterface shortcutManagerView;
-    public void setShortcutManagerView(ShortcutManagerViewInterface shortcutManagerView) {
+    public final void setShortcutManagerView(ShortcutManagerViewInterface shortcutManagerView) {
         this.shortcutManagerView = shortcutManagerView;
     }
 

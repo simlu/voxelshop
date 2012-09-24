@@ -15,7 +15,7 @@ public class ColorPickerLinkage extends FrameLinkagePrototype {
 
     // var & setter
     private ColorPickerViewInterface colorPickerView;
-    public void setColorPickerView(ColorPickerViewInterface colorPickerView) {
+    public final void setColorPickerView(ColorPickerViewInterface colorPickerView) {
         this.colorPickerView = colorPickerView;
     }
 

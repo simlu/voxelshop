@@ -14,19 +14,19 @@ public abstract class FrameLinkagePrototype {
     // var & setter
     protected LangSelectorInterface langSelector;
     @Autowired(required=true)
-    public void setLangSelector(LangSelectorInterface langSelector) {
+    public final void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
     }
 
     // var & setter
     protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // show frame
-    public void setVisible(boolean b) {
+    public final void setVisible(boolean b) {
         if (frame.getDockingManager() != null) {
             if (b) {
                 frame.getDockingManager().showFrame(frame.getName());

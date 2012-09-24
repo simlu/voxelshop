@@ -22,7 +22,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
     // var & setter
     private ComplexActionManager complexActionManager;
     @Autowired
-    public void setComplexActionManager(ComplexActionManager complexActionManager) {
+    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
         this.complexActionManager = complexActionManager;
     }
 

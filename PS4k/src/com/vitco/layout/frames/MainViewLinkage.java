@@ -12,7 +12,7 @@ public class MainViewLinkage extends FrameLinkagePrototype {
 
     // var & setter
     private MainViewInterface mainView;
-    public void setMainView(MainViewInterface mainView) {
+    public final void setMainView(MainViewInterface mainView) {
         this.mainView = mainView;
     }
 

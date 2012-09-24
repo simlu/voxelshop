@@ -96,7 +96,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
             return col == 0;
         }
 
-        public void setValueAt(Object value, int row, int col) {
+        public final void setValueAt(Object value, int row, int col) {
             if (!cancelEdit) {
                 switch (col) {
                     case 0:
@@ -158,7 +158,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
     // var & setter
     protected Data data;
     @Autowired
-    public void setData(Data data) {
+    public final void setData(Data data) {
         this.data = data;
     }
 

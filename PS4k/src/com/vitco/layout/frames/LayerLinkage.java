@@ -15,7 +15,7 @@ public class LayerLinkage extends FrameLinkagePrototype {
 
     // var & setter
     private LayerViewInterface layerView;
-    public void setLayerView(LayerViewInterface layerView) {
+    public final void setLayerView(LayerViewInterface layerView) {
         this.layerView = layerView;
     }
 

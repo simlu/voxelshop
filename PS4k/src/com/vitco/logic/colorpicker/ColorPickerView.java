@@ -28,14 +28,14 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // var & setter
     protected PreferencesInterface preferences;
     @Autowired(required=true)
-    public void setPreferences(PreferencesInterface preferences) {
+    public final void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
 
     // var & setter (can not be interface!!)
     protected Data data;
     @Autowired
-    public void setData(Data data) {
+    public final void setData(Data data) {
         this.data = data;
     }
 
@@ -43,7 +43,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // set the action handler
     @Override
     @Autowired
-    public void setThreadManager(ThreadManagerInterface threadManager) {
+    public final void setThreadManager(ThreadManagerInterface threadManager) {
         this.threadManager = threadManager;
     }
 
@@ -226,7 +226,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
             BufferedImage thumbBuffer = null;
             Point prevContentRect = new Point(0,0);
 
-            private final int SIZE = 5;
+            private final static int SIZE = 5;
             //private final int INNER_WIDTH = 9;
 
             @Override

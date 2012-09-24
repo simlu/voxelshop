@@ -62,7 +62,7 @@ public abstract class AnimationHighlight extends AnimationData implements Animat
 
     // set the preview line
     @Override
-    public void setPreviewLine(int id1, int id2) {
+    public final void setPreviewLine(int id1, int id2) {
         if (previewLine[0] != id1 || previewLine[1] != id2) {
             if ((isValid(id1) || id1 == -1) && (isValid(id2) || id2 == -1)) {
                 previewLine[0] = id1;

@@ -17,14 +17,14 @@ public class CCamera extends Camera {
     private float ZOOM_OUT_MAX = -1;
     private float ZOOM_IN_MAX = -1;
 
-    public void setZoomLimits(float zoom_in_max, float zoom_out_max) {
+    public final void setZoomLimits(float zoom_in_max, float zoom_out_max) {
         ZOOM_OUT_MAX = zoom_out_max;
         ZOOM_IN_MAX = zoom_in_max;
     }
 
     // to disable all camera interaction
     private boolean enableCamera = true;
-    public void setEnabled(boolean b) {
+    public final void setEnabled(boolean b) {
         enableCamera = b;
     }
 
@@ -80,7 +80,7 @@ public class CCamera extends Camera {
     }
 
     // reset the perspective
-    public void setView(SimpleVector pos) {
+    public final void setView(SimpleVector pos) {
         if (enableCamera) {
             this.setPosition(pos);
             this.lookAt(SimpleVector.ORIGIN);

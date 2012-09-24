@@ -16,49 +16,49 @@ public abstract class MenuLogicPrototype {
     // var & setter
     protected ConsoleInterface console;
     @Autowired
-    public void setConsole(ConsoleInterface console) {
+    public final void setConsole(ConsoleInterface console) {
         this.console = console;
     }
 
     // var & setter
     protected LangSelectorInterface langSelector;
     @Autowired
-    public void setLangSelector(LangSelectorInterface langSelector) {
+    public final void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
     }
 
     // var & setter
     protected ErrorHandlerInterface errorHandler;
     @Autowired(required=true)
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 
     // var & setter
     protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // var & setter
     protected ActionGroupManagerInterface actionGroupManager;
     @Autowired(required=true)
-    public void setActionGroupManager(ActionGroupManagerInterface actionGroupManager) {
+    public final void setActionGroupManager(ActionGroupManagerInterface actionGroupManager) {
         this.actionGroupManager = actionGroupManager;
     }
 
     // var & setter (can not be interface!!)
     protected Data data;
     @Autowired
-    public void setData(Data data) {
+    public final void setData(Data data) {
         this.data = data;
     }
 
     // var & setter
     protected PreferencesInterface preferences;
     @Autowired(required=true)
-    public void setPreferences(PreferencesInterface preferences) {
+    public final void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
 }

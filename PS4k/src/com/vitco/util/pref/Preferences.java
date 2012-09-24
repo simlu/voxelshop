@@ -49,12 +49,12 @@ public class Preferences implements PreferencesInterface {
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 
     @Override
-    public void storeObject(String key, Object value) {
+    public final void storeObject(String key, Object value) {
         if (!map.containsKey(key) || !map.get(key).equals(value)) {
             map.put(key, value);
             notifyListeners(key, value);
@@ -92,14 +92,14 @@ public class Preferences implements PreferencesInterface {
     }
 
     @Override
-    public String loadString(String key) {
+    public final String loadString(String key) {
         return map.containsKey(key) ? (String)map.get(key) : "";
     }
 
     // var % setter
     private String storageFileName;
     @Override
-    public void setStorageFile(String filename) {
+    public final void setStorageFile(String filename) {
         storageFileName = filename;
     }
 

@@ -16,12 +16,12 @@ public abstract class BarLinkagePrototype {
     // var & setter
     protected MenuGeneratorInterface menuGenerator;
     @Autowired(required = true)
-    public void setMenuGenerator(MenuGeneratorInterface menuGenerator) {
+    public final void setMenuGenerator(MenuGeneratorInterface menuGenerator) {
         this.menuGenerator = menuGenerator;
     }
     // var & setter
     protected MenuLogicInterface menuLogic;
-    public void setMenuLogic(MenuLogicInterface menuLogic) {
+    public final void setMenuLogic(MenuLogicInterface menuLogic) {
         this.menuLogic = menuLogic;
     }
 }

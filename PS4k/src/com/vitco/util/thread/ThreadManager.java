@@ -1,7 +1,6 @@
 package com.vitco.util.thread;
 
 import com.vitco.util.action.ActionManager;
-import com.vitco.util.action.ActionManagerInterface;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ public class ThreadManager implements ThreadManagerInterface {
     // set the action handler
     @Override
     @Autowired
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 

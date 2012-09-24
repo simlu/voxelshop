@@ -32,6 +32,11 @@ public class BiMap<KeyType, ValueType>{
         return removedKey;
     }
 
+    synchronized public void clear() {
+        keyToValueMap.clear();
+        valueToKeyMap.clear();
+    }
+
     public boolean doesNotContainKey(KeyType key){
         return !keyToValueMap.containsKey(key);
     }

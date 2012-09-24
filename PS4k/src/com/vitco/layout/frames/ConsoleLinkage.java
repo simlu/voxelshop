@@ -15,7 +15,7 @@ public class ConsoleLinkage extends FrameLinkagePrototype {
 
     // var & setter
     private ConsoleViewInterface consoleView;
-    public void setConsoleView(ConsoleViewInterface consoleView) {
+    public final void setConsoleView(ConsoleViewInterface consoleView) {
         this.consoleView = consoleView;
     }
 

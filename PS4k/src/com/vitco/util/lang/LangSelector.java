@@ -26,17 +26,17 @@ public final class LangSelector implements LangSelectorInterface {
     }
 
     @Override
-    public void setLanguageBundle(String filename) {
+    public final void setLanguageBundle(String filename) {
         this.defaultFile = filename;
     }
 
     @Override
-    public void setLanguage(String language) {
+    public final void setLanguage(String language) {
         this.language = language;
     }
 
     @Override
-    public void setCountry(String country) {
+    public final void setCountry(String country) {
         this.country = country;
     }
 

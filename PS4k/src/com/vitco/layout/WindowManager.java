@@ -43,28 +43,28 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     private Map<String, BarLinkagePrototype> barLinkageMap;
     // set the map
     @Override
-    public void setBarLinkageMap(Map<String, BarLinkagePrototype> map) {
+    public final void setBarLinkageMap(Map<String, BarLinkagePrototype> map) {
         this.barLinkageMap = map;
     }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 
     // var & setter (can not be interface!!)
     protected Data data;
     @Override
-    public void setData(Data data) {
+    public final void setData(Data data) {
         this.data = data;
     }
 
     // var & setter
     private PreferencesInterface preferences;
     @Override
-    public void setPreferences(PreferencesInterface preferences) {
+    public final void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
 
@@ -72,34 +72,34 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     private Map<String, FrameLinkagePrototype> frameLinkageMap;
     // set the map
     @Override
-    public void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map) {
+    public final void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map) {
         this.frameLinkageMap = map;
     }
 
     // to hook the shortcut manager to the frames
     private ShortcutManagerInterface shortcutManager;
     @Override
-    public void setShortcutManager(ShortcutManagerInterface shortcutManager) {
+    public final void setShortcutManager(ShortcutManagerInterface shortcutManager) {
         this.shortcutManager = shortcutManager;
     }
 
     private ActionManager actionManager;
     // set the action handler
     @Override
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // var & setter
     protected LangSelectorInterface langSelector;
     @Override
-    public void setLangSelector(LangSelectorInterface langSelector) {
+    public final void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
     }
 
     // prepare all frames
     @Override
-    public DockableFrame prepareFrame(String key) {
+    public final DockableFrame prepareFrame(String key) {
         DockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
             frame = frameLinkageMap.get(key).buildFrame(key);
@@ -115,7 +115,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
     // prepare all bars
     @Override
-    public CommandMenuBar prepareBar(String key) {
+    public final CommandMenuBar prepareBar(String key) {
 
         CommandMenuBar bar = null;
 
@@ -163,14 +163,14 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
     @PreDestroy
     @Override
-    public void finish() {
+    public final void finish() {
         // store the boundary of the program (current window position)
         preferences.storeObject("program_boundary_rect", this.getBounds());
     }
 
     @PostConstruct
     @Override
-    public void init() {
+    public final void init() {
 
         if (preferences.contains("program_boundary_rect")) {
             // load the boundary of the program (current window position)

@@ -18,12 +18,12 @@ public class Frame implements Serializable {
     }
 
     // get name
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
     // set name
-    public void setName(String name) {
+    public final void setName(String name) {
         this.name = name;
     }
 
@@ -31,12 +31,12 @@ public class Frame implements Serializable {
     private final HashMap<Integer, ExtendedVector> points = new HashMap<Integer, ExtendedVector>();
 
     // sets a point
-    public void setPoint(int id, ExtendedVector point) {
+    public final void setPoint(int id, ExtendedVector point) {
         points.put(id, point);
     }
 
     // return a point, null if not set
-    public ExtendedVector getPoint(int id) {
+    public final ExtendedVector getPoint(int id) {
         return points.get(id);
     }
 

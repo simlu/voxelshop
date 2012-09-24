@@ -15,7 +15,7 @@ public class ActionGroupManager implements ActionGroupManagerInterface {
     // var & setter
     protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 

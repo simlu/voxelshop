@@ -30,14 +30,14 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // var & setter
     protected Data data;
     @Autowired
-    public void setData(Data data) {
+    public final void setData(Data data) {
         this.data = data;
     }
 
-    private ThreadManagerInterface threadManager;
+    protected ThreadManagerInterface threadManager;
     // set the action handler
     @Autowired
-    public void setThreadManager(ThreadManagerInterface threadManager) {
+    public final void setThreadManager(ThreadManagerInterface threadManager) {
         this.threadManager = threadManager;
     }
 
@@ -118,36 +118,36 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // this draws opengl content if enabled
         private boolean drawWorld = true;
-        public void setDrawWorld(boolean b) {
+        public final void setDrawWorld(boolean b) {
             drawWorld = b;
         }
 
         // this enabled/disables all overlay
         private boolean drawOverlay = true;
-        public void setDrawOverlay(boolean b) {
+        public final void setDrawOverlay(boolean b) {
             drawOverlay = b;
         }
 
         // enabled/ disables animation overlay
         private boolean drawAnimationOverlay = true;
-        public void setDrawAnimationOverlay(boolean b) {
+        public final void setDrawAnimationOverlay(boolean b) {
             drawAnimationOverlay = b;
         }
 
         // enabled/ disables animation overlay
         private boolean drawVoxelOverlay = true;
-        public void setDrawVoxelOverlay(boolean b) {
+        public final void setDrawVoxelOverlay(boolean b) {
             drawVoxelOverlay = b;
         }
 
         // for the next refresh do not update the world (OpenGL render)
         private boolean skipNextWorldRender = false;
-        public void skipNextWorldRender() {
+        public final void skipNextWorldRender() {
             skipNextWorldRender = true;
         }
         // prevent skipping of next world view
         private boolean doNotSkipNextWorldRender = false;
-        public void doNotSkipNextWorldRender() {
+        public final void doNotSkipNextWorldRender() {
             doNotSkipNextWorldRender = true;
         }
 

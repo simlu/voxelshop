@@ -18,56 +18,56 @@ public abstract class ViewPrototype {
     // var & setter
     protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // var & setter
     protected ActionGroupManagerInterface actionGroupManager;
     @Autowired(required=true)
-    public void setActionGroupManager(ActionGroupManagerInterface actionGroupManager) {
+    public final void setActionGroupManager(ActionGroupManagerInterface actionGroupManager) {
         this.actionGroupManager = actionGroupManager;
     }
 
     // var & setter
     protected MenuGeneratorInterface menuGenerator;
     @Autowired(required=true)
-    public void setMenuGenerator(MenuGeneratorInterface menuGenerator) {
+    public final void setMenuGenerator(MenuGeneratorInterface menuGenerator) {
         this.menuGenerator = menuGenerator;
     }
 
     // var & setter
     protected ConsoleInterface console;
     @Autowired(required=true)
-    public void setConsole(ConsoleInterface console) {
+    public final void setConsole(ConsoleInterface console) {
         this.console = console;
     }
 
     // var & setter
     protected PreferencesInterface preferences;
     @Autowired(required=true)
-    public void setPreferences(PreferencesInterface preferences) {
+    public final void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
 
     // var & setter
     protected ShortcutManagerInterface shortcutManager;
     @Autowired(required=true)
-    public void setShortcutManager(ShortcutManagerInterface shortcutManager) {
+    public final void setShortcutManager(ShortcutManagerInterface shortcutManager) {
         this.shortcutManager = shortcutManager;
     }
 
     // var & setter
     protected LangSelectorInterface langSelector;
     @Autowired(required=true)
-    public void setLangSelector(LangSelectorInterface langSelector) {
+    public final void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
     }
 
     // var & setter
     protected ErrorHandlerInterface errorHandler;
     @Autowired(required=true)
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 

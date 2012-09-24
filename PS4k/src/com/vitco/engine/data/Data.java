@@ -25,7 +25,7 @@ public final class Data extends VoxelHighlight implements DataInterface {
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Autowired(required=true)
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 

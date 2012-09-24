@@ -26,7 +26,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
     // var & setter
     private ConsoleInterface console;
     @Override
-    public void setConsole(ConsoleInterface console) {
+    public final void setConsole(ConsoleInterface console) {
         this.console = console;
         initOutMapping();
     }
@@ -67,7 +67,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
     // var & setter
     private String debugReportUrl;
     @Override
-    public void setDebugReportUrl(String debugReportUrl) {
+    public final void setDebugReportUrl(String debugReportUrl) {
         this.debugReportUrl = debugReportUrl;
     }
 
@@ -80,7 +80,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
     // var & setter
     private LangSelectorInterface langSelector;
     @Override
-    public void setLangSelector(LangSelectorInterface langSelector) {
+    public final void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
     }
 

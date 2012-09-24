@@ -13,7 +13,7 @@ import java.awt.event.ComponentEvent;
 public class SideViews extends ViewPrototype implements SideViewsInterface {
 
     private SideViewInterface[] sideViews;
-    public void setSideViews(SideViewInterface[] sideViews) {
+    public final void setSideViews(SideViewInterface[] sideViews) {
         this.sideViews = sideViews.clone();
     }
 

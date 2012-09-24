@@ -11,7 +11,7 @@ public class ActionManager extends ActionManagerPrototype<AbstractAction> {
     protected AbstractAction getDummyAction(final String actionName) {
         return new AbstractAction() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public final void actionPerformed(ActionEvent e) {
                 System.out.println("Dummy Action \"" + actionName + "\"");
             }
         };

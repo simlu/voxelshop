@@ -34,11 +34,11 @@ public class HistoryManager {
         return historyPosition;
     }
 
-    public void setHistory(ArrayList<BasicActionIntent> history) {
+    public final void setHistory(ArrayList<BasicActionIntent> history) {
         this.history = new ArrayList<BasicActionIntent>(history);
     }
 
-    public void setHistoryPosition(int historyPosition) {
+    public final void setHistoryPosition(int historyPosition) {
         this.historyPosition = historyPosition;
     }
 

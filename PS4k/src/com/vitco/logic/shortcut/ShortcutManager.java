@@ -101,8 +101,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     && enableAllActivatableActions) {
                 // fire new action
                 actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                        new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {
-                        }
+                        new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
                 );
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
@@ -121,7 +120,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
             private Object activeWindow = null;
             private Object focusOwner = null;
 
-            private final void update() {
+            private void update() {
                 if (activeWindow != frame || focusOwner instanceof JTextComponent) {
                     deactivateShortcuts();
                 } else {
@@ -171,41 +170,41 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // var & setter
     private PreferencesInterface preferences;
     @Override
-    public void setPreferences(PreferencesInterface preferences) {
+    public final void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
 
     // var & setter
     private String xmlFile;
     @Override
-    public void setConfigFile(String filename) {
+    public final void setConfigFile(String filename) {
         xmlFile = filename;
     }
 
     // var & setter
     private ActionManager actionManager;
     @Override
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 
     // var & setter
     private LangSelectorInterface langSel;
     @Override
-    public void setLangSelector(LangSelectorInterface langSel) {
+    public final void setLangSelector(LangSelectorInterface langSel) {
         this.langSel = langSel;
     }
 
     // get all frames as string array (frameKey, localized frameCaption)
     @Override
-    public String[][] getFrames() {
+    public final String[][] getFrames() {
         String[][] result = new String[map.size()][];
         // loop over all the frames
         int i = 0;
@@ -222,7 +221,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // get global KeyStroke by action
     // returns null if not registered
     @Override
-    public KeyStroke getGlobalShortcutByAction(String actionName) {
+    public final KeyStroke getGlobalShortcutByAction(String actionName) {
        if (globalByAction.containsKey(actionName)) {
            return globalByAction.get(actionName).keyStroke;
        } else {
@@ -233,7 +232,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // get shortcuts as string array (localized caption, str representation)
     // for null this will return the global shortcuts
     @Override
-    public String[][] getShortcuts(String frameKey) {
+    public final String[][] getShortcuts(String frameKey) {
         if (frameKey != null) { // frame shortcuts
             if (map.containsKey(frameKey)) {
                 ArrayList<ShortcutObject> shortcuts = map.get(frameKey);
@@ -264,7 +263,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // update (keystroke,action) registration for a frame and shortcut id
     // if frame == null this will update a global shortcut
     @Override
-    public boolean updateShortcutObject(KeyStroke keyStroke, String frame, int id) {
+    public final boolean updateShortcutObject(KeyStroke keyStroke, String frame, int id) {
         boolean result = false;
         if (frame != null) { // update frame shortcut
             // for frame
@@ -309,7 +308,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
 
     // convert KeyStroke to string representation
     @Override
-    public String asString(KeyStroke keyStroke) {
+    public final String asString(KeyStroke keyStroke) {
         return keyStroke == null ? "-" : keyStroke.toString()
                 .replaceFirst("^pressed ", "") // remove if at very beginning (e.g. for f-keys)
                 .replace("pressed", "+")
@@ -321,7 +320,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // otherwise as a shortcut for the frame
     // null is always a valid keyStroke
     @Override
-    public boolean isFreeShortcut(String frame, KeyStroke keyStroke) {
+    public final boolean isFreeShortcut(String frame, KeyStroke keyStroke) {
         boolean result = true;
         if (keyStroke != null) { // null is valid
             if (frame != null) { // check for this frame
@@ -358,7 +357,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // check if this is a KeyStroke that has a valid format
     // null is a valid shortcut
     @Override
-    public boolean isValidShortcut(KeyStroke keyStroke) {
+    public final boolean isValidShortcut(KeyStroke keyStroke) {
         // check that this is a format that is allowed as shortcut
         return keyStroke == null || ((keyStroke.getModifiers() == (InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK)) ||
                 (keyStroke.getModifiers() == (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK)) ||

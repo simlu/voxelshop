@@ -37,35 +37,35 @@ public class MenuGenerator implements MenuGeneratorInterface {
     // var & setter
     private LangSelectorInterface langSel;
     @Override
-    public void setLangSelector(LangSelectorInterface langSel) {
+    public final void setLangSelector(LangSelectorInterface langSel) {
         this.langSel = langSel;
     }
 
     // var & setter
     private ShortcutManagerInterface shortcutManager;
     @Override
-    public void setShortcutManager(ShortcutManagerInterface shortcutManager) {
+    public final void setShortcutManager(ShortcutManagerInterface shortcutManager) {
         this.shortcutManager = shortcutManager;
     }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 
     // var & setter
     private ActionManager actionManager;
     @Override
-    public void setActionManager(ActionManager actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // var & setter
     private ComplexActionManager complexActionManager;
     @Override
-    public void setComplexActionManager(ComplexActionManager complexActionManager) {
+    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
         this.complexActionManager = complexActionManager;
     }
 
