@@ -110,6 +110,9 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     @Override
     public final JPanel build() {
 
+        // set the simple view mode
+        setSimpleVoxelMode(true, side);
+
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
 

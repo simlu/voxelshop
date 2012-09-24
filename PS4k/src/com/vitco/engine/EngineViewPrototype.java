@@ -1,11 +1,15 @@
 package com.vitco.engine;
 
+import com.newbrightidea.util.RTree;
 import com.threed.jpct.*;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.ExtendedVector;
+import com.vitco.engine.data.container.Voxel;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.BiMap;
 import com.vitco.util.G2DUtil;
+import com.vitco.util.WorldUtil;
 import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
@@ -20,6 +24,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.List;
 
 /**
  * Rendering functionality of this World (data + overlay)
@@ -74,22 +79,228 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         return result;
     }
 
-    // updates the world with voxels
-    protected abstract void updateWorldWithVoxels();
+    // ==============================
+    // updating of world with voxels
+    // ==============================
+
+    // if true we use updateWorldWithVoxelsSimple with simpleVoxelModeSide,
+    // otherwise we use updateWorldWithVoxels to update world
+    protected boolean useSimpleVoxelMode = false;
+    protected int simpleVoxelModeSide = -1;
+
+    // toggle between simple mode (draw only one side) and normal mode (draw needed sides)
+    // clear indexes
+    protected final void setSimpleVoxelMode(boolean b, int side) {
+        useSimpleVoxelMode = b;
+        simpleVoxelModeSide = side;
+        // remove the objects
+        for (int id : voxelToObject.keySet()) {
+            world.removeObject(voxelToObject.get(id));
+            voxelToObject.removeByKey(id);
+            idToVoxel.remove(id);
+        }
+        voxelPositions.clear();
+    }
+
+    // voxel data getter to be defined
+    protected abstract Voxel[] getVoxels();
+
+    // retrieve the voxel for an object id if exists, otherwise return null
+    protected final Voxel getVoxelForObjectId(int id) {
+        return data.getVoxel(voxelToObject.getKey(id));
+    }
+
+    // maps voxel ids to world ids
+    private final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
+    private final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
+    // index to find voxels in range
+    private final RTree<Voxel> voxelPositions = new RTree<Voxel>(50, 2, 3);
+    private static final float[] ZEROS = new float[] {0,0,0};
+
+    // helper to add voxel to world (with one side)
+    private void addVoxelToWorld(Voxel voxel, int side) {
+        int id = WorldUtil.addBoxSides(world,
+                new SimpleVector(
+                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
+                VitcoSettings.VOXEL_SIZE / 2,
+                voxel.getColor(),
+                new boolean[]{
+                        true, side == 2 ? false : true,
+                        true, side == 1 ? false : true,
+                        true, side == 0 ? false : true
+                }, 2);
+        voxelToObject.put(voxel.id, id);
+    }
+
+    // helper - make sure the voxel objects are up to date, but only draw one side of the voxel
+    private void updateWorldWithVoxelsSimple(int side) {
+        Voxel[] voxels = getVoxels();
+
+        // temporary to find unneeded objects
+        ArrayList<Integer> voxelIds = new ArrayList<Integer>();
+        voxelIds.addAll(voxelToObject.keySet());
+
+        // loop over all voxels
+        for (Voxel voxel : voxels) {
+            voxelIds.remove((Integer)voxel.id);
+            if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
+                addVoxelToWorld(voxel, side);
+                idToVoxel.put(voxel.id, voxel);
+            } else { // remove and add all altered voxels
+                if (!idToVoxel.get(voxel.id).equals(voxel)) {
+                    idToVoxel.put(voxel.id, voxel);
+                    world.removeObject(voxelToObject.get(voxel.id)); // remove
+                    addVoxelToWorld(voxel, side);
+                }
+            }
+        }
+
+        // remove the objects that are no longer needed
+        for (int id : voxelIds) {
+            world.removeObject(voxelToObject.get(id));
+            voxelToObject.removeByKey(id);
+            idToVoxel.remove(id);
+        }
+    }
+
+    // add neighbors, uses voxelPositions index
+    private void addNeighbors(ArrayList<Voxel> toRefresh, Voxel voxel) {
+        float[] pos = voxel.getPosAsFloat();
+        // search all the voxels neighboring
+        for (int i = 0; i < 6; i++) {
+            int add = i%2 == 0 ? 1 : -1;
+            List<Voxel> list = voxelPositions.search(new float[] {
+                    i/2 == 0 ? pos[0] + add : pos[0],
+                    i/2 == 1 ? pos[1] + add : pos[1],
+                    i/2 == 2 ? pos[2] + add : pos[2]
+            }, ZEROS);
+            if (list.size() > 0) {
+                Voxel neigh = list.get(0);
+                if (!toRefresh.contains(neigh)) { // add them if not already known to need updating
+                    toRefresh.add(neigh);
+                }
+            }
+        }
+    }
+
+    // helper - make sure the voxel objects in the world are up to date
+    private void updateWorldWithVoxels() {
+        final Voxel[] voxels = getVoxels();
+
+        // we need to rebuild these voxels
+        ArrayList<Voxel> toRefresh = new ArrayList<Voxel>();
+
+        // temporary to find unneeded objects
+        ArrayList<Integer> voxelToRemove = new ArrayList<Integer>();
+        voxelToRemove.addAll(voxelToObject.keySet());
+
+        // erased voxels
+        ArrayList<Voxel> refreshOnlyNeighbors = new ArrayList<Voxel>();
+
+        // loop over all voxels
+        for (Voxel voxel : voxels) {
+            if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
+                idToVoxel.put(voxel.id, voxel);
+                voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel);
+                toRefresh.add(voxel);
+            } else { // remove and re-add all altered voxels
+                Voxel oldVoxel = idToVoxel.get(voxel.id);
+                if (!oldVoxel.equals(voxel)) {
+                    voxelPositions.delete(oldVoxel.getPosAsFloat(), ZEROS, oldVoxel); // delete old entry
+                    voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel); // add new
+                    idToVoxel.put(voxel.id, voxel); // overwrite voxel object
+                    // register to change environment
+                    refreshOnlyNeighbors.add(oldVoxel);
+                    toRefresh.add(voxel);
+                }
+            }
+            // do not remove this voxel
+            voxelToRemove.remove((Integer) voxel.id);
+        }
+
+        // remove the objects that are no longer needed
+        for (int id : voxelToRemove) {
+            world.removeObject(voxelToObject.get(id));
+            voxelToObject.removeByKey(id);
+            Voxel voxel = idToVoxel.get(id);
+            refreshOnlyNeighbors.add(voxel);
+            voxelPositions.delete(voxel.getPosAsFloat(), ZEROS, voxel);
+            idToVoxel.remove(id);
+        }
+
+        // add all neighbors
+        for (int i1 = 0, tobuildSize = toRefresh.size(); i1 < tobuildSize; i1++) {
+            Voxel voxel = toRefresh.get(i1);
+            addNeighbors(toRefresh, voxel);
+        }
+
+        // add all neighbors of the erased voxels
+        for (Voxel voxel : refreshOnlyNeighbors) {
+            addNeighbors(toRefresh, voxel);
+        }
+
+        // refresh the objects
+        for (Voxel voxel : toRefresh) {
+            float[] pos = voxel.getPosAsFloat();
+            // calculate the required sides
+            boolean[] sides = new boolean[6];
+            int triCount = 0;
+            for (int i = 0; i < 6; i++) {
+                int add = i%2 == 0 ? 1 : -1;
+                sides[i] = voxelPositions.search(new float[] {
+                        i/2 == 0 ? pos[0] + add : pos[0],
+                        i/2 == 1 ? pos[1] + add : pos[1],
+                        i/2 == 2 ? pos[2] + add : pos[2]
+                }, ZEROS).size() > 0;
+                if (!sides[i]) {
+                    triCount+=2;
+                }
+            }
+            // add the box to the world
+            int id = WorldUtil.addBoxSides(world,
+                    new SimpleVector(
+                            voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
+                            voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
+                            voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
+                    VitcoSettings.VOXEL_SIZE / 2,
+                    voxel.getColor(),
+                    sides, triCount);
+            Integer key = voxelToObject.get(voxel.id);
+            // remove if there was already an object for this voxel
+            if (key != null) {
+                world.removeObject(key);
+            }
+            // remember the object reference
+            voxelToObject.put(voxel.id, id);
+        }
+
+    }
+
     // true iff the world does not need to be updated with voxels
     private boolean worldVoxelCurrent = false;
     // force update of world before next draw
     protected final void invalidateVoxels() {
         if (localMouseDown) { // instant update needed for interaction
-            updateWorldWithVoxels();
+            if (useSimpleVoxelMode) {
+                updateWorldWithVoxelsSimple(simpleVoxelModeSide);
+            } else {
+                updateWorldWithVoxels();
+            }
             worldVoxelCurrent = true;
         } else {
             worldVoxelCurrent = false;
         }
     }
 
+    // ==============================
+    // END: updating of world with voxels
+    // ==============================
+
     // the container that we draw on
     protected final MPanel container = new MPanel();
+
     protected final class MPanel extends JPanel {
 
         // bg color of this panel
@@ -459,7 +670,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 buffer.clear(bgColor);
                 if (drawWorld) {
                     if (!worldVoxelCurrent) {
-                        updateWorldWithVoxels();
+                        if (useSimpleVoxelMode) {
+                            updateWorldWithVoxelsSimple(simpleVoxelModeSide);
+                        } else {
+                            updateWorldWithVoxels();
+                        }
                         worldVoxelCurrent = true;
                     }
                     world.renderScene(buffer);
@@ -520,7 +735,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // only perform these actions once (even if the class is instantiated several times)
         if (!initialized) {
             Config.fadeoutLight=false;
-            Config.maxPolysVisible = 30000;
+            Config.maxPolysVisible = 15000;
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }
