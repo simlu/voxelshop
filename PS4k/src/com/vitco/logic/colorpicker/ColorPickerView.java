@@ -154,7 +154,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
             JSlider source = (JSlider) e.getSource();
             if (!source.getValueIsAdjusting()) {
                 hue = source.getValue()/(float) HUE_STEPS;
-                preferences.storeObject("previous_current_color", new float[] {hue, currentColor[1], currentColor[2]});
+                preferences.storeObject("currently_used_color", new float[] {hue, currentColor[1], currentColor[2]});
                 computeColorPicker();
                 panel.repaint();
             }
@@ -170,7 +170,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
                     Math.max(0, Math.min(1, (float)((pos.getX() / (double) panel.getWidth())))),
                     Math.max(0, Math.min(1, 1-(float)((pos.getY() / (double) panel.getHeight()))))
             };
-            preferences.storeObject("previous_current_color", val);
+            preferences.storeObject("currently_used_color", val);
         }
 
         private void setColor(Point point) {
@@ -207,7 +207,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
         panel.addMouseMotionListener(mouseAdapter);
 
         // register change of current color
-        preferences.addPrefChangeListener("previous_current_color", new PrefChangeListener() {
+        preferences.addPrefChangeListener("currently_used_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object newValue) {
                 currentColor = (float[])newValue;

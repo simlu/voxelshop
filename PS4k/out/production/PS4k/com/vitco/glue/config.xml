@@ -124,7 +124,7 @@
 
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
-        <constructor-arg value="PS4k - Alpha Version (V1.0.16)"/>
+        <constructor-arg value="PS4k - Alpha Version (V1.0.17)"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>

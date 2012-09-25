@@ -1,8 +1,10 @@
 package com.vitco.logic.menu;
 
+import com.jidesoft.swing.JideSplitButton;
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.ColorTools;
 import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.colors.ColorChangeListener;
@@ -11,8 +13,10 @@ import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Handles the toolbar logic.
@@ -59,6 +63,43 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
     }
 
     public void registerLogic(Frame frame) {
+        // register the color preview "button" and picker
+        // =====================================
+        // register the popup and action
+        SimpleColorChooser scc = new SimpleColorChooser();
+        scc.addColorChangeListener(new ColorChangeListener() {
+            @Override
+            public void colorChanged(Color color) {
+                preferences.storeObject("currently_used_color", ColorTools.colorToHSB(color));
+            }
+        });
+        complexActionManager.registerAction("current_color_button_popup", scc);
+        // to perform validity check we need to register this name
+        complexActionManager.registerActionIsUsed("current_color_button_icon");
+        // lazy action linking (the action might not be ready!)
+        preferences.addPrefChangeListener("currently_used_color", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(final Object o) {
+                complexActionManager.performWhenActionIsReady("current_color_button_icon", new Runnable() {
+                    @Override
+                    public void run() {
+                        // create the image that is used as icon
+                        BufferedImage image = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
+                        Graphics2D ig = (Graphics2D)image.getGraphics();
+                        ig.setColor(ColorTools.hsbToColor((float[])o));
+                        ig.fillRect(1,1,22,22);
+                        ig.setColor(Color.BLACK);
+                        ig.drawRect(0,0,23,23);
+                        // create and set the icon
+                        ImageIcon icon = new ImageIcon();
+                        icon.setImage(image);
+                        ((JideSplitButton) complexActionManager.getAction("current_color_button_icon")).setIcon(icon);
+                    }
+                });
+            }
+        });
+        // =====================================
+
         // register the tool actions
         // =====================================
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_view", new ToolAction(VOXELMODE.VIEW));

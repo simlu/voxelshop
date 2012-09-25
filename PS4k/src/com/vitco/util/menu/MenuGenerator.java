@@ -302,6 +302,10 @@ public class MenuGenerator implements MenuGeneratorInterface {
             }
         });
 
+        if (e.hasAttribute("register-button-as-complex-action")) {
+            complexActionManager.registerAction(e.getAttribute("register-button-as-complex-action"), jideButton);
+        }
+
         handleAbstractButton(jideButton, e, checkable, grayable, hideable);
 
         component.add(jideButton);
@@ -343,6 +347,10 @@ public class MenuGenerator implements MenuGeneratorInterface {
                 splitButton.add(complexActionManager.getAction(e.getAttribute("complex-action")));
             }
         });
+
+        if (e.hasAttribute("register-button-as-complex-action")) {
+            complexActionManager.registerAction(e.getAttribute("register-button-as-complex-action"), splitButton);
+        }
 
         handleAbstractButton(splitButton, e, checkable, grayable, hideable);
 

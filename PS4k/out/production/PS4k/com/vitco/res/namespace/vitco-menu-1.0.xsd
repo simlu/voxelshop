@@ -23,6 +23,7 @@
             <xs:attribute name="grayable" form="unqualified" type="xs:string" />
             <xs:attribute name="hideable" form="unqualified" type="xs:string" />
             <xs:attribute name="invert" form="unqualified" type="xs:string" />
+            <xs:attribute name="register-button-as-complex-action" form="unqualified" type="xs:string" />
         </xs:complexType>
     </xs:element>
 
@@ -38,6 +39,7 @@
             <xs:attribute name="grayable" form="unqualified" type="xs:string" />
             <xs:attribute name="hideable" form="unqualified" type="xs:string" />
             <xs:attribute name="invert" form="unqualified" type="xs:string" />
+            <xs:attribute name="register-button-as-complex-action" form="unqualified" type="xs:string" />
         </xs:complexType>
     </xs:element>
 

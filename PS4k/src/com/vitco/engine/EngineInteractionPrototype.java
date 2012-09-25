@@ -280,7 +280,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         // initialize
         public void init() {
             // register change of current color
-            preferences.addPrefChangeListener("previous_current_color", new PrefChangeListener() {
+            preferences.addPrefChangeListener("currently_used_color", new PrefChangeListener() {
                 @Override
                 public void onPrefChange(Object newValue) {
                     currentColor = (float[])newValue;
@@ -324,7 +324,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else if (voxelMode == VOXELMODE.PICKER) {
                         Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), false);
                         if (highlightedVoxel != null) {
-                            preferences.storeObject("previous_current_color",
+                            preferences.storeObject("currently_used_color",
                                     ColorTools.colorToHSB(highlightedVoxel.getColor()));
                         }
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {

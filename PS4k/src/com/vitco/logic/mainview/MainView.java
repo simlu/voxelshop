@@ -6,16 +6,10 @@ import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.action.types.StateActionPrototype;
-import com.vitco.util.colors.ColorChangeListener;
-import com.vitco.util.colors.SimpleColorChooser;
 import com.vitco.util.WorldUtil;
-import com.vitco.util.action.ComplexActionManager;
+import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -171,7 +165,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             public void action(ActionEvent actionEvent) {
                 useWireFrame = !useWireFrame;
                 useWireFrame(useWireFrame);
-                world.getObject(worldPlane).setVisibility(!useWireFrame);
+                //world.getObject(worldPlane).setVisibility(!useWireFrame);
                 forceRepaint();
             }
 

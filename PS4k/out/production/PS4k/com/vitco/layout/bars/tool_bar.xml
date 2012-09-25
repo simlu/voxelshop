@@ -53,5 +53,10 @@
                tool-tip="toggle_voxel_snap_tooltip"
                checkable="true" hideable="true"
                action="toggle_voxel_snap"/>
-
+    <separator/>
+    <!--color picker-->
+    <split-item src="resource/img/bars/tool_bar/settings.png"
+                tool-tip="settings_menubar_tooltip"
+                complex-action="current_color_button_popup"
+                register-button-as-complex-action="current_color_button_icon"/>
 </head>
