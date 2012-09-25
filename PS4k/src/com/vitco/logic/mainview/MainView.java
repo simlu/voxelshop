@@ -6,6 +6,7 @@ import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.ColorTools;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
@@ -178,6 +179,13 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         // holds menu and render area (container)
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
+
+        preferences.addPrefChangeListener("engine_view_bg_color", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                wrapper.setBackground((Color) o);
+            }
+        });
 
         // create menu
         CommandMenuBar menuPanel = new CommandMenuBar();

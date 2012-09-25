@@ -1,6 +1,5 @@
 package com.vitco.engine;
 
-import com.jidesoft.utils.ColorUtils;
 import com.newbrightidea.util.RTree;
 import com.threed.jpct.*;
 import com.vitco.engine.data.Data;
@@ -9,7 +8,6 @@ import com.vitco.engine.data.container.Voxel;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.BiMap;
-import com.vitco.util.ColorTools;
 import com.vitco.util.G2DUtil;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.pref.PrefChangeListener;
@@ -792,6 +790,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     buffer.dispose();
                     buffer = null; // so the gc can collect before creation if necessary
                     buffer = new FrameBuffer(container.getWidth(), container.getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
+                    container.doNotSkipNextWorldRender();
                     forceRepaint();
                 }
             }

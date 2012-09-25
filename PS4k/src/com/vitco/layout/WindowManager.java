@@ -6,10 +6,12 @@ import com.jidesoft.action.DockableBar;
 import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
+import com.jidesoft.docking.DockingManager;
 import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -244,23 +246,41 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         }
 
         actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
+            private final String frame = "xyView";
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                DockingManager dm = getDockingManager();
+                dm.addFrame(new DockableFrame("__dummy"));
+                dm.moveFrame("__dummy", frame);
+                dm.moveFrame(frame, "mainView");
+                dm.moveFrame("mainView", "__dummy");
+                dm.removeFrame("__dummy");
             }
         });
 
         actionManager.registerAction("swap_mainView_with_xzView", new AbstractAction() {
+            private final String frame = "xzView";
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                DockingManager dm = getDockingManager();
+                dm.addFrame(new DockableFrame("__dummy"));
+                dm.moveFrame("__dummy", frame);
+                dm.moveFrame(frame, "mainView");
+                dm.moveFrame("mainView", "__dummy");
+                dm.removeFrame("__dummy");
             }
         });
 
         actionManager.registerAction("swap_mainView_with_yzView", new AbstractAction() {
+            private final String frame = "yzView";
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                DockingManager dm = getDockingManager();
+                dm.addFrame(new DockableFrame("__dummy"));
+                dm.moveFrame("__dummy", frame);
+                dm.moveFrame(frame, "mainView");
+                dm.moveFrame("mainView", "__dummy");
+                dm.removeFrame("__dummy");
             }
         });
 

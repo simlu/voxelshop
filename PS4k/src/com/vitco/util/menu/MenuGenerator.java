@@ -152,9 +152,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
             @Override
             public void onChange() {
                 KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
-                if (accelerator != null) {
-                    item.setAccelerator(accelerator);
-                }
+                item.setAccelerator(accelerator);
             }
         });
     }
@@ -182,6 +180,8 @@ public class MenuGenerator implements MenuGeneratorInterface {
                             langSel.getString(e.getAttribute("tool-tip"))
                                     + " (" + shortcutManager.asString(accelerator) + ")"
                     );
+                } else {
+                    button.setToolTipText(langSel.getString(e.getAttribute("tool-tip")));
                 }
             }
         });

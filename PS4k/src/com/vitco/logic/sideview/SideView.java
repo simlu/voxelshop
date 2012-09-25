@@ -7,6 +7,7 @@ import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.ColorTools;
 import com.vitco.util.pref.PrefChangeListener;
 
 import javax.swing.*;
@@ -233,6 +234,13 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         // holds the menu and the draw panel (container)
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
+
+        preferences.addPrefChangeListener("engine_view_bg_color", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                wrapper.setBackground((Color) o);
+            }
+        });
 
         // create menu
         CommandMenuBar menuPanel = new CommandMenuBar();
