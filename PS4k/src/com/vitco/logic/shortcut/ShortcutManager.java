@@ -142,7 +142,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
         });
     }
 
-    // executed when "global" changes
+    // executed when "global" shortcut change
     private void handleGlobalUpdate() {
         // rewrite the fast access data for global
         globalByKeyStroke.clear();
@@ -495,9 +495,49 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 }
             }
         }
+
         // make sure the list updated
         handleGlobalUpdate();
 
+    }
+
+    // check if there are duplicate shortcuts
+    public final void doSanityCheck() {
+        // check global keystrokes for duplicates
+        HashMap<String, ShortcutObject> globalShortcuts = new HashMap<String, ShortcutObject>();
+        for (ShortcutObject so : global) {
+            String stroke = asString(so.keyStroke);
+            if (globalShortcuts.containsKey(stroke)) {
+                ShortcutObject dup = globalShortcuts.get(stroke);
+                System.err.println("Warning: The two actions " +
+                        so.actionName + " and " + dup.actionName +
+                        " have the same global shortcut (" + stroke + ").");
+            }
+            globalShortcuts.put(stroke, so);
+        }
+
+        // check frame keystrokes for duplicates
+        HashMap<String, ShortcutObject> shortcuts = new HashMap<String, ShortcutObject>();
+        for (String key : map.keySet()) {
+            shortcuts.clear();
+            for (ShortcutObject so : map.get(key)) {
+                String stroke = asString(so.keyStroke);
+                if (shortcuts.containsKey(stroke)) {
+                    ShortcutObject dup = shortcuts.get(stroke);
+                    System.err.println("Warning: The two actions " +
+                            so.actionName + " and " + dup.actionName +
+                            " for frame \"" + key + "\" have the same shortcut (" + stroke + ").");
+                }
+                // check if this clashes with a global shortcut
+                if (globalShortcuts.containsKey(stroke)) {
+                    ShortcutObject dup = globalShortcuts.get(stroke);
+                    System.err.println("Warning: The two actions " +
+                            dup.actionName + " (global) and " + so.actionName +
+                            " (frame \"" + key + "\") have the same shortcut (" + stroke + ").");
+                }
+                shortcuts.put(stroke, so);
+            }
+        }
     }
 
     // convert string into KeyCode
@@ -527,7 +567,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
 
     // internal - build a ShortcutObject from xml element
     // performs some sanity checks, frameName is only needed for error reporting
-    // frameName shoud be null for global shortcuts
+    // frameName should be null for global shortcuts
     private ShortcutObject buildShortcut(Element e, String frameName) {
         ShortcutObject shortcutObject = new ShortcutObject();
         // store

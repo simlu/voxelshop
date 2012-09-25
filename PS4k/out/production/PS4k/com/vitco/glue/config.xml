@@ -107,28 +107,24 @@
     <!--ENGINE STUFF-->
     <!-- animation data -->
     <bean id="Data" class="com.vitco.engine.data.Data"/>
-    <!-- side view -->
-    <bean id="SideView" class="com.vitco.logic.sideview.SideViews">
-        <property name="sideViews">
-            <array value-type="com.vitco.logic.sideview.SideView">
-                <bean class="com.vitco.logic.sideview.SideView">
-                    <constructor-arg value="0"/>  <!--first view-->
-                </bean>
-                <bean class="com.vitco.logic.sideview.SideView">
-                    <constructor-arg value="1"/>  <!--second view-->
-                </bean>
-                <bean class="com.vitco.logic.sideview.SideView">
-                    <constructor-arg value="2"/> <!--third view-->
-                </bean>
-            </array>
-        </property>
-    </bean>
+
     <!-- main view -->
     <bean id="MainView" class="com.vitco.logic.mainview.MainView"/>
 
+    <!--side views-->
+    <bean id="xyView" class="com.vitco.logic.sideview.SideView">
+        <constructor-arg value="0"/>  <!--first view-->
+    </bean>
+    <bean id="xzView" class="com.vitco.logic.sideview.SideView">
+        <constructor-arg value="1"/>  <!--second view-->
+    </bean>
+    <bean id="yzView" class="com.vitco.logic.sideview.SideView">
+        <constructor-arg value="2"/> <!--third view-->
+    </bean>
+
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
-        <constructor-arg value="PS4k - Alpha Version (V1.0.14)"/>
+        <constructor-arg value="PS4k - Alpha Version (V1.0.16)"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
@@ -175,9 +171,21 @@
                     </bean>
                 </entry>
                 <entry>
-                    <key><value>sideView</value></key>
+                    <key><value>xyView</value></key>
                     <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage">
-                        <property name="sideView" ref="SideView"/>
+                        <property name="sideView" ref="xyView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>xzView</value></key>
+                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage">
+                        <property name="sideView" ref="xzView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>yzView</value></key>
+                    <bean id="SideViewLinkage" class="com.vitco.layout.frames.SideViewLinkage">
+                        <property name="sideView" ref="yzView"/>
                     </bean>
                 </entry>
                 <entry>

@@ -7,4 +7,5 @@ import javax.swing.*;
  */
 public interface SideViewInterface {
     JPanel build();
+    int getSide();
 }

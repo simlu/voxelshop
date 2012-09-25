@@ -20,4 +20,7 @@
     <icon-item src="resource/img/framebars/sideview/align.png"
                tool-tip="sideview_align_main_view_tooltip"
                action="align_main_to_sideview2"/>
+    <icon-item src="resource/img/framebars/view/xzSwap.png"
+               tool-tip="swap_mainView_with_xzView_tooltip"
+               action="swap_mainView_with_xzView"/>
 </head>

@@ -110,6 +110,7 @@ public final class VitcoSettings {
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
+    public static final Color VOXEL_PREVIEW_LINE_COLOR_BRIGHT = new Color(255,255,255,100);
 
     public static final Color[] GRAYSCALE_COLOR_SWATCH = new Color[] {
             new Color(0, 0, 0), new Color(14, 14, 14), new Color(27, 27, 27),

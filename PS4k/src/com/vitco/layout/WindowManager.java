@@ -243,6 +243,27 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             errorHandler.handle(e); // should not happen
         }
 
+        actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        actionManager.registerAction("swap_mainView_with_xzView", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        actionManager.registerAction("swap_mainView_with_yzView", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
     }
 
 }

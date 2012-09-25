@@ -1,5 +1,6 @@
 package com.vitco;
 
+import com.vitco.logic.shortcut.ShortcutManager;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.error.ErrorHandler;
@@ -31,7 +32,7 @@ public class Main {
         // for debugging
         ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
         ((ComplexActionManager) context.getBean("ComplexActionManager")).performValidityCheck();
-
+        ((ShortcutManager) context.getBean("ShortcutManager")).doSanityCheck();
 //        // test console
 //        final Console console = ((Console) context.getBean("Console"));
 //        new Thread() {

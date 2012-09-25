@@ -2,7 +2,11 @@ package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.logic.mainview.MainViewInterface;
+import com.vitco.util.action.types.StateActionPrototype;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 
 /**
@@ -18,10 +22,11 @@ public class MainViewLinkage extends FrameLinkagePrototype {
 
     @Override
     public DockableFrame buildFrame(String key) {
-        // construct the frame
-        frame = new DockableFrame(key, null);
-        // update the title
-        updateTitle();
+        // construct frame
+        frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource("resource/img/icons/frames/mainview.png")
+        )));
+        updateTitle(); // update the title
         // remove all existing mouse listeners (no idea why there exist any.. jide?!)
         // prevent stupid popup
         for (MouseListener ml : frame.getMouseListeners()) {
@@ -29,6 +34,19 @@ public class MainViewLinkage extends FrameLinkagePrototype {
         }
 
         frame.add(mainView.build());
+
+        // register action to hide/show this frame and get visible state
+        actionManager.registerAction("mainview_state-action_show", new StateActionPrototype() {
+            @Override
+            public boolean getStatus() {
+                return frame.isVisible();
+            }
+
+            @Override
+            public void action(ActionEvent e) {
+                toggleVisible();
+            }
+        });
 
         return frame;
     }

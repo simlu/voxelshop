@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.logic.sideview.SideViewsInterface;
+import com.vitco.logic.sideview.SideViewInterface;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
@@ -9,13 +9,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
- * construct the side view frame
+ * construct a side view frame
  */
 public class SideViewLinkage extends FrameLinkagePrototype {
 
     // var & setter
-    private SideViewsInterface sideView;
-    public final void setSideView(SideViewsInterface sideView) {
+    private SideViewInterface sideView;
+    public final void setSideView(SideViewInterface sideView) {
         this.sideView = sideView;
     }
 
@@ -27,12 +27,10 @@ public class SideViewLinkage extends FrameLinkagePrototype {
         )));
         updateTitle(); // update the title
 
-        final JPanel pane = new JPanel();
-        sideView.buildSides(pane); // build content of frame
-        frame.add(pane);
+        frame.add(sideView.build());
 
         // register action to hide/show this frame and get visible state
-        actionManager.registerAction("side-view_state-action_show", new StateActionPrototype() {
+        actionManager.registerAction("side-view_state-action_show" + (sideView.getSide()+1), new StateActionPrototype() {
             @Override
             public boolean getStatus() {
                 return frame.isVisible();

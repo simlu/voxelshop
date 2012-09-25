@@ -238,15 +238,17 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         CommandMenuBar menuPanel = new CommandMenuBar();
         menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/logic/sideview/toolbar" + (side + 1) + ".xml");
         menuPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        menuPanel.setBorder(
-                // the last menu gets a bottom border
-                BorderFactory.createMatteBorder(0, 1, side == 2 ? 1 : 0, 1, VitcoSettings.DEFAULT_BORDER_COLOR)
-        );
+        //menuPanel.setBorder( BorderFactory.createMatteBorder(0, 1, 1, 1, VitcoSettings.DEFAULT_BORDER_COLOR) );
 
         // add menu and container
         wrapper.add(menuPanel, BorderLayout.SOUTH);
         wrapper.add(container, BorderLayout.CENTER);
 
         return wrapper;
+    }
+
+    @Override
+    public int getSide() {
+        return side;
     }
 }

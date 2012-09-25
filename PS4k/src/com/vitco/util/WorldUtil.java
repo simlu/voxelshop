@@ -8,6 +8,7 @@ import com.threed.jpct.util.Light;
 import com.vitco.res.VitcoSettings;
 
 import java.awt.*;
+import java.util.HashMap;
 
 /**
  * Class that provides basic functions for world manipulation
@@ -35,53 +36,74 @@ public class WorldUtil {
         return box.getID();
     }
 
-    private final static float cdis = VitcoSettings.VOXEL_SIZE/2;
-    private final static SimpleVector c1 = new SimpleVector(cdis, cdis, cdis);
-    private final static SimpleVector c2 = new SimpleVector(cdis, -cdis, cdis);
-    private final static SimpleVector c3 = new SimpleVector(cdis, -cdis, -cdis);
-    private final static SimpleVector c4 = new SimpleVector(cdis, cdis, -cdis);
-    private final static SimpleVector c5 = new SimpleVector(-cdis, cdis, cdis);
-    private final static SimpleVector c6 = new SimpleVector(-cdis, -cdis, cdis);
-    private final static SimpleVector c7 = new SimpleVector(-cdis, -cdis, -cdis);
-    private final static SimpleVector c8 = new SimpleVector(-cdis, cdis, -cdis);
+    private final static HashMap<String, Object3D> boxTypes = new HashMap<String, Object3D>();
+
+    static {
+        float cdis = VitcoSettings.VOXEL_SIZE/2;
+        SimpleVector c1 = new SimpleVector(cdis, cdis, cdis);
+        SimpleVector c2 = new SimpleVector(cdis, -cdis, cdis);
+        SimpleVector c3 = new SimpleVector(cdis, -cdis, -cdis);
+        SimpleVector c4 = new SimpleVector(cdis, cdis, -cdis);
+        SimpleVector c5 = new SimpleVector(-cdis, cdis, cdis);
+        SimpleVector c6 = new SimpleVector(-cdis, -cdis, cdis);
+        SimpleVector c7 = new SimpleVector(-cdis, -cdis, -cdis);
+        SimpleVector c8 = new SimpleVector(-cdis, cdis, -cdis);
+        // generate all possible objects
+        for (int i = 0; i < 64; i++) {
+            String bin = String.format("%06d", Integer.parseInt(Integer.toBinaryString(i)));
+            int triCount = 0;
+            for (int c = 0; c < 6; c++) {
+                if (bin.charAt(c) == '0') {
+                    triCount+=2;
+                }
+            }
+
+            // set the amount of triangles we need
+            Object3D box = new Object3D(triCount);
+
+            // add the triangles
+            if (bin.charAt(0) == '0') {
+                box.addTriangle(c1, c2, c3);
+                box.addTriangle(c1, c3, c4);
+            }
+            if (bin.charAt(1) == '0') {
+                box.addTriangle(c7, c6, c5);
+                box.addTriangle(c8, c7, c5);
+            }
+            if (bin.charAt(2) == '0') {
+                box.addTriangle(c1, c8, c5);
+                box.addTriangle(c1, c4, c8);
+            }
+            if (bin.charAt(3) == '0') {
+                box.addTriangle(c2, c6, c7);
+                box.addTriangle(c2, c7, c3);
+            }
+            if (bin.charAt(4) == '0') {
+                box.addTriangle(c1, c6, c2);
+                box.addTriangle(c1, c5, c6);
+            }
+            if (bin.charAt(5) == '0') {
+                box.addTriangle(c3, c8, c4);
+                box.addTriangle(c3, c7, c8);
+            }
+
+            boxTypes.put(bin, box);
+
+        }
+    }
 
     // add a box to the world
-    public static int addBoxSides (World world, SimpleVector pos, float size, Color color, boolean[] sides, int triCount) {
-        // set the amount of triangles we need
-        Object3D box = new Object3D(triCount);
-
-        // add the triangles
-        if (!sides[0]) {
-            box.addTriangle(c1, c2, c3);
-            box.addTriangle(c1, c3, c4);
-        }
-        if (!sides[1]) {
-            box.addTriangle(c7, c6, c5);
-            box.addTriangle(c8, c7, c5);
-        }
-        if (!sides[2]) {
-            box.addTriangle(c1, c8, c5);
-            box.addTriangle(c1, c4, c8);
-        }
-        if (!sides[3]) {
-            box.addTriangle(c2, c6, c7);
-            box.addTriangle(c2, c7, c3);
-        }
-        if (!sides[4]) {
-            box.addTriangle(c1, c6, c2);
-            box.addTriangle(c1, c5, c6);
-        }
-        if (!sides[5]) {
-            box.addTriangle(c3, c8, c4);
-            box.addTriangle(c3, c7, c8);
-        }
-
+    public static int addBoxSides (World world, SimpleVector pos, Color color, String boxType) {
+        Object3D box = boxTypes.get(boxType).cloneObject();
         // set other settings, build and add
         box.setAdditionalColor(color);
+        box.setOrigin(pos);
         box.setEnvmapped(Object3D.ENVMAP_ENABLED);
         box.setShadingMode(Object3D.SHADING_FAKED_FLAT);
         box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
-        box.setOrigin(pos);
+        if (boxType.equals("111111")) { // no need to show this object
+            box.setVisibility(false);
+        }
         box.build();
         world.addObject(box);
         return box.getID();

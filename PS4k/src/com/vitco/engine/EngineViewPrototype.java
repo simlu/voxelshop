@@ -1,5 +1,6 @@
 package com.vitco.engine;
 
+import com.jidesoft.utils.ColorUtils;
 import com.newbrightidea.util.RTree;
 import com.threed.jpct.*;
 import com.vitco.engine.data.Data;
@@ -8,6 +9,7 @@ import com.vitco.engine.data.container.Voxel;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.BiMap;
+import com.vitco.util.ColorTools;
 import com.vitco.util.G2DUtil;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.pref.PrefChangeListener;
@@ -124,13 +126,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                         voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
                         voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
                         voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
-                VitcoSettings.VOXEL_SIZE / 2,
                 voxel.getColor(),
-                new boolean[]{
-                        true, side == 2 ? false : true,
-                        true, side == 1 ? false : true,
-                        true, side == 0 ? false : true
-                }, 2);
+                "1" + (side == 2 ? "0" : "1") +
+                "1" + (side == 1 ? "0" : "1") +
+                "1" + (side == 0 ? "0" : "1"));
         voxelToObject.put(voxel.id, id);
     }
 
@@ -146,10 +145,14 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         for (Voxel voxel : voxels) {
             voxelIds.remove((Integer)voxel.id);
             if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
+                voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel);
                 addVoxelToWorld(voxel, side);
                 idToVoxel.put(voxel.id, voxel);
             } else { // remove and add all altered voxels
-                if (!idToVoxel.get(voxel.id).equals(voxel)) {
+                Voxel oldVoxel = idToVoxel.get(voxel.id);
+                if (!oldVoxel.equals(voxel)) {
+                    voxelPositions.delete(oldVoxel.getPosAsFloat(), ZEROS, oldVoxel); // delete old entry
+                    voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel); // add new
                     idToVoxel.put(voxel.id, voxel);
                     world.removeObject(voxelToObject.get(voxel.id)); // remove
                     addVoxelToWorld(voxel, side);
@@ -161,6 +164,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         for (int id : voxelIds) {
             world.removeObject(voxelToObject.get(id));
             voxelToObject.removeByKey(id);
+            Voxel voxel = idToVoxel.get(id);
+            voxelPositions.delete(voxel.getPosAsFloat(), ZEROS, voxel);
             idToVoxel.remove(id);
         }
     }
@@ -245,35 +250,29 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         for (Voxel voxel : toRefresh) {
             float[] pos = voxel.getPosAsFloat();
             // calculate the required sides
-            boolean[] sides = new boolean[6];
-            int triCount = 0;
+            StringBuilder sides = new StringBuilder();
             for (int i = 0; i < 6; i++) {
                 int add = i%2 == 0 ? 1 : -1;
-                sides[i] = voxelPositions.search(new float[] {
+                sides.append(voxelPositions.search(new float[] {
                         i/2 == 0 ? pos[0] + add : pos[0],
                         i/2 == 1 ? pos[1] + add : pos[1],
                         i/2 == 2 ? pos[2] + add : pos[2]
-                }, ZEROS).size() > 0;
-                if (!sides[i]) {
-                    triCount+=2;
-                }
+                }, ZEROS).size() > 0 ? "1" : "0");
             }
-            // add the box to the world
             int id = WorldUtil.addBoxSides(world,
                     new SimpleVector(
                             voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
                             voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
                             voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
-                    VitcoSettings.VOXEL_SIZE / 2,
-                    voxel.getColor(),
-                    sides, triCount);
+                    voxel.getColor(), sides.toString());
+            // remember the object reference
             Integer key = voxelToObject.get(voxel.id);
+            voxelToObject.put(voxel.id, id);
             // remove if there was already an object for this voxel
             if (key != null) {
                 world.removeObject(key);
             }
-            // remember the object reference
-            voxelToObject.put(voxel.id, id);
+
         }
 
     }
@@ -297,6 +296,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // ==============================
     // END: updating of world with voxels
     // ==============================
+
+    // set wireframe mode
+    private boolean useWireFrame = false;
+    protected final void useWireFrame(boolean b) {
+        useWireFrame = b;
+    }
 
     // the container that we draw on
     protected final MPanel container = new MPanel();
@@ -387,6 +392,15 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             final int[] voxel = data.getHighlightedVoxel();
             // draw selected voxel (ghost / preview voxel)
             if (voxel != null) {
+                Color previewColor = VitcoSettings.VOXEL_PREVIEW_LINE_COLOR;
+//                // try to find the voxel color
+//                List<Voxel> list = voxelPositions.search(new float[] {voxel[0], voxel[1], voxel[2]}, ZEROS);
+//                if (list.size() > 0) {
+//                    Voxel voxelObject3D = list.get(0);
+//                    if (ColorTools.perceivedBrightness(voxelObject3D.getColor()) < 130) {
+//                        previewColor = VitcoSettings.VOXEL_PREVIEW_LINE_COLOR_BRIGHT;
+//                    }
+//                }
                 // define the points of the voxel
                 SimpleVector[] vectors = new SimpleVector[] {
                         new SimpleVector(voxel[0] + 0.5, voxel[1] + 0.5, voxel[2] + 0.5),
@@ -421,9 +435,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     // draw the cube
                     ig.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
                     for (int i = 0; i < 4; i++) {
-                        drawCubeLine(ig, vectors, i, (i + 1) % 4, VitcoSettings.VOXEL_PREVIEW_LINE_COLOR, distance, zRange);
-                        drawCubeLine(ig, vectors, i + 4, (i + 1) % 4 + 4, VitcoSettings.VOXEL_PREVIEW_LINE_COLOR, distance, zRange);
-                        drawCubeLine(ig, vectors, i, i + 4, VitcoSettings.VOXEL_PREVIEW_LINE_COLOR, distance, zRange);
+                        drawCubeLine(ig, vectors, i, (i + 1) % 4, previewColor, distance, zRange);
+                        drawCubeLine(ig, vectors, i + 4, (i + 1) % 4 + 4, previewColor, distance, zRange);
+                        drawCubeLine(ig, vectors, i, i + 4, previewColor, distance, zRange);
                     }
 
                     // draw the highlighted side
@@ -468,17 +482,17 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                         if (valid) {
                             // draw the lines
                             float halfLen = points.length/((float)8);
-                            Color transColor = new Color(VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getRed(),
-                                    VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getGreen(),
-                                    VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getBlue(),
+                            Color transColor = new Color(previewColor.getRed(),
+                                    previewColor.getGreen(),
+                                    previewColor.getBlue(),
                                     0);
                             for (int i = 0, len = points.length/4; i < len; i++) {
 
                                 float alpha = (halfLen-Math.abs(i-halfLen))/halfLen;
                                 Color visColor = new Color(
-                                        VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getRed(),
-                                        VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getGreen(),
-                                        VitcoSettings.VOXEL_PREVIEW_LINE_COLOR.getBlue(),
+                                        previewColor.getRed(),
+                                        previewColor.getGreen(),
+                                        previewColor.getBlue(),
                                         Math.min(255,Math.max(0,Math.round(100*alpha))));
 
                                 ig.setPaint(new GradientPaint(
@@ -678,7 +692,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                         worldVoxelCurrent = true;
                     }
                     world.renderScene(buffer);
-                    world.draw(buffer);
+                    if (useWireFrame) {
+                        world.drawWireframe(buffer, Color.WHITE);
+                    } else {
+                        world.draw(buffer);
+                    }
                 }
                 buffer.update();
                 if (drawOverlay) { // overlay part 1

@@ -5,10 +5,14 @@
         <shortcut ctrl="yes" alt="no" shift="yes" key="Z" action="global_action_redo" caption="global_redo_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="1" action="console_state-action_show" caption="console_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="2" action="shortcut-mg_state-action_show" caption="shortcutManager_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="3" action="side-view_state-action_show" caption="sideView_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="4" action="snapshot_state-action_show" caption="snapshot_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="5" action="personal_state-action_show" caption="personal_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="6" action="layer_state-action_show" caption="layer_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="3" action="side-view_state-action_show1" caption="xyView_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="4" action="side-view_state-action_show2" caption="xzView_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="5" action="side-view_state-action_show3" caption="yzView_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="6" action="snapshot_state-action_show" caption="snapshot_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="7" action="personal_state-action_show" caption="personal_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="8" action="layer_state-action_show" caption="layer_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="9" action="colorpicker_state-action_show" caption="colorpicker_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="0" action="mainview_state-action_show" caption="mainView_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
         <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
@@ -29,7 +33,11 @@
         <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
     </frame>
 
-    <frame name="sideView">
+    <frame name="xyView">
+    </frame>
+    <frame name="xzView">
+    </frame>
+    <frame name="yzView">
     </frame>
 
     <frame name="console">

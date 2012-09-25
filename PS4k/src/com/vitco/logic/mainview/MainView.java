@@ -6,6 +6,7 @@ import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.colors.ColorChangeListener;
 import com.vitco.util.colors.SimpleColorChooser;
 import com.vitco.util.WorldUtil;
@@ -162,15 +163,34 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
         });
 
+        // register button action for wireframe toggle
+
+        actionManager.registerAction("main_window_toggle_wireframe", new StateActionPrototype() {
+            private boolean useWireFrame = false; // always false on startup
+            @Override
+            public void action(ActionEvent actionEvent) {
+                useWireFrame = !useWireFrame;
+                useWireFrame(useWireFrame);
+                world.getObject(worldPlane).setVisibility(!useWireFrame);
+                forceRepaint();
+            }
+
+            @Override
+            public boolean getStatus() {
+                return useWireFrame;
+            }
+        });
+
         // holds menu and render area (container)
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
 
         // create menu
         CommandMenuBar menuPanel = new CommandMenuBar();
-        menuPanel.setOrientation(1); // top down orientation
+        //menuPanel.setOrientation(1); // top down orientation
+        menuPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/logic/mainview/toolbar.xml");
-        menuPanel.setBorder(BorderFactory.createMatteBorder(1,0,1,1,VitcoSettings.DEFAULT_BORDER_COLOR));
+        //menuPanel.setBorder(BorderFactory.createMatteBorder(1,0,1,1,VitcoSettings.DEFAULT_BORDER_COLOR));
 
         // register color change event of ground plane
         preferences.addPrefChangeListener("main_view_ground_plane_color", new PrefChangeListener() {
@@ -182,7 +202,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         });
 
         // add to wrapper
-        wrapper.add(menuPanel, BorderLayout.EAST);
+        wrapper.add(menuPanel, BorderLayout.SOUTH);
         wrapper.add(container, BorderLayout.CENTER);
 
         return wrapper;
