@@ -11,7 +11,6 @@ import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
-import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -136,16 +135,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         // save the state on exit of the program
         // this needs to be done BEFORE the window is closing
         addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-                // initialize the view when swing is ready
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        repaint();
-                    }
-                });
-            }
 
             @Override
             public void windowClosing(final WindowEvent e) {
@@ -246,44 +235,39 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         }
 
         actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
-            private final String frame = "xyView";
+            private static final String frame = "xyView";
             @Override
             public void actionPerformed(ActionEvent e) {
-                DockingManager dm = getDockingManager();
-                dm.addFrame(new DockableFrame("__dummy"));
-                dm.moveFrame("__dummy", frame);
-                dm.moveFrame(frame, "mainView");
-                dm.moveFrame("mainView", "__dummy");
-                dm.removeFrame("__dummy");
+                handleFrameSwap(frame);
             }
         });
 
         actionManager.registerAction("swap_mainView_with_xzView", new AbstractAction() {
-            private final String frame = "xzView";
+            private static final String frame = "xzView";
             @Override
             public void actionPerformed(ActionEvent e) {
-                DockingManager dm = getDockingManager();
-                dm.addFrame(new DockableFrame("__dummy"));
-                dm.moveFrame("__dummy", frame);
-                dm.moveFrame(frame, "mainView");
-                dm.moveFrame("mainView", "__dummy");
-                dm.removeFrame("__dummy");
+                handleFrameSwap(frame);
             }
         });
 
         actionManager.registerAction("swap_mainView_with_yzView", new AbstractAction() {
-            private final String frame = "yzView";
+            private static final String frame = "yzView";
             @Override
             public void actionPerformed(ActionEvent e) {
-                DockingManager dm = getDockingManager();
-                dm.addFrame(new DockableFrame("__dummy"));
-                dm.moveFrame("__dummy", frame);
-                dm.moveFrame(frame, "mainView");
-                dm.moveFrame("mainView", "__dummy");
-                dm.removeFrame("__dummy");
+                handleFrameSwap(frame);
             }
         });
 
+    }
+
+    // handle swap of frames
+    private void handleFrameSwap(String frame) {
+        DockingManager dm = getDockingManager();
+        dm.addFrame(new DockableFrame("__dummy"));
+        dm.moveFrame("__dummy", frame);
+        dm.moveFrame(frame, "mainView");
+        dm.moveFrame("mainView", "__dummy");
+        dm.removeFrame("__dummy");
     }
 
 }

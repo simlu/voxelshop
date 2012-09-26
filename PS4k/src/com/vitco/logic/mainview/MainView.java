@@ -6,7 +6,6 @@ import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.ColorTools;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
@@ -180,6 +179,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
 
+        // prevent "flickering"
         preferences.addPrefChangeListener("engine_view_bg_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {
@@ -192,7 +192,8 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         //menuPanel.setOrientation(1); // top down orientation
         menuPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/logic/mainview/toolbar.xml");
-        //menuPanel.setBorder(BorderFactory.createMatteBorder(1,0,1,1,VitcoSettings.DEFAULT_BORDER_COLOR));
+        // so the background doesn't show
+        menuPanel.setOpaque(true);
 
         // register color change event of ground plane
         preferences.addPrefChangeListener("main_view_ground_plane_color", new PrefChangeListener() {

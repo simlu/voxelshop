@@ -272,7 +272,9 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
 
         // create the complex action to select the color of the background
         SimpleColorChooser bgColorChooser = new SimpleColorChooser();
-        preferences.storeObject("engine_view_bg_color", VitcoSettings.ANIMATION_BG_COLOR);
+        if (!preferences.contains("engine_view_bg_color")) {
+            preferences.storeObject("engine_view_bg_color", VitcoSettings.ANIMATION_BG_COLOR);
+        }
         bgColorChooser.addColorChangeListener(new ColorChangeListener() {
             @Override
             public void colorChanged(Color newColor) {

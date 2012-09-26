@@ -6,6 +6,7 @@ import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
@@ -179,6 +180,9 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         }
     }
 
+    // true if we are in animation mode, false if in voxel mode
+    private boolean isAnimationMode = false;
+
     @Override
     public final JPanel build() {
         JPanel result = new JPanel();
@@ -247,6 +251,15 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         menuPanel.setBorder(BorderFactory.createMatteBorder(0,1,1,1,VitcoSettings.DEFAULT_BORDER_COLOR));
         result.add(menuPanel, BorderLayout.SOUTH);
 
+        // register change of mode (disable buttons to make history consistent)
+        preferences.addPrefChangeListener("is_animation_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                isAnimationMode = (Boolean)o;
+                actionGroupManager.refreshGroup("voxel_layer_interaction");
+            }
+        });
+
         // register the menu actions
         actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_add-layer", new StateActionPrototype() {
             @Override
@@ -259,7 +272,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
             @Override
             public boolean getStatus() {
-                return data.getLayers().length < VitcoSettings.MAX_LAYER_COUNT;
+                return data.getLayers().length < VitcoSettings.MAX_LAYER_COUNT && !isAnimationMode;
             }
         });
         actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_remove-layer", new StateActionPrototype() {
@@ -272,7 +285,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
             @Override
             public boolean getStatus() {
-                return data.getSelectedLayer() != -1;
+                return data.getSelectedLayer() != -1 && !isAnimationMode;
             }
         });
         actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_move-layer-up", new StateActionPrototype() {
@@ -284,7 +297,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
             @Override
             public boolean getStatus() {
-                return data.canMoveLayerUp(data.getSelectedLayer());
+                return data.canMoveLayerUp(data.getSelectedLayer()) && !isAnimationMode;
             }
         });
         actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_move-layer-down", new StateActionPrototype() {
@@ -296,7 +309,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
             @Override
             public boolean getStatus() {
-                return data.canMoveLayerDown(data.getSelectedLayer());
+                return data.canMoveLayerDown(data.getSelectedLayer()) && !isAnimationMode;
             }
         });
         actionGroupManager.addAction("voxel_layer_interaction", "layer-frame_layer-merge", new StateActionPrototype() {
@@ -308,7 +321,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
             @Override
             public boolean getStatus() {
-                return data.canMergeVisibleLayers();
+                return data.canMergeVisibleLayers() && !isAnimationMode;
             }
         });
         actionGroupManager.registerGroup("voxel_layer_interaction");

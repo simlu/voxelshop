@@ -1,14 +1,16 @@
 package com.vitco.logic.sideview;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.jidesoft.swing.JideButton;
 import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.ColorTools;
+import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.pref.PrefChangeListener;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,11 +18,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Creates one side view instance (one perspective) and the specific user interaction.
  */
 public class SideView extends EngineInteractionPrototype implements SideViewInterface {
+
+    // var & setter
+    private ComplexActionManager complexActionManager;
+    @Autowired
+    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
+        this.complexActionManager = complexActionManager;
+    }
 
     private final int side;
 
@@ -142,6 +152,38 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 preferences.storeObject("currentplane_sideview" + (side + 1), currentplane+1);
             }
         });
+        actionManager.registerAction("sideview_set_plane_to_zero" + (side + 1), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                preferences.storeObject("currentplane_sideview" + (side + 1), 0);
+            }
+        });
+        // complex action for repainting the icon with number
+        complexActionManager.registerActionIsUsed("sideview_set_plane_to_zero_button" + (side + 1));
+        complexActionManager.performWhenActionIsReady("sideview_set_plane_to_zero_button" + (side + 1), new Runnable() {
+            @Override
+            public void run() {
+                preferences.addPrefChangeListener("currentplane_sideview" + (side + 1), new PrefChangeListener() {
+                    @Override
+                    public void onPrefChange(Object o) {
+                        Image imgRes = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("resource/img/framebars/sideview/make_zero.png"));
+                        BufferedImage image = new BufferedImage(imgRes.getWidth(null), imgRes.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                        image.getGraphics().drawImage(imgRes,0,0, null);
+                        Graphics2D ig = (Graphics2D)image.getGraphics();
+                        // Anti-alias
+                        ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+                        ig.setColor(Color.GRAY);
+                        ig.setFont(new Font(ig.getFont().getName(), Font.PLAIN, 9));
+                        ig.drawString(String.valueOf(o), 4, 16);
+                        ImageIcon icon = new ImageIcon();
+                        icon.setImage(image);
+                        ((JideButton) complexActionManager.getAction("sideview_set_plane_to_zero_button" + (side + 1))).setIcon(icon);
+                    }
+                });
+            }
+        });
+
 
         // register zoom buttons
         actionManager.registerAction("sideview_zoom_in_tb" + (side + 1), new AbstractAction() {
@@ -235,6 +277,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
 
+        // prevent "flickering"
         preferences.addPrefChangeListener("engine_view_bg_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {
@@ -246,7 +289,8 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         CommandMenuBar menuPanel = new CommandMenuBar();
         menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/logic/sideview/toolbar" + (side + 1) + ".xml");
         menuPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        //menuPanel.setBorder( BorderFactory.createMatteBorder(0, 1, 1, 1, VitcoSettings.DEFAULT_BORDER_COLOR) );
+        // so the background doesn't show
+        menuPanel.setOpaque(true);
 
         // add menu and container
         wrapper.add(menuPanel, BorderLayout.SOUTH);
