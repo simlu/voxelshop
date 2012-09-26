@@ -6,11 +6,21 @@ import com.vitco.engine.data.container.VOXELMODE;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Hold all used colors. Aids in keeping a consistent color schema.
  */
 public final class VitcoSettings {
+
+    // these can change externally
+    public static final String PROGRAM_UPDATER_URL = "http://www.fantasy-mmorpg.com/tools/ps4k/updater/digest.txt";
+
+    // cursor
+    public static final Cursor CURSOR_DEFAULT = Cursor.getDefaultCursor();
+    public static final Cursor CURSOR_BLANK = Toolkit.getDefaultToolkit().createCustomCursor(
+            new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "blank cursor");
+
     // color picker
     public static final Color COLOR_PICKER_SLIDER_KNOB_COLOR = new Color(110, 143, 163);
 

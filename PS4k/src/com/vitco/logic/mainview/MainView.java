@@ -179,7 +179,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
 
-        // prevent "flickering"
+        // prevent "flickering" when swapping windows
         preferences.addPrefChangeListener("engine_view_bg_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {

@@ -152,6 +152,12 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
     }
 
+    // handle cursor (global)
+    @Override
+    public final void setCustomCursor(Cursor cursor) {
+        this.getContentPane().setCursor(cursor);
+    }
+
     @PreDestroy
     @Override
     public final void finish() {

@@ -164,11 +164,21 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void run() {
                 preferences.addPrefChangeListener("currentplane_sideview" + (side + 1), new PrefChangeListener() {
+                    private JideButton button = null;
+                    private BufferedImage originalBG = null;
                     @Override
                     public void onPrefChange(Object o) {
-                        Image imgRes = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("resource/img/framebars/sideview/make_zero.png"));
-                        BufferedImage image = new BufferedImage(imgRes.getWidth(null), imgRes.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-                        image.getGraphics().drawImage(imgRes,0,0, null);
+                        if (button == null || originalBG == null) { // remember the original icon
+                            button = ((JideButton) complexActionManager.getAction("sideview_set_plane_to_zero_button" + (side + 1)));
+                            Icon icon = button.getIcon();
+                            originalBG = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                            icon.paintIcon(null, originalBG.getGraphics(), 0, 0);
+                        }
+
+                        // print the number
+                        BufferedImage image = new BufferedImage(originalBG.getWidth(), originalBG.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                        image.getGraphics().drawImage(originalBG,0,0, null);
+
                         Graphics2D ig = (Graphics2D)image.getGraphics();
                         // Anti-alias
                         ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -178,7 +188,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                         ig.drawString(String.valueOf(o), 4, 16);
                         ImageIcon icon = new ImageIcon();
                         icon.setImage(image);
-                        ((JideButton) complexActionManager.getAction("sideview_set_plane_to_zero_button" + (side + 1))).setIcon(icon);
+                        button.setIcon(icon);
                     }
                 });
             }
@@ -262,8 +272,9 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (mouse_down_point != null) {
-                    camera.shift((float)(e.getX() - mouse_down_point.getX()),
-                            (float)(e.getY() - mouse_down_point.getY()),
+                    // keep speed the same for different container sizes
+                    camera.shift(150*(float)(e.getX() - mouse_down_point.getX())/container.getWidth(),
+                            150*(float)(e.getY() - mouse_down_point.getY())/container.getHeight(),
                             VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
                     mouse_down_point = e.getPoint();
                     forceRepaint();
@@ -277,7 +288,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
 
-        // prevent "flickering"
+        // prevent "flickering" when swapping windows
         preferences.addPrefChangeListener("engine_view_bg_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {

@@ -3,6 +3,8 @@ package com.vitco.logic.colorpicker;
 import com.vitco.engine.data.Data;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.ColorTools;
+import com.vitco.util.action.ActionManager;
+import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.pref.PreferencesInterface;
 import com.vitco.util.thread.LifeTimeThread;
@@ -14,10 +16,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -32,11 +31,25 @@ public class ColorPickerView implements ColorPickerViewInterface {
         this.preferences = preferences;
     }
 
+    // var & setter
+    private ErrorHandlerInterface errorHandler;
+    @Autowired
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
     // var & setter (can not be interface!!)
     protected Data data;
     @Autowired
     public final void setData(Data data) {
         this.data = data;
+    }
+
+    // var & setter
+    private ActionManager actionManager;
+    @Autowired
+    public final void setActionManager(ActionManager actionManager) {
+        this.actionManager = actionManager;
     }
 
     private ThreadManagerInterface threadManager;
@@ -200,6 +213,28 @@ public class ColorPickerView implements ColorPickerViewInterface {
         final JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
         wrapper.setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR));
+
+        // ===========
+        // initialize the robot (for global color picker)
+        Robot tmp = null;
+        try {
+            tmp = new Robot();
+        } catch (AWTException e) {
+            errorHandler.handle(e);
+        }
+        final Robot robot = tmp;
+        // register global color picker action
+        actionManager.registerAction("pick_color_under_mouse_as_current_color", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (robot != null) {
+                    Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+                    preferences.storeObject("currently_used_color",
+                            ColorTools.colorToHSB(robot.getPixelColor(mousePosition.x, mousePosition.y)));
+                }
+            }
+        });
+        // ===========
 
         // prepare panel events
         panel.addComponentListener(adapter);

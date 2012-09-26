@@ -3,12 +3,58 @@ package com.vitco.util;
 import com.vitco.util.error.ErrorHandlerInterface;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 /**
  * Some basic tools to deal with files and streams.
  */
 public class FileTools {
+
+    public static String readFileAsString(File file, ErrorHandlerInterface errorHandler){
+        String result = "";
+        BufferedReader br = null;
+        try
+        {
+            br = new BufferedReader(new FileReader(file));
+            StringBuilder str = new StringBuilder();
+            String line = br.readLine();
+            while (line != null)
+            {
+                str.append(line).append("\n");
+                line = br.readLine();
+            }
+            result = str.toString();
+        } catch (FileNotFoundException e) {
+            errorHandler.handle(e);
+        } catch (IOException e) {
+            errorHandler.handle(e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    errorHandler.handle(e);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String md5Hash(String str, ErrorHandlerInterface errorHandler) {
+        String result = "";
+        try {
+            byte[] bytesOfMessage = str.getBytes("UTF-8");
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            result = new String(md.digest(bytesOfMessage));
+        } catch (UnsupportedEncodingException e) {
+            errorHandler.handle(e);
+        } catch (NoSuchAlgorithmException e) {
+            errorHandler.handle(e);
+        }
+        return result;
+    }
 
     // de-serialize object from file
     public static Object loadFromFile(File file, ErrorHandlerInterface errorHandler) {

@@ -13,6 +13,7 @@ import com.vitco.util.pref.PreferencesInterface;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.awt.*;
 import java.util.Map;
 
 /**
@@ -47,4 +48,7 @@ public interface WindowManagerInterface {
 
     @PreDestroy
     void finish();
+
+    // handle cursor (global)
+    void setCustomCursor(Cursor cursor);
 }

@@ -28,6 +28,7 @@
         <shortcut action="swap_mainView_with_xyView" caption="swap_mainView_with_xyView_caption" />
         <shortcut action="swap_mainView_with_xzView" caption="swap_mainView_with_xzView_caption" />
         <shortcut action="swap_mainView_with_yzView" caption="swap_mainView_with_yzView_caption" />
+        <shortcut action="pick_color_under_mouse_as_current_color" caption="pick_color_under_mouse_as_current_color_caption" />
 
     </global>
 
