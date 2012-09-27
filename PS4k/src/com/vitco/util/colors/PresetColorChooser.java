@@ -4,12 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 /**
  * A very simple color chooser.
  */
-public class SimpleColorChooser extends JPanel {
+public class PresetColorChooser extends ColorChooserPrototype {
 
     private final static Color[] DEFAULT_SWATCH = new Color[] {
             // black to white
@@ -121,18 +120,6 @@ public class SimpleColorChooser extends JPanel {
             new Color(185, 183, 197), new Color(222, 225, 229), new Color(242, 246, 245), new Color(246, 251, 249)
     };
 
-    private final ArrayList<ColorChangeListener> listeners = new ArrayList<ColorChangeListener>();
-
-    private void notifyListeners(Color color) {
-        for (ColorChangeListener ccl : listeners) {
-            ccl.colorChanged(color);
-        }
-    }
-
-    public final void addColorChangeListener(ColorChangeListener ccl) {
-        listeners.add(ccl);
-    }
-
     private void setUpColors(int ROWS, int COLS, Color[] colors) {
 
         this.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, Color.BLACK));
@@ -164,18 +151,18 @@ public class SimpleColorChooser extends JPanel {
     }
 
     // custom constructor
-    public SimpleColorChooser(Color[] colors) {
+    public PresetColorChooser(Color[] colors) {
         int maxHeight = (int)Math.floor(Math.sqrt(colors.length));
         setUpColors(Math.min(colors.length, maxHeight), (int)Math.ceil(colors.length/(double)maxHeight), colors);
     }
 
     // custom constructor
-    public SimpleColorChooser(int ROWS, int COLS, Color[] colors) {
+    public PresetColorChooser(int ROWS, int COLS, Color[] colors) {
         setUpColors(ROWS, COLS, colors);
     }
 
     // default constructor
-    public SimpleColorChooser() {
+    public PresetColorChooser() {
 
 //        final int ROWS=12;
 //        final int COLS=30;

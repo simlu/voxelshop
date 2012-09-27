@@ -1,5 +1,6 @@
 package com.vitco.logic.shortcut;
 
+import com.jidesoft.docking.DialogFloatingContainer;
 import com.vitco.util.FileTools;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
@@ -115,13 +116,15 @@ public class ShortcutManager implements ShortcutManagerInterface {
     public void registerShortcuts(final Frame frame) {
         // register global actions
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(globalProcessor);
+
         // update activity / inactivity of shortcuts
         FocusManager.getCurrentManager().addPropertyChangeListener(new PropertyChangeListener() {
             private Object activeWindow = null;
             private Object focusOwner = null;
 
             private void update() {
-                if (activeWindow != frame || focusOwner instanceof JTextComponent) {
+                // the current frame or a dockableFrame popup, or an component where we edit
+                if ((activeWindow != frame && !(activeWindow instanceof DialogFloatingContainer)) || focusOwner instanceof JTextComponent) {
                     deactivateShortcuts();
                 } else {
                     activateShortcuts();

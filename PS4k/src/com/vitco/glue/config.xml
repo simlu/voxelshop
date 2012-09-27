@@ -127,7 +127,7 @@
 
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
-        <constructor-arg value="PS4k - Alpha Version (V1.0.19)"/>
+        <constructor-arg value="PS4k - Alpha Version (V1.0.20)"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
@@ -210,6 +210,10 @@
                     <bean id="ColorPickerLinkage" class="com.vitco.layout.frames.ColorPickerLinkage">
                         <property name="ColorPickerView" ref="ColorPickerView"/>
                     </bean>
+                </entry>
+                <entry>
+                    <key><value>colorslider</value></key>
+                    <bean id="ColorSliderLinkage" class="com.vitco.layout.frames.ColorSliderLinkage" />
                 </entry>
             </map>
         </property>

@@ -8,7 +8,7 @@ import com.vitco.util.ColorTools;
 import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.colors.ColorChangeListener;
-import com.vitco.util.colors.SimpleColorChooser;
+import com.vitco.util.colors.PresetColorChooser;
 import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -66,7 +66,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         // register the color preview "button" and picker
         // =====================================
         // register the popup and action
-        SimpleColorChooser scc = new SimpleColorChooser();
+        final PresetColorChooser scc = new PresetColorChooser();
         scc.addColorChangeListener(new ColorChangeListener() {
             @Override
             public void colorChanged(Color color) {
@@ -260,7 +260,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         });
 
         // create the complex action to select the color of the background plane
-        SimpleColorChooser bgPlaneColorChooser = new SimpleColorChooser();
+        PresetColorChooser bgPlaneColorChooser = new PresetColorChooser();
         bgPlaneColorChooser.addColorChangeListener(new ColorChangeListener() {
             @Override
             public void colorChanged(Color newColor) {
@@ -271,7 +271,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         complexActionManager.registerAction("pick_color_voxel_ground_plane", bgPlaneColorChooser);
 
         // create the complex action to select the color of the background
-        SimpleColorChooser bgColorChooser = new SimpleColorChooser();
+        PresetColorChooser bgColorChooser = new PresetColorChooser();
         if (!preferences.contains("engine_view_bg_color")) {
             preferences.storeObject("engine_view_bg_color", VitcoSettings.ANIMATION_BG_COLOR);
         }

@@ -158,9 +158,13 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 @Override
                 public void mouseMoved(MouseEvent e) {
                     JTable aTable = (JTable)e.getSource();
-                    curRow = aTable.rowAtPoint(e.getPoint());
-                    curCol = aTable.columnAtPoint(e.getPoint());
-                    aTable.repaint();
+                    int tRow = aTable.rowAtPoint(e.getPoint());
+                    int tCol = aTable.columnAtPoint(e.getPoint());
+                    if (curRow != tRow || curCol != tCol) {
+                        curRow = tRow;
+                        curCol = tCol;
+                        aTable.repaint();
+                    }
                 }
             });
             shortcut_table.addMouseListener(new MouseAdapter() {
@@ -191,13 +195,15 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 langSelector.getString("shortcut_mg_header_shortcut")
         };
         // the different frame shortcuts are in different tabs
-        final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.BOTTOM,JideTabbedPane.SCROLL_TAB_LAYOUT);
+        final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.RIGHT,JideTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.setFocusable(false); // looks nicer
+        tabbedPane.setTabShape(JideTabbedPane.SHAPE_WINDOWS); // make square
+        tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);
         // add the global shortcuts
         String[][] globalShortcuts = shortcutManager.getShortcuts(null);
         tabbedPane.addTab(
-                langSelector.getString("global_shortcuts_caption"),
-                new JScrollPane(createTab(globalShortcuts, columnNames, null))
+            langSelector.getString("global_shortcuts_caption"),
+            new JScrollPane(createTab(globalShortcuts, columnNames, null))
         );
         // add the frame shortcuts
         String[][] frames = shortcutManager.getFrames();
@@ -213,10 +219,13 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             }
         }
 
+        // todo add setter and getter for this
         // load from preferences
-        int selectedIndex = preferences.loadInteger("shortcut-manager_active-tab");
-        if (tabbedPane.getTabCount() > selectedIndex) {
-            tabbedPane.setSelectedIndex(selectedIndex); // set the stored index as active
+        if (preferences.contains("shortcut-manager_active-tab")) {
+            int selectedIndex = preferences.loadInteger("shortcut-manager_active-tab");
+            if (tabbedPane.getTabCount() > selectedIndex) {
+                tabbedPane.setSelectedIndex(selectedIndex); // set the stored index as active
+            }
         }
         // store when active tab changes
         tabbedPane.addChangeListener(new ChangeListener() {

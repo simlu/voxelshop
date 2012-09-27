@@ -21,9 +21,6 @@ public final class VitcoSettings {
     public static final Cursor CURSOR_BLANK = Toolkit.getDefaultToolkit().createCustomCursor(
             new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "blank cursor");
 
-    // color picker
-    public static final Color COLOR_PICKER_SLIDER_KNOB_COLOR = new Color(110, 143, 163);
-
     // initial settings
     public static final Color INITIAL_CURRENT_COLOR = new Color(199, 89, 68);
     public static final VOXELMODE INITIAL_VOXEL_MODE = VOXELMODE.DRAW;

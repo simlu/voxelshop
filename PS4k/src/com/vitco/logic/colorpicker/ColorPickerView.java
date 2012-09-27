@@ -24,6 +24,8 @@ import java.awt.image.BufferedImage;
  */
 public class ColorPickerView implements ColorPickerViewInterface {
 
+    // todo rework this entirely!
+
     // var & setter
     protected PreferencesInterface preferences;
     @Autowired(required=true)
@@ -74,7 +76,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
     // and then stops itself (can also be stopped from outside)
     private final class PaintThread extends LifeTimeThread {
         // get some needed components/settings
-        private static final int SUBFRAMES = 30;
+        private static final int SUBFRAMES = 20;
         final int width = image.getWidth() - 1;
         final int height = image.getHeight() - 1;
         int curPos = 0;
@@ -99,7 +101,7 @@ public class ColorPickerView implements ColorPickerViewInterface {
             curPos++;
 
             if (curPos < count) {
-                sleep(100);
+                sleep(150);
             } else { // stop when finished
                 stopThread();
             }
@@ -254,7 +256,6 @@ public class ColorPickerView implements ColorPickerViewInterface {
 
         // slider settings
         slider.setPreferredSize(new Dimension(25, slider.getPreferredSize().height));
-        slider.setBackground(VitcoSettings.COLOR_PICKER_SLIDER_KNOB_COLOR);
         final BasicSliderUI sliderUI = new BasicSliderUI(slider) {
 
             BufferedImage bgBuffer = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);

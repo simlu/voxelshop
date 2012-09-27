@@ -7,10 +7,12 @@ import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.jidesoft.docking.DockingManager;
+import com.jidesoft.plaf.UIDefaultsLookup;
 import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -155,7 +157,12 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     // handle cursor (global)
     @Override
     public final void setCustomCursor(Cursor cursor) {
-        this.getContentPane().setCursor(cursor);
+        for (String frameName : getDockingManager().getAllFrames()) {
+            getDockingManager().getFrame(frameName).setCursor(cursor);
+        }
+        for (DockableBar dockableBar : getDockableBarManager().getAllDockableBars()) {
+            dockableBar.setCursor(cursor);
+        }
     }
 
     @PreDestroy
@@ -186,6 +193,9 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             // custom style (would go here)
             // UIManager.setLookAndFeel(WindowsLookAndFeel.class.getName());
             // LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_XERTO);
+
+            // make the frame background match the tabbed pane background (border)
+            UIManager.getDefaults().put("DockableFrame.background", UIDefaultsLookup.getColor("JideTabbedPane.background"));
 
             // init loading
             ////////////////

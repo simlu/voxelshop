@@ -22,6 +22,7 @@
             <item caption="snapshot_caption" action="snapshot_state-action_show" checkable="true"/>
             <item caption="personal_caption" action="personal_state-action_show" checkable="true"/>
             <item caption="colorpicker_caption" action="colorpicker_state-action_show" checkable="true"/>
+            <item caption="colorslider_caption" action="colorslider_state-action_show" checkable="true"/>
         </menu>
     </menu>
 </head>

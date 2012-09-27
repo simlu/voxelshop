@@ -17,7 +17,7 @@
                tool-tip="sideview_move_plane_out_caption"
                action="sideview_move_plane_out3"/>
     <icon-item src="resource/img/framebars/sideview/make_zero.png"
-               tool-tip="sideview_set_plane_to_zero_tooptip"
+               tool-tip="sideview_set_plane_to_zero_tooltip"
                action="sideview_set_plane_to_zero3"
                register-button-as-complex-action="sideview_set_plane_to_zero_button3"/>
     <separator/>

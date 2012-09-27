@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <head xmlns="http://www.unfine.de/schema/shortcuts">
     <global>
+        <!--History-->
         <shortcut ctrl="yes" alt="no" shift="no" key="Z" action="global_action_undo" caption="global_undo_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="Z" action="global_action_redo" caption="global_redo_caption" />
+        <!--Windows-->
+        <shortcut ctrl="yes" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
         <shortcut ctrl="yes" alt="no" shift="no" key="1" action="console_state-action_show" caption="console_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="2" action="shortcut-mg_state-action_show" caption="shortcutManager_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="3" action="side-view_state-action_show1" caption="xyView_caption" />
@@ -13,23 +16,24 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="8" action="layer_state-action_show" caption="layer_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="9" action="colorpicker_state-action_show" caption="colorpicker_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="0" action="mainview_state-action_show" caption="mainView_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
+        <!--File-->
         <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="I" action="import_file_action" caption="import_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
+        <!--Tools-->
         <shortcut ctrl="no" alt="no" shift="no" key="F1" action="voxel_mode_select_type_view" caption="voxel_mode_select_type_view_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F2" action="voxel_mode_select_type_draw" caption="voxel_mode_select_type_draw_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F5" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
         <shortcut action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
+        <!--Custom-->
         <shortcut action="swap_mainView_with_xyView" caption="swap_mainView_with_xyView_caption" />
         <shortcut action="swap_mainView_with_xzView" caption="swap_mainView_with_xzView_caption" />
         <shortcut action="swap_mainView_with_yzView" caption="swap_mainView_with_yzView_caption" />
-        <shortcut action="pick_color_under_mouse_as_current_color" caption="pick_color_under_mouse_as_current_color_caption" />
-
+        <shortcut ctrl="no" alt="no" shift="no" key="P" action="pick_color_under_mouse_as_current_color" caption="pick_color_under_mouse_as_current_color_caption" />
     </global>
 
     <frame name="mainView">
@@ -39,10 +43,30 @@
     </frame>
 
     <frame name="xyView">
+        <shortcut action="sideview_set_plane_to_zero1" caption="sideview_set_plane_to_zero_caption" />
+        <shortcut action="sideview_move_plane_in1" caption="sideview_move_plane_in_caption" />
+        <shortcut action="sideview_move_plane_out1" caption="sideview_move_plane_out_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="X" action="sideview_reset_view1" caption="sideview_reset_view_tooltip" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb1" caption="sideview_zoom_out" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb1" caption="sideview_zoom_in" />
     </frame>
+
     <frame name="xzView">
+        <shortcut action="sideview_set_plane_to_zero2" caption="sideview_set_plane_to_zero_caption" />
+        <shortcut action="sideview_move_plane_in2" caption="sideview_move_plane_in_caption" />
+        <shortcut action="sideview_move_plane_out2" caption="sideview_move_plane_out_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="X" action="sideview_reset_view2" caption="sideview_reset_view_tooltip" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb2" caption="sideview_zoom_out" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb2" caption="sideview_zoom_in" />
     </frame>
+
     <frame name="yzView">
+        <shortcut action="sideview_set_plane_to_zero3" caption="sideview_set_plane_to_zero_caption" />
+        <shortcut action="sideview_move_plane_in3" caption="sideview_move_plane_in_caption" />
+        <shortcut action="sideview_move_plane_out3" caption="sideview_move_plane_out_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="X" action="sideview_reset_view3" caption="sideview_reset_view_tooltip" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb3" caption="sideview_zoom_out" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb3" caption="sideview_zoom_in" />
     </frame>
 
     <frame name="console">
@@ -68,5 +92,8 @@
     </frame>
 
     <frame name="colorpicker">
+    </frame>
+
+    <frame name="colorslider">
     </frame>
 </head>
