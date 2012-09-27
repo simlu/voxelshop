@@ -43,16 +43,16 @@ public class ColorSliderLinkage extends FrameLinkagePrototype {
         updateTitle(); // update the title
 
         // the color chooser events
-        scc.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(Color color) {
-                preferences.storeObject("currently_used_color", ColorTools.colorToHSB(color));
-            }
-        });
         preferences.addPrefChangeListener("currently_used_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {
                 scc.setColor((float[])o);
+            }
+        });
+        scc.addColorChangeListener(new ColorChangeListener() {
+            @Override
+            public void colorChanged(Color color) {
+                preferences.storeObject("currently_used_color", ColorTools.colorToHSB(color));
             }
         });
         // load active tab
