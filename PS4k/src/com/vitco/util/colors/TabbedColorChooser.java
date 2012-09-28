@@ -328,6 +328,9 @@ public class TabbedColorChooser extends ColorChooserPrototype {
             if (prevContentRect.x != sliderUI.getContentRect().width || prevContentRect.y != sliderUI.getContentRect().height ||
                     !lastLeftColor.equals(leftColor) || !lastRightColor.equals(rightColor)) {
 
+                lastLeftColor = leftColor;
+                lastRightColor = rightColor;
+
                 prevContentRect = new Point(sliderUI.getContentRect().width, sliderUI.getContentRect().height);
                 int w = sliderUI.getSlider().getWidth();
                 int h = sliderUI.getSlider().getHeight();
@@ -339,9 +342,9 @@ public class TabbedColorChooser extends ColorChooserPrototype {
 
                 // leave some free for the slider
                 ig.setPaint(new GradientPaint(sliderUI.getXPositionForValue(0), 0, leftColor, sliderUI.getXPositionForValue(255), 0, rightColor, false));
-                ig.fillRect(0, 0, w, h - 10);
+                ig.fillRect(1, 1, w - 2, h - 11);
                 ig.setColor(SLIDER_BORDER_COLOR);
-                ig.drawRect(0, 0, w, h - 10);
+                ig.drawRect(0, 0, w - 1, h - 10);
             }
 
             // draw the background
@@ -375,12 +378,12 @@ public class TabbedColorChooser extends ColorChooserPrototype {
                 ig.fillRect(0, 0, w, h);
 
                 // leave some free for the slider
-                for (int x = 0; x < w; x++) {
+                for (int x = 0; x < w - 1; x++) {
                     ig.setColor(ColorTools.hsbToColor(new float[] {(float)sliderUI.getValueForXPosition(x)/ sliderUI.getSlider().getMaximum(), 1, 1}));
-                    ig.drawLine(x, 0, x, h - 10);
+                    ig.drawLine(x, 1, x, h - 11);
                 }
                 ig.setColor(SLIDER_BORDER_COLOR);
-                ig.drawRect(0, 0, w, h - 10);
+                ig.drawRect(0, 0, w - 1, h - 10);
             }
 
             // draw the background
@@ -397,14 +400,81 @@ public class TabbedColorChooser extends ColorChooserPrototype {
 
     // tab prototype
     private abstract class TabPrototype extends JPanel {
-        private String[] values;
         private HorizontalSliderPrototype[] sliders;
         private NumberBox[] fields;
 
-        protected final void init(String[] values, HorizontalSliderPrototype[] sliders, NumberBox[] fields) {
-            this.values = values;
+        protected abstract void onSliderChange(int id, ChangeEvent e);
+        protected abstract void onTextFieldChange(int id, NumberBox source);
+        protected abstract void refreshUI();
+        protected abstract void notifyColorChange(Color color);
+
+        private boolean hasChanged = false;
+        protected void update(Color newColor, boolean externalChange, boolean publishIfChanged) {
+            boolean changed = !color.equals(newColor);
+            if (changed || externalChange) {
+                // set the color
+                color = newColor;
+                if (changed) {
+                    hasChanged = true;
+                }
+                if (externalChange) {
+                    notifyColorChange(newColor);
+                }
+                refreshUI();
+            }
+            // notify the listeners
+            if (hasChanged && publishIfChanged) {
+                hasChanged = false;
+                notifyListeners(color);
+            }
+        }
+
+        // update displayed values
+        protected final void setValues(int[] values) {
+            for (int i = 0; i < values.length; i++) {
+                sliders[i].setValueWithoutRefresh(values[i]);
+                fields[i].setValueWithoutRefresh(values[i]);
+            }
+        }
+
+        protected final void init(String[] values, HorizontalSliderPrototype[] sliders, final NumberBox[] fields) {
+            // store internal
             this.sliders = sliders;
             this.fields = fields;
+
+            // align only when showing
+            addHierarchyListener(new HierarchyListener() {
+                @Override
+                public void hierarchyChanged(HierarchyEvent e) {
+                    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) == HierarchyEvent.SHOWING_CHANGED) {
+                        if (isShowing()) {
+                            update(color, true, false);
+                        }
+                    }
+                }
+            });
+
+            // register slider events
+            for (int id = 0; id < sliders.length; id++) {
+                final int finalId = id;
+                sliders[id].addValueChangeListener(new HorizontalSliderPrototype.ValueChangeListener() {
+                    @Override
+                    public void onChange(ChangeEvent e) {
+                        onSliderChange(finalId, e);
+                    }
+                });
+            }
+
+            // register textfield events
+            for (int id = 0; id < fields.length; id++) {
+                final int finalId = id;
+                fields[id].addTextChangeListener(new NumberBox.TextChangeListener() {
+                    @Override
+                    public void onChange() {
+                        onTextFieldChange(finalId, fields[finalId]);
+                    }
+                });
+            }
 
             // construct the layout
             setLayout(new GridBagLayout());
@@ -442,7 +512,7 @@ public class TabbedColorChooser extends ColorChooserPrototype {
     }
 
     // the rgb chooser
-    RGBTab rgbTab = new RGBTab();
+    private final RGBTab rgbTab = new RGBTab();
     private class RGBTab extends TabPrototype {
 
         // the sliders
@@ -455,53 +525,6 @@ public class TabbedColorChooser extends ColorChooserPrototype {
         private final NumberBox gBox = new NumberBox(0, 255, 0);
         private final NumberBox bBox = new NumberBox(0, 255, 0);
 
-        private boolean hasChanged = false;
-
-        public final void updateRGB(Color newColor, boolean forceRefresh, boolean publishIfChanged) {
-            boolean changed = !color.equals(newColor);
-            if (changed || forceRefresh) {
-                // debug
-//                System.out.println(newColor.getRed() + "vs" + color.getRed() +
-//                    " & " + newColor.getGreen() + "vs" + color.getGreen() +
-//                    " & " + newColor.getBlue() + "vs" + color.getBlue() );
-//                System.out.println("RGB refresh");
-
-                if (changed) {
-                    hasChanged = true;
-                }
-
-                // set the color
-                color = newColor;
-
-                // repaint the slider
-                rSlider.setLeftColor(new Color(0, color.getGreen(), color.getBlue()));
-                rSlider.setRightColor(new Color(255, color.getGreen(), color.getBlue()));
-                rSlider.repaint();
-
-                gSlider.setLeftColor(new Color(color.getRed(), 0, color.getBlue()));
-                gSlider.setRightColor(new Color(color.getRed(), 255, color.getBlue()));
-                gSlider.repaint();
-
-                bSlider.setLeftColor(new Color(color.getRed(), color.getGreen(), 0));
-                bSlider.setRightColor(new Color(color.getRed(), color.getGreen(), 255));
-                bSlider.repaint();
-
-                // set the values
-                rBox.setValueWithoutRefresh(color.getRed());
-                gBox.setValueWithoutRefresh(color.getGreen());
-                bBox.setValueWithoutRefresh(color.getBlue());
-                rSlider.setValueWithoutRefresh(color.getRed());
-                gSlider.setValueWithoutRefresh(color.getGreen());
-                bSlider.setValueWithoutRefresh(color.getBlue());
-            }
-
-            // notify the listeners
-            if (hasChanged && publishIfChanged) {
-                hasChanged = false;
-                notifyListeners(color);
-            }
-        }
-
         public RGBTab() {
 
             init(
@@ -509,63 +532,54 @@ public class TabbedColorChooser extends ColorChooserPrototype {
                     new HorizontalSliderPrototype[]{rSlider, gSlider, bSlider},
                     new NumberBox[]{rBox, gBox, bBox}
             );
+        }
 
-            // align only when showing
-            addHierarchyListener(new HierarchyListener() {
-                @Override
-                public void hierarchyChanged(HierarchyEvent e) {
-                    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) == HierarchyEvent.SHOWING_CHANGED) {
-                        if (isShowing()) {
-                            updateRGB(color, true, false);
-                        }
-                    }
-                }
-            });
+        @Override
+        protected void onSliderChange(int id, ChangeEvent e) {
+            JSlider source = ((JSlider) e.getSource());
+            update(new Color(
+                    id == 0 ? source.getValue() : color.getRed(),
+                    id == 1 ? source.getValue() : color.getGreen(),
+                    id == 2 ? source.getValue() : color.getBlue()),
+                    false, !source.getValueIsAdjusting());
+        }
 
-            // slider events
-            rSlider.addValueChangeListener(new HorizontalSliderPrototype.ValueChangeListener() {
-                @Override
-                public void onChange(ChangeEvent e) {
-                    updateRGB(new Color(rSlider.getValue(), color.getGreen(), color.getBlue()), false, !((JSlider) e.getSource()).getValueIsAdjusting());
-                }
-            });
-            gSlider.addValueChangeListener(new HorizontalSliderPrototype.ValueChangeListener() {
-                @Override
-                public void onChange(ChangeEvent e) {
-                    updateRGB(new Color(color.getRed(), gSlider.getValue(), color.getBlue()), false, !((JSlider) e.getSource()).getValueIsAdjusting());
-                }
-            });
-            bSlider.addValueChangeListener(new HorizontalSliderPrototype.ValueChangeListener() {
-                @Override
-                public void onChange(ChangeEvent e) {
-                    updateRGB(new Color(color.getRed(), color.getGreen(), bSlider.getValue()), false, !((JSlider) e.getSource()).getValueIsAdjusting());
-                }
-            });
+        @Override
+        protected void onTextFieldChange(int id, NumberBox source) {
+            update(new Color(
+                    id == 0 ? source.getValue() : color.getRed(),
+                    id == 1 ? source.getValue() : color.getGreen(),
+                    id == 2 ? source.getValue() : color.getBlue()),
+                    false, true);
+        }
 
-            // the edit fields events
-            rBox.addTextChangeListener(new NumberBox.TextChangeListener() {
-                @Override
-                public void onChange() {
-                    updateRGB(new Color(rBox.getValue(), color.getGreen(), color.getBlue()), false, true);
-                }
-            });
-            gBox.addTextChangeListener(new NumberBox.TextChangeListener() {
-                @Override
-                public void onChange() {
-                    updateRGB(new Color(color.getRed(), gBox.getValue(), color.getBlue()), false, true);
-                }
-            });
-            bBox.addTextChangeListener(new NumberBox.TextChangeListener() {
-                @Override
-                public void onChange() {
-                    updateRGB(new Color(color.getRed(), color.getGreen(), bBox.getValue()), false, true);
-                }
-            });
+        @Override
+        protected void refreshUI() {
+            // repaint the slider
+            rSlider.setLeftColor(new Color(0, color.getGreen(), color.getBlue()));
+            rSlider.setRightColor(new Color(255, color.getGreen(), color.getBlue()));
+            rSlider.repaint();
+
+            gSlider.setLeftColor(new Color(color.getRed(), 0, color.getBlue()));
+            gSlider.setRightColor(new Color(color.getRed(), 255, color.getBlue()));
+            gSlider.repaint();
+
+            bSlider.setLeftColor(new Color(color.getRed(), color.getGreen(), 0));
+            bSlider.setRightColor(new Color(color.getRed(), color.getGreen(), 255));
+            bSlider.repaint();
+
+            // set the values
+            setValues(new int[] {color.getRed(), color.getGreen(), color.getBlue()});
+        }
+
+        @Override
+        protected void notifyColorChange(Color color) {
+            // nothing to do here
         }
     }
 
     // the hsb chooser
-    HSBTab hsbTab = new HSBTab();
+    private final HSBTab hsbTab = new HSBTab();
     private class HSBTab extends TabPrototype {
 
         private final static int HUE_STEPCOUNT = 360;
@@ -581,127 +595,142 @@ public class TabbedColorChooser extends ColorChooserPrototype {
         private final NumberBox sBox = new NumberBox(0, STEPCOUNT, 0);
         private final NumberBox bBox = new NumberBox(0, STEPCOUNT, 0);
 
-        private float[] oldRoundHSB = new float[3];
-        private float[] newRoundHSB = new float[3];
-
-        private boolean hasChanged = false;
-
-        public final void updateHSB(float[] newHsb, boolean forceRefresh, boolean publishIfChanged) {
-
-            // make values smooth to prevent redraw
-            newRoundHSB[0] = (float)Math.round(newHsb[0]*HUE_STEPCOUNT)/HUE_STEPCOUNT;
-            newRoundHSB[1] = (float)Math.round(newHsb[1]*STEPCOUNT)/STEPCOUNT;
-            newRoundHSB[2] = (float)Math.round(newHsb[2]*STEPCOUNT)/STEPCOUNT;
-
-            boolean changed = (oldRoundHSB[0] != newRoundHSB[0] || oldRoundHSB[1] != newRoundHSB[1] || oldRoundHSB[2] != newRoundHSB[2]);
-            if (changed || forceRefresh) {
-                // debug
-//                System.out.println(oldRoundHSB[0] + "vs" + newRoundHSB[0] +
-//                    " & " + oldRoundHSB[1] + "vs" + newRoundHSB[1] +
-//                    " & " + oldRoundHSB[2] + "vs" + newRoundHSB[2] );
-//                System.out.println("HSB refresh");
-
-                if (changed) {
-                    hasChanged = true;
-                }
-
-                // set the color
-                color = ColorTools.hsbToColor(newHsb);
-                oldRoundHSB = newRoundHSB.clone();
-
-                sSlider.setLeftColor(ColorTools.hsbToColor(new float[] {oldRoundHSB[0], 0, oldRoundHSB[2]}));
-                sSlider.setRightColor(ColorTools.hsbToColor(new float[] {oldRoundHSB[0], 1, oldRoundHSB[2]}));
-                sSlider.repaint();
-
-                bSlider.setLeftColor(ColorTools.hsbToColor(new float[] {oldRoundHSB[0], oldRoundHSB[1], 0}));
-                bSlider.setRightColor(ColorTools.hsbToColor(new float[] {oldRoundHSB[0], oldRoundHSB[1], 1}));
-                bSlider.repaint();
-
-                // set the values
-                hBox.setValueWithoutRefresh(Math.round(oldRoundHSB[0] * HUE_STEPCOUNT));
-                sBox.setValueWithoutRefresh(Math.round(oldRoundHSB[1] * STEPCOUNT));
-                bBox.setValueWithoutRefresh(Math.round(oldRoundHSB[2] * STEPCOUNT));
-                hSlider.setValueWithoutRefresh(Math.round(oldRoundHSB[0] * HUE_STEPCOUNT));
-                sSlider.setValueWithoutRefresh(Math.round(oldRoundHSB[1] * STEPCOUNT));
-                bSlider.setValueWithoutRefresh(Math.round(oldRoundHSB[2] * STEPCOUNT));
-            }
-
-            // notify the listeners
-            if (hasChanged && publishIfChanged) {
-                hasChanged = false;
-                notifyListeners(color);
-            }
-        }
-
         public HSBTab() {
-
             init(
                     new String[]{"H", "S", "B"},
                     new HorizontalSliderPrototype[]{hSlider, sSlider, bSlider},
                     new NumberBox[]{hBox, sBox, bBox}
             );
+        }
 
-            // set up the HSBChooser
-            setBackground(BG_COLOR);
-            final GridBagConstraints c = new GridBagConstraints();
-            c.insets = new Insets(3,3,3,3);
-            // align only when showing
-            addHierarchyListener(new HierarchyListener() {
-                @Override
-                public void hierarchyChanged(HierarchyEvent e) {
-                    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) == HierarchyEvent.SHOWING_CHANGED) {
-                        if (isShowing()) {
-                            updateHSB(ColorTools.colorToHSB(color), true, false);
-                        }
-                    }
-                }
-            });
+        @Override
+        protected void onSliderChange(int id, ChangeEvent e) {
+            JSlider source = ((JSlider) e.getSource());
+            hsb = new float[]{
+                    id == 0 ? (float) source.getValue() / HUE_STEPCOUNT : hsb[0],
+                    id == 1 ? (float) source.getValue() / STEPCOUNT : hsb[1],
+                    id == 2 ? (float) source.getValue() / STEPCOUNT : hsb[2]};
+            update(ColorTools.hsbToColor(hsb), false, !source.getValueIsAdjusting());
+        }
 
-            // slider events
-            hSlider.addValueChangeListener(new HorizontalSliderPrototype.ValueChangeListener() {
-                @Override
-                public void onChange(ChangeEvent e) {
-                    updateHSB(new float[]{(float)hSlider.getValue()/HUE_STEPCOUNT, oldRoundHSB[1], oldRoundHSB[2]}, false, !((JSlider) e.getSource()).getValueIsAdjusting());
-                }
-            });
-            sSlider.addValueChangeListener(new HorizontalSliderPrototype.ValueChangeListener() {
-                @Override
-                public void onChange(ChangeEvent e) {
-                    updateHSB(new float[] {oldRoundHSB[0], (float)sSlider.getValue()/STEPCOUNT, oldRoundHSB[2]}, false, !((JSlider)e.getSource()).getValueIsAdjusting());
-                }
-            });
-            bSlider.addValueChangeListener(new HorizontalSliderPrototype.ValueChangeListener() {
-                @Override
-                public void onChange(ChangeEvent e) {
-                    updateHSB(new float[] {oldRoundHSB[0], oldRoundHSB[1],(float)bSlider.getValue()/STEPCOUNT}, false, !((JSlider)e.getSource()).getValueIsAdjusting());
-                }
-            });
+        @Override
+        protected void onTextFieldChange(int id, NumberBox source) {
+            hsb = new float[]{
+                    id == 0 ? (float) source.getValue() / HUE_STEPCOUNT : hsb[0],
+                    id == 1 ? (float) source.getValue() / STEPCOUNT : hsb[1],
+                    id == 2 ? (float) source.getValue() / STEPCOUNT : hsb[2]};
+            update(ColorTools.hsbToColor(hsb), false, true);
+        }
 
-            // the edit fields events
-            hBox.addTextChangeListener(new NumberBox.TextChangeListener() {
-                @Override
-                public void onChange() {
-                    updateHSB(new float[] {(float)hBox.getValue()/HUE_STEPCOUNT, oldRoundHSB[1], oldRoundHSB[2]}, false, true);
-                }
-            });
-            sBox.addTextChangeListener(new NumberBox.TextChangeListener() {
-                @Override
-                public void onChange() {
-                    updateHSB(new float[] {oldRoundHSB[0], (float)sBox.getValue()/STEPCOUNT, oldRoundHSB[2]}, false, true);
-                }
-            });
-            bBox.addTextChangeListener(new NumberBox.TextChangeListener() {
-                @Override
-                public void onChange() {
-                    updateHSB(new float[] {oldRoundHSB[0], oldRoundHSB[1], (float)bBox.getValue()/STEPCOUNT}, false, true);
-                }
+        @Override
+        protected void refreshUI() {
+            sSlider.setLeftColor(ColorTools.hsbToColor(new float[] {hsb[0], 0, hsb[2]}));
+            sSlider.setRightColor(ColorTools.hsbToColor(new float[] {hsb[0], 1, hsb[2]}));
+            sSlider.repaint();
+
+            bSlider.setLeftColor(ColorTools.hsbToColor(new float[] {hsb[0], hsb[1], 0}));
+            bSlider.setRightColor(ColorTools.hsbToColor(new float[] {hsb[0], hsb[1], 1}));
+            bSlider.repaint();
+
+            // set the values
+            setValues(new int[] {
+                    Math.round(hsb[0] * HUE_STEPCOUNT),
+                    Math.round(hsb[1] * STEPCOUNT),
+                    Math.round(hsb[2] * STEPCOUNT)
             });
         }
 
+        private float[] hsb = new float[3];
+
+        @Override
+        protected void notifyColorChange(Color color) {
+            hsb = ColorTools.colorToHSB(color);
+        }
+    }
+
+    private final CMYKTab cmykTab = new CMYKTab();
+    private class CMYKTab extends TabPrototype {
+
+        private final static int STEPCOUNT = 100;
+
+        // the sliders
+        private final TabbedColorChooser.HorizontalColorSlider cSlider = new TabbedColorChooser.HorizontalColorSlider(0, STEPCOUNT, 0);
+        private final TabbedColorChooser.HorizontalColorSlider mSlider = new TabbedColorChooser.HorizontalColorSlider(0, STEPCOUNT, 0);
+        private final TabbedColorChooser.HorizontalColorSlider ySlider = new TabbedColorChooser.HorizontalColorSlider(0, STEPCOUNT, 0);
+        private final TabbedColorChooser.HorizontalColorSlider kSlider = new TabbedColorChooser.HorizontalColorSlider(0, STEPCOUNT, 0);
+
+        // the number boxes
+        private final NumberBox cBox = new NumberBox(0, STEPCOUNT, 0);
+        private final NumberBox mBox = new NumberBox(0, STEPCOUNT, 0);
+        private final NumberBox yBox = new NumberBox(0, STEPCOUNT, 0);
+        private final NumberBox kBox = new NumberBox(0, STEPCOUNT, 0);
+
+        public CMYKTab() {
+            init(
+                    new String[]{"C", "M", "Y", "K"},
+                    new HorizontalSliderPrototype[]{cSlider, mSlider, ySlider, kSlider},
+                    new NumberBox[]{cBox, mBox, yBox, kBox}
+            );
+        }
+
+        @Override
+        protected void onSliderChange(int id, ChangeEvent e) {
+            JSlider source = ((JSlider) e.getSource());
+            cmyk = new float[]{
+                    id == 0 ? (float) source.getValue() / STEPCOUNT : cmyk[0],
+                    id == 1 ? (float) source.getValue() / STEPCOUNT : cmyk[1],
+                    id == 2 ? (float) source.getValue() / STEPCOUNT : cmyk[2],
+                    id == 3 ? (float) source.getValue() / STEPCOUNT : cmyk[3]};
+            update(ColorTools.cmykToColor(cmyk), false, !source.getValueIsAdjusting());
+        }
+
+        @Override
+        protected void onTextFieldChange(int id, NumberBox source) {
+            cmyk = new float[]{
+                    id == 0 ? (float) source.getValue() / STEPCOUNT : cmyk[0],
+                    id == 1 ? (float) source.getValue() / STEPCOUNT : cmyk[1],
+                    id == 2 ? (float) source.getValue() / STEPCOUNT : cmyk[2],
+                    id == 3 ? (float) source.getValue() / STEPCOUNT : cmyk[3]};
+            update(ColorTools.cmykToColor(cmyk), false, true);
+        }
+
+        @Override
+        protected void refreshUI() {
+            cSlider.setLeftColor(ColorTools.cmykToColor(new float[]{0, cmyk[1], cmyk[2], cmyk[3]}));
+            cSlider.setRightColor(ColorTools.cmykToColor(new float[]{1, cmyk[1], cmyk[2], cmyk[3]}));
+            cSlider.repaint();
+
+            mSlider.setLeftColor(ColorTools.cmykToColor(new float[]{cmyk[0], 0, cmyk[2], cmyk[3]}));
+            mSlider.setRightColor(ColorTools.cmykToColor(new float[]{cmyk[0], 1, cmyk[2], cmyk[3]}));
+            mSlider.repaint();
+
+            ySlider.setLeftColor(ColorTools.cmykToColor(new float[]{cmyk[0], cmyk[1], 0, cmyk[3]}));
+            ySlider.setRightColor(ColorTools.cmykToColor(new float[]{cmyk[0], cmyk[1], 1, cmyk[3]}));
+            ySlider.repaint();
+
+            kSlider.setLeftColor(ColorTools.cmykToColor(new float[]{cmyk[0], cmyk[1], cmyk[2], 0}));
+            kSlider.setRightColor(ColorTools.cmykToColor(new float[]{cmyk[0], cmyk[1], cmyk[2], 1}));
+            kSlider.repaint();
+
+            // set the values
+            setValues(new int[] {
+                    Math.round(cmyk[0] * STEPCOUNT),
+                    Math.round(cmyk[1] * STEPCOUNT),
+                    Math.round(cmyk[2] * STEPCOUNT),
+                    Math.round(cmyk[3] * STEPCOUNT)
+            });
+        }
+
+        private float[] cmyk = new float[4];
+
+        @Override
+        protected void notifyColorChange(Color color) {
+            cmyk = ColorTools.colorToCMYK(color);
+        }
     }
 
     // the tabbed pane
-    JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.RIGHT, JideTabbedPane.SCROLL_TAB_LAYOUT);
+    private final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.RIGHT, JideTabbedPane.SCROLL_TAB_LAYOUT);
 
     // ======================
 
@@ -723,10 +752,13 @@ public class TabbedColorChooser extends ColorChooserPrototype {
         Color color = ColorTools.hsbToColor(hsb);
         if (!this.color.equals(color)) {
             if (rgbTab.isShowing()) {
-                rgbTab.updateRGB(color, true, false);
+                rgbTab.update(color, true, false);
             }
             if (hsbTab.isShowing()) {
-                hsbTab.updateHSB(ColorTools.colorToHSB(color), true, false);
+                hsbTab.update(color, true, false);
+            }
+            if (cmykTab.isShowing()) {
+                cmykTab.update(color, true, false);
             }
         }
     }
@@ -742,6 +774,7 @@ public class TabbedColorChooser extends ColorChooserPrototype {
         // add the tabs
         tabbedPane.addTab("RGB", new JScrollPane(rgbTab));
         tabbedPane.addTab("HSB", new JScrollPane(hsbTab));
+        tabbedPane.addTab("CMYK", new JScrollPane(cmykTab));
 
         tabbedPane.setTabShape(JideTabbedPane.SHAPE_ROUNDED_FLAT); // make square
         tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);

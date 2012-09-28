@@ -10,9 +10,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3775d788-1cb3-4d79-83c9-f6bf480db621" name="Default" comment="Added localization, GUI, first resources">
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab$1.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab$2.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab$3.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab$4.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab$5.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab$6.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab$7.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab$1.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab$2.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab$3.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab$4.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab$5.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab$6.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab$7.class" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\ColorTools.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\ColorTools.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HSBTab.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HorizontalColorSlider.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HorizontalColorSlider.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HorizontalHueSlider.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$HorizontalHueSlider.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$RGBTab.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$TabPrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser$TabPrototype.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\TabbedColorChooser.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings/pref.ser" afterPath="$PROJECT_DIR$/settings/pref.ser" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/ColorTools.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/ColorTools.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/TabbedColorChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/TabbedColorChooser.java" />
     </list>
     <ignored path="PS3k 2.0.iws" />
@@ -75,7 +99,37 @@
     <favorites_list name="PS3k 2.0" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="ColorSliderLinkage.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="44" column="29" selection-start="1457" selection-end="1457" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#1530#1693#0" expanded="true" />
+                <element signature="e#1682#1683#0" expanded="true" />
+                <element signature="e#1731#1951#0" expanded="true" />
+                <element signature="e#1940#1941#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TabbedColorChooser.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/TabbedColorChooser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="425" column="49" selection-start="16518" selection-end="16518" vertical-scroll-proportion="0.047222223">
+              <folding>
+                <element signature="class#HorizontalSliderPrototype#0;class#TabbedColorChooser#0" expanded="false" />
+                <element signature="class#HorizontalColorSlider#0;class#TabbedColorChooser#0" expanded="false" />
+                <element signature="class#HorizontalHueSlider#0;class#TabbedColorChooser#0" expanded="false" />
+                <element signature="class#RGBTab#0;class#TabbedColorChooser#0" expanded="false" />
+                <element signature="class#HSBTab#0;class#TabbedColorChooser#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -99,8 +153,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/vitco/logic/sideview/toolbar3.xml" />
-        <option value="$PROJECT_DIR$/src/com/vitco/logic/shortcut/ShortcutManager.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/colors/ColorChooserInterface.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/colors/SimpleColorChooser.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/colors/ColorChooserPrototype.java" />
@@ -113,6 +165,8 @@
         <option value="$PROJECT_DIR$/src/com/vitco/logic/menu/ToolBarLogic.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/layout/WindowManager.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/logic/colorpicker/ColorPickerView.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/ColorTools.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/PColor.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/colors/TabbedColorChooser.java" />
       </list>
@@ -174,6 +228,20 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -276,37 +344,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="logic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
+              <option name="myItemId" value="util" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vitco" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="colorpicker" />
+              <option name="myItemId" value="colors" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -392,20 +434,6 @@
             <PATH_ELEMENT USER_OBJECT="Root">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -792,7 +820,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3905724" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45622894" sideWeight="0.5003796" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.261959" sideWeight="0.3838384" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32659933" sideWeight="0.4969651" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="FindBugs-IDEA" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32659933" sideWeight="0.4969651" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.4969651" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38047138" sideWeight="0.4939074" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.4969651" order="5" side_tool="false" content_ui="tabs" />
@@ -800,7 +828,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2627183" sideWeight="0.45117846" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852808" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39939255" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2604404" sideWeight="0.6195286" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2604404" sideWeight="0.6734007" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.43434343" sideWeight="0.4851936" order="13" side_tool="false" content_ui="tabs" x="68" y="33" width="1271" height="621" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" x="-140" y="-932" width="1096" height="840" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3262519" sideWeight="0.64309764" order="3" side_tool="false" content_ui="tabs" />
@@ -884,34 +912,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resource/bundle/LangBundle.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="0" selection-start="4570" selection-end="4570" vertical-scroll-proportion="0.79476863" />
-      </provider>
-      <provider editor-type-id="ResourceBundle">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/menu/ToolBarLogic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="413" selection-end="413" vertical-scroll-proportion="0.3068592" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/bars/main_menu.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="35" selection-start="624" selection-end="624" vertical-scroll-proportion="0.329806" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/WindowManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="196" column="0" selection-start="6521" selection-end="6521" vertical-scroll-proportion="0.33333334" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/res/VitcoSettings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="0" selection-start="775" selection-end="775" vertical-scroll-proportion="0.33271718" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="54" column="0" selection-start="4852" selection-end="4852" vertical-scroll-proportion="0.33212996" />
@@ -939,28 +939,53 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/ColorChooserPrototype.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="25" selection-start="331" selection-end="331" vertical-scroll-proportion="0.1827957">
-          <folding />
-        </state>
+        <state line="12" column="25" selection-start="331" selection-end="331" vertical-scroll-proportion="0.1827957" />
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/awt/Component.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5866" column="25" selection-start="212971" selection-end="212971" vertical-scroll-proportion="0.44301075">
-          <folding />
-        </state>
+        <state line="5866" column="25" selection-start="212971" selection-end="212971" vertical-scroll-proportion="0.44301075" />
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/javax/swing/JSlider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="147" column="36" selection-start="4738" selection-end="4738" vertical-scroll-proportion="0.33333334">
+        <state line="147" column="36" selection-start="4738" selection-end="4738" vertical-scroll-proportion="0.33333334" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/colorpicker/ColorPickerView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="348" column="23" selection-start="13880" selection-end="13880" vertical-scroll-proportion="5.7881722" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/ColorChangeListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="17" selection-start="105" selection-end="105" vertical-scroll-proportion="0.20987654" />
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/awt/Graphics.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="398" column="25" selection-start="17809" selection-end="17809" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/awt/Color.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="610" column="22" selection-start="18784" selection-end="18790" vertical-scroll-proportion="0.04990758">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/ColorTools.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="48" column="26" selection-start="1279" selection-end="1279" vertical-scroll-proportion="1.4391534">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="74" selection-start="1010" selection-end="1010" vertical-scroll-proportion="0.23985891">
+        <state line="44" column="29" selection-start="1457" selection-end="1457" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#1530#1693#0" expanded="true" />
             <element signature="e#1682#1683#0" expanded="true" />
@@ -972,50 +997,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/TabbedColorChooser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="734" column="43" selection-start="29694" selection-end="29694" vertical-scroll-proportion="1.3727876">
+        <state line="425" column="49" selection-start="16518" selection-end="16518" vertical-scroll-proportion="0.047222223">
           <folding>
-            <element signature="class#NumberBox#0;class#TabbedColorChooser#0" expanded="false" />
-            <element signature="e#2319#2349#0" expanded="true" />
             <element signature="class#HorizontalSliderPrototype#0;class#TabbedColorChooser#0" expanded="false" />
-            <element signature="e#7416#7437#0" expanded="true" />
-            <element signature="e#9223#9400#0" expanded="true" />
-            <element signature="e#9385#9386#0" expanded="true" />
             <element signature="class#HorizontalColorSlider#0;class#TabbedColorChooser#0" expanded="false" />
             <element signature="class#HorizontalHueSlider#0;class#TabbedColorChooser#0" expanded="false" />
-            <element signature="class#TabPrototype#0;class#TabbedColorChooser#0" expanded="false" />
             <element signature="class#RGBTab#0;class#TabbedColorChooser#0" expanded="false" />
-            <element signature="e#19705#20118#0" expanded="true" />
-            <element signature="e#20103#20104#0" expanded="true" />
-            <element signature="e#20194#20513#0" expanded="true" />
-            <element signature="e#20498#20499#0" expanded="true" />
-            <element signature="e#20559#20876#0" expanded="true" />
-            <element signature="e#20861#20862#0" expanded="true" />
-            <element signature="e#20922#21240#0" expanded="true" />
-            <element signature="e#21225#21226#0" expanded="true" />
-            <element signature="e#21887#22128#0" expanded="true" />
-            <element signature="e#22113#22114#0" expanded="true" />
             <element signature="class#HSBTab#0;class#TabbedColorChooser#0" expanded="false" />
-            <element signature="method#updateHSB#0;class#HSBTab#0;class#TabbedColorChooser#0" expanded="false" />
-            <element signature="method#HSBTab#0;class#HSBTab#0;class#TabbedColorChooser#0" expanded="false" />
-            <element signature="e#26076#26512#0" expanded="true" />
-            <element signature="e#26497#26498#0" expanded="true" />
-            <element signature="e#26588#26927#0" expanded="true" />
-            <element signature="e#26912#26913#0" expanded="true" />
-            <element signature="e#26973#27308#0" expanded="true" />
-            <element signature="e#27293#27294#0" expanded="true" />
-            <element signature="e#27354#27688#0" expanded="true" />
-            <element signature="e#27673#27674#0" expanded="true" />
-            <element signature="e#28375#28634#0" expanded="true" />
-            <element signature="e#28619#28620#0" expanded="true" />
-            <element signature="method#setColor#0;class#TabbedColorChooser#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/colorpicker/ColorPickerView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="348" column="23" selection-start="13880" selection-end="13880" vertical-scroll-proportion="5.7881722">
-          <folding />
         </state>
       </provider>
     </entry>
