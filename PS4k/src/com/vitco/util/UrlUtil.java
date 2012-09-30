@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 public class UrlUtil {
 
@@ -25,6 +26,8 @@ public class UrlUtil {
             }
 
             in.close();
+        } catch (UnknownHostException ignored) {
+            // this can happen when there is no internet connection
         } catch (IOException e) {
             errorHandler.handle(e);
         }

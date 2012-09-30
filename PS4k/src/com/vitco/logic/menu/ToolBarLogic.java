@@ -7,7 +7,7 @@ import com.vitco.res.VitcoSettings;
 import com.vitco.util.ColorTools;
 import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.action.types.StateActionPrototype;
-import com.vitco.util.colors.ColorChangeListener;
+import com.vitco.util.colors.basics.ColorChangeListener;
 import com.vitco.util.colors.PresetColorChooser;
 import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +69,8 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         final PresetColorChooser scc = new PresetColorChooser();
         scc.addColorChangeListener(new ColorChangeListener() {
             @Override
-            public void colorChanged(Color color) {
-                preferences.storeObject("currently_used_color", ColorTools.colorToHSB(color));
+            public void colorChanged(float[] hsb) {
+                preferences.storeObject("currently_used_color", hsb);
             }
         });
         complexActionManager.registerAction("current_color_button_popup", scc);
@@ -263,8 +263,8 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         PresetColorChooser bgPlaneColorChooser = new PresetColorChooser();
         bgPlaneColorChooser.addColorChangeListener(new ColorChangeListener() {
             @Override
-            public void colorChanged(Color newColor) {
-                preferences.storeObject("main_view_ground_plane_color", newColor);
+            public void colorChanged(float[] hsb) {
+                preferences.storeObject("main_view_ground_plane_color", ColorTools.hsbToColor(hsb));
 
             }
         });
@@ -277,8 +277,8 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         }
         bgColorChooser.addColorChangeListener(new ColorChangeListener() {
             @Override
-            public void colorChanged(Color newColor) {
-                preferences.storeObject("engine_view_bg_color", newColor);
+            public void colorChanged(float[] hsb) {
+                preferences.storeObject("engine_view_bg_color", ColorTools.hsbToColor(hsb));
             }
         });
         complexActionManager.registerAction("pick_color_voxel_bg", bgColorChooser);

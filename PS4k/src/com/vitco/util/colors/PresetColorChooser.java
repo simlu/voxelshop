@@ -1,5 +1,8 @@
 package com.vitco.util.colors;
 
+import com.vitco.util.ColorTools;
+import com.vitco.util.colors.basics.ColorChooserPrototype;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -142,7 +145,7 @@ public class PresetColorChooser extends ColorChooserPrototype {
                 panel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        notifyListeners(panel.getBackground());
+                        notifyListeners(ColorTools.colorToHSB(panel.getBackground()));
                     }
                 });
                 add(panel);

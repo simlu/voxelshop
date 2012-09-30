@@ -1,10 +1,9 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.util.ColorTools;
 import com.vitco.util.action.types.StateActionPrototype;
-import com.vitco.util.colors.ColorChangeListener;
-import com.vitco.util.colors.TabbedColorChooser;
+import com.vitco.util.colors.SliderColorChooser;
+import com.vitco.util.colors.basics.ColorChangeListener;
 import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.pref.PreferencesInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class ColorSliderLinkage extends FrameLinkagePrototype {
     }
 
     // the color chooser
-    final TabbedColorChooser scc = new TabbedColorChooser();
+    final SliderColorChooser scc = new SliderColorChooser();
 
     @PreDestroy
     public final void savePref() {
@@ -51,8 +50,8 @@ public class ColorSliderLinkage extends FrameLinkagePrototype {
         });
         scc.addColorChangeListener(new ColorChangeListener() {
             @Override
-            public void colorChanged(Color color) {
-                preferences.storeObject("currently_used_color", ColorTools.colorToHSB(color));
+            public void colorChanged(float[] hsb) {
+                preferences.storeObject("currently_used_color", hsb);
             }
         });
         // load active tab

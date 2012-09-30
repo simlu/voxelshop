@@ -87,9 +87,6 @@
     <!-- handles display of layers -->
     <bean id="LayerView" class="com.vitco.logic.layer.LayerView"/>
 
-    <!--handles display of color picker-->
-    <bean id="ColorPickerView" class="com.vitco.logic.colorpicker.ColorPickerView"/>
-
     <!-- create MenuGenerator -->
     <!-- handles the menu generation (from xml) -->
     <bean id="MenuGenerator" class="com.vitco.util.menu.MenuGenerator">
@@ -127,7 +124,7 @@
 
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
-        <constructor-arg value="PS4k - Alpha Version (V1.0.20)"/>
+        <constructor-arg value="PS4k - Alpha Version (V1.0.21)"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
@@ -207,9 +204,7 @@
                 </entry>
                 <entry>
                     <key><value>colorpicker</value></key>
-                    <bean id="ColorPickerLinkage" class="com.vitco.layout.frames.ColorPickerLinkage">
-                        <property name="ColorPickerView" ref="ColorPickerView"/>
-                    </bean>
+                    <bean id="ColorPickerLinkage" class="com.vitco.layout.frames.ColorPickerLinkage" />
                 </entry>
                 <entry>
                     <key><value>colorslider</value></key>
