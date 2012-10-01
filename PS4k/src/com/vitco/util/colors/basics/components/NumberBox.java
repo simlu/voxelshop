@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 */
 public class NumberBox extends JTextField {
 
-    // make sure the value is only set when it changes
+    // setter that does not notify the listeners
     public void setValueWithoutRefresh(int value) {
         int croppedValue = cropValue(value);
         if (getValue() != croppedValue) {
@@ -89,14 +89,14 @@ public class NumberBox extends JTextField {
 
         public boolean invalidContent(String text)
         {
-            Pattern pattern = Pattern.compile("\\d{0,4}?");
+            Pattern pattern = Pattern.compile("\\d{0," + (String.valueOf(MAX).length() + 1) + "}?");
             Matcher matcher = pattern.matcher(text);
             boolean isMatch = matcher.matches();
             return !text.equals("") && !isMatch;
         }
     }
 
-    // link to this field
+    // link to this field (for nested reference)
     private final NumberBox thisField = this;
 
     // conversion helper

@@ -114,7 +114,7 @@ public final class SatBrightPanelChooser extends ColorChooserPrototype {
         // Anti-alias
         ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        // draw cirlce (selected color)
+        // draw circle (selected color)
         ig.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
         ig.setColor(ColorTools.perceivedBrightness(currentColor) > 127 ? Color.BLACK : Color.WHITE);
         ig.drawOval(crossPosition.x - 5, crossPosition.y - 5, 10, 10);

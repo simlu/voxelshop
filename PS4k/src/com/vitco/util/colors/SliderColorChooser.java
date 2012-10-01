@@ -40,17 +40,30 @@ public class SliderColorChooser extends ColorChooserPrototype {
 
         @Override
         protected final void drawBackground(Graphics2D g, SliderUI sliderUI) {
+            boolean[] change = new boolean[] {
+                    prevContentRect.x == sliderUI.getContentRect().width
+                            && prevContentRect.y == sliderUI.getContentRect().height,
+                    lastLeftColor.equals(leftColor) && lastRightColor.equals(rightColor)
+            };
             // only generate background on resize and when color changes
-            if (prevContentRect.x != sliderUI.getContentRect().width || prevContentRect.y != sliderUI.getContentRect().height ||
-                    !lastLeftColor.equals(leftColor) || !lastRightColor.equals(rightColor)) {
+            if (!change[0] || !change[1]) {
 
-                lastLeftColor = leftColor;
-                lastRightColor = rightColor;
+                if (!change[1]) {
+                    lastLeftColor = leftColor;
+                    lastRightColor = rightColor;
+                }
 
-                prevContentRect = new Point(sliderUI.getContentRect().width, sliderUI.getContentRect().height);
-                int w = sliderUI.getSlider().getWidth();
-                int h = sliderUI.getSlider().getHeight();
-                bgBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                if (!change[0]) {
+                    prevContentRect = new Point(sliderUI.getContentRect().width, sliderUI.getContentRect().height);
+                    bgBuffer = new BufferedImage(
+                            sliderUI.getSlider().getWidth(),
+                            sliderUI.getSlider().getHeight(),
+                            BufferedImage.TYPE_INT_RGB);
+                }
+
+                int w = bgBuffer.getWidth();
+                int h = bgBuffer.getHeight();
+
                 Graphics2D ig = (Graphics2D) bgBuffer.getGraphics();
 
                 ig.setColor(Settings.BG_COLOR);
@@ -82,7 +95,8 @@ public class SliderColorChooser extends ColorChooserPrototype {
         @Override
         protected void drawBackground(Graphics2D g, SliderUI sliderUI) {
             // only generate background on resize and when color changes
-            if (prevContentRect.x != sliderUI.getContentRect().width || prevContentRect.y != sliderUI.getContentRect().height) {
+            if (prevContentRect.x != sliderUI.getContentRect().width
+                    || prevContentRect.y != sliderUI.getContentRect().height) {
 
                 prevContentRect = new Point(sliderUI.getContentRect().width, sliderUI.getContentRect().height);
                 int w = sliderUI.getSlider().getWidth();
@@ -158,7 +172,7 @@ public class SliderColorChooser extends ColorChooserPrototype {
             this.sliders = sliders;
             this.fields = fields;
 
-            // update color when showing
+            // update color when this component is shown
             addHierarchyListener(new HierarchyListener() {
                 @Override
                 public void hierarchyChanged(HierarchyEvent e) {
@@ -243,7 +257,6 @@ public class SliderColorChooser extends ColorChooserPrototype {
         private final NumberBox bBox = new NumberBox(0, 255, 0);
 
         public RGBTab() {
-
             init(
                     new String[]{"R", "G", "B"},
                     new ColorSliderPrototype[]{rSlider, gSlider, bSlider},
@@ -357,6 +370,7 @@ public class SliderColorChooser extends ColorChooserPrototype {
             });
         }
 
+        // internal variable
         private float[] hsb = new float[3];
 
         @Override
@@ -438,6 +452,7 @@ public class SliderColorChooser extends ColorChooserPrototype {
             });
         }
 
+        // internal variable
         private float[] cmyk = new float[4];
 
         @Override
@@ -497,7 +512,7 @@ public class SliderColorChooser extends ColorChooserPrototype {
         tabbedPane.setFocusable(false);
 
         tabbedPane.setTabShape(JideTabbedPane.SHAPE_ROUNDED_FLAT); // make square
-        tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);
+        tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT); // fit them all
 
         add(tabbedPane, BorderLayout.CENTER);
     }

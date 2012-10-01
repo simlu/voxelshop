@@ -29,7 +29,8 @@ public class HSBPanelSliderChooser extends ColorChooserPrototype {
         @Override
         protected void drawBackground(Graphics2D g, SliderUI sliderUI) {
             // only generate background on resize and when color changes
-            if (prevContentRect.x != sliderUI.getContentRect().width || prevContentRect.y != sliderUI.getContentRect().height) {
+            if (prevContentRect.x != sliderUI.getContentRect().width
+                    || prevContentRect.y != sliderUI.getContentRect().height) {
 
                 prevContentRect = new Point(sliderUI.getContentRect().width, sliderUI.getContentRect().height);
                 int w = sliderUI.getSlider().getWidth();
@@ -37,7 +38,7 @@ public class HSBPanelSliderChooser extends ColorChooserPrototype {
                 bgBuffer = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
                 Graphics2D ig = (Graphics2D) bgBuffer.getGraphics();
 
-                // leave some free for the slider
+                // generate the background on buffer
                 for (int y = 0; y < h; y++) {
                     ig.setColor(ColorTools.hsbToColor(new float[] {
                             (float)sliderUI.getValueForYPosition(y)/ sliderUI.getSlider().getMaximum(), 1, 1}));

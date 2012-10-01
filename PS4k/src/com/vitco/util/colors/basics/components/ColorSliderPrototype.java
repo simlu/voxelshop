@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- * A custom color slider that allows for thumb and background generation.
+ * A custom color slider prototype that allows for custom thumbs (cursor) and background generation.
  */
 public abstract class ColorSliderPrototype extends JSlider {
 
@@ -49,7 +49,7 @@ public abstract class ColorSliderPrototype extends JSlider {
 
     // thumb image that is drawn
     private BufferedImage thumbBuffer;
-    // to replace the thumb image
+    // setter for the thumb image
     public final void setThumb(BufferedImage thumb) {
         thumbBuffer = thumb;
     }
@@ -103,6 +103,7 @@ public abstract class ColorSliderPrototype extends JSlider {
                 // draw the background
                 drawBackground((Graphics2D) g, this);
 
+                // draw the thumb
                 if (g.getClipBounds().intersects(thumbRect)) {
                     if (orientation == JSlider.HORIZONTAL) {
                         // make sure the thumbRect covers the whole height
@@ -126,6 +127,7 @@ public abstract class ColorSliderPrototype extends JSlider {
                 }
             }
         };
+
         // move the thumb to the position we pressed (instantly)
         addMouseListener(new MouseAdapter() {
             @Override

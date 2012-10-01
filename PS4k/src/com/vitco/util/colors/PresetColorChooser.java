@@ -20,7 +20,7 @@ public class PresetColorChooser extends ColorChooserPrototype {
             new Color(108, 108, 108), new Color(122, 122, 122), new Color(135, 135, 135), new Color(149, 149, 149),
             new Color(162, 162, 162), new Color(176, 176, 176), new Color(189, 189, 189), new Color(203, 203, 203),
             new Color(216, 216, 216), new Color(230, 230, 230), new Color(243, 243, 243), new Color(255, 255, 255),
-            // flower
+            // "flower"
             new Color(247, 252, 249), new Color(247, 251, 247), new Color(248, 251, 238), new Color(248, 250, 230),
             new Color(246, 248, 213), new Color(245, 247, 213), new Color(248, 248, 212), new Color(246, 247, 209),
             new Color(240, 242, 201), new Color(234, 239, 191), new Color(216, 227, 170), new Color(210, 223, 165),
@@ -123,7 +123,7 @@ public class PresetColorChooser extends ColorChooserPrototype {
             new Color(185, 183, 197), new Color(222, 225, 229), new Color(242, 246, 245), new Color(246, 251, 249)
     };
 
-    private void setUpColors(int ROWS, int COLS, Color[] colors) {
+    private void setupColors(int ROWS, int COLS, Color[] colors) {
 
         this.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, Color.BLACK));
 
@@ -156,12 +156,12 @@ public class PresetColorChooser extends ColorChooserPrototype {
     // custom constructor
     public PresetColorChooser(Color[] colors) {
         int maxHeight = (int)Math.floor(Math.sqrt(colors.length));
-        setUpColors(Math.min(colors.length, maxHeight), (int)Math.ceil(colors.length/(double)maxHeight), colors);
+        setupColors(Math.min(colors.length, maxHeight), (int)Math.ceil(colors.length/(double)maxHeight), colors);
     }
 
     // custom constructor
     public PresetColorChooser(int ROWS, int COLS, Color[] colors) {
-        setUpColors(ROWS, COLS, colors);
+        setupColors(ROWS, COLS, colors);
     }
 
     // default constructor
@@ -186,7 +186,7 @@ public class PresetColorChooser extends ColorChooserPrototype {
 
         //setUpColors(ROWS, COLS, colors);
 
-        setUpColors(21, 20, DEFAULT_SWATCH);
+        setupColors(21, 20, DEFAULT_SWATCH);
 
     }
 }
