@@ -8,7 +8,9 @@ import com.vitco.engine.data.history.HistoryManager;
 import com.vitco.res.VitcoSettings;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -41,6 +43,15 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // holds the historyV data
     protected final HistoryManager historyManagerV = new HistoryManager();
+
+    // index for selected voxel
+    private final HashMap<Integer, Voxel> selectedVoxel = new HashMap<Integer, Voxel>();
+
+    // buffer for the selected voxels
+    private Voxel[] selectedVoxelBuffer = new Voxel[0];
+    private boolean selectedVoxelBufferValid = false;
+
+    // ===========================================
 
     // ###################### PRIVATE HELPER CLASSES
 
@@ -249,6 +260,33 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         protected void unapplyAction() {
             dataContainer.voxels.put(voxel.id, voxel);
             dataContainer.layers.get(voxel.getLayerId()).addVoxel(voxel);
+        }
+    }
+
+    private final class SelectVoxelIntent extends BasicActionIntent {
+        private final int voxelId;
+        private final boolean selected;
+        private boolean prevSelected;
+        private Voxel voxel;
+
+        protected SelectVoxelIntent(int voxelId, boolean selected, boolean attach) {
+            super(attach);
+            this.voxelId = voxelId;
+            this.selected = selected;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                voxel = dataContainer.voxels.get(voxelId);
+                prevSelected = voxel.isSelected();
+            }
+            voxel.setSelected(selected);
+        }
+
+        @Override
+        protected void unapplyAction() {
+            voxel.setSelected(prevSelected);
         }
     }
 
@@ -468,6 +506,33 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // mass events
+
+    private final class MassSelectVoxelIntent extends BasicActionIntent {
+        private final Integer[] voxelIds;
+        private final boolean selected;
+
+        protected MassSelectVoxelIntent(Integer[] voxelIds, boolean selected, boolean attach) {
+            super(attach);
+            this.voxelIds = voxelIds;
+            this.selected = selected;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                for (Integer id : voxelIds) {
+                    historyManagerV.applyIntent(new SelectVoxelIntent(id, selected, true));
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+    }
+
     // ##################### PRIVATE HELPER FUNCTIONS
     // returns a free voxel id
     private int lastVoxel = -1;
@@ -654,6 +719,61 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         return null;
     }
 
+    // ================================ selection of voxels
+
+    // select a voxel
+    @Override
+    public final boolean setVoxelSelected(int voxelId, boolean selected) {
+        boolean result = false;
+        if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
+            if (selected) {
+                selectedVoxel.put(voxelId, getVoxel(voxelId));
+            } else {
+                selectedVoxel.remove(voxelId);
+            }
+            selectedVoxelBufferValid = false;
+            historyManagerV.applyIntent(new SelectVoxelIntent(voxelId, selected, false));
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
+    public final boolean isSelected(int voxelId) {
+        return dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected();
+    }
+
+    @Override
+    public final Voxel[] getSelectedVoxels() {
+        if (!selectedVoxelBufferValid) {
+            selectedVoxelBuffer = new Voxel[selectedVoxel.keySet().size()];
+            selectedVoxel.values().toArray(selectedVoxelBuffer);
+            selectedVoxelBufferValid = true;
+        }
+        return selectedVoxelBuffer.clone();
+    }
+
+    @Override
+    public final boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected) {
+        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+        for (int voxelId : voxelIds) {
+            if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
+                validVoxel.add(voxelId);
+            }
+        }
+        if (validVoxel.size() > 0) {
+            Integer[] valid = new Integer[validVoxel.size()];
+            validVoxel.toArray(valid);
+            historyManagerV.applyIntent(new MassSelectVoxelIntent(valid, selected, false));
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    // =============================
+
     Voxel[] layerVoxelBuffer = new Voxel[0];
     boolean layerVoxelBufferValid = false;
     int layerVoxelBufferLastLayer;
@@ -763,6 +883,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
         return result;
     }
+
+    // ==================================
 
     @Override
     public final void undoV() {

@@ -23,6 +23,18 @@ public class ColorTools {
     }
 
     public static Color cmykToColor(float[] cmyk) {
+
+//        float C = ( cmyk[0] * ( 1 - cmyk[3] ) + cmyk[3] );
+//        float M = ( cmyk[1] * ( 1 - cmyk[3] ) + cmyk[3] );
+//        float Y = ( cmyk[2] * ( 1 - cmyk[3] ) + cmyk[3] );
+//
+//        int R = Math.round(( 1 - C ) * 255);
+//        int G = Math.round(( 1 - M ) * 255);
+//        int B = Math.round(( 1 - Y ) * 255);
+//
+//        return new Color(R, G, B);
+
+
         float C3 = cmyk[0] * (1 - cmyk[3]) + 1 * cmyk[3];
         if (C3 > 1) {
             C3 = 1;
@@ -42,6 +54,34 @@ public class ColorTools {
     }
 
     public static float[] colorToCMYK(Color color) {
+
+//        int R = color.getRed();
+//        int G = color.getGreen();
+//        int B = color.getBlue();
+//
+//        float C = 1 - ( (float)R / 255 );
+//        float M = 1 - ( (float)G / 255 );
+//        float Y = 1 - ( (float)B / 255 );
+//
+//        float var_K = 1;
+//
+//        if ( C < var_K )   var_K = C;
+//        if ( M < var_K )   var_K = M;
+//        if ( Y < var_K )   var_K = Y;
+//        if ( var_K == 1 ) { //Black
+//            C = 0;
+//            M = 0;
+//            Y = 0;
+//        }
+//        else {
+//            C = ( C - var_K ) / ( 1 - var_K );
+//            M = ( M - var_K ) / ( 1 - var_K );
+//            Y = ( Y - var_K ) / ( 1 - var_K );
+//        }
+//        float K = var_K;
+//
+//        return new float[] {C,M,Y,K};
+
         float[] result = new float[4];
 
         int r = color.getRed();

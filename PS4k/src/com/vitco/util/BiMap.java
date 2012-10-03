@@ -37,8 +37,8 @@ public class BiMap<KeyType, ValueType>{
         valueToKeyMap.clear();
     }
 
-    public boolean doesNotContainKey(KeyType key){
-        return !keyToValueMap.containsKey(key);
+    public boolean containsKey(KeyType key){
+        return keyToValueMap.containsKey(key);
     }
 
     public boolean containsValue(ValueType value){

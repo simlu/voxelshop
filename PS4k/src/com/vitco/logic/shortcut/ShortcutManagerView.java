@@ -219,7 +219,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             }
         }
 
-        // todo add setter and getter for this
+        // todo add setter and getter for this and store and load in linkage class
         // load from preferences
         if (preferences.contains("shortcut-manager_active-tab")) {
             int selectedIndex = preferences.loadInteger("shortcut-manager_active-tab");

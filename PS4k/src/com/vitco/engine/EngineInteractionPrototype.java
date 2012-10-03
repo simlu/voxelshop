@@ -9,9 +9,7 @@ import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.BiMap;
 import com.vitco.util.ColorTools;
-import com.vitco.util.WorldUtil;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
@@ -20,7 +18,9 @@ import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -277,6 +277,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         // the current color (to draw)
         private float[] currentColor = ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR);
 
+        // select functionality
+        private boolean doSelect = false;
+        private Point selectStartPoint = new Point(0,0);
+
         // initialize
         public void init() {
             // register change of current color
@@ -332,7 +336,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         if (highlightedVoxel != null) {
                             data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
                         }
-                    } else if (VOXELMODE.VIEW == voxelMode) {
+                    } else if (voxelMode == VOXELMODE.VIEW) {
                         // quick select for side view "current" planes
                         int[] voxel = data.getHighlightedVoxel();
                         if (voxel != null) {
@@ -348,67 +352,71 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         // hover on mouse event
         protected void hover(Point point) {
-            // check if we hit something
-            SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
-            Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
-            if (res[1] != null) { // something hit
-                Object3D obj3D = ((Object3D)res[1]);
-                Voxel hitVoxel = getVoxelForObjectId(obj3D.getID());
-                if (hitVoxel != null) {
-                    int[] voxelPos = hitVoxel.getPosAsInt();
-                    if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
-                        // find collision point
-                        SimpleVector colPoint = camera.getPosition();
-                        dir.scalarMul((Float)res[0]);
-                        colPoint.add(dir);
-                        // find side that it hits
-                        ArrayList<float[]> planes = new ArrayList<float[]>();
-                        planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
-                        planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
-                        planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
-                        planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
-                        planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
-                        planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
-                        Collections.sort(planes, new Comparator<float[]>() {
-                            @Override
-                            public int compare(float[] o1, float[] o2) {
-                                return (int) Math.signum(o1[1] - o2[1]);
+            if (voxelMode != VOXELMODE.SELECT) {
+                // check if we hit something
+                SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
+                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
+                if (res[1] != null) { // something hit
+                    Object3D obj3D = ((Object3D)res[1]);
+                    Voxel hitVoxel = getVoxelForObjectId(obj3D.getID());
+                    if (hitVoxel != null) {
+                        int[] voxelPos = hitVoxel.getPosAsInt();
+                        if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
+                            // find collision point
+                            SimpleVector colPoint = camera.getPosition();
+                            dir.scalarMul((Float)res[0]);
+                            colPoint.add(dir);
+                            // find side that it hits
+                            ArrayList<float[]> planes = new ArrayList<float[]>();
+                            planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
+                            planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
+                            planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
+                            planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
+                            planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
+                            planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
+                            Collections.sort(planes, new Comparator<float[]>() {
+                                @Override
+                                public int compare(float[] o1, float[] o2) {
+                                    return (int) Math.signum(o1[1] - o2[1]);
+                                }
+                            });
+                            switch ((int)planes.get(0)[0]) {
+                                case 1: voxelPos[1] -= 1; break;
+                                case 2: voxelPos[1] += 1; break;
+                                case 3: voxelPos[0] -= 1; break;
+                                case 4: voxelPos[0] += 1; break;
+                                case 5: voxelPos[2] -= 1; break;
+                                case 6: voxelPos[2] += 1; break;
                             }
-                        });
-                        switch ((int)planes.get(0)[0]) {
-                            case 1: voxelPos[1] -= 1; break;
-                            case 2: voxelPos[1] += 1; break;
-                            case 3: voxelPos[0] -= 1; break;
-                            case 4: voxelPos[0] += 1; break;
-                            case 5: voxelPos[2] -= 1; break;
-                            case 6: voxelPos[2] += 1; break;
                         }
+                        // highlight the voxel (position)
+                        data.highlightVoxel(voxelPos);
                     }
-                    // highlight the voxel (position)
-                    data.highlightVoxel(voxelPos);
-                }
-            } else { // hit nothing
-                if (voxelMode == VOXELMODE.DRAW) { // trying to draw
-                    // hit nothing, draw preview on zero level
-                    if (dir.y > 0.05) { // angle big enough
-                        // calculate position
-                        float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - camera.getPosition().y) / dir.y;
-                        dir.scalarMul(t);
-                        SimpleVector pos = camera.getPosition();
-                        pos.add(dir);
-                        pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
-                        if (Math.abs(pos.x) < VitcoSettings.VOXEL_GROUND_MAX_RANGE && Math.abs(pos.z) < VitcoSettings.VOXEL_GROUND_MAX_RANGE) {
-                            // if we hit the ground plane
-                            data.highlightVoxel(new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)});
-                        } else {
+                } else { // hit nothing
+                    if (voxelMode == VOXELMODE.DRAW) { // trying to draw
+                        // hit nothing, draw preview on zero level
+                        if (dir.y > 0.05) { // angle big enough
+                            // calculate position
+                            float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - camera.getPosition().y) / dir.y;
+                            dir.scalarMul(t);
+                            SimpleVector pos = camera.getPosition();
+                            pos.add(dir);
+                            pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
+                            if (Math.abs(pos.x) < VitcoSettings.VOXEL_GROUND_MAX_RANGE && Math.abs(pos.z) < VitcoSettings.VOXEL_GROUND_MAX_RANGE) {
+                                // if we hit the ground plane
+                                data.highlightVoxel(new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)});
+                            } else {
+                                data.highlightVoxel(null);
+                            }
+                        } else { // angle too small
                             data.highlightVoxel(null);
                         }
-                    } else { // angle too small
+                    } else { // not trying to draw and hit nothing
                         data.highlightVoxel(null);
                     }
-                } else { // not trying to draw and hit nothing
-                    data.highlightVoxel(null);
                 }
+            } else {
+                data.highlightVoxel(null);
             }
         }
 
@@ -424,7 +432,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 }
             }
             // execute action
-            execute(e);
+            if (voxelMode == VOXELMODE.SELECT) {
+                camera.setEnabled(false);
+                doSelect = true;
+                selectStartPoint = e.getPoint();
+            } else {
+                execute(e);
+            }
         }
 
         @Override
@@ -432,6 +446,40 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             massVoxel = false;
             hover(e.getPoint());
             camera.setEnabled(true);
+            if (doSelect) { // select the voxels in range
+                Point start = new Point(
+                        Math.min(e.getPoint().x, selectStartPoint.x),
+                        Math.min(e.getPoint().y, selectStartPoint.y)
+                );
+                Point stop = new Point(
+                        Math.max(e.getPoint().x, selectStartPoint.x),
+                        Math.max(e.getPoint().y, selectStartPoint.y)
+                );
+
+                Voxel[] voxels = getVoxels();
+                RTree<Integer> queryTree = new RTree<Integer>(50, 2, 2);
+                for (Voxel voxel : voxels) {
+                    float[] pos = voxel.getPosAsFloat();
+                    SimpleVector vec = convert3D2D(new SimpleVector(
+                            pos[0] * VitcoSettings.VOXEL_SIZE,
+                            pos[1] * VitcoSettings.VOXEL_SIZE,
+                            pos[2] * VitcoSettings.VOXEL_SIZE));
+                    queryTree.insert(new float[] {vec.x, vec.y}, voxel.id);
+                }
+                List<Integer> result = queryTree.search(new float[]{start.x, start.y},
+                        new float[]{stop.x - start.x, stop.y -start.y});
+
+                Integer[] toSet = new Integer[result.size()];
+                result.toArray(toSet);
+                if (toSet.length > 0) {
+                    data.massSetVoxelSelected(toSet, e.getButton() == 1);
+                }
+
+                container.setPreviewRect(null);
+                camera.setEnabled(true);
+                doSelect = false;
+                forceRepaint();
+            }
         }
 
         @Override
@@ -453,6 +501,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 execute(e);
             } else {
                 data.removeVoxelHighlights();
+            }
+            if (doSelect) {
+                int x1 = Math.min(selectStartPoint.x, e.getPoint().x);
+                int y1 = Math.min(selectStartPoint.y, e.getPoint().y);
+                int x2 = Math.max(selectStartPoint.x, e.getPoint().x);
+                int y2 = Math.max(selectStartPoint.y, e.getPoint().y);
+                container.setPreviewRect(new Rectangle(x1, y1, x2-x1, y2-y1));
             }
         }
 

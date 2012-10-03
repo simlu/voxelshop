@@ -1,9 +1,9 @@
 package com.vitco.engine.data;
 
 /**
- * Functionality for voxel highlighting.
+ * Functionality for voxel highlighting and selection of voxels.
  */
-public interface VoxelHighlightInterface {
+public interface VoxelHighlightingInterface {
     // highlight a voxel
     void highlightVoxel(int[] pos);
     // retrieve highlighted voxel

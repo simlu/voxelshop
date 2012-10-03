@@ -2,7 +2,8 @@ package com.vitco.util.colors;
 
 import com.jidesoft.swing.JideTabbedPane;
 import com.vitco.util.ColorTools;
-import com.vitco.util.colors.basics.*;
+import com.vitco.util.colors.basics.ColorChooserPrototype;
+import com.vitco.util.colors.basics.Settings;
 import com.vitco.util.colors.basics.components.*;
 
 import javax.swing.*;
@@ -492,6 +493,8 @@ public class SliderColorChooser extends ColorChooserPrototype {
             if (cmykTab.isShowing()) {
                 cmykTab.update(color, true, false);
             }
+            // none of the above might be visible
+            this.color = color;
         }
     }
 
@@ -504,9 +507,20 @@ public class SliderColorChooser extends ColorChooserPrototype {
         setBackground(new Color(0, 0, 0, 0));
 
         // add the tabs
-        tabbedPane.addTab("RGB", new JScrollPane(rgbTab));
-        tabbedPane.addTab("HSB", new JScrollPane(hsbTab));
-        tabbedPane.addTab("CMYK", new JScrollPane(cmykTab));
+        JScrollPane RGBscrollPane = new JScrollPane(rgbTab);
+        RGBscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        RGBscrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        tabbedPane.addTab("RGB", RGBscrollPane);
+
+        JScrollPane HSBscrollPane = new JScrollPane(hsbTab);
+        HSBscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        HSBscrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        tabbedPane.addTab("HSB", HSBscrollPane);
+
+        JScrollPane CMYKscrollPane = new JScrollPane(cmykTab);
+        CMYKscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        CMYKscrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        tabbedPane.addTab("CMYK", CMYKscrollPane);
 
         // disable focus for tabs themselves
         tabbedPane.setFocusable(false);

@@ -1,9 +1,9 @@
 package com.vitco.engine.data;
 
 /**
- * Functionality for voxel highlighting.
+ * Functionality for voxel highlighting and selection of voxels.
  */
-public class VoxelHighlight extends VoxelData implements VoxelHighlightInterface {
+public class VoxelHighlighting extends VoxelData implements VoxelHighlightingInterface {
 
     private int[] pos = null;
 
@@ -29,5 +29,4 @@ public class VoxelHighlight extends VoxelData implements VoxelHighlightInterface
             notifier.onVoxelSelectionChanged();
         }
     }
-
 }

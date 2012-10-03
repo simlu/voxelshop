@@ -10,36 +10,135 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3775d788-1cb3-4d79-83c9-f6bf480db621" name="Default" comment="Added localization, GUI, first resources">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser$2.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser$VerticalHueSlider.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser$VerticalHueSlider.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/HSBPanelSliderChooser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/PresetColorChooser$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/PresetColorChooser$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/PresetColorChooser.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/PresetColorChooser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$CMYKTab.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$CMYKTab.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$HSBTab.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$HSBTab.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$HorizontalColorSlider.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$HorizontalColorSlider.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$HorizontalHueSlider.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$HorizontalHueSlider.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$RGBTab.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$RGBTab.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype$2.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype$3.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser$TabPrototype.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/SliderColorChooser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/ColorSliderPrototype$2.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/ColorSliderPrototype$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/ColorSliderPrototype$3.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/ColorSliderPrototype$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/ColorSliderPrototype.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/ColorSliderPrototype.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$2.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$AxisJTextFilter.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$AxisJTextFilter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/bars/tool_bar/select_tool.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelHighlightingInterface.java" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelHighlight.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelHighlightInterface.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\engine\data\VoxelHighlightInterface.java" afterPath="" />
+      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\engine\data\VoxelHighlight.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelHighlighting.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_jar/PS4k.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" afterPath="$PROJECT_DIR$/out/artifacts/webdata/PS4k.jar" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$2$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$2$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$4.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$4.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$5.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$5.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$VoxelAdapter$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$VoxelAdapter$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$VoxelAdapter$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$VoxelAdapter$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$VoxelAdapter.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype$VoxelAdapter.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineInteractionPrototype.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$4.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel$4.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype$MPanel.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\EngineViewPrototype.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\Data.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\Data.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$AddVoxelIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$AddVoxelIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$AlphaVoxelIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$AlphaVoxelIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$ClearVoxelIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$ClearVoxelIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$ClearVoxelRangeIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$ClearVoxelRangeIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$ColorVoxelIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$ColorVoxelIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$CreateLayerIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$CreateLayerIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$DeleteLayerIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$DeleteLayerIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$FillVoxelRangeIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$FillVoxelRangeIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$LayerVisibilityIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$LayerVisibilityIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$MergeLayersIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$MergeLayersIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$MoveLayerIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$MoveLayerIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$MoveVoxelIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$MoveVoxelIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$RemoveVoxelIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$RemoveVoxelIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$RenameLayerIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$RenameLayerIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$SelectLayerIntent.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData$SelectLayerIntent.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelData.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelDataInterface.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\VoxelDataInterface.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\container\VOXELMODE.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\container\VOXELMODE.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\container\Voxel.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\engine\data\container\Voxel.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\frames\ColorSliderLinkage.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$10.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$10.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$4.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$4.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$5.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$5.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$6.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$6.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$7.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$7.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$8.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$8.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$9.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView$9.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\mainview\MainView.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$10.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$10.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$11.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$11.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$12.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$12.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$13.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$13.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$4.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$4.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$5.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$5.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$6.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$6.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$7.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$7.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$8.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$8.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$9.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$9.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$10.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$10.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$11.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$11.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$4.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$4.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$5$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$5$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$5.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$5.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$6.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$6.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$7.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$7.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$8.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$8.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$9.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView$9.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\sideview\SideView.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\BiMap.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\BiMap.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\ColorTools.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\ColorTools.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$CMYKTab.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$CMYKTab.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$HSBTab.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$HSBTab.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$HorizontalColorSlider.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$HorizontalColorSlider.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$HorizontalHueSlider.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$HorizontalHueSlider.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$RGBTab.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$RGBTab.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype$3.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype$3.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser$TabPrototype.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\SliderColorChooser.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\Settings.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\Settings.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox$1.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox$1.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox$2.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox$2.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox$AxisJTextFilter.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox$AxisJTextFilter.class" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox.class" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\util\colors\basics\components\NumberBox.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings/pref.ser" afterPath="$PROJECT_DIR$/settings/pref.ser" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/HSBPanelSliderChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/HSBPanelSliderChooser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/PresetColorChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/PresetColorChooser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/SatBrightPanelChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/SatBrightPanelChooser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\glue\shortcuts.xml" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\glue\shortcuts.xml" />
+      <change type="MODIFICATION" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\tool_bar.xml" afterPath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\layout\bars\tool_bar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" afterPath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/engine/EngineInteractionPrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/EngineInteractionPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/engine/EngineViewPrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/EngineViewPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/engine/data/Data.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/data/Data.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelData.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelData.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelDataInterface.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelDataInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/engine/data/container/VOXELMODE.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/data/container/VOXELMODE.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/engine/data/container/Voxel.java" afterPath="$PROJECT_DIR$/src/com/vitco/engine/data/container/Voxel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/src/com/vitco/glue/config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml" afterPath="$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/bars/tool_bar.xml" afterPath="$PROJECT_DIR$/src/com/vitco/layout/bars/tool_bar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/mainview/MainView.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/mainview/MainView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/menu/ToolBarLogic.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/menu/ToolBarLogic.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/shortcut/ShortcutManagerView.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/shortcut/ShortcutManagerView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/logic/sideview/SideView.java" afterPath="$PROJECT_DIR$/src/com/vitco/logic/sideview/SideView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/BiMap.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/BiMap.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/ColorTools.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/ColorTools.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/SliderColorChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/SliderColorChooser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/ColorSliderPrototype.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/ColorSliderPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/basics/Settings.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/basics/Settings.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/NumberBox.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/NumberBox.java" />
     </list>
     <ignored path="PS3k 2.0.iws" />
@@ -98,11 +197,177 @@
     <breakpoint_rules />
     <ui_properties />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="VoxelDataInterface.java" pinned="false" current="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/data/VoxelDataInterface.java">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state line="100" column="40" selection-start="3477" selection-end="3477" vertical-scroll-proportion="0.0">
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="EngineInteractionPrototype.java" pinned="false" current="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/EngineInteractionPrototype.java">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state line="508" column="70" selection-start="23615" selection-end="23615" vertical-scroll-proportion="0.31409544">
+                    <folding>
+                      <element signature="imports" expanded="true" />
+                      <element signature="e#1171#1339#0" expanded="true" />
+                      <element signature="e#1328#1329#0" expanded="true" />
+                      <element signature="e#2007#2023#0" expanded="true" />
+                      <element signature="e#5849#6094#0" expanded="true" />
+                      <element signature="e#6075#6076#0" expanded="true" />
+                      <element signature="e#11680#11711#0" expanded="true" />
+                      <element signature="e#12383#12581#0" expanded="true" />
+                      <element signature="e#12566#12567#0" expanded="true" />
+                      <element signature="e#17792#18079#0" expanded="true" />
+                      <element signature="e#18048#18049#0" expanded="true" />
+                      <element signature="e#21679#21688#0" expanded="true" />
+                      <element signature="e#24109#24517#0" expanded="true" />
+                      <element signature="e#24284#24491#0" expanded="true" />
+                      <element signature="e#24472#24473#0" expanded="true" />
+                      <element signature="e#24506#24507#0" expanded="true" />
+                      <element signature="e#27162#27415#0" expanded="true" />
+                      <element signature="e#27404#27405#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+    <window id="2">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="EngineViewPrototype.java" pinned="false" current="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/EngineViewPrototype.java">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state line="230" column="17" selection-start="8964" selection-end="8964" vertical-scroll-proportion="0.33296338">
+                    <folding>
+                      <element signature="imports" expanded="true" />
+                      <element signature="e#3882#3900#0" expanded="true" />
+                      <element signature="e#4007#4025#0" expanded="true" />
+                      <element signature="e#6576#6585#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FavoritesManager">
     <favorites_list name="PS3k 2.0" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="VoxelData.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/data/VoxelData.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="752" column="42" selection-start="25585" selection-end="25585" vertical-scroll-proportion="-8.192307">
+              <folding>
+                <element signature="e#1500#1516#0" expanded="true" />
+                <element signature="class#CreateLayerIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#DeleteLayerIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#RenameLayerIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#SelectLayerIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#LayerVisibilityIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#MoveLayerIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#AddVoxelIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#MoveVoxelIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#ColorVoxelIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#AlphaVoxelIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#ClearVoxelRangeIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#FillVoxelRangeIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#ClearVoxelIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="class#MergeLayersIntent#0;class#VoxelData#0" expanded="false" />
+                <element signature="method#getFreeVoxelId#0;class#VoxelData#0" expanded="false" />
+                <element signature="method#getFreeLayerId#0;class#VoxelData#0" expanded="false" />
+                <element signature="method#moveVoxel#0;class#VoxelData#0" expanded="false" />
+                <element signature="method#setColor#0;class#VoxelData#0" expanded="false" />
+                <element signature="e#25747#25756#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NumberBox.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/NumberBox.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="88" column="50" selection-start="3171" selection-end="3171" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/glue/config.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="126" column="61" selection-start="5634" selection-end="5634" vertical-scroll-proportion="0.34495413">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SideView.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/sideview/SideView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="103" column="29" selection-start="3603" selection-end="3603" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tool_bar.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/bars/tool_bar.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="52" column="57" selection-start="2537" selection-end="2571" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ToolBarLogic.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/menu/ToolBarLogic.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="127" selection-start="4806" selection-end="4806" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LangBundle.properties" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resource/bundle/LangBundle.properties">
+          <provider editor-type-id="ResourceBundle">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="66" column="42" selection-start="2221" selection-end="2263" vertical-scroll-proportion="-6.818182">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="shortcuts.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="30" column="152" selection-start="3267" selection-end="3267" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -126,22 +391,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/ColorSliderPrototype.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorSliderLinkage.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorPickerLinkage.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/layer/LayerView.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/shortcut/ShortcutManagerView.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/mainview/MainView.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/WorldUtil.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/engine/data/container/VOXELMODE.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/layout/bars/tool_bar.xml" />
+        <option value="$PROJECT_DIR$/resource/bundle/LangBundle.properties" />
+        <option value="$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml" />
         <option value="$PROJECT_DIR$/src/com/vitco/logic/menu/ToolBarLogic.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/SliderUI.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/ValueChangeListener.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/ColorChangeListener.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/Settings.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/ColorChooserPrototype.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/glue/config.xml" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/ColorSliderPrototype.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelDataInterface.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/logic/sideview/SideView.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/engine/data/VoxelData.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/engine/EngineViewPrototype.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/NumberBox.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/HSBPanelSliderChooser.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/PresetColorChooser.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/SatBrightPanelChooser.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/colors/SliderColorChooser.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/engine/EngineInteractionPrototype.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/glue/config.xml" />
       </list>
     </option>
   </component>
@@ -149,10 +414,10 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1" />
-    <option name="y" value="1" />
-    <option name="width" value="1364" />
-    <option name="height" value="642" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1382" />
+    <option name="height" value="754" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -201,6 +466,30 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -277,37 +566,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vitco" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="util" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="colors" />
+              <option name="myItemId" value="glue" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -329,28 +588,54 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Project Files">
           <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="settings" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-        </subPane>
-      </pane>
-      <pane id="PackagesPane">
-        <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="PS4k" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resource" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resource" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bundle" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Resource Bundle 'LangBundle'" />
+              <option name="myItemType" value="com.intellij.lang.properties.projectView.ResourceBundleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -361,15 +646,15 @@
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
-    <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="Repository.Attach.JavaDocs" value="true" />
-    <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
-    <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../IntelliJ/RTree" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
     <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../IntelliJ/RTree" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="ps4k" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -386,8 +671,8 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.includeInheritedMembers" value="false" />
     <property name="GenerateAntBuildDialog.backupFiles" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
@@ -402,11 +687,11 @@
       <recent name="com.vitco.layout" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\icons\frames" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\sideview" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\view" />
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\framebars\mainview" />
-      <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar" />
     </key>
     <key name="ExtractSuperBase.RECENT_KEYS">
       <recent name="com.vitco.util.action" />
@@ -544,24 +829,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -587,6 +854,24 @@
       <envs />
       <properties />
       <listeners />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -726,34 +1011,34 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1" y="1" width="1364" height="642" extended-state="0" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.49468893" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32801822" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32473445" sideWeight="0.64309764" order="2" side_tool="false" content_ui="tabs" x="466" y="150" width="433" height="438" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2777778" sideWeight="0.49430525" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3905724" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45622894" sideWeight="0.5003796" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.261959" sideWeight="0.3838384" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32659933" sideWeight="0.4969651" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.4969651" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38047138" sideWeight="0.4939074" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37878788" sideWeight="0.4939074" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.4969651" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Metrics" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32828283" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2627183" sideWeight="0.45117846" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32801822" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39939255" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26404926" sideWeight="0.67171717" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2604404" sideWeight="0.543771" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45622894" sideWeight="0.49430525" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.43434343" sideWeight="0.4851936" order="13" side_tool="false" content_ui="tabs" x="68" y="23" width="1271" height="621" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="-140" y="-932" width="1096" height="840" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3262519" sideWeight="0.64309764" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2777778" sideWeight="0.49430525" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32996634" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45622894" sideWeight="0.49430525" order="4" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -829,84 +1114,164 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/frames/ColorPickerLinkage.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/WorldUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="67" selection-start="2937" selection-end="2937" vertical-scroll-proportion="0.3068783" />
+        <state line="15" column="24" selection-start="372" selection-end="372" vertical-scroll-proportion="0.3207547">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/res/VitcoSettings.java">
+    <entry file="file://$PROJECT_DIR$/src/com/newbrightidea/util/RTree.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="85" column="74" selection-start="4966" selection-end="4987" vertical-scroll-proportion="0.3324468" />
+        <state line="385" column="7" selection-start="9012" selection-end="9012" vertical-scroll-proportion="0.33153638">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/data/AnimationData.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/data/container/Voxel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="490" column="4" selection-start="16719" selection-end="16719" vertical-scroll-proportion="0.0" />
+        <state line="63" column="12" selection-start="1643" selection-end="1643" vertical-scroll-proportion="0.22102426">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/glue/config.xml">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/data/container/VOXELMODE.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="126" column="61" selection-start="5634" selection-end="5634" vertical-scroll-proportion="0.0723104" />
+        <state line="6" column="51" selection-start="160" selection-end="160" vertical-scroll-proportion="0.17989418">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/ColorSliderPrototype.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="129" column="8" selection-start="4932" selection-end="4932" vertical-scroll-proportion="2.1089537" />
+        <state line="30" column="152" selection-start="3267" selection-end="3267" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/bars/tool_bar.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="57" selection-start="2537" selection-end="2571" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resource/bundle/LangBundle.properties">
+      <provider editor-type-id="ResourceBundle">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="42" selection-start="2221" selection-end="2263" vertical-scroll-proportion="-6.818182">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/menu/ToolBarLogic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="127" selection-start="4806" selection-end="4806" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/render/jpct.jar!/com/threed/jpct/Interact2D.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="19" selection-start="159" selection-end="159" vertical-scroll-proportion="0.07538803">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/data/VoxelDataInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="100" column="40" selection-start="3477" selection-end="3477" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/logic/sideview/SideView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="103" column="29" selection-start="3603" selection-end="3603" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/data/VoxelData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="752" column="42" selection-start="25585" selection-end="25585" vertical-scroll-proportion="-8.192307">
+          <folding>
+            <element signature="e#1500#1516#0" expanded="true" />
+            <element signature="class#CreateLayerIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#DeleteLayerIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#RenameLayerIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#SelectLayerIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#LayerVisibilityIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#MoveLayerIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#AddVoxelIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#MoveVoxelIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#ColorVoxelIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#AlphaVoxelIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#ClearVoxelRangeIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#FillVoxelRangeIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#ClearVoxelIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="class#MergeLayersIntent#0;class#VoxelData#0" expanded="false" />
+            <element signature="method#getFreeVoxelId#0;class#VoxelData#0" expanded="false" />
+            <element signature="method#getFreeLayerId#0;class#VoxelData#0" expanded="false" />
+            <element signature="method#moveVoxel#0;class#VoxelData#0" expanded="false" />
+            <element signature="method#setColor#0;class#VoxelData#0" expanded="false" />
+            <element signature="e#25747#25756#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/EngineViewPrototype.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="230" column="17" selection-start="8964" selection-end="8964" vertical-scroll-proportion="0.33296338">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3882#3900#0" expanded="true" />
+            <element signature="e#4007#4025#0" expanded="true" />
+            <element signature="e#6576#6585#0" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/NumberBox.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="114" column="51" selection-start="3967" selection-end="3967" vertical-scroll-proportion="1.8522115" />
+        <state line="88" column="50" selection-start="3171" selection-end="3171" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/SliderUI.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/engine/EngineInteractionPrototype.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="84" selection-start="138" selection-end="138" vertical-scroll-proportion="0.053347282" />
+        <state line="508" column="70" selection-start="23615" selection-end="23615" vertical-scroll-proportion="0.31409544">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1171#1339#0" expanded="true" />
+            <element signature="e#1328#1329#0" expanded="true" />
+            <element signature="e#2007#2023#0" expanded="true" />
+            <element signature="e#5849#6094#0" expanded="true" />
+            <element signature="e#6075#6076#0" expanded="true" />
+            <element signature="e#11680#11711#0" expanded="true" />
+            <element signature="e#12383#12581#0" expanded="true" />
+            <element signature="e#12566#12567#0" expanded="true" />
+            <element signature="e#17792#18079#0" expanded="true" />
+            <element signature="e#18048#18049#0" expanded="true" />
+            <element signature="e#21679#21688#0" expanded="true" />
+            <element signature="e#24109#24517#0" expanded="true" />
+            <element signature="e#24284#24491#0" expanded="true" />
+            <element signature="e#24472#24473#0" expanded="true" />
+            <element signature="e#24506#24507#0" expanded="true" />
+            <element signature="e#27162#27415#0" expanded="true" />
+            <element signature="e#27404#27405#0" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/TextChangeListener.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/glue/config.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="19" selection-start="136" selection-end="136" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/components/ValueChangeListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="61" selection-start="154" selection-end="154" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/ColorChangeListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="51" selection-start="94" selection-end="94" vertical-scroll-proportion="0.054255318" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/ColorChooserPrototype.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="24" selection-start="642" selection-end="642" vertical-scroll-proportion="0.39787233" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/basics/Settings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="45" selection-start="1095" selection-end="1095" vertical-scroll-proportion="0.6296296" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/PresetColorChooser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="133" column="29" selection-start="12482" selection-end="12486" vertical-scroll-proportion="2.2968085" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/HSBPanelSliderChooser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="23" selection-start="2876" selection-end="2879" vertical-scroll-proportion="1.0851064" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/SatBrightPanelChooser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="114" column="42" selection-start="4435" selection-end="4435" vertical-scroll-proportion="1.9531915" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/colors/SliderColorChooser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="514" column="84" selection-start="20413" selection-end="20413" vertical-scroll-proportion="14.637184" />
+        <state line="126" column="61" selection-start="5634" selection-end="5634" vertical-scroll-proportion="0.34495413">
+          <folding />
+        </state>
       </provider>
     </entry>
   </component>

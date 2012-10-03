@@ -92,4 +92,11 @@ public interface VoxelDataInterface {
     boolean mergeVisibleLayers();
     // true iff vis layers can be merged
     boolean canMergeVisibleLayers();
+
+    boolean isSelected(int voxelId);
+    Voxel[] getSelectedVoxels();
+    // select a voxel
+    boolean setVoxelSelected(int voxelId, boolean selected);
+
+    boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected);
 }

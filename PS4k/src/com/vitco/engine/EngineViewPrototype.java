@@ -48,6 +48,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     // the world-required objects
     protected final World world;
+    protected final World selectedVoxelsWorld;
     protected FrameBuffer buffer;
     protected final CCamera camera;
 
@@ -93,12 +94,13 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected final void setSimpleVoxelMode(boolean b, int side) {
         useSimpleVoxelMode = b;
         simpleVoxelModeSide = side;
-        // remove the objects
-        for (int id : voxelToObject.keySet()) {
-            world.removeObject(voxelToObject.get(id));
-            voxelToObject.removeByKey(id);
-            idToVoxel.remove(id);
-        }
+
+        selectedVoxels.clear();
+        voxelToObject.clear();
+        idToVoxel.clear();
+        world.removeAllObjects();
+        selectedVoxelsWorld.removeAllObjects();
+
         voxelPositions.clear();
     }
 
@@ -110,12 +112,45 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         return data.getVoxel(voxelToObject.getKey(id));
     }
 
+    // keeps track of selected voxels on world
+    private final HashMap<Integer, Integer> selectedVoxels = new HashMap<Integer, Integer>();
+
     // maps voxel ids to world ids
     private final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
     private final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
     // index to find voxels in range
     private final RTree<Voxel> voxelPositions = new RTree<Voxel>(50, 2, 3);
     private static final float[] ZEROS = new float[] {0,0,0};
+
+    // helper to remove a voxel id from the world
+    private void removeVoxel(int worldObjId) {
+        world.removeObject(worldObjId); // remove
+        int voxelId = voxelToObject.getKey(worldObjId);
+        // remove selected voxel if exists
+        if (selectedVoxels.containsKey(voxelId)) {
+            selectedVoxelsWorld.removeObject(selectedVoxels.get(voxelId));
+            selectedVoxels.remove(voxelId);
+        }
+    }
+
+    // helper: set the correct deselect/select state of this voxel
+    private void handleVoxelSelection(Voxel voxel) {
+        if (voxel.isSelected()) {
+            if (!selectedVoxels.containsKey(voxel.id)) {
+                int selId = WorldUtil.addBox(selectedVoxelsWorld, new SimpleVector(
+                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
+                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
+                        VitcoSettings.VOXEL_SIZE/2, voxel.getColor());
+                selectedVoxels.put(voxel.id, selId);
+            }
+        } else {
+            if (selectedVoxels.containsKey(voxel.id)) {
+                selectedVoxelsWorld.removeObject(selectedVoxels.get(voxel.id));
+                selectedVoxels.remove(voxel.id);
+            }
+        }
+    }
 
     // helper to add voxel to world (with one side)
     private void addVoxelToWorld(Voxel voxel, int side) {
@@ -133,6 +168,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     // helper - make sure the voxel objects are up to date, but only draw one side of the voxel
     private void updateWorldWithVoxelsSimple(int side) {
+        // retrive the voxels
         Voxel[] voxels = getVoxels();
 
         // temporary to find unneeded objects
@@ -141,8 +177,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // loop over all voxels
         for (Voxel voxel : voxels) {
-            voxelIds.remove((Integer)voxel.id);
-            if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
+            if (!voxelToObject.containsKey(voxel.id)) { // add all new voxels
                 voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel);
                 addVoxelToWorld(voxel, side);
                 idToVoxel.put(voxel.id, voxel);
@@ -152,15 +187,19 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     voxelPositions.delete(oldVoxel.getPosAsFloat(), ZEROS, oldVoxel); // delete old entry
                     voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel); // add new
                     idToVoxel.put(voxel.id, voxel);
-                    world.removeObject(voxelToObject.get(voxel.id)); // remove
+                    removeVoxel(voxelToObject.get(voxel.id)); // remove
                     addVoxelToWorld(voxel, side);
                 }
             }
+            // check that the selection is up to date
+            handleVoxelSelection(voxel);
+            // do not remove this voxel
+            voxelIds.remove((Integer)voxel.id);
         }
 
         // remove the objects that are no longer needed
         for (int id : voxelIds) {
-            world.removeObject(voxelToObject.get(id));
+            removeVoxel(voxelToObject.get(id));
             voxelToObject.removeByKey(id);
             Voxel voxel = idToVoxel.get(id);
             voxelPositions.delete(voxel.getPosAsFloat(), ZEROS, voxel);
@@ -204,7 +243,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // loop over all voxels
         for (Voxel voxel : voxels) {
-            if (voxelToObject.doesNotContainKey(voxel.id)) { // add all new voxels
+            if (!voxelToObject.containsKey(voxel.id)) { // add all new voxels
                 idToVoxel.put(voxel.id, voxel);
                 voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel);
                 toRefresh.add(voxel);
@@ -219,13 +258,15 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     toRefresh.add(voxel);
                 }
             }
+            // check that the selection is up to date
+            handleVoxelSelection(voxel);
             // do not remove this voxel
             voxelToRemove.remove((Integer) voxel.id);
         }
 
         // remove the objects that are no longer needed
         for (int id : voxelToRemove) {
-            world.removeObject(voxelToObject.get(id));
+            removeVoxel(voxelToObject.get(id));
             voxelToObject.removeByKey(id);
             Voxel voxel = idToVoxel.get(id);
             refreshOnlyNeighbors.add(voxel);
@@ -267,8 +308,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             Integer key = voxelToObject.get(voxel.id);
             voxelToObject.put(voxel.id, id);
             // remove if there was already an object for this voxel
+            // (just the display changed!)
             if (key != null) {
                 world.removeObject(key);
+                //removeVoxel(key);
             }
 
         }
@@ -280,15 +323,20 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // force update of world before next draw
     protected final void invalidateVoxels() {
         if (localMouseDown) { // instant update needed for interaction
-            if (useSimpleVoxelMode) {
-                updateWorldWithVoxelsSimple(simpleVoxelModeSide);
-            } else {
-                updateWorldWithVoxels();
-            }
-            worldVoxelCurrent = true;
+            refreshVoxels();
         } else {
             worldVoxelCurrent = false;
         }
+    }
+
+    // make sure the voxels are valid "right now"
+    private void refreshVoxels() {
+        if (useSimpleVoxelMode) {
+            updateWorldWithVoxelsSimple(simpleVoxelModeSide);
+        } else {
+            updateWorldWithVoxels();
+        }
+        worldVoxelCurrent = true;
     }
 
     // ==============================
@@ -365,6 +413,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             doNotSkipNextWorldRender = true;
         }
 
+        // to set the preview rect
+        private Rectangle previewRect = null;
+        public final void setPreviewRect(Rectangle rect) {
+            previewRect = rect;
+        }
+
         // wrapper
         private void drawCubeLine(Graphics2D ig, SimpleVector[] vectors, int i, int j, Color color, float distance, float[] zRange) {
             float range1 = (vectors[i].z-zRange[0])/distance;
@@ -387,6 +441,13 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
+            // draw the select rect
+            if (previewRect != null) {
+                ig.setColor(Color.WHITE);
+                ig.drawRect(previewRect.x, previewRect.y, previewRect.width, previewRect.height);
+            }
+
+            // draw the prievew voxel
             final int[] voxel = data.getHighlightedVoxel();
             // draw selected voxel (ghost / preview voxel)
             if (voxel != null) {
@@ -682,18 +743,15 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 buffer.clear(bgColor);
                 if (drawWorld) {
                     if (!worldVoxelCurrent) {
-                        if (useSimpleVoxelMode) {
-                            updateWorldWithVoxelsSimple(simpleVoxelModeSide);
-                        } else {
-                            updateWorldWithVoxels();
-                        }
-                        worldVoxelCurrent = true;
+                        refreshVoxels();
                     }
                     world.renderScene(buffer);
                     if (useWireFrame) {
                         world.drawWireframe(buffer, Color.WHITE);
                     } else {
                         world.draw(buffer);
+                        selectedVoxelsWorld.renderScene(buffer);
+                        selectedVoxelsWorld.drawWireframe(buffer, Color.WHITE);
                     }
                 }
                 buffer.update();
@@ -750,6 +808,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // only perform these actions once (even if the class is instantiated several times)
         if (!initialized) {
+            Config.tuneForOutdoor();
             Config.fadeoutLight=false;
             Config.maxPolysVisible = 15000;
             Logger.setLogLevel(Logger.ERROR);
@@ -772,8 +831,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // set up world objects
         world = new World();
+        selectedVoxelsWorld = new World();
         camera = new CCamera();
         world.setCameraTo(camera);
+        selectedVoxelsWorld.setCameraTo(camera);
         buffer = new FrameBuffer(100, 100, FrameBuffer.SAMPLINGMODE_OGSS);
 
         // lighting (1,1,1) = true color

@@ -59,5 +59,16 @@ public final class Voxel implements Serializable {
         return layerId;
     }
 
+    // ===================================
+    // for this object instance only
+    private transient boolean selected = false;
+
+    public final boolean isSelected() {
+        return selected;
+    }
+
+    public final void setSelected(boolean b) {
+        selected = b;
+    }
 
 }

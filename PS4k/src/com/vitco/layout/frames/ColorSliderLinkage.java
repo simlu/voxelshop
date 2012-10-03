@@ -41,7 +41,13 @@ public class ColorSliderLinkage extends FrameLinkagePrototype {
         )));
         updateTitle(); // update the title
 
-        // the color chooser events
+        // add the chooser
+        frame.add(scc);
+        // load active tab
+        if (preferences.contains("colorslider_active-tab")) {
+            scc.setActiveTab(preferences.loadInteger("colorslider_active-tab"));
+        }
+        // register the color chooser events
         preferences.addPrefChangeListener("currently_used_color", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {
@@ -54,11 +60,6 @@ public class ColorSliderLinkage extends FrameLinkagePrototype {
                 preferences.storeObject("currently_used_color", hsb);
             }
         });
-        // load active tab
-        if (preferences.contains("colorslider_active-tab")) {
-            scc.setActiveTab(preferences.loadInteger("colorslider_active-tab"));
-        }
-        frame.add(scc);
 
         // register action to hide/show this frame and get visible state
         actionManager.registerAction("colorslider_state-action_show", new StateActionPrototype() {

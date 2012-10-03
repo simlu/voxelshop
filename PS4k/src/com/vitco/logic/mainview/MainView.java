@@ -2,6 +2,8 @@ package com.vitco.logic.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
+import com.threed.jpct.Object3D;
+import com.threed.jpct.Primitives;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
@@ -32,6 +34,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
+        selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
 
         // camera settings
         camera.setFOVLimits(VitcoSettings.MAIN_VIEW_ZOOM_FOV,VitcoSettings.MAIN_VIEW_ZOOM_FOV);

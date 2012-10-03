@@ -47,6 +47,10 @@
                tool-tip="voxel_mode_select_type_color_changer_tooltip"
                checkable="true" hideable="true"
                action="voxel_mode_select_type_color_changer"/>
+    <icon-item src="resource/img/bars/tool_bar/select_tool.png"
+               tool-tip="voxel_mode_select_type_select_tool_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_select_tool"/>
 
     <!--animation mode-->
     <icon-item src="resource/img/framebars/mainview/snap.png"

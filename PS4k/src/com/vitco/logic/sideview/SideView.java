@@ -96,24 +96,26 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         // hover on mouse event
         @Override
         protected void hover(Point point) {
-            // calculate position
-            SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
-                    new SimpleVector(
-                            side == 2 ? currentplane : 0,
-                            side == 1 ? currentplane : 0,
-                            side == 0 ? currentplane : 0
-                    )
-            );
-            int[] pos = new int[]{
-                    side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
-                    side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
-                    side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
-            };
-            Voxel voxel = data.searchVoxel(pos, true);
-            if (voxel != null || VOXELMODE.DRAW == voxelMode) {
-                data.highlightVoxel(pos);
-            } else {
-                data.highlightVoxel(null);
+            if (voxelMode != VOXELMODE.SELECT) {
+                // calculate position
+                SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
+                        new SimpleVector(
+                                side == 2 ? currentplane : 0,
+                                side == 1 ? currentplane : 0,
+                                side == 0 ? currentplane : 0
+                        )
+                );
+                int[] pos = new int[]{
+                        side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
+                        side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
+                        side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
+                };
+                Voxel voxel = data.searchVoxel(pos, true);
+                if (voxel != null || VOXELMODE.DRAW == voxelMode) {
+                    data.highlightVoxel(pos);
+                } else {
+                    data.highlightVoxel(null);
+                }
             }
         }
     }
@@ -126,6 +128,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
+        selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
 
         // set initial current plane
         preferences.storeObject("currentplane_sideview" + (side + 1), 0);

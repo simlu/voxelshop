@@ -10,7 +10,7 @@ import java.io.File;
 /**
  * Data class that puts everything together and defines general data interaction (e.g. save/load)
  */
-public final class Data extends VoxelHighlight implements DataInterface {
+public final class Data extends VoxelHighlighting implements DataInterface {
 
     @Override
     public final void clearHistoryA() {
