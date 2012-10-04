@@ -469,10 +469,22 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 List<Integer> result = queryTree.search(new float[]{start.x, start.y},
                         new float[]{stop.x - start.x, stop.y -start.y});
 
+                // do a single click search as well
+                SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
+                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
+                if (res[1] != null) { // something hit
+                    Object3D obj3D = ((Object3D)res[1]);
+                    Voxel hitVoxel = getVoxelForObjectId(obj3D.getID());
+                    if (!result.contains(hitVoxel.id)) {
+                        result.add(hitVoxel.id);
+                    }
+                }
+
+                // execute the select
                 Integer[] toSet = new Integer[result.size()];
                 result.toArray(toSet);
                 if (toSet.length > 0) {
-                    data.massSetVoxelSelected(toSet, e.getButton() == 1);
+                    data.massSetVoxelSelected(toSet, e.getButton() == 1 && !e.isControlDown());
                 }
 
                 container.setPreviewRect(null);
@@ -508,6 +520,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 int x2 = Math.max(selectStartPoint.x, e.getPoint().x);
                 int y2 = Math.max(selectStartPoint.y, e.getPoint().y);
                 container.setPreviewRect(new Rectangle(x1, y1, x2-x1, y2-y1));
+                if (voxelMode != VOXELMODE.SELECT) { // cancel if the mode was changed
+                    doSelect = false;
+                }
             }
         }
 

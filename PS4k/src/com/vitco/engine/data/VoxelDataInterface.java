@@ -97,6 +97,14 @@ public interface VoxelDataInterface {
     Voxel[] getSelectedVoxels();
     // select a voxel
     boolean setVoxelSelected(int voxelId, boolean selected);
-
+    // select several voxels at once
     boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected);
+    // remove several voxels at once
+    boolean massRemoveVoxel(Integer[] voxelIds);
+
+    boolean massAddVoxel(Voxel[] voxels);
+
+    boolean migrateVoxels(Voxel[] voxels);
+
+    boolean massSetColor(Integer[] voxelIds, Color color);
 }

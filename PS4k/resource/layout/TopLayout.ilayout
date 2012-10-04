@@ -89,7 +89,7 @@
                 autohideWhenActive="false" autohideWidth="311"
                 availableButtons="15" defaultCloseAction="0"
                 defaultEscapeAction="0" dockable="true" docked="true"
-                dockedHeight="180" dockedWidth="261" floatable="true"
+                dockedHeight="200" dockedWidth="261" floatable="true"
                 floated="false" hidable="true" hidden="false"
                 initIndex="2" initMode="4" initSide="4"
                 key="shortcutManager" maximizable="true"
@@ -105,7 +105,7 @@
                 autohideWhenActive="false" autohideWidth="311"
                 availableButtons="15" defaultCloseAction="0"
                 defaultEscapeAction="0" dockable="true" docked="true"
-                dockedHeight="180" dockedWidth="261" floatable="true"
+                dockedHeight="200" dockedWidth="261" floatable="true"
                 floated="false" hidable="true" hidden="false"
                 initIndex="2" initMode="4" initSide="4" key="personal"
                 maximizable="true" maximized="false"
@@ -120,7 +120,7 @@
                 autohideWhenActive="false" autohideWidth="200"
                 availableButtons="15" defaultCloseAction="0"
                 defaultEscapeAction="0" dockable="true" docked="true"
-                dockedHeight="180" dockedWidth="261" floatable="true"
+                dockedHeight="200" dockedWidth="261" floatable="true"
                 floated="false" hidable="true" hidden="false"
                 initIndex="2" initMode="4" initSide="4" key="layer"
                 maximizable="true" maximized="false"
@@ -180,7 +180,7 @@
                 autohideWhenActive="false" autohideWidth="200"
                 availableButtons="15" defaultCloseAction="0"
                 defaultEscapeAction="0" dockable="true" docked="true"
-                dockedHeight="103" dockedWidth="261" floatable="true"
+                dockedHeight="200" dockedWidth="261" floatable="true"
                 floated="false" hidable="true" hidden="false"
                 initIndex="1" initMode="4" initSide="4"
                 key="colorslider" maximizable="true" maximized="false"
@@ -214,6 +214,14 @@
                 menuBar="false" paintBackground="true"
                 rearrangable="true" stretch="false" title="Tool Bar"
                 undockedBounds="251; 146; 280; 47" vertDocked="true"/>
+            <DockableBar allowedDockSides="15"
+                chevronAlwaysVisible="false" floatable="true"
+                floating="false" hidable="false" hidden="false"
+                horiDocked="false" initIndex="0" initMode="3"
+                initSide="8" initSubindex="153" key="selectBar"
+                menuBar="false" paintBackground="true"
+                rearrangable="true" stretch="false"
+                title="Selection Bar" undockedBounds="306; 312; 290; 47" vertDocked="true"/>
         </DockableBars>
     </DockableBarManager>
 </Managers>

@@ -447,7 +447,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 ig.drawRect(previewRect.x, previewRect.y, previewRect.width, previewRect.height);
             }
 
-            // draw the prievew voxel
+            // draw the preview voxel
             final int[] voxel = data.getHighlightedVoxel();
             // draw selected voxel (ghost / preview voxel)
             if (voxel != null) {
@@ -747,11 +747,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     }
                     world.renderScene(buffer);
                     if (useWireFrame) {
-                        world.drawWireframe(buffer, Color.WHITE);
+                        world.drawWireframe(buffer, VitcoSettings.WIREFRAME_COLOR);
                     } else {
                         world.draw(buffer);
                         selectedVoxelsWorld.renderScene(buffer);
-                        selectedVoxelsWorld.drawWireframe(buffer, Color.WHITE);
+                        selectedVoxelsWorld.drawWireframe(buffer, VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR);
                     }
                 }
                 buffer.update();

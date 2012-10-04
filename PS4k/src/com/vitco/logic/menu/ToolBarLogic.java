@@ -76,6 +76,11 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         complexActionManager.registerAction("current_color_button_popup", scc);
         // to perform validity check we need to register this name
         complexActionManager.registerActionIsUsed("current_color_button_icon");
+        // todo move this to global (more general class)
+        // make sure the currently used color is set
+        if (!preferences.contains("currently_used_color")) {
+            preferences.storeObject("currently_used_color", ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR));
+        }
         // lazy action linking (the action might not be ready!)
         preferences.addPrefChangeListener("currently_used_color", new PrefChangeListener() {
             @Override

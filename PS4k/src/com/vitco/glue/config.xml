@@ -100,6 +100,7 @@
     <!--menu logic-->
     <bean id="MainMenuLogic" class="com.vitco.logic.menu.MainMenuLogic"/>
     <bean id="ToolBarLogic" class="com.vitco.logic.menu.ToolBarLogic"/>
+    <bean id="SelectBarLogic" class="com.vitco.logic.menu.SelectBarLogic"/>
 
     <!--ENGINE STUFF-->
     <!-- animation data -->
@@ -124,7 +125,7 @@
 
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
-        <constructor-arg value="PS4k - Alpha Version (V1.0.22)"/>
+        <constructor-arg value="PS4k - Alpha Version (V1.0.23)"/>
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
         <property name="preferences" ref="Preferences"/>
@@ -145,6 +146,12 @@
                     <key><value>toolBar</value></key>
                     <bean id="ToolBarLinkage" class="com.vitco.layout.bars.ToolBarLinkage">
                         <property name="menuLogic" ref="ToolBarLogic"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>selectBar</value></key>
+                    <bean id="SelectBarLinkage" class="com.vitco.layout.bars.SelectBarLinkage">
+                        <property name="menuLogic" ref="SelectBarLogic"/>
                     </bean>
                 </entry>
             </map>

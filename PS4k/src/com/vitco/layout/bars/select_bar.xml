@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <!-- copy, cut, paste -->
+    <icon-item src="resource/img/bars/select_bar/cut.png"
+               tool-tip="selection_tool_cut_tooltip"
+               grayable="true"
+               action="selection_tool_cut"/>
+    <icon-item src="resource/img/bars/select_bar/copy.png"
+               tool-tip="selection_tool_copy_tooltip"
+               grayable="true"
+               action="selection_tool_copy"/>
+    <icon-item src="resource/img/bars/select_bar/paste.png"
+               tool-tip="selection_tool_paste_tooltip"
+               grayable="true"
+               action="selection_tool_paste"/>
+    <separator/>
+
+    <!--deselect / delete-->
+    <icon-item src="resource/img/bars/select_bar/deselect.png"
+               tool-tip="selection_tool_deselect_tooltip"
+               grayable="true"
+               action="selection_tool_deselect"/>
+    <icon-item src="resource/img/bars/select_bar/delete_select.png"
+               tool-tip="selection_tool_delete_tooltip"
+               grayable="true"
+               action="selection_tool_delete"/>
+    <separator/>
+
+    <!--select all, move to new layer, recolor-->
+    <icon-item src="resource/img/bars/select_bar/select_layer.png"
+               tool-tip="selection_tool_select_all_tooltip"
+               grayable="true"
+               action="selection_tool_select_all"/>
+    <icon-item src="resource/img/bars/select_bar/as_new_layer.png"
+               tool-tip="selection_tool_as_new_layer_tooltip"
+               grayable="true"
+               action="selection_tool_as_new_layer"/>
+    <icon-item src="resource/img/bars/select_bar/recolor.png"
+               tool-tip="selection_tool_recolor_tooltip"
+               grayable="true"
+               action="selection_tool_recolor"/>
+</head>

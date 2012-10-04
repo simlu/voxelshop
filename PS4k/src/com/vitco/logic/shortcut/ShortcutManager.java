@@ -47,8 +47,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
-                    // delete
-                    127
+                    // delete, escape, space
+                    127, 27, 32
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
@@ -59,8 +59,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
-                    // delete
-                    127
+                    // delete, escape, space
+                    127, 27, 32
             }));
 
     // global setting for all activatable actions
@@ -124,7 +124,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
 
             private void update() {
                 // the current frame or a dockableFrame popup, or an component where we edit
-                if ((activeWindow != frame && !(activeWindow instanceof DialogFloatingContainer)) || focusOwner instanceof JTextComponent) {
+                if ((activeWindow != frame && !(activeWindow instanceof DialogFloatingContainer))
+                        || (focusOwner instanceof JTextComponent && ((JTextComponent) focusOwner).isEditable())) {
                     deactivateShortcuts();
                 } else {
                     activateShortcuts();
@@ -556,6 +557,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
         } else {
             if (str.equals("DEL")) {
                 result = 127;
+            } else if (str.equals("ESC")) {
+                result = 27;
+            } else if (str.equals("SPACE")) {
+                result = 32;
             } else
             if (str.startsWith("F")) {
                 str = str.substring(1);

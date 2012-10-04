@@ -10,7 +10,6 @@ import com.vitco.res.VitcoSettings;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -38,14 +37,12 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         layerVoxelXYBufferValid = false;
         layerVoxelXZBufferValid = false;
         layerVoxelYZBufferValid = false;
+        selectedVoxelBufferValid = false;
         notifier.onVoxelDataChanged();
     }
 
     // holds the historyV data
     protected final HistoryManager historyManagerV = new HistoryManager();
-
-    // index for selected voxel
-    private final HashMap<Integer, Voxel> selectedVoxel = new HashMap<Integer, Voxel>();
 
     // buffer for the selected voxels
     private Voxel[] selectedVoxelBuffer = new Voxel[0];
@@ -506,6 +503,45 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    private final class MigrateIntent extends BasicActionIntent {
+        private final Voxel[] voxels;
+
+        protected MigrateIntent(Voxel[] voxels, boolean attach) {
+            super(attach);
+            this.voxels = voxels;
+        }
+
+        private Integer[] convertVoxelsToIdArray(Voxel[] voxels) {
+            Integer[] voxelIds = new Integer[voxels.length];
+            int i = 0;
+            for (Voxel voxel : voxels) {
+                voxelIds[i++] = voxel.id;
+            }
+            return voxelIds;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                // create a new layer
+                int layerId = getFreeLayerId();
+                historyManagerV.applyIntent(new CreateLayerIntent(layerId, "Migrated", true));
+                // remove all voxels
+                historyManagerV.applyIntent(
+                        new MassRemoveVoxelIntent(convertVoxelsToIdArray(voxels), true));
+                // add all voxels to new layer
+                historyManagerV.applyIntent(new MassAddVoxelIntent(voxels, layerId, true));
+                // select the new layer
+                historyManagerV.applyIntent(new SelectLayerIntent(layerId, true));
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+    }
+
     // mass events
 
     private final class MassSelectVoxelIntent extends BasicActionIntent {
@@ -523,6 +559,81 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             if (isFirstCall()) {
                 for (Integer id : voxelIds) {
                     historyManagerV.applyIntent(new SelectVoxelIntent(id, selected, true));
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+    }
+
+    private final class MassRemoveVoxelIntent extends BasicActionIntent {
+        private final Integer[] voxelIds;
+
+        protected MassRemoveVoxelIntent(Integer[] voxelIds, boolean attach) {
+            super(attach);
+            this.voxelIds = voxelIds;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                for (Integer id : voxelIds) {
+                    historyManagerV.applyIntent(new RemoveVoxelIntent(id, true));
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+    }
+
+    private final class MassAddVoxelIntent extends BasicActionIntent {
+        private final Voxel[] voxels;
+        private final int layerId;
+
+        protected MassAddVoxelIntent(Voxel[] voxels, int layerId, boolean attach) {
+            super(attach);
+            this.voxels = voxels;
+            this.layerId = layerId;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                for (Voxel voxel : voxels) {
+                    historyManagerV.applyIntent(
+                            new AddVoxelIntent(getFreeVoxelId(), voxel.getPosAsInt(),
+                                    voxel.getColor(), layerId, true));
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+    }
+
+    private final class MassColorVoxelIntent extends BasicActionIntent  {
+        private final Integer[] voxelIds;
+        private final Color color;
+
+        protected MassColorVoxelIntent(Integer[] voxelIds, Color color, boolean attach) {
+            super(attach);
+            this.voxelIds = voxelIds;
+            this.color = color;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                for (Integer voxelId : voxelIds) {
+                    historyManagerV.applyIntent(new ColorVoxelIntent(voxelId, color, true));
                 }
             }
         }
@@ -581,6 +692,27 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
+    public final boolean massAddVoxel(Voxel[] voxels) {
+        boolean result = false;
+        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+        if (layer != null) {
+            ArrayList<Voxel> validVoxel = new ArrayList<Voxel>();
+            for (Voxel voxel : voxels) {
+                if (layer.voxelPositionFree(voxel.getPosAsInt())) {
+                    validVoxel.add(voxel);
+                }
+            }
+            if (validVoxel.size() > 0 && layer.getSize() + validVoxel.size() <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
+                Voxel[] valid = new Voxel[validVoxel.size()];
+                validVoxel.toArray(valid);
+                historyManagerV.applyIntent(new MassAddVoxelIntent(valid, layer.id, false));
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    @Override
     public final boolean removeVoxel(int voxelId) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId)) {
@@ -589,6 +721,25 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
         return result;
     }
+
+    @Override
+    public final boolean massRemoveVoxel(Integer[] voxelIds) {
+        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+        for (int voxelId : voxelIds) {
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                validVoxel.add(voxelId);
+            }
+        }
+        if (validVoxel.size() > 0) {
+            Integer[] valid = new Integer[validVoxel.size()];
+            validVoxel.toArray(valid);
+            historyManagerV.applyIntent(new MassRemoveVoxelIntent(valid, false));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     @Override
     public final boolean moveVoxel(int voxelId, int[] newPos) {
@@ -620,6 +771,24 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             result = true;
         }
         return result;
+    }
+
+    @Override
+    public final boolean massSetColor(Integer[] voxelIds, Color color) {
+        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+        for (int voxelId : voxelIds) {
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                validVoxel.add(voxelId);
+            }
+        }
+        if (validVoxel.size() > 0) {
+            Integer[] valid = new Integer[validVoxel.size()];
+            validVoxel.toArray(valid);
+            historyManagerV.applyIntent(new MassColorVoxelIntent(valid, color, false));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -726,12 +895,6 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final boolean setVoxelSelected(int voxelId, boolean selected) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
-            if (selected) {
-                selectedVoxel.put(voxelId, getVoxel(voxelId));
-            } else {
-                selectedVoxel.remove(voxelId);
-            }
-            selectedVoxelBufferValid = false;
             historyManagerV.applyIntent(new SelectVoxelIntent(voxelId, selected, false));
             result = true;
         }
@@ -746,8 +909,17 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getSelectedVoxels() {
         if (!selectedVoxelBufferValid) {
-            selectedVoxelBuffer = new Voxel[selectedVoxel.keySet().size()];
-            selectedVoxel.values().toArray(selectedVoxelBuffer);
+            // get all presented voxels
+            Voxel voxels[] = getVisibleLayerVoxel();
+            // filter the selected
+            ArrayList<Voxel> selected = new ArrayList<Voxel>();
+            for (Voxel voxel : voxels) {
+                if (voxel.isSelected()) {
+                    selected.add(voxel);
+                }
+            }
+            selectedVoxelBuffer = new Voxel[selected.size()];
+            selected.toArray(selectedVoxelBuffer);
             selectedVoxelBufferValid = true;
         }
         return selectedVoxelBuffer.clone();
@@ -769,8 +941,18 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         } else {
             return false;
         }
-
     }
+
+    @Override
+    public final boolean migrateVoxels(Voxel[] voxels) {
+        boolean result = false;
+        if (voxels.length > 0 && voxels.length <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
+            historyManagerV.applyIntent(new MigrateIntent(voxels, false));
+            result = true;
+        }
+        return result;
+    }
+
 
     // =============================
 
