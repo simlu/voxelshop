@@ -1,15 +1,12 @@
 package com.vitco.engine;
 
-import com.newbrightidea.util.RTree;
 import com.threed.jpct.*;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.BiMap;
 import com.vitco.util.G2DUtil;
-import com.vitco.util.WorldUtil;
 import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
@@ -23,8 +20,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Rendering functionality of this World (data + overlay)
@@ -605,7 +604,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         if (!initialized) {
             Config.tuneForOutdoor();
             Config.fadeoutLight=false;
-            Config.maxPolysVisible = 15000;
+            Config.maxPolysVisible = 2000;
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }

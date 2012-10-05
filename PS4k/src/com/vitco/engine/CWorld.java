@@ -21,7 +21,7 @@ public class CWorld extends World {
 
     // constructor
     private final boolean culling;
-    private final Integer side;
+    private final Integer side; // default -1 (all sites)
     public CWorld(boolean culling, Integer side) {
         this.culling = culling;
         this.side = side;
@@ -36,7 +36,7 @@ public class CWorld extends World {
     // these voxels need to be refreshed
     private final ArrayList<Integer> toRefresh = new ArrayList<Integer>();
     // maps voxel ids to world objects (entries are existent iff world object exists)
-    private final BiMap<Integer, Integer> voxelIdToWorldId = new BiMap<Integer, Integer>();
+    private transient final BiMap<Integer, Integer> voxelIdToWorldId = new BiMap<Integer, Integer>();
 
     // ==============================
 
@@ -175,7 +175,7 @@ public class CWorld extends World {
     public final Integer[] getLoaded() {
         Integer[] result = new Integer[voxelIdToWorldId.keySet().size()];
         voxelIdToWorldId.keySet().toArray(result);
-        return result;
+        return result.clone();
     }
 
 }

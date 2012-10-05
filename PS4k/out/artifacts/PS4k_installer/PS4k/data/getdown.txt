@@ -1,0 +1,14 @@
+# The URL from which the client is downloaded
+appbase = http://fantasy-mmorpg.com/tools/ps4k/updater/
+
+# UI Configuration
+ui.name = PS4k
+
+# Application jar files
+code = PS4k.jar
+
+# The main entry point for the application
+class = com.vitco.Main
+
+# set heap size
+jvmarg = -Xmx512M

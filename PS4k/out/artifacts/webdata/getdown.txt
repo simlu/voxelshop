@@ -27,3 +27,6 @@ code = lib/jpct.jar
 
 # The main entry point for the application
 class = com.vitco.Main
+
+# Heap size
+jvmarg = -Xmx512M

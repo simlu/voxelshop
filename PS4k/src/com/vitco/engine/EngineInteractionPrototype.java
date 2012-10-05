@@ -538,8 +538,6 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 massVoxel = false;
                 container.setPreviewRect(null);
                 massVoxelMode = voxelMode;
-                data.removeVoxelHighlights();
-                forceRepaint();
             }
         }
     }
