@@ -52,7 +52,8 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     }
 
     // constructor
-    public SideView(int side) {
+    public SideView(Integer side) {
+        super(side);
         this.side = side;
         resetView();
         // set the adapter with the altered behalvior
@@ -124,7 +125,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     public final JPanel build() {
 
         // set the simple view mode
-        setSimpleVoxelMode(true, side);
+        //setSimpleVoxelMode(true, side);
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);

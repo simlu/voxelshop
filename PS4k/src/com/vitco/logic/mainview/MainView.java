@@ -2,8 +2,6 @@ package com.vitco.logic.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
-import com.threed.jpct.Object3D;
-import com.threed.jpct.Primitives;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
@@ -23,6 +21,10 @@ import java.awt.event.MouseWheelEvent;
  * Creates the main view instance and attaches the specific user interaction.
  */
 public class MainView extends EngineInteractionPrototype implements MainViewInterface {
+
+    protected MainView() {
+        super(-1);
+    }
 
     @Override
     protected Voxel[] getVoxels() {

@@ -29,8 +29,8 @@ import java.util.List;
 public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
     // constructor
-    protected EngineInteractionPrototype() {
-        super();
+    protected EngineInteractionPrototype(Integer side) {
+        super(side);
         // refresh the 2D index when the camera changes
         camera.addCameraChangeListener(new CameraChangeListener() {
             @Override
@@ -273,6 +273,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     protected class VoxelAdapter extends MouseAdapter {
         // true means we're currently adding/removing voxels on drag
         private boolean massVoxel = false;
+        private VOXELMODE massVoxelMode = null;
 
         // the current color (to draw)
         private float[] currentColor = ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR);
@@ -422,6 +423,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public final void mousePressed(MouseEvent e) {
+            // remember voxel mode
+            massVoxelMode = voxelMode;
             // make sure there is a layer selected or display a warning
             if (data.getSelectedLayer() == -1) {
                 Integer[] layers = data.getLayers();
@@ -520,9 +523,6 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 int x2 = Math.max(selectStartPoint.x, e.getPoint().x);
                 int y2 = Math.max(selectStartPoint.y, e.getPoint().y);
                 container.setPreviewRect(new Rectangle(x1, y1, x2-x1, y2-y1));
-                if (voxelMode != VOXELMODE.SELECT) { // cancel if the mode was changed
-                    doSelect = false;
-                }
             }
         }
 
@@ -530,6 +530,17 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         public final void mouseMoved(MouseEvent e) {
             lastMovePos = new Point(e.getPoint());
             hover(e.getPoint());
+        }
+
+        public void notifyVoxelModeChanged() {
+            if (massVoxelMode != voxelMode) { // cancel if mode changed
+                doSelect = false;
+                massVoxel = false;
+                container.setPreviewRect(null);
+                massVoxelMode = voxelMode;
+                data.removeVoxelHighlights();
+                forceRepaint();
+            }
         }
     }
 
@@ -622,6 +633,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             @Override
             public void onPrefChange(Object newValue) {
                 voxelMode = (VOXELMODE)newValue;
+                voxelAdapter.notifyVoxelModeChanged();
                 voxelAdapter.replayHover();
                 forceRepaint();
             }

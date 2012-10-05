@@ -93,7 +93,7 @@ public class WorldUtil {
     }
 
     // add a box to the world
-    public static int addBoxSides (World world, SimpleVector pos, Color color, String boxType) {
+    public static int addBoxSides (World world, SimpleVector pos, Color color, String boxType, boolean culling) {
         Object3D box = boxTypes.get(boxType).cloneObject();
         // set other settings, build and add
         box.setAdditionalColor(color);
@@ -101,6 +101,7 @@ public class WorldUtil {
         box.setEnvmapped(Object3D.ENVMAP_ENABLED);
         box.setShadingMode(Object3D.SHADING_FAKED_FLAT);
         box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+        box.setCulling(culling);
         if (boxType.equals("111111")) { // no need to show this object
             box.setVisibility(false);
         }

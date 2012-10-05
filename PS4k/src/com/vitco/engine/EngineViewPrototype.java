@@ -47,8 +47,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     }
 
     // the world-required objects
-    protected final World world;
-    protected final World selectedVoxelsWorld;
+    protected final CWorld world;
+    protected final CWorld selectedVoxelsWorld;
     protected FrameBuffer buffer;
     protected final CCamera camera;
 
@@ -84,238 +84,37 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // updating of world with voxels
     // ==============================
 
-    // if true we use updateWorldWithVoxelsSimple with simpleVoxelModeSide,
-    // otherwise we use updateWorldWithVoxels to update world
-    protected boolean useSimpleVoxelMode = false;
-    protected int simpleVoxelModeSide = -1;
-
-    // toggle between simple mode (draw only one side) and normal mode (draw needed sides)
-    // clear indexes
-    protected final void setSimpleVoxelMode(boolean b, int side) {
-        useSimpleVoxelMode = b;
-        simpleVoxelModeSide = side;
-
-        selectedVoxels.clear();
-        voxelToObject.clear();
-        idToVoxel.clear();
-        world.removeAllObjects();
-        selectedVoxelsWorld.removeAllObjects();
-
-        voxelPositions.clear();
-    }
-
     // voxel data getter to be defined
     protected abstract Voxel[] getVoxels();
 
     // retrieve the voxel for an object id if exists, otherwise return null
     protected final Voxel getVoxelForObjectId(int id) {
-        return data.getVoxel(voxelToObject.getKey(id));
-    }
-
-    // keeps track of selected voxels on world
-    private final HashMap<Integer, Integer> selectedVoxels = new HashMap<Integer, Integer>();
-
-    // maps voxel ids to world ids
-    private final BiMap<Integer, Integer> voxelToObject = new BiMap<Integer, Integer>();
-    private final HashMap<Integer, Voxel> idToVoxel = new HashMap<Integer, Voxel>();
-    // index to find voxels in range
-    private final RTree<Voxel> voxelPositions = new RTree<Voxel>(50, 2, 3);
-    private static final float[] ZEROS = new float[] {0,0,0};
-
-    // helper to remove a voxel id from the world
-    private void removeVoxel(int worldObjId) {
-        world.removeObject(worldObjId); // remove
-        int voxelId = voxelToObject.getKey(worldObjId);
-        // remove selected voxel if exists
-        if (selectedVoxels.containsKey(voxelId)) {
-            selectedVoxelsWorld.removeObject(selectedVoxels.get(voxelId));
-            selectedVoxels.remove(voxelId);
-        }
-    }
-
-    // helper: set the correct deselect/select state of this voxel
-    private void handleVoxelSelection(Voxel voxel) {
-        if (voxel.isSelected()) {
-            if (!selectedVoxels.containsKey(voxel.id)) {
-                int selId = WorldUtil.addBox(selectedVoxelsWorld, new SimpleVector(
-                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
-                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
-                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
-                        VitcoSettings.VOXEL_SIZE/2, voxel.getColor());
-                selectedVoxels.put(voxel.id, selId);
-            }
-        } else {
-            if (selectedVoxels.containsKey(voxel.id)) {
-                selectedVoxelsWorld.removeObject(selectedVoxels.get(voxel.id));
-                selectedVoxels.remove(voxel.id);
-            }
-        }
-    }
-
-    // helper to add voxel to world (with one side)
-    private void addVoxelToWorld(Voxel voxel, int side) {
-        int id = WorldUtil.addBoxSides(world,
-                new SimpleVector(
-                        voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
-                        voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
-                        voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
-                voxel.getColor(),
-                "1" + (side == 2 ? "0" : "1") +
-                "1" + (side == 1 ? "0" : "1") +
-                "1" + (side == 0 ? "0" : "1"));
-        voxelToObject.put(voxel.id, id);
-    }
-
-    // helper - make sure the voxel objects are up to date, but only draw one side of the voxel
-    private void updateWorldWithVoxelsSimple(int side) {
-        // retrive the voxels
-        Voxel[] voxels = getVoxels();
-
-        // temporary to find unneeded objects
-        ArrayList<Integer> voxelIds = new ArrayList<Integer>();
-        voxelIds.addAll(voxelToObject.keySet());
-
-        // loop over all voxels
-        for (Voxel voxel : voxels) {
-            if (!voxelToObject.containsKey(voxel.id)) { // add all new voxels
-                voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel);
-                addVoxelToWorld(voxel, side);
-                idToVoxel.put(voxel.id, voxel);
-            } else { // remove and add all altered voxels
-                Voxel oldVoxel = idToVoxel.get(voxel.id);
-                if (!oldVoxel.equals(voxel)) {
-                    voxelPositions.delete(oldVoxel.getPosAsFloat(), ZEROS, oldVoxel); // delete old entry
-                    voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel); // add new
-                    idToVoxel.put(voxel.id, voxel);
-                    removeVoxel(voxelToObject.get(voxel.id)); // remove
-                    addVoxelToWorld(voxel, side);
-                }
-            }
-            // check that the selection is up to date
-            handleVoxelSelection(voxel);
-            // do not remove this voxel
-            voxelIds.remove((Integer)voxel.id);
-        }
-
-        // remove the objects that are no longer needed
-        for (int id : voxelIds) {
-            removeVoxel(voxelToObject.get(id));
-            voxelToObject.removeByKey(id);
-            Voxel voxel = idToVoxel.get(id);
-            voxelPositions.delete(voxel.getPosAsFloat(), ZEROS, voxel);
-            idToVoxel.remove(id);
-        }
-    }
-
-    // add neighbors, uses voxelPositions index
-    private void addNeighbors(ArrayList<Voxel> toRefresh, Voxel voxel) {
-        float[] pos = voxel.getPosAsFloat();
-        // search all the voxels neighboring
-        for (int i = 0; i < 6; i++) {
-            int add = i%2 == 0 ? 1 : -1;
-            List<Voxel> list = voxelPositions.search(new float[] {
-                    i/2 == 0 ? pos[0] + add : pos[0],
-                    i/2 == 1 ? pos[1] + add : pos[1],
-                    i/2 == 2 ? pos[2] + add : pos[2]
-            }, ZEROS);
-            if (list.size() > 0) {
-                Voxel neigh = list.get(0);
-                if (!toRefresh.contains(neigh)) { // add them if not already known to need updating
-                    toRefresh.add(neigh);
-                }
-            }
-        }
+        return data.getVoxel(world.getVoxelId(id));
     }
 
     // helper - make sure the voxel objects in the world are up to date
     private void updateWorldWithVoxels() {
-        final Voxel[] voxels = getVoxels();
-
-        // we need to rebuild these voxels
-        ArrayList<Voxel> toRefresh = new ArrayList<Voxel>();
-
-        // temporary to find unneeded objects
-        ArrayList<Integer> voxelToRemove = new ArrayList<Integer>();
-        voxelToRemove.addAll(voxelToObject.keySet());
-
-        // erased voxels
-        ArrayList<Voxel> refreshOnlyNeighbors = new ArrayList<Voxel>();
-
-        // loop over all voxels
-        for (Voxel voxel : voxels) {
-            if (!voxelToObject.containsKey(voxel.id)) { // add all new voxels
-                idToVoxel.put(voxel.id, voxel);
-                voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel);
-                toRefresh.add(voxel);
-            } else { // remove and re-add all altered voxels
-                Voxel oldVoxel = idToVoxel.get(voxel.id);
-                if (!oldVoxel.equals(voxel)) {
-                    voxelPositions.delete(oldVoxel.getPosAsFloat(), ZEROS, oldVoxel); // delete old entry
-                    voxelPositions.insert(voxel.getPosAsFloat(), ZEROS, voxel); // add new
-                    idToVoxel.put(voxel.id, voxel); // overwrite voxel object
-                    // register to change environment
-                    refreshOnlyNeighbors.add(oldVoxel);
-                    toRefresh.add(voxel);
-                }
-            }
-            // check that the selection is up to date
-            handleVoxelSelection(voxel);
-            // do not remove this voxel
-            voxelToRemove.remove((Integer) voxel.id);
+        ArrayList<Integer> loaded = new ArrayList<Integer>();
+        Collections.addAll(loaded, world.getLoaded());
+        for (Voxel voxel : getVoxels()) {
+            world.updateVoxel(voxel);
+            loaded.remove((Integer) voxel.id);
         }
-
-        // remove the objects that are no longer needed
-        for (int id : voxelToRemove) {
-            removeVoxel(voxelToObject.get(id));
-            voxelToObject.removeByKey(id);
-            Voxel voxel = idToVoxel.get(id);
-            refreshOnlyNeighbors.add(voxel);
-            voxelPositions.delete(voxel.getPosAsFloat(), ZEROS, voxel);
-            idToVoxel.remove(id);
+        for (Integer voxelId : loaded) {
+            world.removeVoxel(voxelId);
         }
+        world.refreshWorld();
 
-        // add all neighbors
-        for (int i1 = 0, tobuildSize = toRefresh.size(); i1 < tobuildSize; i1++) {
-            Voxel voxel = toRefresh.get(i1);
-            addNeighbors(toRefresh, voxel);
+        ArrayList<Integer> loadedSelected = new ArrayList<Integer>();
+        Collections.addAll(loadedSelected, selectedVoxelsWorld.getLoaded());
+        for (Voxel voxel : data.getSelectedVoxels()) {
+            selectedVoxelsWorld.updateVoxel(voxel);
+            loadedSelected.remove((Integer) voxel.id);
         }
-
-        // add all neighbors of the erased voxels
-        for (Voxel voxel : refreshOnlyNeighbors) {
-            addNeighbors(toRefresh, voxel);
+        for (Integer voxelId : loadedSelected) {
+            selectedVoxelsWorld.removeVoxel(voxelId);
         }
-
-        // refresh the objects
-        for (Voxel voxel : toRefresh) {
-            float[] pos = voxel.getPosAsFloat();
-            // calculate the required sides
-            StringBuilder sides = new StringBuilder();
-            for (int i = 0; i < 6; i++) {
-                int add = i%2 == 0 ? 1 : -1;
-                sides.append(voxelPositions.search(new float[] {
-                        i/2 == 0 ? pos[0] + add : pos[0],
-                        i/2 == 1 ? pos[1] + add : pos[1],
-                        i/2 == 2 ? pos[2] + add : pos[2]
-                }, ZEROS).size() > 0 ? "1" : "0");
-            }
-            int id = WorldUtil.addBoxSides(world,
-                    new SimpleVector(
-                            voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
-                            voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
-                            voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
-                    voxel.getColor(), sides.toString());
-            // remember the object reference
-            Integer key = voxelToObject.get(voxel.id);
-            voxelToObject.put(voxel.id, id);
-            // remove if there was already an object for this voxel
-            // (just the display changed!)
-            if (key != null) {
-                world.removeObject(key);
-                //removeVoxel(key);
-            }
-
-        }
-
+        selectedVoxelsWorld.refreshWorld();
     }
 
     // true iff the world does not need to be updated with voxels
@@ -329,13 +128,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
     }
 
-    // make sure the voxels are valid "right now"
+    // make sure the voxels are valid "right now", no matter what
     private void refreshVoxels() {
-        if (useSimpleVoxelMode) {
-            updateWorldWithVoxelsSimple(simpleVoxelModeSide);
-        } else {
-            updateWorldWithVoxels();
-        }
+        updateWorldWithVoxels();
         worldVoxelCurrent = true;
     }
 
@@ -804,7 +599,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     private boolean localMouseDown = false;
     private static boolean globalMouseDown = false;
     private static boolean initialized = false;
-    protected EngineViewPrototype() {
+    protected EngineViewPrototype(Integer side) {
 
         // only perform these actions once (even if the class is instantiated several times)
         if (!initialized) {
@@ -830,8 +625,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         });
 
         // set up world objects
-        world = new World();
-        selectedVoxelsWorld = new World();
+        world = new CWorld(true, side);
+        selectedVoxelsWorld = new CWorld(false, side);
         camera = new CCamera();
         world.setCameraTo(camera);
         selectedVoxelsWorld.setCameraTo(camera);

@@ -101,10 +101,10 @@ public interface VoxelDataInterface {
     boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected);
     // remove several voxels at once
     boolean massRemoveVoxel(Integer[] voxelIds);
-
+    // add several voxels at once
     boolean massAddVoxel(Voxel[] voxels);
-
+    // migrate voxels to a new layer
     boolean migrateVoxels(Voxel[] voxels);
-
+    // set color of several voxels at once
     boolean massSetColor(Integer[] voxelIds, Color color);
 }

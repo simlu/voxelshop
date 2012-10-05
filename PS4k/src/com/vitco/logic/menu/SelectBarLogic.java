@@ -22,9 +22,8 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
     private Integer[] convertVoxelsToIdArray(Voxel[] voxels) {
         Integer[] voxelIds = new Integer[voxels.length];
-        int i = 0;
-        for (Voxel voxel : voxels) {
-            voxelIds[i++] = voxel.id;
+        for (int i = 0; i < voxels.length; i++) {
+            voxelIds[i] = voxels[i].id;
         }
         return voxelIds;
     }
@@ -36,14 +35,13 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
+                    // remember what we cut
                     storedVoxels.clear();
                     Voxel[] voxels = data.getSelectedVoxels();
-                    Integer[] voxelIds = new Integer[voxels.length];
-                    int i = 0;
-                    for (Voxel voxel : voxels) {
-                        storedVoxels.add(voxel);
-                        voxelIds[i++] = voxel.id;
-                    }
+                    Collections.addAll(storedVoxels, voxels);
+
+                    // fetch voxel ids for cut
+                    Integer[] voxelIds = convertVoxelsToIdArray(voxels);
                     // mass delete
                     data.massRemoveVoxel(voxelIds);
                 }
@@ -126,6 +124,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
+                    // todo make this an intent (select layer)
                     // deselect all voxels
                     Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
                     data.massSetVoxelSelected(voxelIds, false);
