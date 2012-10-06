@@ -84,6 +84,9 @@ public class ErrorHandler implements ErrorHandlerInterface {
         this.langSelector = langSelector;
     }
 
+    private long lastErrorReport = 0;
+    private final static long error_spam_timeout = 2*60*1000; // 2 minutes
+
     // handle exceptions
     @Override
     public void handle(Throwable e) {
@@ -91,31 +94,34 @@ public class ErrorHandler implements ErrorHandlerInterface {
             // print the trace (debug)
             e.printStackTrace();
         } else {
-            Toolkit.getDefaultToolkit().beep(); // play beep
-            // show dialog
-            if (JOptionPane.showOptionDialog(null, langSelector.getString("error_dialog_text"),
-                    langSelector.getString("error_dialog_caption"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.ERROR_MESSAGE,
-                    null,
-                    new String[]{langSelector.getString("error_dialog_clc_yes"),
-                            langSelector.getString("error_dialog_clc_no")},
-                    0) == JOptionPane.YES_OPTION
-                    ) {
-                try {
-                    // write temporary file with stack-trace
-                    File temp = File.createTempFile("PS4k_" + DateTools.now("yyyy-MM-dd_HH-mm-ss_"), ".error");
-                    temp.deleteOnExit();
-                    PrintStream ps = new PrintStream(temp);
-                    e.printStackTrace(ps);
+            if (lastErrorReport + error_spam_timeout < System.currentTimeMillis()) {
+                lastErrorReport = System.currentTimeMillis();
+                Toolkit.getDefaultToolkit().beep(); // play beep
+                // show dialog
+                if (JOptionPane.showOptionDialog(null, langSelector.getString("error_dialog_text"),
+                        langSelector.getString("error_dialog_caption"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.ERROR_MESSAGE,
+                        null,
+                        new String[]{langSelector.getString("error_dialog_clc_yes"),
+                                langSelector.getString("error_dialog_clc_no")},
+                        0) == JOptionPane.YES_OPTION
+                        ) {
+                    try {
+                        // write temporary file with stack-trace
+                        File temp = File.createTempFile("PS4k_" + DateTools.now("yyyy-MM-dd_HH-mm-ss_"), ".error");
+                        temp.deleteOnExit();
+                        PrintStream ps = new PrintStream(temp);
+                        e.printStackTrace(ps);
 
-                    // upload to server
-                    uploadFile(temp, e.getMessage());
+                        // upload to server
+                        uploadFile(temp, e.getMessage());
 
-                } catch (FileNotFoundException e1) {
-                    //e1.printStackTrace();
-                } catch (IOException e1) {
-                    //e1.printStackTrace();
+                    } catch (FileNotFoundException e1) {
+                        //e1.printStackTrace();
+                    } catch (IOException e1) {
+                        //e1.printStackTrace();
+                    }
                 }
             }
         }

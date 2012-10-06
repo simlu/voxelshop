@@ -16,6 +16,7 @@ import java.util.List;
  * This is a world wrapper that provides easy voxel interaction.
  */
 public class CWorld extends World {
+    private static final long serialVersionUID = 1L;
     // static variables
     private final static float[] ZEROS = new float[] {0,0,0};
 

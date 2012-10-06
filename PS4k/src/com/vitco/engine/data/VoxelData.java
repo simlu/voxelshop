@@ -906,6 +906,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         return dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected();
     }
 
+    // get selected visible voxels
     @Override
     public final Voxel[] getSelectedVoxels() {
         if (!selectedVoxelBufferValid) {

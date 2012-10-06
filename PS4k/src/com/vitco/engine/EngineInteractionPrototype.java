@@ -511,13 +511,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         @Override
         public final void mouseDragged(MouseEvent e) {
             lastMovePos = new Point(e.getPoint());
+            hover(e.getPoint());
             if (massVoxel) {
-                hover(e.getPoint());
                 execute(e);
-            } else {
-                data.removeVoxelHighlights();
-            }
-            if (doSelect) {
+            } else if (doSelect) {
                 int x1 = Math.min(selectStartPoint.x, e.getPoint().x);
                 int y1 = Math.min(selectStartPoint.y, e.getPoint().y);
                 int x2 = Math.max(selectStartPoint.x, e.getPoint().x);
