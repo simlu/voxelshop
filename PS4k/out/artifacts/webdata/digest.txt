@@ -1,5 +1,5 @@
 getdown.txt = 0e9904897512cff9112c69f413567eee
-PS4k.jar = 0b9e8fcb5a6d96cb7b3eb844f5a2be09
+PS4k.jar = 34220dda797da043dbb595ef42674cb4
 lib/commons-logging-1.1.1.jar = 073a5c734e213bcbbb43af48ed479da3
 lib/jide-action.jar = c00ff8707114eff9c607464115c334be
 lib/jide-common.jar = 6c766a9e3f143a8b844bfda59f3de91d
@@ -18,4 +18,4 @@ lib/httpclient-4.2.1.jar = 39305aaf131c5eb6d8a1d6e520d7b390
 lib/httpmime-4.2.1.jar = f2eec872062662d4af35edc38106bfb9
 lib/log4j-1.2.6.jar = cf3e04d747c155bb0c5b06cda47e5d13
 lib/jpct.jar = ba04bbd804ee59a16bf715e9968915c1
-digest.txt = 65af397ebbdf7c8db3e576986b93071e
+digest.txt = 70832fccee1789d28f1c038376684788

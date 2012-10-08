@@ -42,6 +42,8 @@
         <shortcut ctrl="yes" alt="no" shift="yes" key="N" action="selection_tool_as_new_layer" caption="selection_tool_as_new_layer_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="R" action="selection_tool_recolor" caption="selection_tool_recolor_caption" />
 
+        <shortcut ctrl="no" alt="no" shift="no" key="ENTER" action="selection_tool_finalize_shifting" caption="selection_tool_finalize_shifting_caption" />
+
         <!--Custom-->
         <shortcut action="swap_mainView_with_xyView" caption="swap_mainView_with_xyView_caption" />
         <shortcut action="swap_mainView_with_xzView" caption="swap_mainView_with_xzView_caption" />

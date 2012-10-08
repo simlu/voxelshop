@@ -302,6 +302,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             if (isFirstCall()) {
                 Voxel voxel = dataContainer.voxels.get(voxelId);
                 historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
+
+                // remove if something is at new position in this layer
+                Voxel[] toRemove = dataContainer.layers.get(voxel.getLayerId()).search(newPos, 0);
+                if (toRemove.length > 0) {
+                    historyManagerV.applyIntent(new RemoveVoxelIntent(toRemove[0].id, true));
+                }
+
+                // add the voxel at new position
                 historyManagerV.applyIntent(new AddVoxelIntent(voxelId, newPos, voxel.getColor(), voxel.getLayerId(), true));
             }
         }
@@ -503,6 +511,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // move to new layer
     private final class MigrateIntent extends BasicActionIntent {
         private final Voxel[] voxels;
 
@@ -592,11 +601,13 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // if the layerid is null the voxel layerId will be used,
+    // otherwise the provided layerid
     private final class MassAddVoxelIntent extends BasicActionIntent {
         private final Voxel[] voxels;
-        private final int layerId;
+        private final Integer layerId;
 
-        protected MassAddVoxelIntent(Voxel[] voxels, int layerId, boolean attach) {
+        protected MassAddVoxelIntent(Voxel[] voxels, Integer layerId, boolean attach) {
             super(attach);
             this.voxels = voxels;
             this.layerId = layerId;
@@ -605,10 +616,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void applyAction() {
             if (isFirstCall()) {
+                boolean layerIdSet = layerId != null;
                 for (Voxel voxel : voxels) {
                     historyManagerV.applyIntent(
                             new AddVoxelIntent(getFreeVoxelId(), voxel.getPosAsInt(),
-                                    voxel.getColor(), layerId, true));
+                                    voxel.getColor(), layerIdSet ? layerId : voxel.getLayerId(), true));
                 }
             }
         }
@@ -635,6 +647,54 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 for (Integer voxelId : voxelIds) {
                     historyManagerV.applyIntent(new ColorVoxelIntent(voxelId, color, true));
                 }
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+    }
+
+    private final class MassMoveVoxelIntent extends BasicActionIntent  {
+        private final Voxel[] voxels;
+        private final Integer[] shift;
+
+        protected MassMoveVoxelIntent(Voxel[] voxels, Integer[] shift, boolean attach) {
+            super(attach);
+            this.voxels = voxels;
+            this.shift = shift;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                // generate the ids
+                Integer[] voxelIds = new Integer[voxels.length];
+                int i = 0;
+                for (Voxel voxel : voxels) {
+                    voxelIds[i++] = voxel.id;
+                }
+                // remove all voxels
+                historyManagerV.applyIntent(new MassRemoveVoxelIntent(voxelIds, true));
+                // create new voxels (with new position) and delete
+                // existing voxels at those positions
+                Voxel[] shiftedVoxels = new Voxel[voxels.length];
+                i = 0;
+                for (Voxel voxel : voxels) {
+                    int[] pos = voxel.getPosAsInt();
+                    pos[0] -= shift[0];
+                    pos[1] -= shift[1];
+                    pos[2] -= shift[2];
+                    shiftedVoxels[i++] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getLayerId());
+                    // remove existing voxels in this layer
+                    Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
+                    for (Voxel remVoxel : result) {
+                        historyManagerV.applyIntent(new RemoveVoxelIntent(remVoxel.id, true));
+                    }
+                }
+                // (re)add all the shifted voxels (null ~ the voxel layer id is used)
+                historyManagerV.applyIntent(new MassAddVoxelIntent(shiftedVoxels, null, true));
             }
         }
 
@@ -740,16 +800,23 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
-
     @Override
     public final boolean moveVoxel(int voxelId, int[] newPos) {
         boolean result = false;
         Voxel voxel = dataContainer.voxels.get(voxelId);
         if (voxel != null) {
-            if (dataContainer.layers.get(voxel.getLayerId()).voxelPositionFree(newPos)) {
-                historyManagerV.applyIntent(new MoveVoxelIntent(voxel.id, newPos, false));
-                result = true;
-            }
+            historyManagerV.applyIntent(new MoveVoxelIntent(voxel.id, newPos, false));
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
+    public final boolean massMoveVoxel(Voxel[] voxel, Integer[] shift) {
+        boolean result = false;
+        if (voxel.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
+            historyManagerV.applyIntent(new MassMoveVoxelIntent(voxel, shift, false));
+            result = true;
         }
         return result;
     }

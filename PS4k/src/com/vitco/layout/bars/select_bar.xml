@@ -16,6 +16,10 @@
     <separator/>
 
     <!--deselect / delete-->
+    <icon-item src="resource/img/bars/select_bar/finalize_move.png"
+               tool-tip="selection_tool_finalize_shifting_tooltip"
+               grayable="true"
+               action="selection_tool_finalize_shifting"/>
     <icon-item src="resource/img/bars/select_bar/deselect.png"
                tool-tip="selection_tool_deselect_tooltip"
                grayable="true"

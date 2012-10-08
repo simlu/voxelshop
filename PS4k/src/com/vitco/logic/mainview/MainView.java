@@ -95,11 +95,13 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                     camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
                     leftMouseDown.x = e.getX();
                     leftMouseDown.y = e.getY();
+                    container.doNotSkipNextWorldRender();
                     forceRepaint();
                 } else if (rightMouseDown != null) {
                     camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
                     rightMouseDown.x = e.getX();
                     rightMouseDown.y = e.getY();
+                    container.doNotSkipNextWorldRender();
                     forceRepaint();
                 }
             }

@@ -92,9 +92,14 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    // mass deselect
-                    Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
-                    data.massSetVoxelSelected(voxelIds, false);
+                    Integer[] shift = data.getVoxelSelectionShift();
+                    if (shift[0] != 0 || shift[1] != 0 || shift[2] != 0) {
+                        data.setVoxelSelectionShift(0,0,0);
+                    } else {
+                        // mass deselect
+                        Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
+                        data.massSetVoxelSelected(voxelIds, false);
+                    }
                 }
             }
 
@@ -163,6 +168,23 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                         Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
                         Color color = ColorTools.hsbToColor((float[])preferences.loadObject("currently_used_color"));
                         data.massSetColor(voxelIds, color);
+                    }
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_finalize_shifting", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    Voxel[] selectedVoxels = data.getSelectedVoxels();
+                    Integer[] shift = data.getVoxelSelectionShift();
+                    if (selectedVoxels.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
+                        data.massMoveVoxel(data.getSelectedVoxels(), shift);
                     }
                 }
             }

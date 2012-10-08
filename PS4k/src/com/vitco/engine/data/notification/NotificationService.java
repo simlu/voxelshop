@@ -43,9 +43,16 @@ public final class NotificationService implements NotificationServiceInterface {
     }
 
     @Override
-     public void onVoxelSelectionChanged() {
+     public void onVoxelHighlightingChanged() {
         for (DataChangeListener listener : listeners) {
-            listener.onVoxelSelectionChanged();
+            listener.onVoxelHighlightingChanged();
+        }
+    }
+
+    @Override
+    public void onVoxelSelectionShiftChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onVoxelSelectionShiftChanged();
         }
     }
 

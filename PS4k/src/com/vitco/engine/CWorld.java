@@ -1,13 +1,13 @@
 package com.vitco.engine;
 
 import com.newbrightidea.util.RTree;
-import com.threed.jpct.SimpleVector;
-import com.threed.jpct.World;
+import com.threed.jpct.*;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.BiMap;
 import com.vitco.util.WorldUtil;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +40,80 @@ public class CWorld extends World {
     private transient final BiMap<Integer, Integer> voxelIdToWorldId = new BiMap<Integer, Integer>();
 
     // ==============================
+    // drawing of selected (wireframe)
+
+    // todo remove
+//    private boolean centerValid = false;
+//    private final Integer[] center = new Integer[]{0,0,0};
+
+//    // get the center
+//    private Integer[] getCenter() {
+//        if (!centerValid) {
+//            Float[] center = new Float[]{0f,0f,0f};
+//            Integer count = 0;
+//            for (Voxel voxel : voxels.values()) {
+//                // update center information
+//                count++;
+//                float[] pos = voxel.getPosAsFloat();
+//                center[0] += pos[0];
+//                center[1] += pos[1];
+//                center[2] += pos[2];
+//            }
+//            this.center[0] = Math.round(center[0]/count);
+//            this.center[1] = Math.round(center[1]/count);
+//            this.center[2] = Math.round(center[2]/count);
+//            System.out.println(this.center[0] + "," + this.center[1] + "," + this.center[2]);
+//            centerValid = true;
+//        }
+//        return center;
+//    }
+
+    // move offset
+    private SimpleVector offset = new SimpleVector(0, 0, 0);
+    private float length = offset.length();
+
+    // set the shift of this (just used for "drawAsShiftedWireframe"
+    public final void setShift(Integer[] shift) {
+        offset = new SimpleVector(
+                shift[0],
+                shift[1],
+                shift[2]);
+        length = offset.length() * VitcoSettings.VOXEL_SIZE;
+        offset = offset.normalize();
+    }
+
+    // draw just the wireframe (possible shifted)
+    public final void drawAsShiftedWireframe(FrameBuffer buffer, Color selected, Color shifted) {
+        if (length != 0) {
+            getCamera().moveCamera(offset, length);
+            renderScene(buffer);
+            drawWireframe(buffer, shifted);
+            getCamera().moveCamera(offset, -length);
+        } else {
+            renderScene(buffer);
+            drawWireframe(buffer, selected);
+        }
+    }
+
+    public final SimpleVector shiftedCollisionPoint(Point point, FrameBuffer buffer) {
+        // check if we hit a <selected> voxel
+        SimpleVector result = null;
+        Camera camera = getCamera();
+        camera.moveCamera(offset, length);
+        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int) Math.round(point.getX() * 2), (int) Math.round(point.getY() * 2)).normalize();
+        Object[] res = calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
+        if (res[1] != null) { // something hit
+            // find collision point
+            result = camera.getPosition();
+            dir.scalarMul((Float)res[0]);
+            result.add(dir);
+        }
+        camera.moveCamera(offset, -length);
+        return result;
+    }
+
+    // ==============================
+    // internal voxel handling
 
     // updates internal lists (no refresh registration)
     private void updateVoxelInternal(Voxel voxel) {

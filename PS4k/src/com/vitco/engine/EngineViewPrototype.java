@@ -86,11 +86,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // voxel data getter to be defined
     protected abstract Voxel[] getVoxels();
 
-    // retrieve the voxel for an object id if exists, otherwise return null
-    protected final Voxel getVoxelForObjectId(int id) {
-        return data.getVoxel(world.getVoxelId(id));
-    }
-
     // helper - make sure the voxel objects in the world are up to date
     private void updateWorldWithVoxels() {
         ArrayList<Integer> loaded = new ArrayList<Integer>();
@@ -544,8 +539,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                         world.drawWireframe(buffer, VitcoSettings.WIREFRAME_COLOR);
                     } else {
                         world.draw(buffer);
-                        selectedVoxelsWorld.renderScene(buffer);
-                        selectedVoxelsWorld.drawWireframe(buffer, VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR);
+                        selectedVoxelsWorld.drawAsShiftedWireframe(buffer,
+                                VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR,
+                                VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED);
                     }
                 }
                 buffer.update();
@@ -595,11 +591,16 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         buffer.dispose();
     }
 
+    protected final int side;
     private boolean localMouseDown = false;
     private static boolean globalMouseDown = false;
     private static boolean initialized = false;
     protected EngineViewPrototype(Integer side) {
-
+        // make sure side defaults to -1
+        if (side == null || side < 0 || side > 2) {
+            side = -1;
+        }
+        this.side = side;
         // only perform these actions once (even if the class is instantiated several times)
         if (!initialized) {
             Config.tuneForOutdoor();

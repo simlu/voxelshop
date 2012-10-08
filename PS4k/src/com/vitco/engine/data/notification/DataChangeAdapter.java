@@ -15,5 +15,8 @@ public abstract class DataChangeAdapter implements DataChangeListener {
     public void onVoxelDataChanged() {}
 
     @Override
-    public void onVoxelSelectionChanged() {}
+    public void onVoxelHighlightingChanged() {}
+
+    @Override
+    public void onVoxelSelectionShiftChanged() {}
 }

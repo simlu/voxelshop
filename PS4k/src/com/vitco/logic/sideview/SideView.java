@@ -56,8 +56,30 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         super(side);
         this.side = side;
         resetView();
-        // set the adapter with the altered behalvior
-        voxelAdapter = new VoxelAdapterSideView();
+    }
+
+    @Override
+    protected final int[] voxelPosForHoverPos(Point point) {
+        // calculate position
+        SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
+                new SimpleVector(
+                        side == 2 ? currentplane : 0,
+                        side == 1 ? currentplane : 0,
+                        side == 0 ? currentplane : 0
+                )
+        );
+        int[] pos = new int[]{
+                side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
+                side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
+                side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
+        };
+        // nullify if we didn't find a voxel (and not in draw mode)
+        if (voxelMode != VOXELMODE.DRAW) {
+            if (data.searchVoxel(pos, true) == null) {
+                pos = null;
+            }
+        }
+        return pos;
     }
 
     // the current depth of the plane that is shown
@@ -90,35 +112,6 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 side == 1 ? currentplane*VitcoSettings.VOXEL_SIZE : 0,
                 side == 0 ? currentplane*VitcoSettings.VOXEL_SIZE : 0
         );
-    }
-
-    // alter the behavior (always use position - not next to voxel)
-    private final class VoxelAdapterSideView extends EngineInteractionPrototype.VoxelAdapter {
-        // hover on mouse event
-        @Override
-        protected void hover(Point point) {
-            if (voxelMode != VOXELMODE.SELECT) {
-                // calculate position
-                SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
-                        new SimpleVector(
-                                side == 2 ? currentplane : 0,
-                                side == 1 ? currentplane : 0,
-                                side == 0 ? currentplane : 0
-                        )
-                );
-                int[] pos = new int[]{
-                        side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
-                        side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
-                        side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
-                };
-                Voxel voxel = data.searchVoxel(pos, true);
-                if (voxel != null || VOXELMODE.DRAW == voxelMode) {
-                    data.highlightVoxel(pos);
-                } else {
-                    data.highlightVoxel(null);
-                }
-            }
-        }
     }
 
     @Override

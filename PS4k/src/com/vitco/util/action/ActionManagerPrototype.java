@@ -35,7 +35,7 @@ public abstract class ActionManagerPrototype<T> implements ActionManagerInterfac
     @Override
     public final void registerAction(String key, T action) {
         if (map.containsKey(key)) {
-            System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ")  is already registered!");
+            System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ") is already registered!");
         } else {
             map.put(key, action);
             if (actionQueStack.containsKey(key)) { // run the thread that was waiting for this action
@@ -86,13 +86,13 @@ public abstract class ActionManagerPrototype<T> implements ActionManagerInterfac
         }
         for (String key : map.keySet()) {
             if (!actionNames.contains(key)) {
-                System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ")  is never used!");
+                System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ") is never used!");
             }
         }
         // this should always be empty as a dummy action is registered above
         // (unless the action is never marked as used)
         for (String key : actionQueStack.keySet()) {
-            System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ")  was never registered!");
+            System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ") was never registered!");
             System.err.println("Did you forget to register that the action is used?!");
         }
         return result;

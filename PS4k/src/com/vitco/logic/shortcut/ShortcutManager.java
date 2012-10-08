@@ -47,8 +47,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
-                    // delete, escape, space
-                    127, 27, 32
+                    // delete, escape, space, enter
+                    127, 27, 32, 10
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
@@ -59,8 +59,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
-                    // delete, escape, space
-                    127, 27, 32
+                    // delete, escape, space, enter
+                    127, 27, 32, 10
             }));
 
     // global setting for all activatable actions
@@ -561,6 +561,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 result = 27;
             } else if (str.equals("SPACE")) {
                 result = 32;
+            } else if (str.equals("ENTER")) {
+                result = 10;
             } else
             if (str.startsWith("F")) {
                 str = str.substring(1);

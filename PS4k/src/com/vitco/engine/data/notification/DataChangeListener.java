@@ -7,5 +7,6 @@ public interface DataChangeListener {
     void onAnimationDataChanged();
     void onAnimationSelectionChanged();
     void onVoxelDataChanged();
-    void onVoxelSelectionChanged();
+    void onVoxelHighlightingChanged();
+    void onVoxelSelectionShiftChanged();
 }

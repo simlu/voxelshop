@@ -107,4 +107,6 @@ public interface VoxelDataInterface {
     boolean migrateVoxels(Voxel[] voxels);
     // set color of several voxels at once
     boolean massSetColor(Integer[] voxelIds, Color color);
+
+    boolean massMoveVoxel(Voxel[] voxel, Integer[] shift);
 }

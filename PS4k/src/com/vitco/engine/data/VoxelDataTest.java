@@ -63,7 +63,12 @@ public class VoxelDataTest {
         data.createLayer("layer2");
         data.selectLayer(lid1);
         int id1 = data.addVoxel(Color.RED, new int[]{5,6,7});
-        assert !data.moveVoxel(id1, new int[]{5,6,7});
+        int id2 = data.addVoxel(Color.RED, new int[]{7,8,9});
+        data.moveVoxel(id2, new int[]{5,6,7});
+        assert data.getVoxel(id1) == null;
+        data.undoV();
+        assert data.getVoxel(id1) != null;
+        data.undoV();
         boolean moved = data.moveVoxel(id1, new int[]{3,1,2});
         assert moved;
         assert data.getVoxel(id1).getPosAsInt()[0] == 3;

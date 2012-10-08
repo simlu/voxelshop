@@ -16,6 +16,7 @@ public final class VitcoSettings {
     // wireframe / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
     public static final Color SELECTED_VOXEL_WIREFRAME_COLOR = new Color(255, 255, 255);
+    public static final Color SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED= new Color(175, 255, 172);
 
     // these can change externally
     public static final String PROGRAM_UPDATER_URL = "http://www.fantasy-mmorpg.com/tools/ps4k/updater/digest.txt";

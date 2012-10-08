@@ -267,6 +267,66 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     // Voxel
     // ===============================
 
+    // can be override (sideview)
+    protected int[] voxelPosForHoverPos(Point point) {
+        int[] voxelPos = null;
+        // check if we hit something
+        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
+        Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
+        if (res[1] != null) { // something hit
+            Object3D obj3D = ((Object3D)res[1]);
+            Voxel hitVoxel = data.getVoxel(world.getVoxelId(obj3D.getID()));
+            if (hitVoxel != null) {
+                voxelPos = hitVoxel.getPosAsInt();
+                if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
+                    // find collision point
+                    SimpleVector colPoint = camera.getPosition();
+                    dir.scalarMul((Float)res[0]);
+                    colPoint.add(dir);
+                    // find side that it hits
+                    ArrayList<float[]> planes = new ArrayList<float[]>();
+                    planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
+                    planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
+                    planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
+                    planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
+                    planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
+                    planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
+                    Collections.sort(planes, new Comparator<float[]>() {
+                        @Override
+                        public int compare(float[] o1, float[] o2) {
+                            return (int) Math.signum(o1[1] - o2[1]);
+                        }
+                    });
+                    switch ((int)planes.get(0)[0]) {
+                        case 1: voxelPos[1] -= 1; break;
+                        case 2: voxelPos[1] += 1; break;
+                        case 3: voxelPos[0] -= 1; break;
+                        case 4: voxelPos[0] += 1; break;
+                        case 5: voxelPos[2] -= 1; break;
+                        case 6: voxelPos[2] += 1; break;
+                    }
+                }
+            }
+        } else {
+            if (voxelMode == VOXELMODE.DRAW) { // trying to draw
+                // hit nothing, draw preview on zero level
+                if (dir.y > 0.05) { // angle big enough
+                    // calculate position
+                    float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - camera.getPosition().y) / dir.y;
+                    dir.scalarMul(t);
+                    SimpleVector pos = camera.getPosition();
+                    pos.add(dir);
+                    pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
+                    if (Math.abs(pos.x) < VitcoSettings.VOXEL_GROUND_MAX_RANGE && Math.abs(pos.z) < VitcoSettings.VOXEL_GROUND_MAX_RANGE) {
+                        // if we hit the ground plane
+                        voxelPos = new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)};
+                    }
+                }
+            }
+        }
+        return voxelPos;
+    }
+
     // voxel draw adapter for main view
     @SuppressWarnings("CanBeFinal")
     protected VoxelAdapter voxelAdapter = new VoxelAdapter();
@@ -279,7 +339,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private float[] currentColor = ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR);
 
         // select functionality
-        private boolean doSelect = false;
+        private Integer selectMode = 0; // 0 = do nothing, 1 = select voxels, 2 = drag voxels
+        private SimpleVector dragStartVoxelPos = null;
+        private SimpleVector dragStartPos = null;
+        private Integer[] currentSelectionShift = new Integer[3];
         private Point selectStartPoint = new Point(0,0);
 
         // initialize
@@ -293,7 +356,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             });
         }
 
-        private Point lastMovePos = new Point(0,0);
+        private Point lastMovePos = new Point(0, 0);
         private boolean mouseInside = false;
         // replay the last hover
         public final void replayHover() {
@@ -303,7 +366,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         // execute on mouse event
-        protected void execute(MouseEvent e) {
+        protected void executeNormalMode(MouseEvent e) {
             if (container.getBounds().contains(e.getPoint())) {
                 if (data.getHighlightedVoxel() != null) { // something highlighted
                     camera.setEnabled(voxelMode == VOXELMODE.VIEW);
@@ -351,73 +414,128 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             }
         }
 
+        // execute on mouse event
+        protected void executeSelectionMode(MouseEvent e) {
+            switch (selectMode) {
+                case 1:
+                    int x1 = Math.min(selectStartPoint.x, e.getPoint().x);
+                    int y1 = Math.min(selectStartPoint.y, e.getPoint().y);
+                    int x2 = Math.max(selectStartPoint.x, e.getPoint().x);
+                    int y2 = Math.max(selectStartPoint.y, e.getPoint().y);
+                    container.setPreviewRect(new Rectangle(x1, y1, x2-x1, y2-y1));
+                    break;
+                case 2:
+                    SimpleVector stopPos = convert2D3D(e.getX(), e.getY(), dragStartVoxelPos);
+                    // update position of what we dragged
+                    data.setVoxelSelectionShift(
+                            Math.round(currentSelectionShift[0] - (stopPos.x - dragStartPos.x)/VitcoSettings.VOXEL_SIZE),
+                            Math.round(currentSelectionShift[1] - (stopPos.y - dragStartPos.y)/VitcoSettings.VOXEL_SIZE),
+                            Math.round(currentSelectionShift[2] - (stopPos.z - dragStartPos.z)/VitcoSettings.VOXEL_SIZE));
+                    break;
+            }
+        }
+
+        // called to select / deselect voxels in rect
+        // true if something changed
+        protected final boolean finishSelect(MouseEvent e) {
+            boolean result = false;
+            Point start = new Point(
+                    Math.min(e.getPoint().x, selectStartPoint.x),
+                    Math.min(e.getPoint().y, selectStartPoint.y)
+            );
+            Point stop = new Point(
+                    Math.max(e.getPoint().x, selectStartPoint.x),
+                    Math.max(e.getPoint().y, selectStartPoint.y)
+            );
+
+            Voxel[] voxels = getVoxels();
+            RTree<Integer> queryTree = new RTree<Integer>(50, 2, 2);
+            for (Voxel voxel : voxels) {
+                float[] pos = voxel.getPosAsFloat();
+                SimpleVector vec = convert3D2D(new SimpleVector(
+                        pos[0] * VitcoSettings.VOXEL_SIZE,
+                        pos[1] * VitcoSettings.VOXEL_SIZE,
+                        pos[2] * VitcoSettings.VOXEL_SIZE));
+                queryTree.insert(new float[] {vec.x, vec.y}, voxel.id);
+            }
+            List<Integer> searchResult = queryTree.search(new float[]{start.x, start.y},
+                    new float[]{stop.x - start.x, stop.y -start.y});
+
+            // do a single click search as well
+            SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
+            Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
+            if (res[1] != null) { // something hit
+                Object3D obj3D = ((Object3D)res[1]);
+                Voxel hitVoxel = data.getVoxel(world.getVoxelId(obj3D.getID()));
+                if (!searchResult.contains(hitVoxel.id)) {
+                    searchResult.add(hitVoxel.id);
+                }
+            }
+
+            // execute the select
+            Integer[] toSet = new Integer[searchResult.size()];
+            searchResult.toArray(toSet);
+            if (toSet.length > 0) {
+                result = true;
+                data.massSetVoxelSelected(toSet, e.getButton() == 1 && !e.isControlDown());
+            }
+
+            container.setPreviewRect(null);
+            camera.setEnabled(true);
+
+            if (result) {
+                // reset shift
+                data.setVoxelSelectionShift(0,0,0);
+            }
+
+            forceRepaint();
+
+            return result;
+        }
+
         // hover on mouse event
-        protected void hover(Point point) {
+        protected final void hover(Point point) {
             if (voxelMode != VOXELMODE.SELECT) {
-                // check if we hit something
-                SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
-                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
-                if (res[1] != null) { // something hit
-                    Object3D obj3D = ((Object3D)res[1]);
-                    Voxel hitVoxel = getVoxelForObjectId(obj3D.getID());
-                    if (hitVoxel != null) {
-                        int[] voxelPos = hitVoxel.getPosAsInt();
-                        if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
-                            // find collision point
-                            SimpleVector colPoint = camera.getPosition();
-                            dir.scalarMul((Float)res[0]);
-                            colPoint.add(dir);
-                            // find side that it hits
-                            ArrayList<float[]> planes = new ArrayList<float[]>();
-                            planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
-                            planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
-                            planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
-                            planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
-                            planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
-                            planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
-                            Collections.sort(planes, new Comparator<float[]>() {
-                                @Override
-                                public int compare(float[] o1, float[] o2) {
-                                    return (int) Math.signum(o1[1] - o2[1]);
-                                }
-                            });
-                            switch ((int)planes.get(0)[0]) {
-                                case 1: voxelPos[1] -= 1; break;
-                                case 2: voxelPos[1] += 1; break;
-                                case 3: voxelPos[0] -= 1; break;
-                                case 4: voxelPos[0] += 1; break;
-                                case 5: voxelPos[2] -= 1; break;
-                                case 6: voxelPos[2] += 1; break;
-                            }
-                        }
-                        // highlight the voxel (position)
-                        data.highlightVoxel(voxelPos);
-                    }
-                } else { // hit nothing
-                    if (voxelMode == VOXELMODE.DRAW) { // trying to draw
-                        // hit nothing, draw preview on zero level
-                        if (dir.y > 0.05) { // angle big enough
-                            // calculate position
-                            float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - camera.getPosition().y) / dir.y;
-                            dir.scalarMul(t);
-                            SimpleVector pos = camera.getPosition();
-                            pos.add(dir);
-                            pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
-                            if (Math.abs(pos.x) < VitcoSettings.VOXEL_GROUND_MAX_RANGE && Math.abs(pos.z) < VitcoSettings.VOXEL_GROUND_MAX_RANGE) {
-                                // if we hit the ground plane
-                                data.highlightVoxel(new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)});
-                            } else {
-                                data.highlightVoxel(null);
-                            }
-                        } else { // angle too small
-                            data.highlightVoxel(null);
-                        }
-                    } else { // not trying to draw and hit nothing
-                        data.highlightVoxel(null);
-                    }
+                int[] voxelPos = voxelPosForHoverPos(point);
+                if (voxelPos != null) {
+                    data.highlightVoxel(voxelPos);
+                } else {
+                    data.highlightVoxel(null);
                 }
             } else {
-                data.highlightVoxel(null);
+                switch (selectMode) {
+                    case 0:
+                    case 2:
+                        SimpleVector hitPos = selectedVoxelsWorld.shiftedCollisionPoint(point, buffer);
+                        if (hitPos != null) {
+                            dragStartVoxelPos = hitPos;
+                            container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                            selectMode = 2;
+                        } else {
+                            container.setCursor(Cursor.getDefaultCursor());
+                            selectMode = 0;
+                        }
+                        // remove voxel highlights
+                        data.highlightVoxel(null);
+                        break;
+                }
+            }
+        }
+
+        // cancel all active actions
+        private void cancelAllActions() {
+            dragStartVoxelPos = null;
+            selectMode = 0;
+            massVoxel = false;
+            container.setPreviewRect(null);
+            container.setCursor(Cursor.getDefaultCursor());
+        }
+
+        // called when mode changes
+        public void notifyModeChange() {
+            if (massVoxelMode != voxelMode) { // cancel if mode changed
+                cancelAllActions();
+                massVoxelMode = voxelMode;
             }
         }
 
@@ -437,63 +555,34 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             // execute action
             if (voxelMode == VOXELMODE.SELECT) {
                 camera.setEnabled(false);
-                doSelect = true;
-                selectStartPoint = e.getPoint();
+                switch (selectMode) {
+                    case 0:
+                        selectStartPoint = e.getPoint();
+                        selectMode = 1;
+                        break;
+                    case 2:
+                        currentSelectionShift = data.getVoxelSelectionShift().clone();
+                        dragStartPos = convert2D3D(e.getX(), e.getY(), dragStartVoxelPos);
+                        break;
+                }
             } else {
-                execute(e);
+                executeNormalMode(e);
             }
         }
 
         @Override
         public final void mouseReleased(MouseEvent e) {
-            massVoxel = false;
             hover(e.getPoint());
             camera.setEnabled(true);
-            if (doSelect) { // select the voxels in range
-                Point start = new Point(
-                        Math.min(e.getPoint().x, selectStartPoint.x),
-                        Math.min(e.getPoint().y, selectStartPoint.y)
-                );
-                Point stop = new Point(
-                        Math.max(e.getPoint().x, selectStartPoint.x),
-                        Math.max(e.getPoint().y, selectStartPoint.y)
-                );
-
-                Voxel[] voxels = getVoxels();
-                RTree<Integer> queryTree = new RTree<Integer>(50, 2, 2);
-                for (Voxel voxel : voxels) {
-                    float[] pos = voxel.getPosAsFloat();
-                    SimpleVector vec = convert3D2D(new SimpleVector(
-                            pos[0] * VitcoSettings.VOXEL_SIZE,
-                            pos[1] * VitcoSettings.VOXEL_SIZE,
-                            pos[2] * VitcoSettings.VOXEL_SIZE));
-                    queryTree.insert(new float[] {vec.x, vec.y}, voxel.id);
-                }
-                List<Integer> result = queryTree.search(new float[]{start.x, start.y},
-                        new float[]{stop.x - start.x, stop.y -start.y});
-
-                // do a single click search as well
-                SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
-                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
-                if (res[1] != null) { // something hit
-                    Object3D obj3D = ((Object3D)res[1]);
-                    Voxel hitVoxel = getVoxelForObjectId(obj3D.getID());
-                    if (!result.contains(hitVoxel.id)) {
-                        result.add(hitVoxel.id);
-                    }
-                }
-
-                // execute the select
-                Integer[] toSet = new Integer[result.size()];
-                result.toArray(toSet);
-                if (toSet.length > 0) {
-                    data.massSetVoxelSelected(toSet, e.getButton() == 1 && !e.isControlDown());
-                }
-
-                container.setPreviewRect(null);
-                camera.setEnabled(true);
-                doSelect = false;
-                forceRepaint();
+            massVoxel = false;
+            switch (selectMode) {
+                case 1:
+                    finishSelect(e);
+                    selectMode = 0;
+                    break;
+                case 2:
+                    selectMode = 0;
+                    break;
             }
         }
 
@@ -511,15 +600,16 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         @Override
         public final void mouseDragged(MouseEvent e) {
             lastMovePos = new Point(e.getPoint());
-            hover(e.getPoint());
             if (massVoxel) {
-                execute(e);
-            } else if (doSelect) {
-                int x1 = Math.min(selectStartPoint.x, e.getPoint().x);
-                int y1 = Math.min(selectStartPoint.y, e.getPoint().y);
-                int x2 = Math.max(selectStartPoint.x, e.getPoint().x);
-                int y2 = Math.max(selectStartPoint.y, e.getPoint().y);
-                container.setPreviewRect(new Rectangle(x1, y1, x2-x1, y2-y1));
+                hover(e.getPoint());
+                executeNormalMode(e);
+            } else {
+                switch (selectMode) {
+                    case 1:
+                    case 2:
+                        executeSelectionMode(e);
+                        break;
+                }
             }
         }
 
@@ -527,15 +617,6 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         public final void mouseMoved(MouseEvent e) {
             lastMovePos = new Point(e.getPoint());
             hover(e.getPoint());
-        }
-
-        public void notifyVoxelModeChanged() {
-            if (massVoxelMode != voxelMode) { // cancel if mode changed
-                doSelect = false;
-                massVoxel = false;
-                container.setPreviewRect(null);
-                massVoxelMode = voxelMode;
-            }
         }
     }
 
@@ -576,14 +657,24 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             @Override
             public void onVoxelDataChanged() {
+                // reset shift of voxels selection
+                data.setVoxelSelectionShift(0,0,0);
                 invalidateVoxels();
                 container.doNotSkipNextWorldRender();
                 forceRepaint();
             }
 
             @Override
-            public void onVoxelSelectionChanged() {
+            public void onVoxelHighlightingChanged() {
                 container.skipNextWorldRender();
+                forceRepaint();
+            }
+
+            @Override
+            public void onVoxelSelectionShiftChanged() {
+                Integer[] shift = data.getVoxelSelectionShift();
+                selectedVoxelsWorld.setShift(shift);
+                container.doNotSkipNextWorldRender();
                 forceRepaint();
             }
 
@@ -628,7 +719,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             @Override
             public void onPrefChange(Object newValue) {
                 voxelMode = (VOXELMODE)newValue;
-                voxelAdapter.notifyVoxelModeChanged();
+                voxelAdapter.notifyModeChange();
                 voxelAdapter.replayHover();
                 forceRepaint();
             }

@@ -2,7 +2,6 @@ package com.vitco.util.error;
 
 import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.util.DateTools;
-import com.vitco.util.FileTools;
 import com.vitco.util.lang.LangSelectorInterface;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -133,14 +132,13 @@ public class ErrorHandler implements ErrorHandlerInterface {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(debugReportUrl);
         try {
-            FileBody body = new FileBody(temp);
             MultipartEntity reqEntity = new MultipartEntity();
             reqEntity.addPart("error", new StringBody(error));
-            reqEntity.addPart("report", body);
+            reqEntity.addPart("report", new FileBody(temp));
             httpPost.setEntity(reqEntity);
             HttpResponse response = httpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
-            if (FileTools.inputStreamToString(entity.getContent()).equals("1")) {
+            if (EntityUtils.toString(entity).equals("1")) {
                 // upload was successful, notify the user
                 console.addLine(langSelector.getString("error_dialog_upload_ok"));
             } else {
