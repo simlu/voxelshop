@@ -5,6 +5,7 @@ package com.vitco.logic.menu;
  */
 
 import com.vitco.engine.data.container.Voxel;
+import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.ColorTools;
 import com.vitco.util.action.types.StateActionPrototype;
@@ -18,7 +19,13 @@ import java.util.Collections;
 
 public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInterface {
 
-    boolean isAnimate = VitcoSettings.INITIAL_MODE_IS_ANIMATION;
+    private boolean isAnimate = VitcoSettings.INITIAL_MODE_IS_ANIMATION;
+    // status of selection moved
+    private boolean voxelsAreMoved = false;
+    // true iff there are selected voxels
+    private boolean voxelsAreSelected = false;
+    // true iff there are voxels in layer
+    private boolean voxelsAreInLayer = true;
 
     private Integer[] convertVoxelsToIdArray(Voxel[] voxels) {
         Integer[] voxelIds = new Integer[voxels.length];
@@ -44,12 +51,14 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                     Integer[] voxelIds = convertVoxelsToIdArray(voxels);
                     // mass delete
                     data.massRemoveVoxel(voxelIds);
+                    // refresh status
+                    actionGroupManager.refreshGroup("selection_interaction");
                 }
             }
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreSelected;
             }
         });
         actionGroupManager.addAction("selection_interaction", "selection_tool_copy", new StateActionPrototype() {
@@ -59,12 +68,14 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                     storedVoxels.clear();
                     Voxel[] voxels = data.getSelectedVoxels();
                     Collections.addAll(storedVoxels, voxels);
+                    // refresh status
+                    actionGroupManager.refreshGroup("selection_interaction");
                 }
             }
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreSelected;
             }
         });
         actionGroupManager.addAction("selection_interaction", "selection_tool_paste", new StateActionPrototype() {
@@ -83,7 +94,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && storedVoxels.size() > 0;
             }
         });
 
@@ -105,7 +116,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreSelected;
             }
         });
         actionGroupManager.addAction("selection_interaction", "selection_tool_delete", new StateActionPrototype() {
@@ -120,7 +131,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreSelected;
             }
         });
 
@@ -142,7 +153,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreInLayer;
             }
         });
         actionGroupManager.addAction("selection_interaction", "selection_tool_as_new_layer", new StateActionPrototype() {
@@ -157,7 +168,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreSelected;
             }
         });
         actionGroupManager.addAction("selection_interaction", "selection_tool_recolor", new StateActionPrototype() {
@@ -174,13 +185,14 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreSelected;
             }
         });
         actionGroupManager.addAction("selection_interaction", "selection_tool_finalize_shifting", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
+                    // note: shifting will deselect voxels (so no need to do it here)
                     Voxel[] selectedVoxels = data.getSelectedVoxels();
                     Integer[] shift = data.getVoxelSelectionShift();
                     if (selectedVoxels.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
@@ -191,7 +203,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate;
+                return !isAnimate && voxelsAreMoved && voxelsAreSelected;
             }
         });
 
@@ -208,6 +220,32 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 actionGroupManager.refreshGroup("selection_interaction");
             }
         });
+
+        // register data change listener
+        data.addDataChangeListener(new DataChangeAdapter() {
+            @Override
+            public void onVoxelSelectionShiftChanged() {
+                Integer[] shift = data.getVoxelSelectionShift();
+                boolean voxelsAreMovedTemp = shift[0] != 0 || shift[1] != 0 | shift[2] != 0;
+                if (voxelsAreMovedTemp != voxelsAreMoved) {
+                    voxelsAreMoved = voxelsAreMovedTemp;
+                    actionGroupManager.refreshGroup("selection_interaction");
+                }
+            }
+
+            @Override
+            public void onVoxelDataChanged() {
+                boolean voxelsAreSelectedTemp = data.getSelectedVoxels().length > 0;
+                boolean voxelsAreInLayerTemp = data.getVisibleLayerVoxel().length > 0;
+                if (voxelsAreSelected != voxelsAreSelectedTemp || voxelsAreInLayer != voxelsAreInLayerTemp) {
+                    voxelsAreSelected = voxelsAreSelectedTemp;
+                    voxelsAreInLayer = voxelsAreInLayerTemp;
+                    actionGroupManager.refreshGroup("selection_interaction");
+                }
+            }
+        });
+
+
     }
 
 }

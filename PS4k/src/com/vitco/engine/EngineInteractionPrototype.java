@@ -340,7 +340,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         // select functionality
         private Integer selectMode = 0; // 0 = do nothing, 1 = select voxels, 2 = drag voxels
-        private SimpleVector dragStartVoxelPos = null;
+        private SimpleVector dragStartReferencePos = null;
         private SimpleVector dragStartPos = null;
         private Integer[] currentSelectionShift = new Integer[3];
         private Point selectStartPoint = new Point(0,0);
@@ -425,7 +425,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     container.setPreviewRect(new Rectangle(x1, y1, x2-x1, y2-y1));
                     break;
                 case 2:
-                    SimpleVector stopPos = convert2D3D(e.getX(), e.getY(), dragStartVoxelPos);
+                    SimpleVector stopPos = convert2D3D(e.getX(), e.getY(), dragStartReferencePos);
                     // update position of what we dragged
                     data.setVoxelSelectionShift(
                             Math.round(currentSelectionShift[0] - (stopPos.x - dragStartPos.x)/VitcoSettings.VOXEL_SIZE),
@@ -508,7 +508,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     case 2:
                         SimpleVector hitPos = selectedVoxelsWorld.shiftedCollisionPoint(point, buffer);
                         if (hitPos != null) {
-                            dragStartVoxelPos = hitPos;
+                            dragStartReferencePos = hitPos;
                             container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                             selectMode = 2;
                         } else {
@@ -524,7 +524,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         // cancel all active actions
         private void cancelAllActions() {
-            dragStartVoxelPos = null;
+            dragStartReferencePos = null;
             selectMode = 0;
             massVoxel = false;
             container.setPreviewRect(null);
@@ -532,7 +532,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         // called when mode changes
-        public void notifyModeChange() {
+        public final void notifyModeChange() {
             if (massVoxelMode != voxelMode) { // cancel if mode changed
                 cancelAllActions();
                 massVoxelMode = voxelMode;
@@ -562,7 +562,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         break;
                     case 2:
                         currentSelectionShift = data.getVoxelSelectionShift().clone();
-                        dragStartPos = convert2D3D(e.getX(), e.getY(), dragStartVoxelPos);
+                        dragStartPos = convert2D3D(e.getX(), e.getY(), dragStartReferencePos);
                         break;
                 }
             } else {

@@ -119,7 +119,7 @@ public class CCamera extends Camera {
 //            this.moveCamera(Camera.CAMERA_MOVEOUT, dist);
 
 
-            // move to new origin
+            // move to origin
             float dist = this.getPosition().distance(SimpleVector.ORIGIN);
             this.moveCamera(Camera.CAMERA_MOVEIN, dist);
 
