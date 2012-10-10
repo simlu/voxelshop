@@ -1071,16 +1071,36 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getVoxelsXY(int z) {
         if (!layerVoxelXYBufferValid || z != lastVoxelXYBufferZValue) {
-            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
-                layerVoxelXYBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
+
+            VoxelLayer result = new VoxelLayer(-1, "tmp");
+            for (Integer layerId : dataContainer.layerOrder) {
+                if (dataContainer.layers.get(layerId).isVisible()) {
+                    Voxel[] voxels = dataContainer.layers.get(layerId).search(
                         new float[] {Integer.MIN_VALUE/2, Integer.MIN_VALUE/2, z},
-                        new float[] {Integer.MAX_VALUE, Integer.MAX_VALUE, 0}
-                );
-            } else {
-                layerVoxelXYBuffer = new Voxel[0];
+                        new float[] {Integer.MAX_VALUE, Integer.MAX_VALUE, 0});
+                    for (Voxel voxel : voxels) {
+                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
+                            result.addVoxel(voxel);
+                        }
+                    }
+                }
             }
+            layerVoxelXYBuffer = result.getVoxels();
             layerVoxelXYBufferValid = true;
             lastVoxelXYBufferZValue = z;
+
+//            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+//                layerVoxelXYBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
+//                        new float[] {Integer.MIN_VALUE/2, Integer.MIN_VALUE/2, z},
+//                        new float[] {Integer.MAX_VALUE, Integer.MAX_VALUE, 0}
+//                );
+//            } else {
+//                layerVoxelXYBuffer = new Voxel[0];
+//            }
+//            layerVoxelXYBufferValid = true;
+//            lastVoxelXYBufferZValue = z;
+
+
         }
         return layerVoxelXYBuffer.clone();
     }
@@ -1091,16 +1111,34 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getVoxelsXZ(int y) {
         if (!layerVoxelXZBufferValid || y != lastVoxelXZBufferYValue) {
-            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
-                layerVoxelXZBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
+
+            VoxelLayer result = new VoxelLayer(-1, "tmp");
+            for (Integer layerId : dataContainer.layerOrder) {
+                if (dataContainer.layers.get(layerId).isVisible()) {
+                    Voxel[] voxels = dataContainer.layers.get(layerId).search(
                         new float[] {Integer.MIN_VALUE/2, y, Integer.MIN_VALUE/2},
-                        new float[] {Integer.MAX_VALUE, 0, Integer.MAX_VALUE}
-                );
-            } else {
-                layerVoxelXZBuffer = new Voxel[0];
+                        new float[] {Integer.MAX_VALUE, 0, Integer.MAX_VALUE});
+                    for (Voxel voxel : voxels) {
+                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
+                            result.addVoxel(voxel);
+                        }
+                    }
+                }
             }
+            layerVoxelXZBuffer = result.getVoxels();
             layerVoxelXZBufferValid = true;
             lastVoxelXZBufferYValue = y;
+
+//            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+//                layerVoxelXZBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
+//                        new float[] {Integer.MIN_VALUE/2, y, Integer.MIN_VALUE/2},
+//                        new float[] {Integer.MAX_VALUE, 0, Integer.MAX_VALUE}
+//                );
+//            } else {
+//                layerVoxelXZBuffer = new Voxel[0];
+//            }
+//            layerVoxelXZBufferValid = true;
+//            lastVoxelXZBufferYValue = y;
         }
         return layerVoxelXZBuffer.clone();
     }
@@ -1111,16 +1149,34 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final Voxel[] getVoxelsYZ(int x) {
         if (!layerVoxelYZBufferValid || x != lastVoxelYZBufferXValue) {
-            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
-                layerVoxelYZBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
-                        new float[] {x, Integer.MIN_VALUE/2, Integer.MIN_VALUE/2},
-                        new float[] {0, Integer.MAX_VALUE, Integer.MAX_VALUE}
-                );
-            } else {
-                layerVoxelYZBuffer = new Voxel[0];
+
+            VoxelLayer result = new VoxelLayer(-1, "tmp");
+            for (Integer layerId : dataContainer.layerOrder) {
+                if (dataContainer.layers.get(layerId).isVisible()) {
+                    Voxel[] voxels = dataContainer.layers.get(layerId).search(
+                            new float[] {x, Integer.MIN_VALUE/2, Integer.MIN_VALUE/2},
+                            new float[] {0, Integer.MAX_VALUE, Integer.MAX_VALUE});
+                    for (Voxel voxel : voxels) {
+                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
+                            result.addVoxel(voxel);
+                        }
+                    }
+                }
             }
+            layerVoxelYZBuffer = result.getVoxels();
             layerVoxelYZBufferValid = true;
             lastVoxelYZBufferXValue = x;
+
+//            if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
+//                layerVoxelYZBuffer = dataContainer.layers.get(dataContainer.selectedLayer).search(
+//                        new float[] {x, Integer.MIN_VALUE/2, Integer.MIN_VALUE/2},
+//                        new float[] {0, Integer.MAX_VALUE, Integer.MAX_VALUE}
+//                );
+//            } else {
+//                layerVoxelYZBuffer = new Voxel[0];
+//            }
+//            layerVoxelYZBufferValid = true;
+//            lastVoxelYZBufferXValue = x;
         }
         return layerVoxelYZBuffer.clone();
     }

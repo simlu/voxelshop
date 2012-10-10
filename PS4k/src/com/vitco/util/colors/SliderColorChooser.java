@@ -528,6 +528,11 @@ public class SliderColorChooser extends ColorChooserPrototype {
         tabbedPane.setTabShape(JideTabbedPane.SHAPE_ROUNDED_FLAT); // make square
         tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT); // fit them all
 
+        // set tooltips
+        for (int i = 0; i < tabbedPane.getTabCount(); i ++) {
+            tabbedPane.setToolTipTextAt(i, tabbedPane.getTitleAt(i));
+        }
+
         add(tabbedPane, BorderLayout.CENTER);
     }
 }

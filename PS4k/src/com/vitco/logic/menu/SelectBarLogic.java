@@ -36,8 +36,21 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
     }
 
     public void registerLogic(Frame frame) {
+        // stores the current position (keeps current)
+        final int[] currentPos = new int[3];
+        for (int i = 0; i < 3; i++) {
+            final int finalI = i;
+            preferences.addPrefChangeListener("currentplane_sideview" + (i + 1), new PrefChangeListener() {
+                @Override
+                public void onPrefChange(Object o) {
+                    currentPos[finalI] = (Integer)o;
+                }
+            });
+        }
+
         // cut, copy, paste
         final ArrayList<Voxel> storedVoxels = new ArrayList<Voxel>();
+        final int[] storedPos = new int[3];
         actionGroupManager.addAction("selection_interaction", "selection_tool_cut", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
@@ -46,6 +59,10 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                     storedVoxels.clear();
                     Voxel[] voxels = data.getSelectedVoxels();
                     Collections.addAll(storedVoxels, voxels);
+                    // remember the current position
+                    storedPos[0] = currentPos[0];
+                    storedPos[1] = currentPos[1];
+                    storedPos[2] = currentPos[2];
 
                     // fetch voxel ids for cut
                     Integer[] voxelIds = convertVoxelsToIdArray(voxels);
@@ -68,6 +85,10 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                     storedVoxels.clear();
                     Voxel[] voxels = data.getSelectedVoxels();
                     Collections.addAll(storedVoxels, voxels);
+                    // remember the current position
+                    storedPos[0] = currentPos[0];
+                    storedPos[1] = currentPos[1];
+                    storedPos[2] = currentPos[2];
                     // refresh status
                     actionGroupManager.refreshGroup("selection_interaction");
                 }
@@ -84,7 +105,23 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 if (getStatus()) {
                     if (storedVoxels.size() > 0) {
                         Voxel[] voxels = new Voxel[storedVoxels.size()];
-                        storedVoxels.toArray(voxels);
+                        int[] pos;
+                        // compute the shift for all voxels
+                        int[] shift = new int[] {
+                                storedPos[0] - currentPos[0],
+                                storedPos[1] - currentPos[1],
+                                storedPos[2] - currentPos[2]
+                        };
+                        // apply the shift
+                        int i = 0;
+                        for (Voxel voxel : storedVoxels) {
+                            pos = voxel.getPosAsInt().clone();
+                            pos[0] -= shift[2];
+                            pos[1] -= shift[1];
+                            pos[2] -= shift[0];
+                            voxels[i++] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getLayerId());
+                        }
+                        // execute the (shifted) add
                         if (!data.massAddVoxel(voxels)) {
                             console.addLine(langSelector.getString("min_max_voxel_error"));
                         }

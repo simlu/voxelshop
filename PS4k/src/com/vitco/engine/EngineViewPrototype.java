@@ -605,7 +605,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         if (!initialized) {
             Config.tuneForOutdoor();
             Config.fadeoutLight=false;
-            Config.maxPolysVisible = 2000;
+            Config.maxPolysVisible = 5000;
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }

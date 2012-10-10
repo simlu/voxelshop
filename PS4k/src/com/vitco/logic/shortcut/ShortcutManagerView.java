@@ -218,6 +218,10 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 );
             }
         }
+        // set tooltips
+        for (int i = 0; i < tabbedPane.getTabCount(); i ++) {
+            tabbedPane.setToolTipTextAt(i, tabbedPane.getTitleAt(i));
+        }
 
         // todo add setter and getter for this and store and load in linkage class
         // load from preferences

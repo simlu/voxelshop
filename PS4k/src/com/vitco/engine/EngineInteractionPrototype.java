@@ -335,6 +335,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private boolean massVoxel = false;
         private VOXELMODE massVoxelMode = null;
 
+        // the last position we drew
+        private int[] lastDrawPos = new int[3];
+
         // the current color (to draw)
         private float[] currentColor = ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR);
 
@@ -345,6 +348,12 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private Integer[] currentSelectionShift = new Integer[3];
         private Point selectStartPoint = new Point(0,0);
 
+        private boolean active = false;
+
+        public final void setActive(boolean active) {
+            this.active = active;
+        }
+
         // initialize
         public void init() {
             // register change of current color
@@ -354,30 +363,50 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     currentColor = (float[])newValue;
                 }
             });
+            modifierListener.add(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (active && mouseInside) {
+                        if (lastMoveEvent != null) {
+                            hover(new MouseEvent(e.getComponent(), e.getID(), e.getWhen(),
+                                    e.getModifiers(), lastMoveEvent.getX(),
+                                    lastMoveEvent.getY(), 0, false));
+                        }
+                    }
+                }
+            });
         }
 
-        private Point lastMovePos = new Point(0, 0);
+        private MouseEvent lastMoveEvent = null;
         private boolean mouseInside = false;
         // replay the last hover
         public final void replayHover() {
-            if (mouseInside) {
-                hover(lastMovePos);
+            if (mouseInside && lastMoveEvent != null) {
+                hover(lastMoveEvent);
             }
         }
 
         // execute on mouse event
         protected void executeNormalMode(MouseEvent e) {
             if (container.getBounds().contains(e.getPoint())) {
-                if (data.getHighlightedVoxel() != null) { // something highlighted
+
+                int[] highlighted = data.getHighlightedVoxel();
+                if (highlighted != null) { // something highlighted
                     camera.setEnabled(voxelMode == VOXELMODE.VIEW);
                     if (voxelMode == VOXELMODE.DRAW) { // add voxel
                         if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
                             switch (e.getModifiersEx()) {
                                 case InputEvent.BUTTON1_DOWN_MASK: // left click
-                                    data.addVoxel(ColorTools.hsbToColor(currentColor), data.getHighlightedVoxel());
+                                    if (!massVoxel) {
+                                        // memorise position
+                                        lastDrawPos = highlighted;
+                                    }
+                                    if (side != -1 || lastDrawPos[1] == highlighted[1]) {
+                                        data.addVoxel(ColorTools.hsbToColor(currentColor), highlighted);
+                                    }
                                     break;
                                 case InputEvent.BUTTON3_DOWN_MASK: // right click
-                                    Voxel voxel = data.searchVoxel(data.getHighlightedVoxel(), true);
+                                    Voxel voxel = data.searchVoxel(highlighted, true);
                                     if (null != voxel) {
                                         data.removeVoxel(voxel.id);
                                     }
@@ -385,29 +414,26 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             }
                         }
                     } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
-                        Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
+                        Voxel highlightedVoxel = data.searchVoxel(highlighted, true);
                         if (highlightedVoxel != null) {
                             data.removeVoxel(highlightedVoxel.id);
                         }
                     } else if (voxelMode == VOXELMODE.PICKER) {
-                        Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), false);
+                        Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
                         if (highlightedVoxel != null) {
                             preferences.storeObject("currently_used_color",
                                     ColorTools.colorToHSB(highlightedVoxel.getColor()));
                         }
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {
-                        Voxel highlightedVoxel = data.searchVoxel(data.getHighlightedVoxel(), true);
+                        Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
                         if (highlightedVoxel != null) {
                             data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
                         }
                     } else if (voxelMode == VOXELMODE.VIEW) {
                         // quick select for side view "current" planes
-                        int[] voxel = data.getHighlightedVoxel();
-                        if (voxel != null) {
-                            preferences.storeObject("currentplane_sideview1", voxel[2]);
-                            preferences.storeObject("currentplane_sideview2", voxel[1]);
-                            preferences.storeObject("currentplane_sideview3", voxel[0]);
-                        }
+                        preferences.storeObject("currentplane_sideview1", highlighted[2]);
+                        preferences.storeObject("currentplane_sideview2", highlighted[1]);
+                        preferences.storeObject("currentplane_sideview3", highlighted[0]);
                     }
                     massVoxel = true;
                 }
@@ -436,9 +462,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         // called to select / deselect voxels in rect
-        // true if something changed
-        protected final boolean finishSelect(MouseEvent e) {
-            boolean result = false;
+        // returns the voxel id that was hit (direct hit)
+        protected final Integer finishSelect(MouseEvent e) {
+            Integer result = null;
+            boolean changedSelection = false;
             Point start = new Point(
                     Math.min(e.getPoint().x, selectStartPoint.x),
                     Math.min(e.getPoint().y, selectStartPoint.y)
@@ -470,33 +497,31 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 if (!searchResult.contains(hitVoxel.id)) {
                     searchResult.add(hitVoxel.id);
                 }
+                result = hitVoxel.id;
             }
 
             // execute the select
             Integer[] toSet = new Integer[searchResult.size()];
             searchResult.toArray(toSet);
             if (toSet.length > 0) {
-                result = true;
-                data.massSetVoxelSelected(toSet, e.getButton() == 1 && !e.isControlDown());
+                changedSelection = true;
+                data.massSetVoxelSelected(toSet, e.getButton() == 1);
             }
 
             container.setPreviewRect(null);
             camera.setEnabled(true);
 
-            if (result) {
+            if (changedSelection) {
                 // reset shift
                 data.setVoxelSelectionShift(0,0,0);
             }
-
-            forceRepaint();
-
             return result;
         }
 
         // hover on mouse event
-        protected final void hover(Point point) {
+        protected final void hover(MouseEvent e) {
             if (voxelMode != VOXELMODE.SELECT) {
-                int[] voxelPos = voxelPosForHoverPos(point);
+                int[] voxelPos = voxelPosForHoverPos(e.getPoint());
                 if (voxelPos != null) {
                     data.highlightVoxel(voxelPos);
                 } else {
@@ -506,8 +531,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 switch (selectMode) {
                     case 0:
                     case 2:
-                        SimpleVector hitPos = selectedVoxelsWorld.shiftedCollisionPoint(point, buffer);
-                        if (hitPos != null) {
+                        SimpleVector hitPos = selectedVoxelsWorld.shiftedCollisionPoint(e.getPoint(), buffer);
+                        if (hitPos != null && !e.isControlDown()) {
                             dragStartReferencePos = hitPos;
                             container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                             selectMode = 2;
@@ -572,18 +597,24 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public final void mouseReleased(MouseEvent e) {
-            hover(e.getPoint());
+            hover(e);
             camera.setEnabled(true);
             massVoxel = false;
             switch (selectMode) {
                 case 1:
-                    finishSelect(e);
+                    Integer hitVoxelId = finishSelect(e);
                     selectMode = 0;
+                    if (hitVoxelId != null && data.getVoxel(hitVoxelId).isSelected()) {
+                        // make sure the voxel is correctly selected
+                        container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                    }
                     break;
                 case 2:
                     selectMode = 0;
                     break;
             }
+            invalidateVoxels();
+            forceRepaint();
         }
 
         @Override
@@ -599,9 +630,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public final void mouseDragged(MouseEvent e) {
-            lastMovePos = new Point(e.getPoint());
+            lastMoveEvent = e;
             if (massVoxel) {
-                hover(e.getPoint());
+                hover(e);
                 executeNormalMode(e);
             } else {
                 switch (selectMode) {
@@ -615,13 +646,34 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public final void mouseMoved(MouseEvent e) {
-            lastMovePos = new Point(e.getPoint());
-            hover(e.getPoint());
+            lastMoveEvent = e;
+            hover(e);
         }
     }
 
+    private final ArrayList<KeyListener> modifierListener = new ArrayList<KeyListener>();
+
     @PostConstruct
     protected final void init() {
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            private boolean ctrlDown = false;
+            private boolean altDown = false;
+            private boolean shiftDown = false;
+
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (ctrlDown != e.isControlDown() || altDown != e.isAltDown() || shiftDown != e.isShiftDown()) {
+                    ctrlDown = e.isControlDown();
+                    altDown = e.isAltDown();
+                    shiftDown = e.isShiftDown();
+                    for (KeyListener kl : modifierListener) {
+                        kl.keyPressed(e);
+                    }
+                }
+                return false;
+            }
+        });
 
         // init the voxel adapter
         voxelAdapter.init();
@@ -695,6 +747,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     removeAll();
                     container.addMouseMotionListener(voxelAdapter);
                     container.addMouseListener(voxelAdapter);
+                    voxelAdapter.setActive(true);
                     voxelAdapter.replayHover();
                 }
                 container.setDrawAnimationOverlay(isAnimate);
@@ -703,6 +756,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             private void removeAll() {
                 // just to be sure there are no listeners left
+                voxelAdapter.setActive(false);
                 container.removeMouseMotionListener(voxelAdapter);
                 container.removeMouseListener(voxelAdapter);
                 container.removeMouseMotionListener(animationAdapter);
