@@ -89,9 +89,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // changed selected voxels since last call
     protected abstract Voxel[][] getChangedSelectedVoxels();
 
-    // holds the update information of the voxel
-    //private final HashMap<Integer, Object> voxelUpdates = new HashMap<Integer, Object>();
-
     // helper - make sure the voxel objects in the world are up to date
     private void updateWorldWithVoxels() {
         // only retrieve the changed voxels

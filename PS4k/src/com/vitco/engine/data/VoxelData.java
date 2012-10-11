@@ -83,13 +83,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 }
             }
         } else {
-            for (String key : changedVisibleVoxel.keySet()) {
-                changedVisibleVoxel.put(key, null);
-            }
+            changedSelectedVoxel.clear();
+            changedVisibleVoxel.clear();
             changedVisibleVoxelPlane.clear();
-//            for (String key : changedVisibleVoxelPlane.keySet()) {
-//                changedVisibleVoxelPlane.put(key, new HashMap<Integer, HashMap<String, int[]>>());
-//            }
         }
         layerBufferValid = false;
         layerNameBufferValid = false;

@@ -263,7 +263,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void onVoxelSelectionShiftChanged() {
                 Integer[] shift = data.getVoxelSelectionShift();
-                boolean voxelsAreMovedTemp = shift[0] != 0 || shift[1] != 0 | shift[2] != 0;
+                boolean voxelsAreMovedTemp = shift[0] != 0 || shift[1] != 0 || shift[2] != 0;
                 if (voxelsAreMovedTemp != voxelsAreMoved) {
                     voxelsAreMoved = voxelsAreMovedTemp;
                     actionGroupManager.refreshGroup("selection_interaction");

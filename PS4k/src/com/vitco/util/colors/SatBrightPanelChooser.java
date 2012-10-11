@@ -34,8 +34,8 @@ public final class SatBrightPanelChooser extends ColorChooserPrototype {
         MouseAdapter ma = new MouseAdapter() {
             private void internalColorUpdate(Point point, boolean notify) {
                 point = new Point(
-                        (int)Math.max(0, Math.min(getWidth()-1, point.getX())),
-                        (int)Math.max(0, Math.min(getHeight()-1, point.getY()))
+                        (int)Math.max(0, Math.min(getWidth(), point.getX())),
+                        (int)Math.max(0, Math.min(getHeight(), point.getY()))
                 );
                 currentColor = new float[] {
                         Math.max(0, Math.min(1, currentColor[0])),
