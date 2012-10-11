@@ -104,6 +104,16 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         return voxels;
     }
 
+    @Override
+    protected Voxel[][] getChangedVoxels() {
+        return data.getNewSideVoxel("side" + side, side, currentplane);
+    }
+
+    @Override
+    protected Voxel[][] getChangedSelectedVoxels() {
+        return data.getNewSelectedVoxel("side" + side);
+    }
+
     // get the reference point depending on the selected layer
     @Override
     protected SimpleVector getRefPoint() {
@@ -131,6 +141,8 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void onPrefChange(Object o) {
                 currentplane = (Integer)o;
+                // invalidate this buffer (as the plane has changed)
+                data.invalidateSideViewBuffer("side" + side, side, currentplane);
                 invalidateVoxels();
                 forceRepaint();
             }

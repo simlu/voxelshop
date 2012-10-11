@@ -41,6 +41,12 @@ public interface VoxelDataInterface {
     Voxel[] getLayerVoxels(int layerId);
     // get all visible layer voxels
     Voxel[] getVisibleLayerVoxel();
+    // get changed voxels since last call
+    Voxel[][] getNewVisibleLayerVoxel(String requestId);
+    // to invalidate the side view buffer
+    void invalidateSideViewBuffer(String requestId, Integer side, Integer plane);
+    // get changed side view voxels since last call
+    Voxel[][] getNewSideVoxel(String requestId, Integer side, Integer plane);
     // get voxel range (plane) of current layer
     Voxel[] getVoxelsXY(int z);
     Voxel[] getVoxelsXZ(int y);
@@ -95,6 +101,8 @@ public interface VoxelDataInterface {
 
     boolean isSelected(int voxelId);
     Voxel[] getSelectedVoxels();
+    // get the new selected voxels since last call
+    Voxel[][] getNewSelectedVoxel(String requestId);
     // select a voxel
     boolean setVoxelSelected(int voxelId, boolean selected);
     // select several voxels at once
@@ -107,6 +115,6 @@ public interface VoxelDataInterface {
     boolean migrateVoxels(Voxel[] voxels);
     // set color of several voxels at once
     boolean massSetColor(Integer[] voxelIds, Color color);
-
+    // move several voxels at once
     boolean massMoveVoxel(Voxel[] voxel, Integer[] shift);
 }

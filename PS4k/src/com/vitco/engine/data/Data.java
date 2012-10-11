@@ -58,7 +58,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
             clearHistoryV();
             dataContainer = (DataContainer)loaded;
             invalidateA();
-            invalidateV();
+            invalidateV(null);
             // file has not changed yet
             hasChanged = false;
             result = true;

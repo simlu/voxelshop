@@ -1,6 +1,7 @@
 package com.vitco.engine.data.container;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -14,6 +15,20 @@ public final class Voxel implements Serializable {
     private Color color; // color of voxel
     private int alpha = -1; // alpha of this voxel
     private final int layerId; // the id of the layer this voxel lives in
+
+    // default initialization
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        lastUpdate = new Object();
+    }
+
+    // utilized to update visualization
+    private transient Object lastUpdate = new Object();
+
+    public final Object getLastUpdate() {
+        return lastUpdate;
+    }
 
     // constructor
     public Voxel(int id, int[] pos, Color color, int layerId) {
@@ -37,6 +52,7 @@ public final class Voxel implements Serializable {
     // set the color of this voxel
     protected final void setColor(Color color) {
         this.color = color;
+        lastUpdate = new Object();
     }
 
     // get the color of this voxel
@@ -47,6 +63,7 @@ public final class Voxel implements Serializable {
     // set the alpha of this voxel
     protected final void setAlpha(int alpha) {
         this.alpha = alpha;
+        lastUpdate = new Object();
     }
 
     // get the color of this voxel
@@ -69,6 +86,7 @@ public final class Voxel implements Serializable {
 
     public final void setSelected(boolean b) {
         selected = b;
+        lastUpdate = new Object();
     }
 
 }

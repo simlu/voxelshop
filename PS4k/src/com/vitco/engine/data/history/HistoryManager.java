@@ -5,17 +5,17 @@ import java.util.ArrayList;
 /**
  * Manages BasicActionIntents. History manager.
  */
-public class HistoryManager {
+public class HistoryManager<T extends BasicActionIntent> {
 
     // holds the history data
     private int historyPosition = -1;
-    private ArrayList<BasicActionIntent> history = new ArrayList<BasicActionIntent>();
+    private ArrayList<T> history = new ArrayList<T>();
 
     public void clear() {
         historyPosition = -1;
-        history = new ArrayList<BasicActionIntent>();
+        history = new ArrayList<T>();
         // invalidate the cache
-        notifyListener();
+        notifyListener(null);
     }
 
     public final boolean canUndo() {
@@ -26,16 +26,16 @@ public class HistoryManager {
         return (history.size() > historyPosition + 1);
     }
 
-    public ArrayList<BasicActionIntent> getHistory() {
-        return new ArrayList<BasicActionIntent>(history);
+    public ArrayList<T> getHistory() {
+        return new ArrayList<T>(history);
     }
 
     public int getHistoryPosition() {
         return historyPosition;
     }
 
-    public final void setHistory(ArrayList<BasicActionIntent> history) {
-        this.history = new ArrayList<BasicActionIntent>(history);
+    public final void setHistory(ArrayList<T> history) {
+        this.history = new ArrayList<T>(history);
     }
 
     public final void setHistoryPosition(int historyPosition) {
@@ -43,7 +43,7 @@ public class HistoryManager {
     }
 
     // adds a new intent to the history and executes it
-    public final void applyIntent(BasicActionIntent actionIntent) {
+    public final void applyIntent(T actionIntent) {
         // delete all "re-dos"
         while (history.size() > historyPosition + 1) {
             history.remove(historyPosition + 1);
@@ -56,7 +56,7 @@ public class HistoryManager {
         // invalidate the cache if the intent is not attached
         // (for the main intent)
         if (!actionIntent.attach) {
-            notifyListener();
+            notifyListener(actionIntent);
         }
     }
 
@@ -69,7 +69,7 @@ public class HistoryManager {
             if (history.size() > historyPosition + 1 && history.get(historyPosition).attach) {
                 apply();
             } else {
-                notifyListener();
+                notifyListener(history.get(historyPosition)); // ok
             }
         }
 
@@ -78,27 +78,35 @@ public class HistoryManager {
     // apply the last history intent
     public final void unapply() {
         if (historyPosition > -1) { // we can still undo
+            T mainAction = history.get(historyPosition);
+            _unapply();
+            notifyListener(mainAction);
+        }
+    }
+
+    // helper
+    private void _unapply() {
+        if (historyPosition > -1) { // we can still undo
             history.get(historyPosition).unapply(); // undo action
             historyPosition--; // move one "down"
             // make sure the attached histories are applied
             if (historyPosition > -1 && history.get(historyPosition).attach) {
-                unapply();
-            } else {
-                notifyListener();
+                _unapply();
             }
         }
     }
 
-    private final ArrayList<HistoryChangeListener> listeners = new ArrayList<HistoryChangeListener>();
-    public final void addChangeListener(HistoryChangeListener hcl) {
+    private final ArrayList<HistoryChangeListener<T>> listeners
+            = new ArrayList<HistoryChangeListener<T>>();
+    public final void addChangeListener(HistoryChangeListener<T> hcl) {
         listeners.add(hcl);
     }
-    public final void removeChangeListener(HistoryChangeListener hcl) {
+    public final void removeChangeListener(HistoryChangeListener<T> hcl) {
         listeners.remove(hcl);
     }
-    private void notifyListener() {
-        for (HistoryChangeListener hcl : listeners) {
-            hcl.onChange();
+    private void notifyListener(T action) {
+        for (HistoryChangeListener<T> hcl : listeners) {
+            hcl.onChange(action);
         }
     }
 

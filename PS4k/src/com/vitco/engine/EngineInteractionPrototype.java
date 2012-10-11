@@ -348,8 +348,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private Integer[] currentSelectionShift = new Integer[3];
         private Point selectStartPoint = new Point(0,0);
 
+        // true if this adapter is used
         private boolean active = false;
-
         public final void setActive(boolean active) {
             this.active = active;
         }

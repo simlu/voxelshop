@@ -19,9 +19,9 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     protected AnimationData() {
         super();
         // notify when the data changes
-        historyManagerA.addChangeListener(new HistoryChangeListener() {
+        historyManagerA.addChangeListener(new HistoryChangeListener<BasicActionIntent>() {
             @Override
-            public final void onChange() {
+            public final void onChange(BasicActionIntent action) {
                 invalidateA();
             }
         });
@@ -36,7 +36,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     // history manager
-    protected final HistoryManager historyManagerA = new HistoryManager();
+    protected final HistoryManager<BasicActionIntent> historyManagerA = new HistoryManager<BasicActionIntent>();
 
     // ###################### PRIVATE HELPER CLASSES
     // "add point" intent

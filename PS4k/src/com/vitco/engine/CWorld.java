@@ -119,6 +119,18 @@ public class CWorld extends World {
     private void updateVoxelInternal(Voxel voxel) {
         // make sure old detailes are removed (if exist)
         removeVoxelInternal(voxel.id);
+
+        // make sure there exists no voxel already
+        int[] pos = voxel.getPosAsInt();
+        List<Voxel> list = positions.search(new float[] {pos[0], pos[1], pos[2]}, ZEROS);
+        if (list.size() > 0) {
+            int id = list.get(0).id;
+            removeVoxelInternal(id);
+            if (!toRefresh.contains(id)) { // add them if not already known to need updating
+                toRefresh.add(id);
+            }
+        }
+
         // add this voxel
         voxels.put(voxel.id, voxel);
         positions.insert(voxel.getPosAsFloat(), voxel);
@@ -207,6 +219,32 @@ public class CWorld extends World {
         return result;
     }
 
+    public final void clear() {
+        Integer[] ids = new Integer[voxels.size()];
+        int i = 0;
+        for (Voxel voxel : voxels.values()) {
+            ids[i++] = voxel.id;
+        }
+        for (int id : ids) {
+            removeVoxelInternal(id);
+            // mark to refresh (if not already marked)
+            if (!toRefresh.contains(id)) {
+                toRefresh.add(id);
+            }
+        }
+    }
+
+    // clear field by position
+    public final boolean clearPosition(int[] pos) {
+        boolean result = false;
+        List<Voxel> list = positions.search(new float[] {pos[0], pos[1], pos[2]}, ZEROS);
+        if (list.size() > 0) {
+            removeVoxel(list.get(0).id);
+            result = true;
+        }
+        return result;
+    }
+
     // refresh world
     public final void refreshWorld() {
         for (Integer voxelId : toRefresh) {
@@ -239,6 +277,7 @@ public class CWorld extends World {
                 }
             }
         }
+        toRefresh.clear();
     }
 
     // retrieve voxel for object id

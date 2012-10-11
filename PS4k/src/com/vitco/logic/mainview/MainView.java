@@ -32,6 +32,16 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
     }
 
     @Override
+    protected Voxel[][] getChangedVoxels() {
+        return data.getNewVisibleLayerVoxel("main_view");
+    }
+
+    @Override
+    protected Voxel[][] getChangedSelectedVoxels() {
+        return data.getNewSelectedVoxel("main_view");
+    }
+
+    @Override
     public final JPanel build() {
 
         // make sure we can see into the distance

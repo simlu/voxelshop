@@ -20,10 +20,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 /**
  * Rendering functionality of this World (data + overlay)
@@ -86,27 +83,44 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // voxel data getter to be defined
     protected abstract Voxel[] getVoxels();
 
+    // voxel data getter to be defined (for changed voxels since last call)
+    protected abstract Voxel[][] getChangedVoxels();
+
+    // changed selected voxels since last call
+    protected abstract Voxel[][] getChangedSelectedVoxels();
+
+    // holds the update information of the voxel
+    //private final HashMap<Integer, Object> voxelUpdates = new HashMap<Integer, Object>();
+
     // helper - make sure the voxel objects in the world are up to date
     private void updateWorldWithVoxels() {
-        ArrayList<Integer> loaded = new ArrayList<Integer>();
-        Collections.addAll(loaded, world.getLoaded());
-        for (Voxel voxel : getVoxels()) {
-            world.updateVoxel(voxel);
-            loaded.remove((Integer) voxel.id);
+        // only retrieve the changed voxels
+        Voxel[][] changed = getChangedVoxels();
+        if (changed[0] == null) { // rebuild
+            world.clear();
+        } else {
+            // remove individual voxel
+            for (Voxel remove : changed[0]) {
+                world.clearPosition(remove.getPosAsInt());
+            }
         }
-        for (Integer voxelId : loaded) {
-            world.removeVoxel(voxelId);
+        for (Voxel added : changed[1]) {
+            world.updateVoxel(added);
         }
         world.refreshWorld();
 
-        ArrayList<Integer> loadedSelected = new ArrayList<Integer>();
-        Collections.addAll(loadedSelected, selectedVoxelsWorld.getLoaded());
-        for (Voxel voxel : data.getSelectedVoxels()) {
-            selectedVoxelsWorld.updateVoxel(voxel);
-            loadedSelected.remove((Integer) voxel.id);
+        // only retrieve the changed voxels
+        changed = getChangedSelectedVoxels();
+        if (changed[0] == null) { // rebuild
+            selectedVoxelsWorld.clear();
+        } else {
+            // remove individual voxel
+            for (Voxel remove : changed[0]) {
+                selectedVoxelsWorld.clearPosition(remove.getPosAsInt());
+            }
         }
-        for (Integer voxelId : loadedSelected) {
-            selectedVoxelsWorld.removeVoxel(voxelId);
+        for (Voxel added : changed[1]) {
+            selectedVoxelsWorld.updateVoxel(added);
         }
         selectedVoxelsWorld.refreshWorld();
     }
@@ -522,6 +536,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // handle the redrawing of this component
         @Override
         protected final void paintComponent(Graphics g1) {
+            isRepainting = true;
             if (skipNextWorldRender && !doNotSkipNextWorldRender) {
                 skipNextWorldRender = false;
             } else {
@@ -538,13 +553,13 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     if (useWireFrame) {
                         world.drawWireframe(buffer, VitcoSettings.WIREFRAME_COLOR);
                     } else {
-                        world.draw(buffer);
+                        world.draw(buffer); // takes time (!) ~ 60ms
                         selectedVoxelsWorld.drawAsShiftedWireframe(buffer,
                                 VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR,
                                 VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED);
                     }
                 }
-                buffer.update();
+                buffer.update(); // takes time (!) ~ 10ms
                 if (drawOverlay) { // overlay part 1
                     drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
                 }
@@ -556,7 +571,14 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             if (drawOverlay && drawVoxelOverlay) {
                 drawVoxelOverlay((Graphics2D) g1);
             }
+            isRepainting = false;
         }
+
+        private boolean isRepainting = false;
+        protected boolean isRepainting() {
+            return isRepainting;
+        }
+
     }
 
     private boolean needRepaint = true;
@@ -570,7 +592,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         threadManager.manage(new LifeTimeThread() {
             @Override
             public void loop() throws InterruptedException {
-                if (needRepaint) {
+                if (needRepaint && !container.isRepainting()) {
                     needRepaint = false;
                     container.repaint();
                 }
