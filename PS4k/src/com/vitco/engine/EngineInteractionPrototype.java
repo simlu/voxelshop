@@ -177,6 +177,11 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     if (!point.equals(point2)) {
                         data.redoA();
                     }
+                    // quick select for side view "current" planes
+                    SimpleVector position = data.getPoint(dragPoint);
+                    preferences.storeObject("currentplane_sideview1", Math.round(position.z/VitcoSettings.VOXEL_SIZE));
+                    preferences.storeObject("currentplane_sideview2", Math.round(position.y/VitcoSettings.VOXEL_SIZE));
+                    preferences.storeObject("currentplane_sideview3", Math.round(position.x/VitcoSettings.VOXEL_SIZE));
                 }
                 dragPoint = -1; // stop dragging
                 final int highlighted_point = data.getHighlightedPoint();
@@ -219,25 +224,27 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 camera.setEnabled(false);
             }
             switch (e.getButton()) {
-                case 3: if (highlighted_point != -1) {
-                    // highlighted point -> ask to remove
-                    JPopupMenu popup = new JPopupMenu();
-                    JMenuItem remove = new JMenuItem(langSelector.getString("remove_point"));
-                    remove.addActionListener(new ActionListener() {
-                        private final int tmp_point = highlighted_point; // store point for later access
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            // add a point
-                            data.removePoint(tmp_point);
-                            data.highlightPoint(-1);
-                        }
-                    });
-                    popup.add(remove);
-                    popup.show(e.getComponent(), e.getX(), e.getY());
-                } else {
-                    // right click on background -> deselect
-                    data.selectPoint(-1);
-                }
+                case 3:
+                    if (highlighted_point != -1) {
+                        // highlighted point -> ask to remove
+                        JPopupMenu popup = new JPopupMenu();
+                        JMenuItem remove = new JMenuItem(langSelector.getString("remove_point"));
+                        remove.addActionListener(new ActionListener() {
+                            private final int tmp_point = highlighted_point; // store point for later access
+
+                            @Override
+                            public void actionPerformed(ActionEvent evt) {
+                                // add a point
+                                data.removePoint(tmp_point);
+                                data.highlightPoint(-1);
+                            }
+                        });
+                        popup.add(remove);
+                        popup.show(e.getComponent(), e.getX(), e.getY());
+                    } else {
+                        // right click on background -> deselect
+                        data.selectPoint(-1);
+                    }
                     break;
                 case 1: // if left mouse
                     if (highlighted_point != -1) { // highlighted -> select point
@@ -336,7 +343,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private VOXELMODE massVoxelMode = null;
 
         // the last position we drew
-        private int[] lastDrawPos = new int[3];
+        private int[] dragDrawStartPos = null;
 
         // the current color (to draw)
         private float[] currentColor = ColorTools.colorToHSB(VitcoSettings.INITIAL_CURRENT_COLOR);
@@ -397,11 +404,11 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
                             switch (e.getModifiersEx()) {
                                 case InputEvent.BUTTON1_DOWN_MASK: // left click
-                                    if (!massVoxel) {
+                                    if (!massVoxel && side == -1) {
                                         // memorise position
-                                        lastDrawPos = highlighted;
+                                        dragDrawStartPos = highlighted;
                                     }
-                                    if (side != -1 || lastDrawPos[1] == highlighted[1]) {
+                                    if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
                                         data.addVoxel(ColorTools.hsbToColor(currentColor), highlighted);
                                     }
                                     break;
@@ -521,12 +528,23 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         // hover on mouse event
         protected final void hover(MouseEvent e) {
             if (voxelMode != VOXELMODE.SELECT) {
-                int[] voxelPos = voxelPosForHoverPos(e.getPoint());
-                if (voxelPos != null) {
-                    data.highlightVoxel(voxelPos);
-                } else {
-                    data.highlightVoxel(null);
+                int[] voxelPos = null;
+                if (dragDrawStartPos == null) { // normal hover
+                    voxelPos = voxelPosForHoverPos(e.getPoint());
+                } else { // find voxel in same plane
+                    SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, Math.round(e.getX() * 2), Math.round(e.getY() * 2)).normalize();
+                    // hit nothing, draw preview on zero level
+                    if (dir.y > 0.05) { // angle big enough
+                        // calculate position
+                        float t = (dragDrawStartPos[1]*VitcoSettings.VOXEL_SIZE - camera.getPosition().y) / dir.y;
+                        dir.scalarMul(t);
+                        SimpleVector pos = camera.getPosition();
+                        pos.add(dir);
+                        pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
+                        voxelPos = new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)};
+                    }
                 }
+                data.highlightVoxel(voxelPos);
             } else {
                 switch (selectMode) {
                     case 0:
@@ -600,11 +618,12 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             hover(e);
             camera.setEnabled(true);
             massVoxel = false;
+            dragDrawStartPos = null;
             switch (selectMode) {
                 case 1:
                     Integer hitVoxelId = finishSelect(e);
                     selectMode = 0;
-                    if (hitVoxelId != null && data.getVoxel(hitVoxelId).isSelected()) {
+                    if (hitVoxelId != null && data.getVoxel(hitVoxelId).isSelected() && !e.isControlDown()) {
                         // make sure the voxel is correctly selected
                         container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
                     }
@@ -639,6 +658,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     case 1:
                     case 2:
                         executeSelectionMode(e);
+                        forceRepaint();
                         break;
                 }
             }
@@ -751,6 +771,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     voxelAdapter.replayHover();
                 }
                 container.setDrawAnimationOverlay(isAnimate);
+                container.setDrawSelectedVoxels(!isAnimate);
                 forceRepaint();
             }
 

@@ -45,6 +45,13 @@ public class CCamera extends Camera {
         }
     }
 
+    private final SimpleVector origin = new SimpleVector(0, -10 * VitcoSettings.VOXEL_SIZE, 0);
+
+    // get the current origin
+    private SimpleVector getOrigin() {
+        return origin;
+    }
+
     // zoom in
     public void zoomIn(float speed) {
         if (enableCamera) {
@@ -52,7 +59,7 @@ public class CCamera extends Camera {
             this.moveCamera(Camera.CAMERA_MOVELEFT, -amountShifted[0]);
             this.moveCamera(Camera.CAMERA_MOVEUP, -amountShifted[1]);
             // check for zooming
-            if (this.getPosition().distance(SimpleVector.ORIGIN) > ZOOM_IN_MAX || ZOOM_IN_MAX == -1) {
+            if (this.getPosition().distance(getOrigin()) > ZOOM_IN_MAX || ZOOM_IN_MAX == -1) {
                 this.moveCamera(Camera.CAMERA_MOVEIN, speed);
             }
             // shift the camera back (again)
@@ -69,7 +76,7 @@ public class CCamera extends Camera {
             this.moveCamera(Camera.CAMERA_MOVELEFT, -amountShifted[0]);
             this.moveCamera(Camera.CAMERA_MOVEUP, -amountShifted[1]);
             // check for zooming
-            if (this.getPosition().distance(SimpleVector.ORIGIN) < ZOOM_OUT_MAX || ZOOM_OUT_MAX == -1) {
+            if (this.getPosition().distance(getOrigin()) < ZOOM_OUT_MAX || ZOOM_OUT_MAX == -1) {
                 this.moveCamera(Camera.CAMERA_MOVEIN, -speed);
             }
             // shift the camera back (again)
@@ -83,7 +90,7 @@ public class CCamera extends Camera {
     public final void setView(SimpleVector pos) {
         if (enableCamera) {
             this.setPosition(pos);
-            this.lookAt(SimpleVector.ORIGIN);
+            this.lookAt(getOrigin());
             // reset internal shift vars
             amountShifted[0] = 0;
             amountShifted[1] = 0;
@@ -92,10 +99,6 @@ public class CCamera extends Camera {
         }
     }
 
-    // todo remove
-//    float[] rotAmount = new float[2];
-//    SimpleVector prevRotOrigin = SimpleVector.ORIGIN;
-
     // rotate view
     public void rotate(float amountX, float amountY) {
         if (enableCamera) {
@@ -103,24 +106,8 @@ public class CCamera extends Camera {
             this.moveCamera(Camera.CAMERA_MOVELEFT, -amountShifted[0]);
             this.moveCamera(Camera.CAMERA_MOVEUP, -amountShifted[1]);
 
-         // todo remove
-//            // move to previous origin
-//            float dist = this.getPosition().distance(prevRotOrigin);
-//            this.moveCamera(Camera.CAMERA_MOVEIN, dist);
-//
-//            // undo rotations
-//            this.rotateX( rotAmount[1] * VitcoSettings.MAIN_VIEW_ROTATION_X_FACTOR);
-//            this.rotateAxis(this.getYAxis(), - rotAmount[0] * VitcoSettings.MAIN_VIEW_ROTATION_Y_FACTOR);
-//            rotAmount[0] += amountX;
-//            rotAmount[1] += amountY;
-//            prevRotOrigin = new SimpleVector(0, -amountShifted[1], 0);
-//
-//            // move the camera out again
-//            this.moveCamera(Camera.CAMERA_MOVEOUT, dist);
-
-
             // move to origin
-            float dist = this.getPosition().distance(SimpleVector.ORIGIN);
+            float dist = this.getPosition().distance(getOrigin());
             this.moveCamera(Camera.CAMERA_MOVEIN, dist);
 
             // rotate the camera correctly

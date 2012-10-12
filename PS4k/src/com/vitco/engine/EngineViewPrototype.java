@@ -184,6 +184,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             drawWorld = b;
         }
 
+        // this enables/disables drawing of selected voxels
+        private boolean drawSelectedVoxels = true;
+        public final void setDrawSelectedVoxels(boolean b) {
+            drawSelectedVoxels = b;
+        }
+
         // this enabled/disables all overlay
         private boolean drawOverlay = true;
         public final void setDrawOverlay(boolean b) {
@@ -551,9 +557,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                         world.drawWireframe(buffer, VitcoSettings.WIREFRAME_COLOR);
                     } else {
                         world.draw(buffer); // takes time (!) ~ 60ms
-                        selectedVoxelsWorld.drawAsShiftedWireframe(buffer,
-                                VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR,
-                                VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED);
+                        if (drawSelectedVoxels) { // only draw selected voxels if enables
+                            selectedVoxelsWorld.drawAsShiftedWireframe(buffer,
+                                    VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR,
+                                    VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED);
+                        }
                     }
                 }
                 buffer.update(); // takes time (!) ~ 10ms

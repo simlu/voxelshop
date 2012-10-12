@@ -118,7 +118,7 @@ public final class VitcoSettings {
     // general config
     public static final Float VOXEL_SIZE = 10f;
     public static final Float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
-    public static final Float VOXEL_GROUND_PLANE_SIZE = 25 * VOXEL_SIZE; // when changing this make sure the edges are ok
+    public static final Float VOXEL_GROUND_PLANE_SIZE = 35 * VOXEL_SIZE; // when changing this make sure the edges are ok
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
@@ -135,6 +135,6 @@ public final class VitcoSettings {
     };
 
     // file import
-    public static final Integer MAX_VOXEL_COUNT_PER_LAYER = 500;
+    public static final Integer MAX_VOXEL_COUNT_PER_LAYER = 1000;
 
 }

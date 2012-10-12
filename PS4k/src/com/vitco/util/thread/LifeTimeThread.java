@@ -2,25 +2,21 @@ package com.vitco.util.thread;
 
 
 public abstract class LifeTimeThread extends Thread {
-    private boolean stopFlag = false;
-
     // run the loop till interrupted
     public final void run() {
         try {
             //noinspection InfiniteLoopStatement
             while (true) {
                 loop();
-
-                if (stopFlag) {
-                    throw new InterruptedException();
-                }
             }
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     // to interrupt the thread
     public final void stopThread() {
-        stopFlag = true;
+        interrupt();
     }
 
     // loop to be defines

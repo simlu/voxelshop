@@ -37,6 +37,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
     public void registerLogic(Frame frame) {
         // stores the current position (keeps current)
+        // (used to shift copy + paste correctly in side view)
         final int[] currentPos = new int[3];
         for (int i = 0; i < 3; i++) {
             final int finalI = i;
@@ -272,8 +273,8 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public void onVoxelDataChanged() {
-                boolean voxelsAreSelectedTemp = data.getSelectedVoxels().length > 0;
-                boolean voxelsAreInLayerTemp = data.getVisibleLayerVoxel().length > 0;
+                boolean voxelsAreSelectedTemp = true;
+                boolean voxelsAreInLayerTemp = true;
                 if (voxelsAreSelected != voxelsAreSelectedTemp || voxelsAreInLayer != voxelsAreInLayerTemp) {
                     voxelsAreSelected = voxelsAreSelectedTemp;
                     voxelsAreInLayer = voxelsAreInLayerTemp;

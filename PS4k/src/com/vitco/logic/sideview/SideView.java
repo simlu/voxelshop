@@ -143,6 +143,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 currentplane = (Integer)o;
                 // invalidate this buffer (as the plane has changed)
                 data.invalidateSideViewBuffer("side" + side, side, currentplane);
+                container.doNotSkipNextWorldRender();
                 invalidateVoxels();
                 forceRepaint();
             }
