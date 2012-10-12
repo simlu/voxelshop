@@ -21,9 +21,9 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
     private boolean isAnimate = VitcoSettings.INITIAL_MODE_IS_ANIMATION;
     // status of selection moved
-    private boolean voxelsAreMoved = false;
+    private boolean voxelsAreMoved = true; // todo should be false
     // true iff there are selected voxels
-    private boolean voxelsAreSelected = false;
+    private boolean voxelsAreSelected = true; // todo should be false
     // true iff there are voxels in layer
     private boolean voxelsAreInLayer = true;
 
@@ -226,6 +226,8 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 return !isAnimate && voxelsAreSelected;
             }
         });
+
+        // finalize shifting
         actionGroupManager.addAction("selection_interaction", "selection_tool_finalize_shifting", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
@@ -242,6 +244,184 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public boolean getStatus() {
                 return !isAnimate && voxelsAreMoved && voxelsAreSelected;
+            }
+        });
+
+        // rotate (popup buttons) - only to disable
+        StateActionPrototype disableAction = new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                // nothing to do
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        };
+        actionGroupManager.addAction("selection_interaction", "selection_tool_rotatex", disableAction);
+        actionGroupManager.addAction("selection_interaction", "selection_tool_rotatey", disableAction);
+        actionGroupManager.addAction("selection_interaction", "selection_tool_rotatez", disableAction);
+
+        // rotate buttons, define the actions
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorx90", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 0, 90);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorx180", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 0, 180);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorx270", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 0, 270);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrory90", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 1, 90);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrory180", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 1, 180);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrory270", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 1, 270);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorz90", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 2, 90);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorz180", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 2, 180);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorz270", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.rotateVoxel(data.getSelectedVoxels(), 2, 270);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+
+        // mirror actions
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorx", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.mirrorVoxel(data.getSelectedVoxels(), 0);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrory", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.mirrorVoxel(data.getSelectedVoxels(), 1);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_mirrorz", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    data.mirrorVoxel(data.getSelectedVoxels(), 2);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
             }
         });
 
@@ -276,6 +456,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 boolean voxelsAreSelectedTemp = true;
                 boolean voxelsAreInLayerTemp = true;
                 if (voxelsAreSelected != voxelsAreSelectedTemp || voxelsAreInLayer != voxelsAreInLayerTemp) {
+                    // todo: change definition above to false when fetching real values
                     voxelsAreSelected = voxelsAreSelectedTemp;
                     voxelsAreInLayer = voxelsAreInLayerTemp;
                     actionGroupManager.refreshGroup("selection_interaction");

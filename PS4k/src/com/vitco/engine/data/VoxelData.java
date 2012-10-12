@@ -8,6 +8,7 @@ import com.vitco.engine.data.history.VoxelActionIntent;
 import com.vitco.res.VitcoSettings;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -986,6 +987,194 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    private final class RotateVoxelIntent extends VoxelActionIntent  {
+        private final Voxel[] voxels;
+        private final int axe;
+        private final float angle;
+
+        protected RotateVoxelIntent(Voxel[] voxels, int axe, float angle, boolean attach) {
+            super(attach);
+            this.voxels = voxels;
+            this.axe = axe;
+            this.angle = angle;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+
+                // what is effected (there could be duplicate positions here)
+                effected = new int[voxels.length*2][];
+
+                // generate the ids and find center
+                int[] centerMin = null;
+                int[] centerMax = null;
+                Integer[] voxelIds = new Integer[voxels.length];
+                for (int i = 0; i < voxels.length; i++) {
+                    voxelIds[i] = voxels[i].id;
+                    int[] pos = voxels[i].getPosAsInt();
+                    if (centerMin == null) {
+                        centerMin = pos.clone();
+                        centerMax = pos.clone();
+                    }
+                    centerMin[0] = Math.min(centerMin[0],pos[0]);
+                    centerMin[1] = Math.min(centerMin[1],pos[1]);
+                    centerMin[2] = Math.min(centerMin[2],pos[2]);
+                    centerMax[0] = Math.max(centerMax[0],pos[0]);
+                    centerMax[1] = Math.max(centerMax[1],pos[1]);
+                    centerMax[2] = Math.max(centerMax[2],pos[2]);
+                }
+                // calculate center - note: voxels.length must not be zero
+                assert centerMin != null;
+                int[]center = new int[] {
+                        (centerMin[0] + centerMax[0])/2,
+                        (centerMin[1] + centerMax[1])/2,
+                        (centerMin[2] + centerMax[2])/2
+                };
+
+                int rot1 = 0;
+                int rot2 = 2;
+                switch (axe) {
+                    case 2:
+                        rot1 = 0;
+                        rot2 = 1;
+                        break;
+                    case 1:
+                        rot1 = 0;
+                        rot2 = 2;
+                        break;
+                    case 0:
+                        rot1 = 1;
+                        rot2 = 2;
+                        break;
+                }
+
+                // remove all voxels
+                historyManagerV.applyIntent(new MassRemoveVoxelIntent(voxelIds, true));
+
+                // create new voxels (with new position) and delete
+                // existing voxels at those positions
+                Voxel[] shiftedVoxels = new Voxel[voxels.length];
+                for (int i = 0; i < voxels.length; i++) {
+                    Voxel voxel = voxels[i];
+                    int[] pos = voxel.getPosAsInt();
+                    effected[i] = voxel.getPosAsInt().clone(); // what is effected
+
+                    // rotate the point around the center
+                    // todo check for duplicates (overlaps when rotating)
+                    double[] pt = {pos[rot1], pos[rot2]};
+                    AffineTransform.getRotateInstance(Math.toRadians(angle), center[rot1], center[rot2])
+                            .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
+                    pos[rot1] = (int)Math.round(pt[0]);
+                    pos[rot2] = (int)Math.round(pt[1]);
+
+                    effected[i + voxels.length] = pos.clone(); // what is effected
+                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getLayerId());
+                    // remove existing voxels in this layer
+                    Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
+                    for (Voxel remVoxel : result) {
+                        historyManagerV.applyIntent(new RemoveVoxelIntent(remVoxel.id, true));
+                    }
+                }
+                // (re)add all the rotated voxels (null ~ the voxel layer id is used)
+                historyManagerV.applyIntent(new MassAddVoxelIntent(shiftedVoxels, null, true));
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+
+        private int[][] effected = null;
+        @Override
+        public int[][] effected() {
+            return effected;
+        }
+    }
+
+    private final class MirrorVoxelIntent extends VoxelActionIntent  {
+        private final Voxel[] voxels;
+        private final int axe;
+
+        protected MirrorVoxelIntent(Voxel[] voxels, int axe, boolean attach) {
+            super(attach);
+            this.voxels = voxels;
+            this.axe = axe;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+
+                // what is effected (there could be duplicate positions here)
+                effected = new int[voxels.length*2][];
+
+                // generate the ids and find center
+                int[] centerMin = null;
+                int[] centerMax = null;
+                Integer[] voxelIds = new Integer[voxels.length];
+                for (int i = 0; i < voxels.length; i++) {
+                    voxelIds[i] = voxels[i].id;
+                    int[] pos = voxels[i].getPosAsInt();
+                    if (centerMin == null) {
+                        centerMin = pos.clone();
+                        centerMax = pos.clone();
+                    }
+                    centerMin[0] = Math.min(centerMin[0],pos[0]);
+                    centerMin[1] = Math.min(centerMin[1],pos[1]);
+                    centerMin[2] = Math.min(centerMin[2],pos[2]);
+                    centerMax[0] = Math.max(centerMax[0],pos[0]);
+                    centerMax[1] = Math.max(centerMax[1],pos[1]);
+                    centerMax[2] = Math.max(centerMax[2],pos[2]);
+                }
+                // calculate center - note: voxels.length must not be zero
+                assert centerMin != null;
+                int[]center = new int[] {
+                        (centerMin[0] + centerMax[0])/2,
+                        (centerMin[1] + centerMax[1])/2,
+                        (centerMin[2] + centerMax[2])/2
+                };
+
+                // remove all voxels
+                historyManagerV.applyIntent(new MassRemoveVoxelIntent(voxelIds, true));
+
+                // create new voxels (with new position) and delete
+                // existing voxels at those positions
+                Voxel[] shiftedVoxels = new Voxel[voxels.length];
+                for (int i = 0; i < voxels.length; i++) {
+                    Voxel voxel = voxels[i];
+                    int[] pos = voxel.getPosAsInt();
+                    effected[i] = voxel.getPosAsInt().clone(); // what is effected
+
+                    // switch the point with the center
+                    pos[axe] = - pos[axe] + 2*center[axe];
+
+                    effected[i + voxels.length] = pos.clone(); // what is effected
+                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getLayerId());
+                    // remove existing voxels in this layer
+                    Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
+                    for (Voxel remVoxel : result) {
+                        historyManagerV.applyIntent(new RemoveVoxelIntent(remVoxel.id, true));
+                    }
+                }
+                // (re)add all the rotated voxels (null ~ the voxel layer id is used)
+                historyManagerV.applyIntent(new MassAddVoxelIntent(shiftedVoxels, null, true));
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+
+        private int[][] effected = null;
+        @Override
+        public int[][] effected() {
+            return effected;
+        }
+    }
+
     // ##################### PRIVATE HELPER FUNCTIONS
     // returns a free voxel id
     private int lastVoxel = -1;
@@ -1098,6 +1287,26 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         boolean result = false;
         if (voxel.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
             historyManagerV.applyIntent(new MassMoveVoxelIntent(voxel, shift, false));
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
+    public final boolean rotateVoxel(Voxel[] voxel, int axe, float degree) {
+        boolean result = false;
+        if (voxel.length > 0 && degree/360 != 0) {
+            historyManagerV.applyIntent(new RotateVoxelIntent(voxel, axe, degree, false));
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
+    public final boolean mirrorVoxel(Voxel[] voxel, int axe) {
+        boolean result = false;
+        if (voxel.length > 0) {
+            historyManagerV.applyIntent(new MirrorVoxelIntent(voxel, axe, false));
             result = true;
         }
         return result;

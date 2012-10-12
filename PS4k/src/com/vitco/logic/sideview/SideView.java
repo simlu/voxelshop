@@ -75,7 +75,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         };
         // nullify if we didn't find a voxel (and not in draw mode)
         if (voxelMode != VOXELMODE.DRAW) {
-            if (data.searchVoxel(pos, true) == null) {
+            if (data.searchVoxel(pos, false) == null) {
                 pos = null;
             }
         }

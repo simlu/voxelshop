@@ -43,4 +43,39 @@
                tool-tip="selection_tool_recolor_tooltip"
                grayable="true"
                action="selection_tool_recolor"/>
+    <separator/>
+    s
+    <!--rotate-->
+    <split-item src="resource/img/bars/select_bar/rotate/rotatex.png"
+                tool-tip="selection_tool_rotatex_tooltip"
+                grayable="true"
+                disable-action="true"
+                action="selection_tool_rotatex"
+                complex-action="selection_tool_rotatex_popup"/>
+    <split-item src="resource/img/bars/select_bar/rotate/rotatey.png"
+                tool-tip="selection_tool_rotatey_tooltip"
+                grayable="true"
+                disable-action="true"
+                action="selection_tool_rotatey"
+                complex-action="selection_tool_rotatey_popup"/>
+    <split-item src="resource/img/bars/select_bar/rotate/rotatez.png"
+                tool-tip="selection_tool_rotatez_tooltip"
+                grayable="true"
+                disable-action="true"
+                action="selection_tool_rotatez"
+                complex-action="selection_tool_rotatez_popup"/>
+
+    <!--mirror-->
+    <icon-item src="resource/img/bars/select_bar/mirror/mirrorx.png"
+               tool-tip="selection_tool_mirrorx_tooltip"
+               grayable="true"
+               action="selection_tool_mirrorx"/>
+    <icon-item src="resource/img/bars/select_bar/mirror/mirrory.png"
+               tool-tip="selection_tool_mirrory_tooltip"
+               grayable="true"
+               action="selection_tool_mirrory"/>
+    <icon-item src="resource/img/bars/select_bar/mirror/mirrorz.png"
+               tool-tip="selection_tool_mirrorz_tooltip"
+               grayable="true"
+               action="selection_tool_mirrorz"/>
 </head>

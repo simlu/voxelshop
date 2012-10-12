@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <icon-item src="resource/img/bars/select_bar/rotate/y90.png"
+               tool-tip="selection_tool_mirrory90_tooltip"
+               grayable="true"
+               action="selection_tool_mirrory90"/>
+    <icon-item src="resource/img/bars/select_bar/rotate/y180.png"
+               tool-tip="selection_tool_mirrory180_tooltip"
+               grayable="true"
+               action="selection_tool_mirrory180"/>
+    <icon-item src="resource/img/bars/select_bar/rotate/y270.png"
+               tool-tip="selection_tool_mirrory270_tooltip"
+               grayable="true"
+               action="selection_tool_mirrory270"/>
+</head>

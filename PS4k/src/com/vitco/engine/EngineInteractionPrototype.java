@@ -409,7 +409,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         dragDrawStartPos = highlighted;
                                     }
                                     if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
-                                        data.addVoxel(ColorTools.hsbToColor(currentColor), highlighted);
+                                        if (data.searchVoxel(highlighted, false) == null) {
+                                            // only draw if there is no voxels already here
+                                            data.addVoxel(ColorTools.hsbToColor(currentColor), highlighted);
+                                        }
                                     }
                                     break;
                                 case InputEvent.BUTTON3_DOWN_MASK: // right click
@@ -421,7 +424,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             }
                         }
                     } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
-                        Voxel highlightedVoxel = data.searchVoxel(highlighted, true);
+                        Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
                         if (highlightedVoxel != null) {
                             data.removeVoxel(highlightedVoxel.id);
                         }

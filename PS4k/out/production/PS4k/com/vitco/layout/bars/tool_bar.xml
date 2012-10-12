@@ -63,4 +63,5 @@
                 tool-tip="settings_menubar_tooltip"
                 complex-action="current_color_button_popup"
                 register-button-as-complex-action="current_color_button_icon"/>
+
 </head>

@@ -42,32 +42,6 @@ public class CWorld extends World {
     // ==============================
     // drawing of selected (wireframe)
 
-    // todo remove
-//    private boolean centerValid = false;
-//    private final Integer[] center = new Integer[]{0,0,0};
-
-//    // get the center
-//    private Integer[] getCenter() {
-//        if (!centerValid) {
-//            Float[] center = new Float[]{0f,0f,0f};
-//            Integer count = 0;
-//            for (Voxel voxel : voxels.values()) {
-//                // update center information
-//                count++;
-//                float[] pos = voxel.getPosAsFloat();
-//                center[0] += pos[0];
-//                center[1] += pos[1];
-//                center[2] += pos[2];
-//            }
-//            this.center[0] = Math.round(center[0]/count);
-//            this.center[1] = Math.round(center[1]/count);
-//            this.center[2] = Math.round(center[2]/count);
-//            System.out.println(this.center[0] + "," + this.center[1] + "," + this.center[2]);
-//            centerValid = true;
-//        }
-//        return center;
-//    }
-
     // move offset
     private SimpleVector offset = new SimpleVector(0, 0, 0);
     private float length = offset.length();

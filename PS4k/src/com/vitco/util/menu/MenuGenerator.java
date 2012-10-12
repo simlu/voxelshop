@@ -320,7 +320,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
                 ClassLoader.getSystemResource(e.getAttribute("src")))));
 
         // check if we have an action
-        if (e.hasAttribute("action") && !(e.hasAttribute("disable-action") && e.getAttribute("disable-action").equals("true"))) {
+        if (e.hasAttribute("action")) {
             // to perform validity check we need to register this name
             actionManager.registerActionIsUsed(e.getAttribute("action"));
             // lazy action linking (the action might not be ready!)
@@ -330,6 +330,10 @@ public class MenuGenerator implements MenuGeneratorInterface {
                     splitButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
                 }
             });
+            // disable action if wanted (e.g. if only grayout action)
+            if (e.hasAttribute("disable-action") && e.getAttribute("disable-action").equals("true")) {
+                splitButton.setAlwaysDropdown(true);
+            }
         } else {
             // the whole button is now used to open the dropdown menu
             splitButton.setAlwaysDropdown(true);
