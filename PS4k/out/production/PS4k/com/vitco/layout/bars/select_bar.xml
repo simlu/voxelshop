@@ -44,7 +44,7 @@
                grayable="true"
                action="selection_tool_recolor"/>
     <separator/>
-    s
+
     <!--rotate-->
     <split-item src="resource/img/bars/select_bar/rotate/rotatex.png"
                 tool-tip="selection_tool_rotatex_tooltip"

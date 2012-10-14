@@ -535,7 +535,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 if (dragDrawStartPos == null) { // normal hover
                     voxelPos = voxelPosForHoverPos(e.getPoint());
                 } else { // find voxel in same plane
-                    SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, Math.round(e.getX() * 2), Math.round(e.getY() * 2)).normalize();
+                    SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
                     // hit nothing, draw preview on zero level
                     if (dir.y > 0.05) { // angle big enough
                         // calculate position

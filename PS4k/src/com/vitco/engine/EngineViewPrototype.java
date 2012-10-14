@@ -20,6 +20,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 /**
@@ -79,6 +80,17 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // ==============================
     // updating of world with voxels
     // ==============================
+
+
+    // overlay ghost voxels
+    protected abstract SimpleVector[][] getGhostOverlay();
+    // true if overlay has changed since last call
+    protected abstract boolean updateGhostOverlay();
+
+    private boolean drawGhostOverlay = false;
+    public final void setDrawGhostOverlay(boolean b) {
+        drawGhostOverlay = b;
+    }
 
     // voxel data getter to be defined
     protected abstract Voxel[] getVoxels();
@@ -159,6 +171,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // the current preview plane
         private int previewPlane = 0;
 
+        // true iff camera has changed since last draw call
+        private boolean cameraChanged = true;
+
         // initialize
         public void init() {
             // register bg color change
@@ -174,6 +189,13 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 @Override
                 public void onPrefChange(Object newValue) {
                     previewPlane = (Integer)newValue;
+                }
+            });
+            // register camera change listener
+            camera.addCameraChangeListener(new CameraChangeListener() {
+                @Override
+                public void onCameraChange() {
+                    cameraChanged = true;
                 }
             });
         }
@@ -570,13 +592,49 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 }
             }
             buffer.display(g1);
+            // draw the under/overlay (voxels in parallel planes)
+            if (drawGhostOverlay) {
+                drawGhostOverlay((Graphics2D) g1, cameraChanged);
+            }
             if (drawOverlay && drawAnimationOverlay) { // overlay part 2
                 drawAnimationOverlay((Graphics2D) g1); // refreshes with animation data
             }
             if (drawOverlay && drawVoxelOverlay) {
                 drawVoxelOverlay((Graphics2D) g1);
             }
+            cameraChanged = false; // camera is current for this redraw
             isRepainting = false;
+        }
+
+        // draw some ghosting lines (the voxel outline)
+        private BufferedImage overlayBuffer = new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
+        private void drawGhostOverlay(Graphics2D g1, boolean forceRepaint) {
+            boolean resized =
+                    buffer.getOutputWidth() != overlayBuffer.getWidth() ||
+                            buffer.getOutputHeight() != overlayBuffer.getHeight();
+            if (resized) {
+                overlayBuffer = new BufferedImage(buffer.getOutputWidth(), buffer.getOutputHeight(), BufferedImage.TYPE_INT_ARGB);
+            }
+            boolean updated = updateGhostOverlay();
+            if (updated || forceRepaint || resized) {
+                // draw the lines
+                Graphics2D g = (Graphics2D)overlayBuffer.getGraphics();
+                // Anti-alias
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                // clear the previous drawings
+                g.setBackground(new Color(0,0,0,0));
+                g.clearRect(0,0,buffer.getOutputWidth(),buffer.getOutputHeight());
+                // set color
+                g.setColor(VitcoSettings.GHOST_VOXEL_OVERLAY_LINE_COLOR);
+                // draw
+                for (SimpleVector[] line : getGhostOverlay()) {
+                    SimpleVector p1 = convert3D2D(line[0]);
+                    SimpleVector p2 = convert3D2D(line[1]);
+                    g.drawLine(Math.round(p1.x), Math.round(p1.y), Math.round(p2.x), Math.round(p2.y));
+                }
+            }
+            g1.drawImage(overlayBuffer, 0, 0, null);
         }
 
         private boolean isRepainting = false;

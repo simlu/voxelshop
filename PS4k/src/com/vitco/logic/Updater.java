@@ -1,7 +1,9 @@
-package com.vitco.util;
+package com.vitco.logic;
 
 import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.FileTools;
+import com.vitco.util.UrlUtil;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
@@ -42,6 +44,7 @@ public class Updater {
 
     @PostConstruct
     public final void init() {
+        // todo check if this works on mac & linux
         // load the local digest
         String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         try {

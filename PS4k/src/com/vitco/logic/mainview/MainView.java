@@ -26,6 +26,18 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         super(-1);
     }
 
+    // --------------
+    // we don't have an ghost overlay to draw
+    @Override
+    protected SimpleVector[][] getGhostOverlay() {
+        return new SimpleVector[0][];
+    }
+    @Override
+    protected boolean updateGhostOverlay() {
+        return false;
+    }
+    // -----------------------
+
     @Override
     protected Voxel[] getVoxels() {
         return data.getVisibleLayerVoxel();

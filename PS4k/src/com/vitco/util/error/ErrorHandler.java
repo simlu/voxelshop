@@ -15,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.URLDecoder;
 
 /**
  * Deals with all the exceptions in the program. Writes them to file and tries to upload
@@ -96,6 +97,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
             if (lastErrorReport + error_spam_timeout < System.currentTimeMillis()) {
                 lastErrorReport = System.currentTimeMillis();
                 Toolkit.getDefaultToolkit().beep(); // play beep
+                boolean result = false;
                 // show dialog
                 if (JOptionPane.showOptionDialog(null, langSelector.getString("error_dialog_text"),
                         langSelector.getString("error_dialog_caption"),
@@ -114,13 +116,51 @@ public class ErrorHandler implements ErrorHandlerInterface {
                         e.printStackTrace(ps);
 
                         // upload to server
-                        uploadFile(temp, e.getMessage());
+                        if (uploadFile(temp, e.getMessage())) {
+                            result = true;
+                        }
 
                     } catch (FileNotFoundException e1) {
-                        //e1.printStackTrace();
+                        if (debug) {
+                            e1.printStackTrace();
+                        }
                     } catch (IOException e1) {
-                        //e1.printStackTrace();
+                        if (debug) {
+                            e1.printStackTrace();
+                        }
                     }
+                }
+                if (!result) {
+                    console.addLine(langSelector.getString("error_dialog_upload_failed"));
+                    // print this error to file
+                    String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+                    try {
+                        String appJarLocation = URLDecoder.decode(path, "UTF-8");
+                        File appJar = new File(appJarLocation);
+                        String absolutePath = appJar.getAbsolutePath();
+                        String filePath = absolutePath.
+                                substring(0, absolutePath.lastIndexOf(File.separator) + 1);
+                        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filePath + "errorlog.txt", true)));
+                        out.println("===================");
+                        out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
+                        out.println("-------------------");
+                        e.printStackTrace(out);
+                        out.println();
+                        out.close();
+                        console.addLine(langSelector.getString("error_dialog_request_upload_manually"));
+                    } catch (UnsupportedEncodingException ex) {
+                        // If this fails, the program is not reporting.
+                        if (debug) {
+                            ex.printStackTrace();
+                        }
+                    } catch (IOException ex) {
+                        // If this fails, the program is not reporting.
+                        if (debug) {
+                            ex.printStackTrace();
+                        }
+                    }
+                } else {
+                    console.addLine(langSelector.getString("error_dialog_upload_ok"));
                 }
             }
         }
@@ -128,7 +168,8 @@ public class ErrorHandler implements ErrorHandlerInterface {
     }
 
     // upload file to server
-    private void uploadFile(File temp, String error) {
+    private boolean uploadFile(File temp, String error) {
+        boolean result = false;
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(debugReportUrl);
         try {
@@ -138,13 +179,11 @@ public class ErrorHandler implements ErrorHandlerInterface {
             httpPost.setEntity(reqEntity);
             HttpResponse response = httpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
-            if (EntityUtils.toString(entity).equals("1")) {
-                // upload was successful, notify the user
-                console.addLine(langSelector.getString("error_dialog_upload_ok"));
-            } else {
-                console.addLine(langSelector.getString("error_dialog_upload_failed"));
-            }
             // do something useful with the response body
+            if (EntityUtils.toString(entity).equals("1")) {
+                // upload was successful
+                result = true;
+            }
             // and ensure it is fully consumed
             EntityUtils.consume(entity);
         } catch (IOException e) {
@@ -155,6 +194,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
         } finally {
             httpPost.releaseConnection();
         }
+        return result;
     }
 
     @Override
@@ -162,7 +202,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
         try {
             handle(e);
         } catch (Exception ex) {
-            // make sure there will never be a loop!
+            // makes sure there will never be a loop!
         }
     }
 }

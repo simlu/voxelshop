@@ -83,7 +83,53 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     }
 
     // the current depth of the plane that is shown
-    private int currentplane = 0;
+    private int currentplane = -1;
+    private int prevcurrentplane = -1; // the previous current plane
+
+    // --------------
+    // define ghost overlay that we draw
+
+    private VoxelOutline voxelOutline;
+
+    @Override
+    protected SimpleVector[][] getGhostOverlay() {
+        // return the edges to draw
+        return voxelOutline.getLines();
+    }
+
+    @Override
+    protected boolean updateGhostOverlay() {
+        boolean result = false;
+
+        Voxel[][] changedVoxel = data.getNewSideVoxel("side" + side, side, prevcurrentplane);
+
+        if (changedVoxel[0] == null) {
+            voxelOutline.clear();
+            result = true;
+        } else {
+            // remove voxels
+            for (Voxel remove : changedVoxel[0]) {
+                voxelOutline.removePosition(remove.getPosAsFloat());
+            }
+            // update has changed
+            if (changedVoxel[0].length > 0) {
+                result = true;
+            }
+        }
+
+        // add new voxels
+        for (Voxel add : changedVoxel[1]) {
+            voxelOutline.addPosition(add.getPosAsFloat());
+        }
+
+        // update has changed
+        if (changedVoxel[1].length > 0) {
+            result = true;
+        }
+
+        return result;
+    }
+    // --------------
 
     // get the voxels to render
     @Override
@@ -127,8 +173,9 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     @Override
     public final JPanel build() {
 
-        // set the simple view mode
-        //setSimpleVoxelMode(true, side);
+        // draw the ghost voxels (outline)
+        setDrawGhostOverlay(true);
+        voxelOutline = new VoxelOutline(side); // prepare outline helper
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);
@@ -140,9 +187,11 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         preferences.addPrefChangeListener("currentplane_sideview" + (side + 1), new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {
+                prevcurrentplane = currentplane;
                 currentplane = (Integer)o;
-                // invalidate this buffer (as the plane has changed)
+                // invalidate this buffers (as the plane has changed)
                 data.invalidateSideViewBuffer("side" + side, side, currentplane);
+                data.invalidateSideViewBuffer("side" + side, side, prevcurrentplane);
                 container.doNotSkipNextWorldRender();
                 invalidateVoxels();
                 forceRepaint();
@@ -282,9 +331,9 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (mouse_down_point != null) {
-                    // keep speed the same for different container sizes
-                    camera.shift(150*(float)(e.getX() - mouse_down_point.getX())/container.getWidth(),
-                            150*(float)(e.getY() - mouse_down_point.getY())/container.getHeight(),
+                    // keep speed the same for different container sizes (uses shift2D!)
+                    camera.shift2D(150 * (float) (e.getX() - mouse_down_point.getX()) / container.getWidth(),
+                            150 * (float) (e.getY() - mouse_down_point.getY()) / container.getHeight(),
                             VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
                     mouse_down_point = e.getPoint();
                     forceRepaint();

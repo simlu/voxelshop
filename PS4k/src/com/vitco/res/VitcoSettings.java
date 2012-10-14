@@ -13,10 +13,13 @@ import java.awt.image.BufferedImage;
  */
 public final class VitcoSettings {
 
-    // wireframe / select
+    // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
     public static final Color SELECTED_VOXEL_WIREFRAME_COLOR = new Color(255, 255, 255);
-    public static final Color SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED= new Color(175, 255, 172);
+    public static final Color SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED = new Color(175, 255, 172);
+
+    // ghost overlay line color
+    public static final Color GHOST_VOXEL_OVERLAY_LINE_COLOR = new Color(255, 255, 255, 50);
 
     // these can change externally
     public static final String PROGRAM_UPDATER_URL = "http://www.fantasy-mmorpg.com/tools/ps4k/updater/digest.txt";
@@ -82,7 +85,7 @@ public final class VitcoSettings {
     public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1000;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
     public static final float MAIN_VIEW_ZOOM_FOV = 1.25f;
-    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-30, -200, -200);
+    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-400, -500, -500);
     public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // "drag" move content
     public static final float MAIN_VIEW_ROTATION_X_FACTOR = 0.02f;
     public static final float MAIN_VIEW_ROTATION_Y_FACTOR = 0.01f;
@@ -124,7 +127,7 @@ public final class VitcoSettings {
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
     public static final Color VOXEL_PREVIEW_LINE_COLOR_BRIGHT = new Color(255,255,255,100);
 
-    public static final Color[] GRAYSCALE_COLOR_SWATCH = new Color[] {
+    public static final Color[] GRAYSCALE_COLOR_SWATCH = new Color[]{
             new Color(0, 0, 0), new Color(14, 14, 14), new Color(27, 27, 27),
             new Color(41, 41, 41), new Color(54, 54, 54), new Color(68, 68, 68),
             new Color(81, 81, 81), new Color(95, 95, 95), new Color(108, 108, 108),

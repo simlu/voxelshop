@@ -1026,10 +1026,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 }
                 // calculate center - note: voxels.length must not be zero
                 assert centerMin != null;
-                int[]center = new int[] {
-                        (centerMin[0] + centerMax[0])/2,
-                        (centerMin[1] + centerMax[1])/2,
-                        (centerMin[2] + centerMax[2])/2
+                float[] center = new float[] {
+                        (centerMin[0]/(float)2 + centerMax[0]/(float)2),
+                        (centerMin[1]/(float)2 + centerMax[1]/(float)2),
+                        (centerMin[2]/(float)2 + centerMax[2]/(float)2)
                 };
 
                 int rot1 = 0;
@@ -1130,10 +1130,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 }
                 // calculate center - note: voxels.length must not be zero
                 assert centerMin != null;
-                int[]center = new int[] {
-                        (centerMin[0] + centerMax[0])/2,
-                        (centerMin[1] + centerMax[1])/2,
-                        (centerMin[2] + centerMax[2])/2
+                float[] center = new float[] {
+                        (centerMin[0]/(float)2 + centerMax[0]/(float)2),
+                        (centerMin[1]/(float)2 + centerMax[1]/(float)2),
+                        (centerMin[2]/(float)2 + centerMax[2]/(float)2)
                 };
 
                 // remove all voxels
@@ -1148,7 +1148,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     effected[i] = voxel.getPosAsInt().clone(); // what is effected
 
                     // switch the point with the center
-                    pos[axe] = - pos[axe] + 2*center[axe];
+                    pos[axe] = Math.round(- pos[axe] + 2*center[axe]);
 
                     effected[i + voxels.length] = pos.clone(); // what is effected
                     shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getLayerId());
@@ -1295,7 +1295,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean rotateVoxel(Voxel[] voxel, int axe, float degree) {
         boolean result = false;
-        if (voxel.length > 0 && degree/360 != 0) {
+        if (voxel.length > 0 && degree/360 != 0 && axe <= 2 && axe >= 0) {
             historyManagerV.applyIntent(new RotateVoxelIntent(voxel, axe, degree, false));
             result = true;
         }
@@ -1305,7 +1305,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     @Override
     public final boolean mirrorVoxel(Voxel[] voxel, int axe) {
         boolean result = false;
-        if (voxel.length > 0) {
+        if (voxel.length > 0 && axe <= 2 && axe >= 0) {
             historyManagerV.applyIntent(new MirrorVoxelIntent(voxel, axe, false));
             result = true;
         }
