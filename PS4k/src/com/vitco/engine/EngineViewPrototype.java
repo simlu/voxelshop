@@ -688,9 +688,16 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         this.side = side;
         // only perform these actions once (even if the class is instantiated several times)
         if (!initialized) {
-            Config.tuneForOutdoor();
+//            Config.tuneForIndoor();
             Config.fadeoutLight=false;
             Config.maxPolysVisible = 5000;
+            //Config.mtDebug = true;
+
+            // doesnt seem to have much effect ...
+//            Config.maxNumberOfCores = 2;
+//            Config.useMultipleThreads = true;
+//            Config.loadBalancingStrategy = 2; // default 0
+
             Logger.setLogLevel(Logger.ERROR);
             initialized = true;
         }

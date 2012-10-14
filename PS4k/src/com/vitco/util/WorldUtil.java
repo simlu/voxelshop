@@ -39,6 +39,7 @@ public class WorldUtil {
     private final static HashMap<String, Object3D> boxTypes = new HashMap<String, Object3D>();
 
     static {
+        // pre-generate all the boxes
         float cdis = VitcoSettings.VOXEL_SIZE/2;
         SimpleVector c1 = new SimpleVector(cdis, cdis, cdis);
         SimpleVector c2 = new SimpleVector(cdis, -cdis, cdis);

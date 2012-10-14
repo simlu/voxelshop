@@ -319,14 +319,14 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 // hit nothing, draw preview on zero level
                 if (dir.y > 0.05) { // angle big enough
                     // calculate position
-                    float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - camera.getPosition().y) / dir.y;
+                    float t = (VitcoSettings.VOXEL_GROUND_DISTANCE - 0.5f - camera.getPosition().y) / dir.y;
                     dir.scalarMul(t);
                     SimpleVector pos = camera.getPosition();
                     pos.add(dir);
                     pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
                     if (Math.abs(pos.x) < VitcoSettings.VOXEL_GROUND_MAX_RANGE && Math.abs(pos.z) < VitcoSettings.VOXEL_GROUND_MAX_RANGE) {
                         // if we hit the ground plane
-                        voxelPos = new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)};
+                        voxelPos = new int[]{Math.round(pos.x),Math.round(pos.y),Math.round(pos.z)};
                     }
                 }
             }
@@ -352,7 +352,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private Integer selectMode = 0; // 0 = do nothing, 1 = select voxels, 2 = drag voxels
         private SimpleVector dragStartReferencePos = null;
         private SimpleVector dragStartPos = null;
-        private Integer[] currentSelectionShift = new Integer[3];
+        private int[] currentSelectionShift = new int[3];
         private Point selectStartPoint = new Point(0,0);
 
         // true if this adapter is used
@@ -544,7 +544,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         SimpleVector pos = camera.getPosition();
                         pos.add(dir);
                         pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
-                        voxelPos = new int[]{Math.round(pos.x),Math.round(pos.y - 0.5f),Math.round(pos.z)};
+                        voxelPos = new int[]{Math.round(pos.x),Math.round(pos.y),Math.round(pos.z)};
                     }
                 }
                 data.highlightVoxel(voxelPos);
@@ -618,7 +618,6 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public final void mouseReleased(MouseEvent e) {
-            hover(e);
             camera.setEnabled(true);
             massVoxel = false;
             dragDrawStartPos = null;
@@ -635,6 +634,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     selectMode = 0;
                     break;
             }
+            hover(e);
             invalidateVoxels();
             forceRepaint();
         }
@@ -747,7 +747,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             @Override
             public void onVoxelSelectionShiftChanged() {
-                Integer[] shift = data.getVoxelSelectionShift();
+                int[] shift = data.getVoxelSelectionShift();
                 selectedVoxelsWorld.setShift(shift);
                 container.doNotSkipNextWorldRender();
                 forceRepaint();

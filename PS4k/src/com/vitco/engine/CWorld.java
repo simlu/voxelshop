@@ -47,7 +47,7 @@ public class CWorld extends World {
     private float length = offset.length();
 
     // set the shift of this (just used for "drawAsShiftedWireframe"
-    public final void setShift(Integer[] shift) {
+    public final void setShift(int[] shift) {
         offset = new SimpleVector(
                 shift[0],
                 shift[1],

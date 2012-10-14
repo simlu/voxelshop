@@ -505,7 +505,6 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
         @Override
         protected void applyAction() {
-            // todo this will not update the voxel on refresh (!)
             if (isFirstCall()) {
                 voxel = dataContainer.voxels.get(voxelId);
                 oldAlpha = voxel.getAlpha();
@@ -848,6 +847,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // if the layerid is null the voxel layerId will be used,
     // otherwise the provided layerid
+    // the voxel id is never used (!)
     private final class MassAddVoxelIntent extends VoxelActionIntent {
         private final Voxel[] voxels;
         private final Integer layerId;
@@ -929,9 +929,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     private final class MassMoveVoxelIntent extends VoxelActionIntent  {
         private final Voxel[] voxels;
-        private final Integer[] shift;
+        private final int[] shift;
 
-        protected MassMoveVoxelIntent(Voxel[] voxels, Integer[] shift, boolean attach) {
+        protected MassMoveVoxelIntent(Voxel[] voxels, int[] shift, boolean attach) {
             super(attach);
             this.voxels = voxels;
             this.shift = shift;
@@ -1228,9 +1228,13 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
         if (layer != null) {
             ArrayList<Voxel> validVoxel = new ArrayList<Voxel>();
+            ArrayList<String> voxelPos = new ArrayList<String>();
             for (Voxel voxel : voxels) {
-                if (layer.voxelPositionFree(voxel.getPosAsInt())) {
+                String posHash = voxel.getPosAsString();
+                if (layer.voxelPositionFree(voxel.getPosAsInt())
+                        && !voxelPos.contains(posHash)) {
                     validVoxel.add(voxel);
+                    voxelPos.add(posHash);
                 }
             }
             if (validVoxel.size() > 0 && layer.getSize() + validVoxel.size() <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
@@ -1283,10 +1287,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean massMoveVoxel(Voxel[] voxel, Integer[] shift) {
+    public final boolean massMoveVoxel(Voxel[] voxel, int[] shift) {
         boolean result = false;
         if (voxel.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
-            historyManagerV.applyIntent(new MassMoveVoxelIntent(voxel, shift, false));
+            historyManagerV.applyIntent(new MassMoveVoxelIntent(voxel, shift.clone(), false));
             result = true;
         }
         return result;

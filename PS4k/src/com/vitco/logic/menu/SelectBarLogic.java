@@ -141,7 +141,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    Integer[] shift = data.getVoxelSelectionShift();
+                    int[] shift = data.getVoxelSelectionShift();
                     if (shift[0] != 0 || shift[1] != 0 || shift[2] != 0) {
                         data.setVoxelSelectionShift(0,0,0);
                     } else {
@@ -234,7 +234,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 if (getStatus()) {
                     // note: shifting will deselect voxels (so no need to do it here)
                     Voxel[] selectedVoxels = data.getSelectedVoxels();
-                    Integer[] shift = data.getVoxelSelectionShift();
+                    int[] shift = data.getVoxelSelectionShift();
                     if (selectedVoxels.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
                         data.massMoveVoxel(data.getSelectedVoxels(), shift);
                     }
@@ -443,7 +443,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
         data.addDataChangeListener(new DataChangeAdapter() {
             @Override
             public void onVoxelSelectionShiftChanged() {
-                Integer[] shift = data.getVoxelSelectionShift();
+                int[] shift = data.getVoxelSelectionShift();
                 boolean voxelsAreMovedTemp = shift[0] != 0 || shift[1] != 0 || shift[2] != 0;
                 if (voxelsAreMovedTemp != voxelsAreMoved) {
                     voxelsAreMoved = voxelsAreMovedTemp;

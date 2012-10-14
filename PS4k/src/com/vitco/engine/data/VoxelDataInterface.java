@@ -116,7 +116,7 @@ public interface VoxelDataInterface {
     // set color of several voxels at once
     boolean massSetColor(Integer[] voxelIds, Color color);
     // move several voxels at once
-    boolean massMoveVoxel(Voxel[] voxel, Integer[] shift);
+    boolean massMoveVoxel(Voxel[] voxel, int[] shift);
 
     boolean rotateVoxel(Voxel[] voxel, int axe, float degree);
 

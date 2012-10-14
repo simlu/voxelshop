@@ -205,7 +205,6 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         data.addDataChangeListener(new DataChangeAdapter() {
             @Override
             public void onVoxelDataChanged() {
-                // todo can optimize this further (only execute when layer updated!)
                 selectedLayer = data.getSelectedLayer();
                 layers = data.getLayers();
                 // refresh this group

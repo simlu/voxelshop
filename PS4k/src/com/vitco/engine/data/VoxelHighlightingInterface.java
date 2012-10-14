@@ -11,7 +11,7 @@ public interface VoxelHighlightingInterface {
     // remove all highliths
     void removeVoxelHighlights();
 
-    Integer[] getVoxelSelectionShift();
+    int[] getVoxelSelectionShift();
 
     void setVoxelSelectionShift(int x, int y, int z);
 }

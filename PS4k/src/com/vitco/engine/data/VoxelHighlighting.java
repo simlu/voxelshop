@@ -33,7 +33,7 @@ public class VoxelHighlighting extends VoxelData implements VoxelHighlightingInt
     // ================================
     // shifting of selected voxels (selection tool)
 
-    private final Integer[] voxelSelectionShift = new Integer[] {0,0,0};
+    private final int[] voxelSelectionShift = new int[] {0,0,0};
 
     @Override
     public final void setVoxelSelectionShift(int x, int y, int z) {
@@ -46,7 +46,7 @@ public class VoxelHighlighting extends VoxelData implements VoxelHighlightingInt
     }
 
     @Override
-    public final Integer[] getVoxelSelectionShift() {
+    public final int[] getVoxelSelectionShift() {
         return voxelSelectionShift.clone();
     }
 }

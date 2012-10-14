@@ -48,6 +48,9 @@ public final class Voxel implements Serializable {
     public final float[] getPosAsFloat() {
         return posF.clone();
     }
+    public final String getPosAsString() {
+        return posI[0] + "_" + posI[1] + "_" + posI[2];
+    }
 
     // set the color of this voxel
     protected final void setColor(Color color) {

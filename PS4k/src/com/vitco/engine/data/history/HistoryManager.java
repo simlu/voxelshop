@@ -66,11 +66,11 @@ public class HistoryManager<T extends BasicActionIntent> {
             historyPosition++; // move one "up"
             history.get(historyPosition).apply(); // redo action
             // make sure the attached histories are applied
-            if (history.size() > historyPosition + 1 && history.get(historyPosition).attach) {
-                apply();
-            } else {
-                notifyListener(history.get(historyPosition)); // ok
+            while (history.size() > historyPosition + 1 && history.get(historyPosition).attach) {
+                historyPosition++; // move one "up"
+                history.get(historyPosition).apply(); // redo action
             }
+            notifyListener(history.get(historyPosition)); // ok
         }
 
     }
@@ -90,8 +90,9 @@ public class HistoryManager<T extends BasicActionIntent> {
             history.get(historyPosition).unapply(); // undo action
             historyPosition--; // move one "down"
             // make sure the attached histories are applied
-            if (historyPosition > -1 && history.get(historyPosition).attach) {
-                _unapply();
+            while (historyPosition > -1 && history.get(historyPosition).attach) {
+                history.get(historyPosition).unapply(); // undo action
+                historyPosition--; // move one "down"
             }
         }
     }

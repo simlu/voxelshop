@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.awt.*;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -451,8 +452,30 @@ public class VoxelDataTest {
         assert !data.canMoveLayerDown(lid2);
     }
 
-    // big final test
+    @Test
+    public void testMigrateSelection() throws Exception {
+        int lid1 = data.createLayer("layer1");
+        int lid2 = data.createLayer("layer2");
+        int lid3 = data.createLayer("layer2");
+        data.selectLayer(lid1);
+        int id1 = data.addVoxel(Color.BLACK, new int[]{1,2,3});
+        int id2 = data.addVoxel(Color.GREEN, new int[]{1,2,4});
+        data.selectLayer(lid2);
+        int id3 = data.addVoxel(Color.ORANGE, new int[]{1,1,3});
+        int id4 = data.addVoxel(Color.WHITE, new int[]{1,2,4});
+        data.selectLayer(lid2);
+        data.addVoxel(Color.BLUE, new int[]{1,1,3});
+        data.addVoxel(Color.GRAY, new int[]{1,2,4});
+        data.massSetVoxelSelected(new Integer[]{id1, id2, id3, id4}, true);
+        data.setVisible(lid3, false);
+        data.migrateVoxels(data.getSelectedVoxels());
+        assert data.searchVoxel(new int[]{1,2,3}, true).getColor().equals(Color.BLACK);
+        assert data.searchVoxel(new int[]{1,1,3}, true).getColor().equals(Color.ORANGE);
+        assert data.searchVoxel(new int[]{1,2,4}, true).getColor().equals(Color.WHITE);
+        // todo test undo/redo of this
+    }
 
+    // big final test
     @Test
     public void randomeMess() throws Exception {
         class Util {
@@ -632,6 +655,18 @@ public class VoxelDataTest {
                 }
             }
 
+            public void selectVoxel() {
+                if ( data.getSelectedLayer() != -1) {
+                    Voxel[] voxels = data.getLayerVoxels(data.getSelectedLayer());
+                    if (voxels.length > 0) {
+                        int rem = rand.nextInt(voxels.length);
+                        boolean bool = rand.nextBoolean();
+                        data.setVoxelSelected(voxels[rem].id, bool);
+                        assert bool == data.getVoxel(voxels[rem].id).isSelected();
+                    }
+                }
+            }
+
             public void selectLayerSoft() {
                 Integer[] layers = data.getLayers();
                 if (layers.length > 0) {
@@ -641,11 +676,77 @@ public class VoxelDataTest {
                 }
             }
 
+            public void mergeLayers() {
+                data.mergeVisibleLayers();
+            }
+
+            public void migrateSelection() {
+                data.migrateVoxels(data.getSelectedVoxels());
+            }
+
+            public void massSelect() {
+                ArrayList<Integer> voxelIds = new ArrayList<Integer>();
+                for (int layerId : data.getLayers()) {
+                    Voxel[] voxels = data.getLayerVoxels(layerId);
+                    if (voxels.length > 0) {
+                        int count = rand.nextInt(voxels.length);
+                        for (int i = 0; i < count; i++) {
+                            int pos = rand.nextInt(voxels.length);
+                            voxelIds.add(voxels[pos].id);
+                        }
+                    }
+                }
+                Integer[] voxelIdsStatic = new Integer[voxelIds.size()];
+                voxelIds.toArray(voxelIdsStatic);
+                data.massSetVoxelSelected(voxelIdsStatic, rand.nextBoolean());
+            }
+
+            public void massRemove() {
+                Voxel[] voxels = data.getSelectedVoxels();
+                Integer[] voxelIds = new Integer[voxels.length];
+                int i = 0;
+                for (Voxel voxel : voxels) {
+                    voxelIds[i++] = voxel.id;
+                }
+                data.massRemoveVoxel(voxelIds);
+            }
+
+            public void massAdd() {
+                int length = rand.nextInt(20);
+                Voxel[] voxel = new Voxel[length];
+                int layerId = data.getSelectedLayer();
+                for (int i = 0; i < length; i++) {
+                    voxel[i] = new Voxel(-1, randPos(), randCol(), layerId);
+                }
+                data.massAddVoxel(voxel);
+            }
+
+            public void massColor() {
+                Voxel[] voxels = data.getSelectedVoxels();
+                Integer[] voxelIds = new Integer[voxels.length];
+                int i = 0;
+                for (Voxel voxel : voxels) {
+                    voxelIds[i++] = voxel.id;
+                }
+                data.massSetColor(voxelIds,randCol());
+            }
+
+            public void massMove() {
+                data.massMoveVoxel(data.getSelectedVoxels(), randPos());
+            }
+
+            public void rotate() {
+                data.rotateVoxel(data.getSelectedVoxels(), rand.nextInt(3), 90 * rand.nextInt(3));
+            }
+
+            public void mirror() {
+                data.mirrorVoxel(data.getSelectedVoxels(),rand.nextInt(3));
+            }
         }
 
-        final int poss = 16;
+        final int poss = 26;
 
-        for (int seed = 2000; seed < 2005; seed ++) {
+        for (int seed = 93; seed < 2000; seed ++) {
             Util util = new Util(seed);
             float[] prob = new float[poss];
             for (int k = 0; k < prob.length; k++) {
@@ -731,6 +832,57 @@ public class VoxelDataTest {
                     case 16:
                         if (util.getFloat() < prob[15]) {
                             util.selectLayerSoft();
+                        }
+                        break;
+
+                    case 17:
+                        if (util.getFloat() < prob[16]) {
+                            util.mergeLayers();
+                        }
+                        break;
+                    case 18:
+                        if (util.getFloat() < prob[17]) {
+                            util.migrateSelection();
+                        }
+                        break;
+                    case 19:
+                        if (util.getFloat() < prob[18]) {
+                            util.massSelect();
+                        }
+                        break;
+                    case 20:
+                        if (util.getFloat() < prob[19]) {
+                            util.massRemove();
+                        }
+                        break;
+                    case 21:
+                        if (util.getFloat() < prob[20]) {
+                            util.massAdd();
+                        }
+                        break;
+                    case 22:
+                        if (util.getFloat() < prob[21]) {
+                            util.massColor();
+                        }
+                        break;
+                    case 23:
+                        if (util.getFloat() < prob[22]) {
+                            util.massMove();
+                        }
+                        break;
+                    case 24:
+                        if (util.getFloat() < prob[23]) {
+                            util.rotate();
+                        }
+                        break;
+                    case 25:
+                        if (util.getFloat() < prob[24]) {
+                            util.mirror();
+                        }
+                        break;
+                    case 26:
+                        if (util.getFloat() < prob[25]) {
+                            util.selectVoxel();
                         }
                         break;
                 }
