@@ -9,24 +9,25 @@ import io.netty.channel.socket.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
-public class fols_server {
+public class login_server {
     // login server
     private ServerBootstrap loginBootstrap = new ServerBootstrap();
 
     public void run() throws Exception {
         try {
-
             // create the login server
             loginBootstrap.group(new NioEventLoopGroup(), new NioEventLoopGroup())
                     .channel(new NioServerSocketChannel())
                     .option(ChannelOption.SO_BACKLOG, 100)
-                    .localAddress(80)
+                    .localAddress(7633)
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(
+                                    new IdleStateHandler(60,30,0),
                                     new LoggingHandler(LogLevel.INFO)//,
                                     //new fos_server_initializer()
                             );

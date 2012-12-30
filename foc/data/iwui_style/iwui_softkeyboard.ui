@@ -1,0 +1,265 @@
+CIwUISoftKeyboard 
+{
+	name "soft_keyboard"
+	style <softkeyboard_style>
+	sizeToContent true
+	cursorDelay 1500
+	cursorFlashPeriod 1200
+	
+	CIwUIImage 
+	{
+		name "Background"
+		texture "background"
+	}
+	CIwUIImage 
+	{
+		name "BackgroundFade"
+		texture "background"
+	}
+	CIwUITextField 
+	{
+		name "text_box"
+		style <textField_inline>
+	}
+	CIwUISoftKey 
+	{
+		name "close_button"
+		style <softkeyboard_key>
+		sizeMin  { 16 21 }
+		sizeMax  { 400 400 }
+		focus <focus>
+		keyType "close"
+		keyCharacter "X"
+		keyContent {
+			
+			{
+				parent <softkeyboard_tab_label>
+//: 			extraclass "CIwUIDrawableText"
+				caption "X"
+			}
+		}
+	}
+	CIwUIElement 
+	{
+		name "inline_editor"
+		CIwUILabel 
+		{
+			name "input_mode_label"
+			style <label_medium>
+			caption "ABC"
+		}
+		CIwUISoftKeyPosition 
+		{
+			name "softkey_back_position"
+			isAdvanceKey false
+			size { 64, 32 }
+			CIwUISoftKey 
+			{
+				name "softkey_back"
+				size { 64, 32 }
+				style <softkeyboard_all_in_one>
+				keyType "close"
+				keyCharacter "Cancel"
+				keyContent {
+					
+					{
+						parent <softkeyboard_number_key_label>
+//: 					extraclass "CIwUIDrawableText"
+						caption "Cancel"
+						font "font_medium"
+					}
+				}
+			}
+		}
+		CIwUISoftKeyPosition 
+		{
+			name "softkey_ok_position"
+			isAdvanceKey true
+			size { 64, 32 }
+			CIwUISoftKey 
+			{
+				name "softkey_ok"
+				size { 64, 32 }
+				style <softkeyboard_all_in_one>
+				keyType "accept"
+				keyContent {
+					
+					{
+						parent <softkeyboard_number_key_label>
+//: 					extraclass "CIwUIDrawableText"
+						caption "OK"
+						font "font_medium"
+					}
+				}
+			}
+		}
+		CIwUILayout 
+		{
+			name "Layout"
+			sizeToSpace true
+			element 
+			{
+				name "Vertical"
+				border  { 3 0 }
+				alignH "centre"
+				alignV "top"
+				CIwUILayoutVertical 
+				{
+					name "Vertical"
+					element 
+					{
+						name "input_mode_label"
+						border  { 8 0 }
+					}
+				}
+			}
+		}
+	}
+	CIwUIElement 
+	{
+		name "PanelContainer"
+		CIwUILayout 
+		{
+			name "Layout"
+			sizeToSpace true
+		}
+	}
+	CIwUILayout 
+	{
+		name "Layout"
+		sizeToSpace true
+		element 
+		{
+			name "inline_editor"
+		}
+		element 
+		{
+			name "BackgroundFade"
+		}
+		element 
+		{
+			name "Background"
+		}
+		element 
+		{
+			name "Form"
+			CIwUILayoutForm 
+			{
+				name "Form"
+				sizeToSpace true
+				formSize  { 320 480 }
+				element 
+				{
+					name "close_button"
+					alignH "right"
+					top 
+					{
+						val 0
+					}
+					right 
+					{
+						val 320
+					}
+					left 
+					{
+						val 280
+					}
+					bottom 
+					{
+						val 40
+					}
+				}
+				element 
+				{
+					name "text_box"
+					top 
+					{
+						val 0
+					}
+					right 
+					{
+						val 320
+					}
+					left 
+					{
+						val 0
+					}
+					bottom 
+					{
+						val 0
+						coord "top"
+						guide "panel_layout"
+					}
+				}
+				element
+				{
+					name "symbols_chooser"
+					left 
+					{ 
+						val 0 
+					}
+					right 
+					{ 
+						val 320 
+					}
+					top 
+					{ 
+						val 40 
+					}
+					bottom 
+					{ 
+						val 480 
+					}
+				}
+				element 
+				{
+					name "panel_layout"
+					top 
+					{ 
+						val 233
+					}
+					right 
+					{ 
+						val 320
+					}
+					left 
+					{ 
+						val 0
+					}
+					bottom
+					{ 
+						val 480
+					}
+					alignV "bottom"
+						
+					CIwUILayout 
+					{
+						name "panel_layout"
+						sizeToSpace true
+						
+						element 
+						{
+							name "PanelContainer"
+						}
+						element 
+						{ 
+							name lower_alpha_numpad 
+						}
+						element 
+						{ 
+							name upper_alpha_numpad 
+						}
+						element 
+						{ 
+							name numeric_numpad 
+						}
+					}
+				}
+			}
+		}
+	}
+	CIwUIFocusHandlerTab 
+	{
+		name "Focus1"
+	}
+}

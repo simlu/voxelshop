@@ -1,5 +1,7 @@
 #include "IwGx.h"
+#include "IwUI.h"
 #include "game.h"
+#include "utils/ui.h"
 #include "states/init_state.h"
 #include <utils/ssm.h>
 #include <sstream>
@@ -12,8 +14,19 @@ game::game()
 }
 
 void game::run() {
+    //Initialise the IwUI module
+    IwUIInit();
+
+    //Instantiate the view and controller singletons.
+    //IwUI will not instantiate these itself, since they can be subclassed to add functionality.
+    new CIwUIController;
+    new CIwUIView;
+
 	// Initialise the IwGx drawing module
 	IwGxInit();	
+
+	// load the ui
+	ui_load();
 
 	// tell all states about us
 	_sm.set_parent(this);
@@ -45,8 +58,16 @@ void game::update() {
 	fixedTimestepAccumulator += dt;
 	// execute frames of length dt
 	while(fixedTimestepAccumulator >= dt) {
+
+		// update the ui events
+		IwGetUIController()->Update();
+
+		// Update the view (this will do animations etc.)
+		IwGetUIView()->Update((uint32)dt);
+
 		// ALL UPDATE CODE GOES HERE 
 		_sm.update(dt);
+
 		// move on to next one
 		fixedTimestepAccumulator -= dt;
 	}
@@ -54,22 +75,14 @@ void game::update() {
 
 void game::draw() {
 	
-	// Set the background colour to (opaque) blue
-	IwGxSetColClear(0, 0, 0xff, 0xff);
+	// Set the background colour to white
+	IwGxSetColClear(0xff, 0xff, 0xff, 0xff);
 
 	// Clear the surface
 	IwGxClear();
 
-	/*
-	std::stringstream tmp;
-	tmp << frameTime;
-
-
-	
-	IwTrace(DEFAULT, (tmp.str().c_str()));
-	*/
-
-	IwGxPrintString(120, 150, "ROFLWAFLE");
+	// render ui
+	IwGetUIView()->Render();
 
 	// Standard EGL-style flush of drawing to the surface
 	IwGxFlush();
@@ -79,5 +92,9 @@ void game::draw() {
 }
 
 game::~game() {
+    delete IwGetUIController();
+    delete IwGetUIView();
 
+    //Terminate the IwUI module
+    IwUITerminate();
 }

@@ -7,7 +7,7 @@ package com.pixelatedgames.fols;
  */
 public class Main {
     public static void main(String[] args) throws Exception{
-        new fols_server().run();
+        new login_server().run();
     }
 }
 

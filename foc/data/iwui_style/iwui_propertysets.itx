@@ -1,0 +1,795 @@
+CIwUIPropertySet 
+{
+	name "<font_title>"
+//: extraclass "CIwUILabel"
+	sizeToContent false
+	font "font_medium"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+	margin  { 0 0 }
+//: extraclass "CIwUIDrawableText"
+}
+CIwUIPropertySet 
+{
+	name "<font_heading>"
+//: extraclass "CIwUILabel"
+	sizeToContent false
+	font "font_small"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+	margin  { 0 0 }
+//: extraclass "CIwUIDrawableText"
+}
+CIwUIPropertySet 
+{
+	name "<font_body>"
+//: extraclass "CIwUILabel"
+	sizeToContent false
+	font "font_tiny"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+	margin  { 0 0 }
+//: extraclass "CIwUIDrawableText"
+}
+CIwUIPropertySet 
+{
+	name "<focus>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "focus"
+	border  { 10 10 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_left>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 0 0 }
+	uv1  { 30 32 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_right>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 2 0 }
+	uv1  { 32 32 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_centre>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 2 0 }
+	uv1  { 30 32 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_larger_left>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 0 0 }
+	uv1  { 30 30 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_larger_right>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 2 0 }
+	uv1  { 32 30 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_textField>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 1 2 }
+	uv1  { 31 30 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_slider>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 0 0 }
+	uv1  { 30 30 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_tab>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 0 0 }
+	uv1  { 32 29 }
+}
+CIwUIPropertySet 
+{
+	name "<focus_checkbox>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 0 0 }
+	uv1  { 32 32 }
+}
+CIwUIPropertySet 
+{
+	name "<button_up>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "button_up"
+	border  { 12 12 }
+}
+CIwUIPropertySet 
+{
+	name "<button_down>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "button_down"
+	border  { 12 12 }
+}
+CIwUIPropertySet 
+{
+	name "<button>"
+	parent <font_heading>
+//: extraclass "CIwUIButton"
+	sizeMin  { 89 37 }
+	sizeMax  { 89 37 }
+	buttonUp <button_up>
+	buttonDown <button_down>
+	focus <focus>
+	margin  { 6 6 }
+}
+CIwUIPropertySet 
+{
+	name "<slider_marker>"
+//: extraclass "IIwUIDrawable"
+	drawableType "image"
+	texture "slider_marker"
+}
+CIwUIPropertySet 
+{
+	name "<slider_bar>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "slider_bar"
+	border  { 3 0 }
+}
+CIwUIPropertySet 
+{
+	name "<slider_background>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "slider_background"
+	border  { 3 0 }
+}
+CIwUIPropertySet 
+{
+	name "<slider>"
+//: extraclass "CIwUISlider"
+	sizeToContent true
+	background <slider_background>
+	marker <slider_marker>
+	bar <slider_bar>
+	focus <focus_slider>
+	markerSize  { 25 32 }
+	sliderMin 0
+	sliderMax 1024
+}
+CIwUIPropertySet 
+{
+	name "<progressBar_base>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 3 3 }
+	uv1  { 29 24 }
+	border  { 12 12 }
+}
+CIwUIPropertySet 
+{
+	name "<progressBar_background>"
+	parent <progressBar_base>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "progressBar_background"
+}
+CIwUIPropertySet 
+{
+	name "<progressBar>"
+	parent <progressBar_base>
+//: extraclass "CIwUIProgressBar"
+	sizeToContent true
+	texture "progressBar_style"
+	background <progressBar_background>
+}
+CIwUIPropertySet 
+{
+	name "<radio_base>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	border  { 7 9 }
+}
+CIwUIPropertySet 
+{
+	name "<radio_buttonDown>"
+	parent <radio_base>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_buttonDown"
+}
+CIwUIPropertySet 
+{
+	name "<radio_left_buttonDown>"
+	parent <radio_base>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_left_buttonDown"
+}
+CIwUIPropertySet 
+{
+	name "<radio_right_buttonDown>"
+	parent <radio_base>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_right_buttonDown"
+}
+CIwUIPropertySet 
+{
+	name "<radio_buttonUp>"
+	parent <radio_base>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_buttonUp"
+}
+CIwUIPropertySet 
+{
+	name "<radio_left_buttonUp>"
+	parent <radio_base>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_left_buttonUp"
+}
+CIwUIPropertySet 
+{
+	name "<radio_right_buttonUp>"
+	parent <radio_base>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_right_buttonUp"
+}
+CIwUIPropertySet 
+{
+	name "<radio_base_larger>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	border  { 8 9 }
+}
+CIwUIPropertySet 
+{
+	name "<radio_larger_left_buttonUp>"
+	parent <radio_base_larger>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_larger_left_buttonUp"
+}
+CIwUIPropertySet 
+{
+	name "<radio_larger_right_buttonUp>"
+	parent <radio_base_larger>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_larger_right_buttonUp"
+}
+CIwUIPropertySet 
+{
+	name "<radio_larger_left_buttonDown>"
+	parent <radio_base_larger>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_larger_left_buttonDown"
+}
+CIwUIPropertySet 
+{
+	name "<radio_larger_right_buttonDown>"
+	parent <radio_base_larger>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "radio_larger_right_buttonDown"
+}
+CIwUIPropertySet 
+{
+	name "<radio>"
+	parent <font_heading>
+//: extraclass "CIwUIRadioButton"
+	sizeMin  { 16 32 }
+	sizeMax  { 64 32 }
+	focus <focus>
+}
+CIwUIPropertySet 
+{
+	name "<radio_larger>"
+	parent <font_title>
+//: extraclass "CIwUIRadioButton"
+	sizeMin  { 24 35 }
+	sizeMax  { 84 35 }
+	focus <focus>
+}
+CIwUIPropertySet 
+{
+	name "<radio_left>"
+	parent <radio>
+//: extraclass "CIwUIRadioButton"
+	buttonUp <radio_left_buttonUp>
+	buttonDown <radio_left_buttonDown>
+	focus <focus_left>
+}
+CIwUIPropertySet 
+{
+	name "<radio_centre>"
+	parent <radio>
+//: extraclass "CIwUIRadioButton"
+	buttonUp <radio_buttonUp>
+	buttonDown <radio_buttonDown>
+	focus <focus_centre>
+}
+CIwUIPropertySet 
+{
+	name "<radio_right>"
+	parent <radio>
+//: extraclass "CIwUIRadioButton"
+	buttonUp <radio_right_buttonUp>
+	buttonDown <radio_right_buttonDown>
+	focus <focus_right>
+}
+CIwUIPropertySet 
+{
+	name "<radio_larger_left>"
+	parent <radio_larger>
+//: extraclass "CIwUIRadioButton"
+	buttonUp <radio_larger_left_buttonUp>
+	buttonDown <radio_larger_left_buttonDown>
+	focus <focus_larger_left>
+}
+CIwUIPropertySet 
+{
+	name "<radio_larger_right>"
+	parent <radio_larger>
+//: extraclass "CIwUIRadioButton"
+	buttonUp <radio_larger_right_buttonUp>
+	buttonDown <radio_larger_right_buttonDown>
+	focus <focus_larger_right>
+}
+CIwUIPropertySet 
+{
+	name "<label_large>"
+	parent <font_title>
+//: extraclass "CIwUILabel"
+	sizeMin  { 0 37 }
+	sizeMax  { -1 37 }
+	sizeToContent true
+	alignH "left"
+	alignV "middle"
+	margin  { 6 6 }
+}
+CIwUIPropertySet 
+{
+	name "<label_medium>"
+	parent <font_heading>
+//: extraclass "CIwUILabel"
+	sizeMin  { 0 37 }
+	sizeMax  { -1 37 }
+	sizeToContent true
+	alignH "left"
+	alignV "middle"
+	margin  { 6 6 }
+}
+CIwUIPropertySet 
+{
+	name "<label_small>"
+	parent <font_body>
+//: extraclass "CIwUILabel"
+	sizeMin  { 0 20 }
+	sizeMax  { -1 20 }
+	sizeToContent true
+	alignH "left"
+	alignV "middle"
+}
+CIwUIPropertySet 
+{
+	name "<checkbox_style>"
+//: extraclass "IIwUIDrawable"
+	drawableType "image"
+	texture "checkbox_style"
+}
+CIwUIPropertySet 
+{
+	name "<checkbox_cross>"
+//: extraclass "IIwUIDrawable"
+	drawableType "image"
+	texture "checkbox_cross"
+}
+CIwUIPropertySet 
+{
+	name "<checkbox>"
+	parent <font_heading>
+//: extraclass "CIwUICheckbox"
+	sizeToContent true
+	caption ""
+	alignH "left"
+	alignV "middle"
+	margin  { 8 0 }
+	boxSize  { 24 24 }
+	boxStyle <checkbox_style>
+	crossStyle <checkbox_cross>
+	focus <focus_checkbox>
+}
+CIwUIPropertySet 
+{
+	name "<textField_cursor>"
+//: extraclass "IIwUIDrawable"
+	drawableType "image"
+	texture "textField_cursor"
+}
+CIwUIPropertySet 
+{
+	name "<textField_background>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "textField_background"
+	border  { 12 12 }
+}
+CIwUIPropertySet 
+{
+	name "<textField_inline>"
+//: extraclass "CIwUITextField"
+	sizeHint  { -1 55 }
+	sizeToContent false
+	caption ""
+	font "font_medium"
+	textColour { 45 45 45 255 }
+	alignH "left"
+	alignV "middle"
+	oneLine true
+	margin  { 8 8 }
+	background <textField_background>
+	cursorSize  { 3 17 }
+	cursor <textField_cursor>
+	focus <focus_textField>
+}
+CIwUIPropertySet 
+{
+	name "<textField>"
+	parent <label_medium>
+//: extraclass "CIwUITextField"
+	sizeToContent false
+	oneLine true
+	background <textField_background>
+	cursorSize  { 3 17 }
+	cursor <textField_cursor>
+	focus <focus_textField>
+}
+CIwUIPropertySet 
+{
+	name "<img_keyboard_background>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_bluebackground"
+	border  { 10 10 }
+}
+CIwUIPropertySet 
+{
+	name "<img_keyboardTab_frame>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboardTab_frame"
+	border  { 10 8 }
+}
+CIwUIPropertySet 
+{
+	name "<keyboardTabStyle>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	border  { 7 7 }
+}
+CIwUIPropertySet 
+{
+	name "<keyboardTab_unselected>"
+	parent <keyboardTabStyle>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboardTab_unselected"
+}
+CIwUIPropertySet 
+{
+	name "<keyboardTab_selected>"
+	parent <keyboardTabStyle>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboardTab_selected"
+}
+CIwUIPropertySet 
+{
+	name "<border_softkeyboard_close>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "button_up"
+	border  { 12 12 }
+}
+CIwUIPropertySet 
+{
+	name "<bubble>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "bubble"
+	border  { 8 8 }
+}
+CIwUIPropertySet 
+{
+	name "<bubble_pointer>"
+//: extraclass "IIwUIDrawable"
+	drawableType "image"
+	texture "bubble_pointer"
+}
+CIwUIPropertySet 
+{
+	name "<border_softkeyboard_key>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_middle"
+	border  { 7 12 }
+}
+CIwUIPropertySet 
+{
+	name "<border_softkeyboard_pressed_key>"
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_middle_pressed"
+	border  { 7 12 }
+}
+CIwUIPropertySet 
+{
+	name "<border_softkeyboard_key_left>"
+	parent <border_softkeyboard_key>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_left"
+}
+CIwUIPropertySet 
+{
+	name "<border_softkeyboard_key_right>"
+	parent <border_softkeyboard_key>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_right"
+}
+CIwUIPropertySet 
+{
+	name "<border_softkeyboard_pressed_key_left>"
+	parent <border_softkeyboard_pressed_key>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_left_pressed"
+}
+CIwUIPropertySet 
+{
+	name "<border_softkeyboard_pressed_key_right>"
+	parent <border_softkeyboard_pressed_key>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_right_pressed"
+}
+CIwUIPropertySet 
+{
+	name "<border_key_all_in_one>"
+	parent <border_softkeyboard_key>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_all_in_one"
+}
+CIwUIPropertySet 
+{
+	name "<border_key_all_in_one_pressed>"
+	parent <border_softkeyboard_pressed_key>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	texture "keyboard_key_all_in_one_pressed"
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_key>"
+//: extraclass "CIwUIButton"
+	sizeMin  { 12 15 }
+	sizeMax  { 420 500 }
+	sizeHint  { 420 320 }
+	buttonUp <border_softkeyboard_key>
+	buttonDown <border_softkeyboard_pressed_key>
+	focus <focus>
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_key_left>"
+	parent <softkeyboard_key>
+//: extraclass "CIwUIButton"
+	buttonUp <border_softkeyboard_key_left>
+	buttonDown <border_softkeyboard_pressed_key_left>
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_key_right>"
+	parent <softkeyboard_key>
+//: extraclass "CIwUIButton"
+	buttonUp <border_softkeyboard_key_right>
+	buttonDown <border_softkeyboard_pressed_key_right>
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_all_in_one>"
+	parent <softkeyboard_key>
+//: extraclass "CIwUIButton"
+	buttonUp <border_key_all_in_one>
+	buttonDown <border_key_all_in_one_pressed>
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_numpad_num>"
+//: extraclass "CIwUILabel"
+	border { 0 0 }
+	sizeHint  { 400 0 }
+	sizeToContent false
+	font "font_keyboard"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_numpad_txt>"
+//: extraclass "CIwUILabel"
+	border { 0 0 }
+	sizeHint  { 800 0 }
+	sizeToContent false
+	font "font_small"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_lower_key_label>"
+//: extraclass "CIwUILabel"
+	sizeToContent true
+	font "font_keyboard"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_tab_label>"
+//: extraclass "CIwUILabel"
+	sizeToContent true
+	font "font_medium"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_lower_key_image>"
+//: extraclass "CIwUIElement"
+	sizeToContent true
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_upper_key_label>"
+	parent <softkeyboard_lower_key_label>
+//: extraclass "CIwUILabel"
+	font "font_keyboard"
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_number_key_label>"
+	parent <softkeyboard_lower_key_label>
+//: extraclass "CIwUILabel"
+	font "font_keyboard"
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_extra>"
+	parent <softkeyboard_all_in_one>
+//: extraclass "CIwUILabel"
+	sizeMin  { 25 15 }
+	sizeMax  { 790 500 }
+	sizeHint  { 540 320 }
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_space>"
+	parent <softkeyboard_all_in_one>
+//: extraclass "CIwUILabel"
+	sizeMin  { 70 15 }
+	sizeMax  { 2820 500 }
+	sizeHint  { 1320 320 }
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_style>"
+//: extraclass "CIwUIElement"
+}
+CIwUIPropertySet 
+{
+	name "<balloon_style>"
+//: extraclass "CIwUISoftKeyBalloon"
+	sizeToContent false
+	font "font_keyboard"
+	textColour { 45 45 45 255 }
+	alignH "centre"
+	alignV "middle"
+	displayLength 300
+	balloonSize  { 70 70 }
+	background <bubble>
+	backgroundPointer <bubble_pointer>
+}
+CIwUIPropertySet 
+{
+	name "<tab_key_up>"
+//: extraclass "CIwUIButton"
+	sizeMin  { 16 21 }
+	sizeMax  { 640 21 }
+	buttonUp <keyboardTab_selected>
+	buttonDown <keyboardTab_unselected>
+	focus <focus_tab>
+}
+CIwUIPropertySet 
+{
+	name "<tab_key_down>"
+//: extraclass "CIwUIButton"
+	sizeMin  { 16 21 }
+	sizeMax  { 640 21 }
+	buttonUp <keyboardTab_unselected>
+	buttonDown <keyboardTab_selected>
+	focus <focus_tab>
+}
+CIwUIPropertySet 
+{
+	name "<softkeyboard_keys_style>"
+//: extraclass "CIwUIElement"
+	wrapLeft "wrap"
+	wrapRight "wrap"
+	wrapUp "none"
+	wrapDown "stop"
+}
+CIwUIPropertySet 
+{
+	name "<background>"
+//: extraclass "IIwUIDrawable"
+	drawableType "image"
+	texture "Background"
+}
+CIwUIPropertySet 
+{
+	name "<spinner_focus>"
+	parent <focus>
+//: extraclass "IIwUIDrawable"
+	drawableType "border"
+	uv0  { 3 3 }
+	uv1  { 29 29 }
+}
+CIwUIPropertySet 
+{
+	name "<spinner-spacer>"
+//: extraclass "CIwUIElement"
+	texture spinnerspacer
+	sizeMax  { 8 -1 }
+}

@@ -27,7 +27,8 @@ freely, subject to the following restrictions:
 #include "PolyVoxImpl/TypeDef.h"
 
 #include <cassert>
-#include <cmath>
+#include <cstdlib>
+#include <math.h>
 #include <cstring>
 #include <iostream>
 

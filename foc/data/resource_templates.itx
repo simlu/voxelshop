@@ -1,0 +1,23 @@
+CIwResTemplateIMAGE
+{
+	name "default"
+}
+
+CIwResTemplateMTL
+{
+	name "default"
+}
+
+CIwResTemplateIMAGE
+{
+	name "iwui"
+	mipMapping false
+	formatSW ARGB_8888
+}
+
+CIwResTemplateMTL
+{
+	name "iwui"
+	clampUV true
+	alphaMode "BLEND"
+}

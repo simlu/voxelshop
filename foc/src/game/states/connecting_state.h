@@ -20,7 +20,7 @@ public:
 		// create the socket
 		_shared_socket = shared_fos_socket(new fos_socket());
 		// try to connect
-		_shared_socket->connect("10.0.1.10", 8080);
+		_shared_socket->connect("127.0.0.1", 7633);
 	}
 	void update(uint64 dt) {
 		if(_shared_socket->is_connected()) {

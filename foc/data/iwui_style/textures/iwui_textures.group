@@ -1,0 +1,57 @@
+CIwResGroup
+{
+	name	iwui_textures
+	
+	.\background.tga
+	.\bubble.tga
+	.\bubble_pointer.tga
+	.\button_down.tga
+	.\button_up.tga
+	.\checkbox_cross.tga
+	.\checkbox_style.tga
+	.\deleteKey_symbol.tga
+	.\dialog.tga
+	.\enterKey_symbol.tga
+	.\focus.tga
+	.\grouped_list_background.tga
+	.\grouped_list_divider_shadow.tga
+	.\grouped_list_greypanel.tga
+	.\keyboardTab_frame.tga
+	.\keyboardTab_selected.tga
+	.\keyboardTab_unselected.tga
+	.\keyboard_bluebackground.tga
+	.\keyboard_key_all_in_one.tga
+	.\keyboard_key_all_in_one_pressed.tga
+	.\keyboard_key_left.tga
+	.\keyboard_key_left_pressed.tga
+	.\keyboard_key_middle.tga
+	.\keyboard_key_middle_pressed.tga
+	.\keyboard_key_right.tga
+	.\keyboard_key_right_pressed.tga
+	.\pointer.tga
+	.\progressBar_arrowHead.tga
+	.\progressBar_background.tga
+	.\progressBar_style.tga
+	.\radio_buttonDown.tga
+	.\radio_buttonUp.tga
+	.\radio_larger_left_buttonDown.tga
+	.\radio_larger_left_buttonUp.tga
+	.\radio_larger_right_buttonDown.tga
+	.\radio_larger_right_buttonUp.tga
+	.\radio_left_buttonDown.tga
+	.\radio_left_buttonUp.tga
+	.\radio_right_buttonDown.tga
+	.\radio_right_buttonUp.tga
+	.\shiftkey_symbol.tga
+	.\slider_background.tga
+	.\slider_bar.tga
+	.\slider_marker.tga
+	.\spaceBar_symbol.tga
+	.\spinner.tga
+	.\spinnerspacer.tga
+	.\textField_background.tga
+	.\textField_cursor.tga
+
+
+	.\iwui_style.mtl
+}

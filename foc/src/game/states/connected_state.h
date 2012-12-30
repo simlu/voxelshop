@@ -14,10 +14,10 @@ public:
 		_shared_socket = shared_socket;
 
 		// send the login message
-		fantasy_message fm;
+		/*fantasy_message fm;
 		fm.set_type(LOGIN);
 		fm.mutable__login()->set_auth(66);
-		_shared_socket->send(fm);
+		_shared_socket->send(fm);*/
 	}
 	void on_enter() {
 	}

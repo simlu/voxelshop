@@ -10,6 +10,11 @@ options
 
 files
 {
+    [data]
+    (data)
+    main_menu.group
+    main_menu/login.ui
+
     [src/game]
     (src/game)
     game.h
@@ -17,6 +22,7 @@ files
     [src/game/states]
     (src/game/states)
     init_state.h
+    auth_state.h
     connecting_state.h
     disconnected_state.h
     connected_state.h
@@ -36,10 +42,13 @@ files
     (src/utils)
     ssm.h
     ssm.cpp
+    ui.h
+    ui.cpp
 }
 
 subprojects
 {
+    iwui
     iwgx
     iwssl
     (boost\boost)
@@ -48,4 +57,21 @@ subprojects
     google.mkf
     (PolyVox)
     polyvox.mkf
+}
+
+assets
+{
+    #Deploy .group.bin files from the 'data-ram/data-gles1' directory if they
+    #have been written there by running the application in resource building
+    #mode, otherwise deploy pre-built binaries from the 'data' directory.
+    #
+    #For your own application, you are likely to want only the
+    #'data-ram/data-gles1' directory specified here.
+    #
+    #See the IwResManager documentation for more information on resource building.
+
+    (data-ram/data-gles1, data)
+    main_menu.group.bin
+
+    (data)
 }

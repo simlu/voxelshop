@@ -1,0 +1,17 @@
+include resource_templates.itx
+
+CIwResGroup
+{
+	name "main_menu"
+
+	useTemplate	"image"	"iwui"
+	useTemplate	"mtl"	"iwui"
+
+	iwui_style/iwui_style.group { inline true }
+
+	useTemplate	"image"	"default"
+	useTemplate	"mtl"	"default"
+
+	"Image.tga"
+	"main_menu/login.ui"
+}
