@@ -1,0 +1,8 @@
+package com.pixelatedgames.fols.protobufs;
+
+option optimize_for = LITE_RUNTIME;
+
+message gen_msg {
+    repeated int32 nums = 1 [packed=true];
+    repeated string strs = 2;
+}

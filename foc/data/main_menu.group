@@ -4,6 +4,11 @@ CIwResGroup
 {
 	name "main_menu"
 
+	CIwPropertyDefine
+	{
+		CIwPropertyString uilink
+	}
+
 	useTemplate	"image"	"iwui"
 	useTemplate	"mtl"	"iwui"
 
@@ -12,6 +17,6 @@ CIwResGroup
 	useTemplate	"image"	"default"
 	useTemplate	"mtl"	"default"
 
-	"Image.tga"
-	"main_menu/login.ui"
+	"main_menu/new_or_load.ui"
+	"main_menu/new_game.ui"
 }

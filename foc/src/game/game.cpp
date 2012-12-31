@@ -21,6 +21,7 @@ void game::run() {
     //IwUI will not instantiate these itself, since they can be subclassed to add functionality.
     new CIwUIController;
     new CIwUIView;
+	CIwUITextInput textinput;
 
 	// Initialise the IwGx drawing module
 	IwGxInit();	
@@ -63,7 +64,7 @@ void game::update() {
 		IwGetUIController()->Update();
 
 		// Update the view (this will do animations etc.)
-		IwGetUIView()->Update((uint32)dt);
+		IwGetUIView()->Update(1000/20);
 
 		// ALL UPDATE CODE GOES HERE 
 		_sm.update(dt);

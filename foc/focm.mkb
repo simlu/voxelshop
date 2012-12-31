@@ -13,7 +13,8 @@ files
     [data]
     (data)
     main_menu.group
-    main_menu/login.ui
+    main_menu/new_or_load.ui
+    main_menu/new_game.ui
 
     [src/game]
     (src/game)
@@ -27,12 +28,19 @@ files
     disconnected_state.h
     connected_state.h
 
+    [src/ui]
+    (src/ui)
+    menu_handlers.h
+    menu_handlers.cpp
+
     [src/network]
     (src/network)
     fos_socket.h
     fos_socket.cpp
     fantasy_messages.pb.h
     fantasy_messages.pb.cpp
+    gen_msgs.pb.h
+    gen_msgs.pb.cpp
 
     [src/main]
     (src/main)

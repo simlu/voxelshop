@@ -9,5 +9,8 @@ subprocess.call('protoc -I="." --java_out="../fos/src" "fantasy_messages.proto"'
 # c++
 cpp_dir = '../foc/src/network'
 subprocess.call('protoc -I="." --cpp_out="' + cpp_dir+ '" "fantasy_messages.proto"', shell=True);
-os.remove('../foc/src/network/fantasy_messages.pb.cpp')
+try:
+    os.remove('../foc/src/network/fantasy_messages.pb.cpp')
+except WindowsError:
+    
 os.rename(cpp_dir + '/fantasy_messages.pb.cc', cpp_dir + '/fantasy_messages.pb.cpp');

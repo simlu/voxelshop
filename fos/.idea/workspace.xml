@@ -2,18 +2,84 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6663e3f-9c0a-4db3-a1a5-3d9fcbffa891" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/.idea/artifacts/fols_jar.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/META-INF/MANIFEST.MF" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/encryption/password_utils.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/handlers/login_handler.java" />
-      <change type="DELETED" beforePath="C:\fo2\fols\.idea\libraries\libs.xml" afterPath="" />
-      <change type="MOVED" beforePath="C:\fo2\fols\src\com\pixelatedgames\fols\fols_server.java" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/login_server.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/data/main_menu/new_game.ui" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/README" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/descriptor.proto" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/initializer.as.inc" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/options.proto" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/pcompile.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/protobuf-java-2.4.0a.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/protoc-gen-as3.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/protoc-gen-as3" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/protoc.exe" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/fantasy_compile.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/gen_compile.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/gen_msgs.proto" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/ui/menu_handlers.cpp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/ui/menu_handlers.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/AbstractMessage.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/AbstractMessageLite.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/BlockingRpcChannel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/BlockingService.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/ByteString.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/CodedInputStream.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/CodedOutputStream.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/DescriptorProtos.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/Descriptors.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/DynamicMessage.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/ExtensionRegistry.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/ExtensionRegistryLite.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/FieldSet.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/GeneratedMessage.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/GeneratedMessageLite.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/Internal.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/InvalidProtocolBufferException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/LazyStringArrayList.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/LazyStringList.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/Message.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/MessageLite.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/MessageLiteOrBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/MessageOrBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/ProtocolMessageEnum.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/RepeatedFieldBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/RpcCallback.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/RpcChannel.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/RpcController.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/RpcUtil.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/Service.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/ServiceException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/SingleFieldBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/SmallSortedMap.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/TextFormat.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/UninitializedMessageException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/UnknownFieldSet.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/UnmodifiableLazyStringList.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/google/protobuf/WireFormat.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/protobufs/GenMsgs.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../proto/compiler/protoc-gen-as3.bat" />
+      <change type="DELETED" beforePath="C:\fo2\foc\data\image.tga" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\README" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\descriptor.proto" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\initializer.as.inc" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\old_pcompile.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\options.proto" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\pcompile.py" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\protobuf-java-2.4.0a.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\protoc-gen-as3" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\protoc-gen-as3.bat" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\protoc-gen-as3.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\protoc.exe" afterPath="" />
+      <change type="MOVED" beforePath="C:\fo2\foc\data\main_menu\login.ui" afterPath="$PROJECT_DIR$/../foc/data/main_menu/new_or_load.ui" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/data/development.icf" afterPath="$PROJECT_DIR$/../foc/data/development.icf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/data/main_menu.group" afterPath="$PROJECT_DIR$/../foc/data/main_menu.group" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/focm.mkb" afterPath="$PROJECT_DIR$/../foc/focm.mkb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/icfs/focm.icf" afterPath="$PROJECT_DIR$/../foc/icfs/focm.icf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/PolyVox/PolyVoxCore/include/PolyVoxCore/Vector.h" afterPath="$PROJECT_DIR$/../foc/PolyVox/PolyVoxCore/include/PolyVoxCore/Vector.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/states/connected_state.h" afterPath="$PROJECT_DIR$/../foc/src/game/states/connected_state.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/states/connecting_state.h" afterPath="$PROJECT_DIR$/../foc/src/game/states/connecting_state.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/game.cpp" afterPath="$PROJECT_DIR$/../foc/src/game/game.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/states/auth_state.h" afterPath="$PROJECT_DIR$/../foc/src/game/states/auth_state.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/utils/ui.cpp" afterPath="$PROJECT_DIR$/../foc/src/utils/ui.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/utils/ui.h" afterPath="$PROJECT_DIR$/../foc/src/utils/ui.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../fols/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../fols/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/Main.java" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/handlers/login_handler.java" afterPath="$PROJECT_DIR$/../fols/src/com/pixelatedgames/fols/handlers/login_handler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="fos.iws" />
@@ -84,8 +150,8 @@
       <property name="field_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByClasses" value="true" />
       <property name="exception_breakpoints_viewId" value="TABLE" />
-      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="field_breakpoints_viewId" value="TABLE" />
+      <property name="exception_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByMethods" value="false" />
     </ui_properties>
   </component>
@@ -97,25 +163,25 @@
       <file leaf-file-name="fos_server.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/fos_server.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="21" selection-start="510" selection-end="510" vertical-scroll-proportion="0.0">
+            <state line="28" column="50" selection-start="1291" selection-end="1313" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fos_server_initializer.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="fos_server_initializer.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_initializer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="73" selection-start="744" selection-end="772" vertical-scroll-proportion="0.0">
+            <state line="17" column="26" selection-start="803" selection-end="803" vertical-scroll-proportion="0.19653179">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fos_server_handler.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="fos_server_handler.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="75" selection-start="248" selection-end="283" vertical-scroll-proportion="0.078612715">
+            <state line="6" column="76" selection-start="240" selection-end="284" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -236,20 +302,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fos" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -366,6 +418,20 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fos" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -393,9 +459,20 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+  </component>
+  <component name="PublishConfig">
+    <servers>
+      <server id="f4e9ac99-cb53-465b-ad4f-9b7436662c51">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </server>
+    </servers>
   </component>
   <component name="RunManager" selected="Application.Main">
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
@@ -467,24 +544,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -511,6 +570,24 @@
       <envs />
       <properties />
       <listeners />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -621,7 +698,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3256351" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -796,28 +873,28 @@
         <state line="13" column="40" selection-start="208" selection-end="208" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="107" column="0" selection-start="3719" selection-end="3719" vertical-scroll-proportion="0.019653179" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="76" selection-start="240" selection-end="284" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/fos_server.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="21" selection-start="510" selection-end="510" vertical-scroll-proportion="0.0">
+        <state line="28" column="50" selection-start="1291" selection-end="1313" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_initializer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="73" selection-start="744" selection-end="772" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FantasyMessages.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="107" column="0" selection-start="3719" selection-end="3719" vertical-scroll-proportion="0.019653179">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fos/handlers/fos_server_handler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="75" selection-start="248" selection-end="283" vertical-scroll-proportion="0.078612715">
+        <state line="17" column="26" selection-start="803" selection-end="803" vertical-scroll-proportion="0.19653179">
           <folding />
         </state>
       </provider>

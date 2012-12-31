@@ -3,19 +3,37 @@
 
 #include "utils/ssm.h"
 #include "utils/ui.h"
+#include "ui/menu_handlers.h"
 
 class auth_state : public simple_state {
-	public:
+private:
+	main_menu_handler* _handler;
+
+public:
+	auth_state() {
+		_handler = new main_menu_handler();
+	}
+	~auth_state() {
+		delete _handler;
+	}
 
 	void on_enter() {
 		// check for saved login credentials
 
-		// otherwise show the login screen
-		// NEED TO SET CALLBACK AND PASS IT THIS STATE SO IT CAN DO STUFF
-		ui_set_screen("login");
+		// otherwise ask to create a new character or login
+		ui_set_screen("new_or_load", _handler);
 	}
-	void update(uint64 dt) {		
+	
+	void update(uint64 dt) {
+
+		// deal with menu changing
+		CIwString<32>& cur_click = _handler->get_cur_click();
+		if(cur_click.length()) {
+			ui_set_screen(cur_click.c_str(), _handler);
+			_handler->clear_cur_click();
+		}
 	}
+
 	void on_exit() {
 	}
 };

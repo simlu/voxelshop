@@ -1,0 +1,37 @@
+CIwUIElement 
+{
+	name "new_or_load"
+	sizeToContent true
+	CIwUIButton 
+	{
+		name "new_game_button"
+		style <button>
+		sizeMax  { 120 37 }
+		caption "New Game"
+		alignH "centre"
+		UILink "new_game"
+	}
+	CIwUIButton 
+	{
+		name "load_game_button"
+		style <button>
+		sizeMax  { 120 37 }
+		caption "Load Game"
+		alignH "centre"
+	}
+	CIwUILayoutHorizontal 
+	{
+		element 
+		{
+			name "new_game_button"
+			alignH "centre"
+			alignV "bottom"
+		}
+		element 
+		{
+			name "load_game_button"
+			alignH "centre"
+			alignV "bottom"
+		}
+	}
+}

@@ -3,6 +3,6 @@
 
 void ui_load();
 
-void ui_set_screen(const char* screen);
+void ui_set_screen(const char* screen, IIwUIEventHandler* pEventHandler);
 
 #endif
