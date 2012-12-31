@@ -1,0 +1,28 @@
+# The URL from which the client is downloaded
+appbase = http://fantasy-mmorpg.com/tools/ps4k/updater/
+
+# UI Configuration
+ui.name = PS4k
+
+# Application jar files
+code = PS4k.jar
+code = lib/commons-logging-1.1.1.jar
+code = lib/jide-action.jar
+code = lib/jide-common.jar
+code = lib/jide-dock.jar
+code = lib/org.springframework.asm-3.1.2.RELEASE.jar
+code = lib/org.springframework.aspects-3.1.2.RELEASE.jar
+code = lib/org.springframework.beans-3.1.2.RELEASE.jar
+code = lib/org.springframework.context-3.1.2.RELEASE.jar
+code = lib/org.springframework.core-3.1.2.RELEASE.jar
+code = lib/org.springframework.expression-3.1.2.RELEASE.jar
+code = lib/org.springframework.orm-3.1.2.RELEASE.jar
+code = lib/commons-codec-1.6.jar
+code = lib/httpcore-4.2.1.jar
+code = lib/httpclient-4.2.1.jar
+code = lib/httpmime-4.2.1.jar
+code = lib/log4j-1.2.6.jar
+code = lib/jpct.jar
+
+# The main entry point for the application
+class = com.vitco.Main

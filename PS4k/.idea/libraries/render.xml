@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="render">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/render" />
+      <root url="file://$PROJECT_DIR$/lib/render" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/render" recursive="false" />
+  </library>
+</component>

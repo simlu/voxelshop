@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <!--<icon-item src="resource/img/icons/tools/draw.png"-->
+          <!--tool-tip="draw_tooltip"-->
+          <!--action="toggle_animation_mode"-->
+          <!--checkable="true"/>-->
+    <icon-item src="resource/img/icons/tools/animate.png"
+          tool-tip="animate_tooltip"
+          checkable="true"
+          action="toggle_animation_mode"/>
+</head>
