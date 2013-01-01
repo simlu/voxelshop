@@ -1,10 +1,10 @@
-#ifndef CONNECTED_STATE_H
-#define CONNECTED_STATE_H
+#ifndef GAME_CONNECTED_STATE_H
+#define GAME_CONNECTED_STATE_H
 
 #include <utils\ssm.h>
 #include <game\game.h>
 #include <network\fos_socket.h>
-#include "disconnected_state.h"
+#include "game_disconnected_state.h"
 
 class connected_state : public simple_state {
 private:

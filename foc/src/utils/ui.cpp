@@ -16,13 +16,7 @@ void ui_load() {
 	IwGetUIStyleManager()->SetStylesheet(IwSafeCast<CIwUIStylesheet*>(pResource));
 }
 
-void ui_set_screen(const char* screen, IIwUIEventHandler* event_handler) {
-    //Find the dialog template
-    CIwUIElement* pDialogTemplate = (CIwUIElement*)IwGetResManager()->GetResNamed(screen, "CIwUIElement");
-
-    if (!pDialogTemplate)
-        return;
-
+void ui_set_handler(IIwUIEventHandler* event_handler) {
 	// remove the old event handler
 	if(g_event_handler)
 		IwGetUIController()->RemoveEventHandler(g_event_handler);
@@ -30,8 +24,16 @@ void ui_set_screen(const char* screen, IIwUIEventHandler* event_handler) {
 	// add the new event handler
 	g_event_handler = event_handler;
 	IwGetUIController()->AddEventHandler(g_event_handler);
+}
 
-    //Remove the old screen
+void ui_set_screen(const char* screen) {
+    //Find the dialog template
+    CIwUIElement* pDialogTemplate = (CIwUIElement*)IwGetResManager()->GetResNamed(screen, "CIwUIElement");
+
+    if (!pDialogTemplate)
+        return;
+
+	    //Remove the old screen
     if (g_screen)
         IwGetUIView()->DestroyElements();
 

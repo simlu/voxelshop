@@ -7,32 +7,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="af03c306-e03c-4523-91ae-eedbd4667a43" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/data/main_menu/new_game.ui" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/ui/menu_handlers.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/ui/menu_handlers.h" />
-      <change type="DELETED" beforePath="C:\fo2\foc\data\image.tga" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\README" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\descriptor.proto" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\initializer.as.inc" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\old_pcompile.txt" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\options.proto" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\pcompile.py" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\protobuf-java-2.4.0a.jar" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\protoc-gen-as3" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\protoc-gen-as3.bat" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\protoc-gen-as3.jar" afterPath="" />
-      <change type="DELETED" beforePath="C:\fo2\proto\protoc.exe" afterPath="" />
-      <change type="MOVED" beforePath="C:\fo2\foc\data\main_menu\login.ui" afterPath="$PROJECT_DIR$/../foc/data/main_menu/new_or_load.ui" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/data/development.icf" afterPath="$PROJECT_DIR$/../foc/data/development.icf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/data/main_menu.group" afterPath="$PROJECT_DIR$/../foc/data/main_menu.group" />
+      <change type="NEW" beforePath="" afterPath="C:\fo2\proto\fo_msgs.proto" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/game/states/game_connected_state.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/game/states/game_connecting_state.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/game/states/game_disconnected_state.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/game/states/login_auth_state.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/game/states/login_connected_state.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/game/states/login_connecting_state.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../foc/src/game/states/login_disconnected_state.h" />
+      <change type="NEW" beforePath="" afterPath="C:\fo2\foc\src\network\fo_msgs.pb.cpp" />
+      <change type="NEW" beforePath="" afterPath="C:\fo2\foc\src\network\fo_msgs.pb.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_initializer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FoMsgs.java" />
+      <change type="NEW" beforePath="" afterPath="C:\fo2\fos\src\com\pixelatedgames\fos\protobufs\FoMsgs.java" />
+      <change type="DELETED" beforePath="C:\fo2\foc\src\game\states\auth_state.h" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\foc\src\game\states\connected_state.h" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\foc\src\game\states\connecting_state.h" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\foc\src\game\states\disconnected_state.h" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\foc\src\network\fantasy_messages.pb.cpp" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\foc\src\network\fantasy_messages.pb.h" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\fols\libs\netty-4.0.0.Alpha2.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\fols\src\com\pixelatedgames\fols\protobufs\GenMsgs.java" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\fantasy_messages.proto" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\gen_compile.py" afterPath="" />
+      <change type="DELETED" beforePath="C:\fo2\proto\gen_msgs.proto" afterPath="" />
+      <change type="MOVED" beforePath="C:\fo2\proto\fantasy_compile.py" afterPath="C:\fo2\proto\fo_msgs_compile.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/focm.mkb" afterPath="$PROJECT_DIR$/../foc/focm.mkb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/icfs/focm.icf" afterPath="$PROJECT_DIR$/../foc/icfs/focm.icf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/game.cpp" afterPath="$PROJECT_DIR$/../foc/src/game/game.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/states/auth_state.h" afterPath="$PROJECT_DIR$/../foc/src/game/states/auth_state.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/game/states/init_state.h" afterPath="$PROJECT_DIR$/../foc/src/game/states/init_state.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/network/fos_socket.cpp" afterPath="$PROJECT_DIR$/../foc/src/network/fos_socket.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/network/fos_socket.h" afterPath="$PROJECT_DIR$/../foc/src/network/fos_socket.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/utils/ui.cpp" afterPath="$PROJECT_DIR$/../foc/src/utils/ui.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../foc/src/utils/ui.h" afterPath="$PROJECT_DIR$/../foc/src/utils/ui.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_handler.java" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_handler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java" afterPath="$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../fos/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../fos/.idea/workspace.xml" />
     </list>
     <ignored path="fols.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -95,48 +104,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/Main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="13" selection-start="100" selection-end="100" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="password_utils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/encryption/password_utils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="21" selection-start="1092" selection-end="1092" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="login_server.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="66" selection-start="1329" selection-end="1329" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="login_handler.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="login_handler.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_handler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="8" selection-start="427" selection-end="427" vertical-scroll-proportion="0.32346722">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="19" column="67" selection-start="789" selection-end="789" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GenMsgs.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/protobufs/GenMsgs.java">
+      <file leaf-file-name="IdleStateEvent.class" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/handler/timeout/IdleStateEvent.class">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="25" selection-start="750" selection-end="750" vertical-scroll-proportion="-7.28">
+            <state line="5" column="13" selection-start="162" selection-end="162" vertical-scroll-proportion="-2.72">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login_server.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="30" column="62" selection-start="1384" selection-end="1384" vertical-scroll-proportion="0.64693445">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login_initializer.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_initializer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="17" column="56" selection-start="820" selection-end="833" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -158,8 +156,11 @@
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/Main.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/encryption/password_utils.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/fols_server.java" />
-        <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java" />
+        <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/idle_handler.java" />
+        <option value="$PROJECT_DIR$/src/com/pixelatedgames/fos/protobufs/FoMsgs.java" />
+        <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_initializer.java" />
         <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_handler.java" />
+        <option value="$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java" />
       </list>
     </option>
   </component>
@@ -195,6 +196,20 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fols" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fols" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -245,6 +260,32 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="pixelatedgames" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fols" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fols" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pixelatedgames" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="fols" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -267,29 +308,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="fols" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protobufs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fols" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fols" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
+              <option name="myItemId" value="pixelatedgames" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -327,20 +346,6 @@
             <PATH_ELEMENT USER_OBJECT="Root">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fols" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fols" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -820,7 +825,7 @@
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44044945" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44044945" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -901,61 +906,88 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/fols.iml">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/socket/nio/NioSocketChannel.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+        <state line="5" column="13" selection-start="165" selection-end="165" vertical-scroll-proportion="-2.36" />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha2.jar!/io/netty/channel/ChannelOption.class">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/socket/DefaultServerSocketChannelConfig.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="84" selection-start="1093" selection-end="1103" vertical-scroll-proportion="0.29166666" />
+        <state line="9" column="11" selection-start="400" selection-end="400" vertical-scroll-proportion="-5.44" />
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_34/src.zip!/java/lang/String.java">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/socket/ServerSocketChannel.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2723" column="18" selection-start="104511" selection-end="104511" vertical-scroll-proportion="0.33333334" />
+        <state line="5" column="67" selection-start="210" selection-end="223" vertical-scroll-proportion="-2.72" />
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_34/jre/lib/jce.jar!/javax/crypto/spec/PBEKeySpec.class">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/ServerChannel.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="21" selection-start="304" selection-end="314" vertical-scroll-proportion="0.27878788" />
+        <state line="5" column="17" selection-start="158" selection-end="158" vertical-scroll-proportion="-2.72" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/Main.java">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/bootstrap/ServerBootstrap.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="13" selection-start="100" selection-end="100" vertical-scroll-proportion="0.0" />
+        <state line="20" column="46" selection-start="1155" selection-end="1155" vertical-scroll-proportion="0.35180724" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/encryption/password_utils.java">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/socket/nio/NioServerSocketChannel.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="21" selection-start="1092" selection-end="1092" vertical-scroll-proportion="0.0" />
+        <state line="5" column="97" selection-start="224" selection-end="249" vertical-scroll-proportion="-1.6" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/socket/nio/AbstractNioMessageChannel.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="66" selection-start="1329" selection-end="1329" vertical-scroll-proportion="0.0" />
+        <state line="5" column="95" selection-start="229" selection-end="247" vertical-scroll-proportion="-2.72" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../fos/fos.iml">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/socket/nio/AbstractNioChannel.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="5" column="81" selection-start="218" selection-end="233" vertical-scroll-proportion="-2.72" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/AbstractChannel.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="79" selection-start="201" selection-end="220" vertical-scroll-proportion="-2.72" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/util/DefaultAttributeMap.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="13" selection-start="151" selection-end="151" vertical-scroll-proportion="-2.72" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/channel/ChannelOutboundInvoker.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="35" selection-start="575" selection-end="575" vertical-scroll-proportion="0.35172415">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/protobufs/GenMsgs.java">
+    <entry file="jar://$PROJECT_DIR$/libs/netty-4.0.0.Alpha8.jar!/io/netty/handler/timeout/IdleStateEvent.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="25" selection-start="750" selection-end="750" vertical-scroll-proportion="-7.28">
+        <state line="5" column="13" selection-start="162" selection-end="162" vertical-scroll-proportion="-2.72">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_handler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="8" selection-start="427" selection-end="427" vertical-scroll-proportion="0.32346722">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="19" column="67" selection-start="789" selection-end="789" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/handlers/login_initializer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="56" selection-start="820" selection-end="833" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/pixelatedgames/fols/login_server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="62" selection-start="1384" selection-end="1384" vertical-scroll-proportion="0.64693445">
+          <folding />
         </state>
       </provider>
     </entry>

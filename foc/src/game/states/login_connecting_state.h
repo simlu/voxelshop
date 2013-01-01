@@ -1,21 +1,17 @@
-#ifndef CONNECTING_STATE_H
-#define CONNECTING_STATE_H
+#ifndef LOGIN_CONNECTING_STATE_H
+#define LOGIN_CONNECTING_STATE_H
 
-#include <utils\ssm.h>
-#include <game\game.h>
-#include <network\fos_socket.h>
-#include "connected_state.h"
-#include "disconnected_state.h"
+#include "utils/ssm.h"
+#include "network/fos_socket.h"
+#include "login_connected_state.h"
+#include "login_disconnected_state.h"
 
-#define SOCKET_TIMEOUT 10000
-
-class connecting_state : public simple_state {
+class login_connecting_state : public simple_state {
 private:
 	shared_fos_socket _shared_socket;
 	uint64 _startTime;
 public:
 	void on_enter() {
-		// start the timer
 		_startTime = s3eTimerGetMs();
 		// create the socket
 		_shared_socket = shared_fos_socket(new fos_socket());
@@ -25,12 +21,12 @@ public:
 	void update(uint64 dt) {
 		if(_shared_socket->is_connected()) {
 			// connected
-			_sm->switch_state(new connected_state(_shared_socket));
+			_sm->switch_state(new login_connected_state(_shared_socket));
 		} else {
 			// check for timeout or error
 			if(s3eTimerGetMs() - _startTime > SOCKET_TIMEOUT || _shared_socket->is_errors()) {
 				// disconnected
-				_sm->switch_state(new disconnected_state(_shared_socket->is_errors()));
+				_sm->switch_state(new login_disconnected_state(_shared_socket->is_errors()));
 			}
 		}
 	}

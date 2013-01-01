@@ -5,15 +5,15 @@
 #include "utils/ui.h"
 #include "ui/menu_handlers.h"
 
-class auth_state : public simple_state {
+class login_auth_state : public simple_state {
 private:
 	main_menu_handler* _handler;
 
 public:
-	auth_state() {
+	login_auth_state() {
 		_handler = new main_menu_handler();
 	}
-	~auth_state() {
+	~login_auth_state() {
 		delete _handler;
 	}
 

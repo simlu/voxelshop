@@ -1,5 +1,4 @@
 #include "fos_socket.h"
-#include "fantasy_messages.pb.h"
 #include <string.h>
 #include <IwDebug.h>
 #include <s3eDevice.h>
@@ -14,6 +13,7 @@ fos_socket::fos_socket() {
 	_errors = S3E_SOCKET_ERR_NONE;
 	_ping_fm.set_type(PING);
 	_ping_fm.mutable__ping();
+	_last_ping = 0;
 }
 
 void fos_socket::connect(std::string ip, uint16 port) {
@@ -61,9 +61,6 @@ void fos_socket::connection_succeeded() {
 void fos_socket::connection_failed() {
 	// change flag
 	_is_connected = false;
-
-	// save errors
-	_errors = s3eSocketGetError();
 	
 	// kill it
 	s3eSocketClose(_socket);
@@ -77,6 +74,7 @@ int32 connect_callback(s3eSocket *s, void *systemData, void *userData) {
 	if (res == S3E_RESULT_SUCCESS) {
 		socket->connection_succeeded();
 	} else {
+		socket->_errors = s3eSocketGetError();
 		socket->connection_failed();
 	}
 
@@ -86,11 +84,39 @@ int32 connect_callback(s3eSocket *s, void *systemData, void *userData) {
 void fos_socket::receive() {
 	// make sure we're connected
 	if(_is_connected) {
-		//int32 ret = s3eSocketRecv(_socket, _read_buf, _read_buf_len, 0);
+		int32 ret = s3eSocketRecv(_socket, (char*)_read_buf, _read_buf_len, 0);
+		
+		// no data waiting
+		if(ret == -1) {
+			// connection is dead
+			s3eSocketError errors = s3eSocketGetError();
+			if (errors != S3E_SOCKET_ERR_WOULDBLOCK) {
+				_errors = errors;
+				return;
+			}
+
+			// connection still alive
+			return;
+		} else {
+			// check for 0 data received as it's a sign of disconnection
+			// make sure we're pinging our sending some kind of data or we'll be stuck here forever
+			if(ret == 0) {
+				return;
+			}
+
+			// we've got data!
+
+			// DEAL WITH OUR DATA!!
+
+			return;
+		}
 	}
+
+	// disconnected
+	return;
 }
 
-void fos_socket::send(fantasy_message fm) {
+void fos_socket::send(fo_msg fm) {
 	// prepend the length as a varint32
 	int32 totalMsgLen = fm.ByteSize();
 	uint8* _send_buf_end = CodedOutputStream::WriteVarint32ToArray(totalMsgLen, _send_buf);
@@ -121,9 +147,12 @@ void fos_socket::send(fantasy_message fm) {
 				s3eSocketError errors = s3eSocketGetError();
 				if (errors == S3E_SOCKET_ERR_AGAIN) {
 					// REALLY DON'T WANT TO DO THIS!
-					s3eDeviceYield(10);
+					//s3eDeviceYield(10);
 					// ALERT ALERT BAD BAD BAD
 					continue;
+				} else {
+					_errors = errors;
+					return;
 				}
 			}
 		} while(msgSent < msgLen);
@@ -133,8 +162,12 @@ void fos_socket::send(fantasy_message fm) {
 }
 
 void fos_socket::ping() {
-	_ping_fm.mutable__ping()->set_timestamp(s3eTimerGetMs());
-	send(_ping_fm);
+	uint64 now = s3eTimerGetMs();
+	if(now - _last_ping > _ping_frequency) {
+		_ping_fm.mutable__ping()->set_timestamp(now);
+		send(_ping_fm);
+		_last_ping = now;
+	}
 }
 
 fos_socket::~fos_socket() {

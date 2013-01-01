@@ -1,5 +1,6 @@
 package com.pixelatedgames.fols;
 
+import com.pixelatedgames.fols.handlers.login_initializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -19,7 +20,7 @@ public class login_server {
         try {
             // create the login server
             loginBootstrap.group(new NioEventLoopGroup(), new NioEventLoopGroup())
-                    .channel(new NioServerSocketChannel())
+                    .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
                     .localAddress(7633)
                     .childOption(ChannelOption.TCP_NODELAY, true)
@@ -27,9 +28,9 @@ public class login_server {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(
-                                    new IdleStateHandler(60,30,0),
-                                    new LoggingHandler(LogLevel.INFO)//,
-                                    //new fos_server_initializer()
+                                    new IdleStateHandler(60, 30, 0),
+                                    new LoggingHandler(LogLevel.INFO),
+                                    new login_initializer()
                             );
                         }
                     });
