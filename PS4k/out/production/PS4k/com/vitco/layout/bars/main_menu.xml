@@ -4,6 +4,7 @@
         <item caption="new_file_caption" action="new_file_action"/>
         <item caption="load_file_caption" action="load_file_action"/>
         <item caption="import_file_caption" action="import_file_action"/>
+        <item caption="export_file_caption" action="export_file_action" grayable="true"/>
         <item caption="quick_save_file_caption" action="quick_save_file_action" grayable="true"/>
         <item caption="save_file_caption" action="save_file_action"/>
         <item caption="close_program_caption" action="close_program_action"/>
@@ -23,6 +24,7 @@
             <item caption="personal_caption" action="personal_state-action_show" checkable="true"/>
             <item caption="colorpicker_caption" action="colorpicker_state-action_show" checkable="true"/>
             <item caption="colorslider_caption" action="colorslider_state-action_show" checkable="true"/>
+            <item caption="layer_caption" action="layer_state-action_show" checkable="true"/>
         </menu>
     </menu>
 </head>

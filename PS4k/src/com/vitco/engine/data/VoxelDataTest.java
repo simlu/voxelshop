@@ -746,7 +746,7 @@ public class VoxelDataTest {
 
         final int poss = 26;
 
-        for (int seed = 93; seed < 2000; seed ++) {
+        for (int seed = 1140; seed < 2000; seed ++) {
             Util util = new Util(seed);
             float[] prob = new float[poss];
             for (int k = 0; k < prob.length; k++) {

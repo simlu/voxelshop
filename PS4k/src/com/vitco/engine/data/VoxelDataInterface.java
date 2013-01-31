@@ -39,10 +39,12 @@ public interface VoxelDataInterface {
     Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer);
     // get all voxels in current layer
     Voxel[] getLayerVoxels(int layerId);
-    // get all visible layer voxels
-    Voxel[] getVisibleLayerVoxel();
     // get changed voxels since last call
     Voxel[][] getNewVisibleLayerVoxel(String requestId);
+    // get all visible layer voxels
+    Voxel[] getVisibleLayerVoxel();
+    // true iff any voxels are visible
+    boolean anyLayerVoxelVisible();
     // to invalidate the side view buffer
     void invalidateSideViewBuffer(String requestId, Integer side, Integer plane);
     // get changed side view voxels since last call

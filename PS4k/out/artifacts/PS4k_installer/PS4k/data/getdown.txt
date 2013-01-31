@@ -1,5 +1,5 @@
 # The URL from which the client is downloaded
-appbase = http://fantasy-mmorpg.com/tools/ps4k/updater/
+appbase = http://fantasy-mmorpg.com/tools/ps4k/upd/
 
 # UI Configuration
 ui.name = PS4k

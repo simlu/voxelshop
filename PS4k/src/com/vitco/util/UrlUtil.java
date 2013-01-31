@@ -5,6 +5,7 @@ import com.vitco.util.error.ErrorHandlerInterface;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
@@ -27,6 +28,8 @@ public class UrlUtil {
 
             in.close();
         } catch (UnknownHostException ignored) {
+            // this can happen when there is no internet connection
+        } catch (ConnectException ignored) {
             // this can happen when there is no internet connection
         } catch (IOException e) {
             errorHandler.handle(e);

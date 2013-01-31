@@ -1,5 +1,6 @@
 package com.vitco.engine.data;
 
+import com.newbrightidea.util.RTree;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.container.VoxelLayer;
 import com.vitco.engine.data.history.HistoryChangeListener;
@@ -9,9 +10,8 @@ import com.vitco.res.VitcoSettings;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
+import java.util.List;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -95,7 +95,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         layerVoxelXZBufferValid = false;
         layerVoxelYZBufferValid = false;
         selectedVoxelBufferValid = false;
-        visibleLayerVoxelBufferValid = false;
+        visibleLayerVoxelInternalBufferValid = false;
         notifier.onVoxelDataChanged();
     }
 
@@ -1503,7 +1503,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final Voxel[] getSelectedVoxels() {
         if (!selectedVoxelBufferValid) {
             // get all presented voxels
-            Voxel voxels[] = getVisibleLayerVoxel();
+            Voxel voxels[] = _getVisibleLayerVoxel();
             // filter the selected
             ArrayList<Voxel> selected = new ArrayList<Voxel>();
             for (Voxel voxel : voxels) {
@@ -1567,6 +1567,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         return layerVoxelBuffer.clone();
     }
 
+    // get the new visible voxels, NOTE: if first element of array is null
+    // this means that everything is erases
     private final HashMap<String, HashMap<String, int[]>> changedVisibleVoxel = new HashMap<String, HashMap<String, int[]>>();
     @Override
     public final Voxel[][] getNewVisibleLayerVoxel(String requestId) {
@@ -1575,7 +1577,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
         if (changedVisibleVoxel.get(requestId) == null) {
             changedVisibleVoxel.put(requestId, new HashMap<String, int[]>());
-            return new Voxel[][] {null, getVisibleLayerVoxel()};
+            return new Voxel[][] {null, _getVisibleLayerVoxel()};
         } else {
             ArrayList<Voxel> removed = new ArrayList<Voxel>();
             ArrayList<Voxel> added = new ArrayList<Voxel>();
@@ -1597,11 +1599,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
-    Voxel[] visibleLayerVoxelBuffer = new Voxel[0];
-    boolean visibleLayerVoxelBufferValid = false;
-    @Override
-    public final Voxel[] getVisibleLayerVoxel() {
-        if (!visibleLayerVoxelBufferValid) {
+    // internal function, heavy!
+    Voxel[] visibleLayerVoxelInternalBuffer = new Voxel[0];
+    boolean visibleLayerVoxelInternalBufferValid = false;
+    private Voxel[] _getVisibleLayerVoxel() {
+        if (!visibleLayerVoxelInternalBufferValid) {
             VoxelLayer result = new VoxelLayer(-1, "tmp");
             for (Integer layerId : dataContainer.layerOrder) {
                 if (dataContainer.layers.get(layerId).isVisible()) {
@@ -1613,10 +1615,56 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     }
                 }
             }
-            visibleLayerVoxelBuffer = result.getVoxels();
-            visibleLayerVoxelBufferValid = true;
+            visibleLayerVoxelInternalBuffer = result.getVoxels();
+            visibleLayerVoxelInternalBufferValid = true;
         }
-        return visibleLayerVoxelBuffer.clone();
+        return visibleLayerVoxelInternalBuffer.clone();
+    }
+
+    // returns visible voxels
+    @Override
+    public final Voxel[] getVisibleLayerVoxel() {
+        updateVisVoxTreeInternal();
+        return visibleLayerVoxelBuffer;
+    }
+
+    // helper to update buffers for visible voxels
+    private Voxel[] visibleLayerVoxelBuffer = new Voxel[0];
+    private boolean anyVoxelsVisibleBuffer = false;
+    private final RTree<Voxel> visVoxelRTree = new RTree<Voxel>(50,2,3);
+    private final HashSet<Voxel> visVoxelList = new HashSet<Voxel>();
+    private final static float[] ZEROS = new float[] {0,0,0};
+    private void updateVisVoxTreeInternal() {
+        Voxel[][] newV = getNewVisibleLayerVoxel("___internal___visible_list");
+        if (newV[0] == null) {
+            visVoxelList.clear();
+        } else {
+            for (Voxel removed : newV[0]) {
+                float[] pos = removed.getPosAsFloat();
+                List<Voxel> search = visVoxelRTree.search(pos, ZEROS);
+                for (Voxel vox : search) {
+                    visVoxelRTree.delete(pos, ZEROS, vox);
+                    visVoxelList.remove(vox);
+                }
+            }
+        }
+        for (Voxel added : newV[1]) {
+            visVoxelRTree.insert(added.getPosAsFloat(), ZEROS, added);
+            visVoxelList.add(added);
+        }
+        // update the buffer
+        if (newV[0]== null || newV[0].length > 0 || newV[1].length > 0) {
+            visibleLayerVoxelBuffer = new Voxel[visVoxelList.size()];
+            visVoxelList.toArray(visibleLayerVoxelBuffer);
+            anyVoxelsVisibleBuffer = visibleLayerVoxelBuffer.length > 0;
+        }
+    }
+
+    // true iff any voxels visible
+    @Override
+    public final boolean anyLayerVoxelVisible() {
+        updateVisVoxTreeInternal();
+        return anyVoxelsVisibleBuffer;
     }
 
     // to invalidate the side view buffer

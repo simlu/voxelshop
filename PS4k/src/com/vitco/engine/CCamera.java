@@ -58,6 +58,8 @@ public class CCamera extends Camera {
             speed = Math.abs(speed);
             if (zoom - speed > ZOOM_IN_MAX || ZOOM_IN_MAX == -1) {
                 zoom -= speed;
+            } else {
+                zoom = ZOOM_IN_MAX;
             }
             update();
         }
@@ -68,6 +70,8 @@ public class CCamera extends Camera {
             speed = Math.abs(speed);
             if (zoom + speed < ZOOM_OUT_MAX || ZOOM_OUT_MAX == -1) {
                 zoom += speed;
+            } else {
+                zoom = ZOOM_OUT_MAX;
             }
             update();
         }
@@ -106,6 +110,8 @@ public class CCamera extends Camera {
             amountRotated[1] = 0;
             amountShifted[0] = 0;
             amountShifted[1] = 0;
+            amountShifted2D[0] = 0;
+            amountShifted2D[1] = 0;
             zoom = pos.distance(getOrigin()); // needs to go last
             update();
         }

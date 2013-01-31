@@ -41,13 +41,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             return "PS4k File (*.vsd)";
         }
     }
+    // export file chooser
+    final JFileChooser fc_export = new JFileChooser();
     // import file chooser
     final JFileChooser fc_import = new JFileChooser();
     // filter to only allow import files (png)
-    private static final class ImportFilter extends FileFilter
+    private static final class GeneralFilter extends FileFilter
     {
         private final String[] names;
-        private ImportFilter(String[] names) {
+        private GeneralFilter(String[] names) {
             this.names = names;
         }
 
@@ -75,6 +77,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             return result.toString();
         }
     }
+
     // save file prompt (and overwrite prompt): true iff save was successful
     private boolean handleSaveDialog(Frame frame) {
         boolean result = false;
@@ -175,12 +178,17 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_vsd.setFileFilter(new VSDFilter());
         fc_vsd.setAcceptAllFileFilterUsed(false);
 
-        FileFilter pngFilter = new ImportFilter(new String[] {"png"});
+        FileFilter pngFilter = new MainMenuLogic.GeneralFilter(new String[] {"png"});
         fc_import.addChoosableFileFilter(pngFilter);
-        fc_import.addChoosableFileFilter(new ImportFilter(new String[] {"jpg"}));
-        fc_import.addChoosableFileFilter(new ImportFilter(new String[] {"jpeg"}));
+        fc_import.addChoosableFileFilter(new MainMenuLogic.GeneralFilter(new String[] {"jpg"}));
+        fc_import.addChoosableFileFilter(new MainMenuLogic.GeneralFilter(new String[] {"jpeg"}));
         fc_import.setFileFilter(pngFilter);
         fc_import.setAcceptAllFileFilterUsed(false);
+
+        FileFilter daeFilter = new MainMenuLogic.GeneralFilter(new String[] {"dae"});
+        fc_export.addChoosableFileFilter(daeFilter);
+        fc_export.setFileFilter(daeFilter);
+        fc_export.setAcceptAllFileFilterUsed(false);
 
         // save file
         actionManager.registerAction("save_file_action", new AbstractAction() {
@@ -219,6 +227,40 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         }
                     }
                 }
+            }
+        });
+
+        // export file
+        actionManager.registerAction("export_file_action", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus() && fc_export.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+
+                    // make sure filename ends with *.dae
+                    String dir = fc_export.getSelectedFile().getPath();
+                    if(!dir.toLowerCase().endsWith(".dae")) {
+                        dir += ".dae";
+                    }
+                    File exportTo = new File(dir);
+                    // query if file already exists
+                    if (!exportTo.exists() ||
+                            JOptionPane.showConfirmDialog(frame,
+                                    dir + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+
+                        if (data.exportToCollada(exportTo)) {
+                            console.addLine(langSelector.getString("export_file_successful"));
+                        } else {
+                            console.addLine(langSelector.getString("export_file_error"));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return data.anyLayerVoxelVisible();
             }
         });
 
@@ -304,14 +346,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
     @PreDestroy
     public final void finish() {
-        // store folder locations (for open / close / import)
+        // store folder locations (for open / close / import / export)
         preferences.storeString("file_open_close_dialog_last_directory", fc_vsd.getCurrentDirectory().getAbsolutePath());
         preferences.storeString("file_import_dialog_last_directory", fc_import.getCurrentDirectory().getAbsolutePath());
+        preferences.storeString("file_export_dialog_last_directory", fc_export.getCurrentDirectory().getAbsolutePath());
     }
 
     @PostConstruct
     public final void init() {
-        // load folder locations (for open / close / import)
+        // load folder locations (for open / close / import / export)
         if (preferences.contains("file_open_close_dialog_last_directory")) {
             File file = new File(preferences.loadString("file_open_close_dialog_last_directory"));
             if (file.isDirectory()) {
@@ -322,6 +365,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             File file = new File(preferences.loadString("file_import_dialog_last_directory"));
             if (file.isDirectory()) {
                 fc_import.setCurrentDirectory(file);
+            }
+        }
+        if (preferences.contains("file_export_dialog_last_directory")) {
+            File file = new File(preferences.loadString("file_export_dialog_last_directory"));
+            if (file.isDirectory()) {
+                fc_export.setCurrentDirectory(file);
             }
         }
     }

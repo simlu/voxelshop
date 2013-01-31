@@ -1,5 +1,5 @@
 # The URL from which the client is downloaded
-appbase = http://fantasy-mmorpg.com/tools/ps4k/updater/
+appbase = http://fantasy-mmorpg.com/tools/ps4k/upd/
 
 # UI Configuration
 ui.name = PS4k
@@ -10,7 +10,6 @@ code = lib/commons-logging-1.1.1.jar
 code = lib/jide-action.jar
 code = lib/jide-common.jar
 code = lib/jide-dock.jar
-code = lib/retroweaver-rt-2.0.7.jar
 code = lib/org.springframework.asm-3.1.2.RELEASE.jar
 code = lib/org.springframework.aspects-3.1.2.RELEASE.jar
 code = lib/org.springframework.beans-3.1.2.RELEASE.jar

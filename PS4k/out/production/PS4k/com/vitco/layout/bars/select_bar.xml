@@ -20,6 +20,10 @@
                tool-tip="selection_tool_finalize_shifting_tooltip"
                grayable="true"
                action="selection_tool_finalize_shifting"/>
+    <icon-item src="resource/img/bars/select_bar/finalize_move_as_copy.png"
+               tool-tip="selection_tool_finalize_shifting_as_copy_tooltip"
+               grayable="true"
+               action="selection_tool_finalize_shifting_as_copy"/>
     <icon-item src="resource/img/bars/select_bar/deselect.png"
                tool-tip="selection_tool_deselect_tooltip"
                grayable="true"

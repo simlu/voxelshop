@@ -47,7 +47,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 camera.setView(VitcoSettings.SIDE_VIEW3_CAMERA_POSITION);
                 break;
         }
-        camera.setFOVLimits(VitcoSettings.SIDE_VIEW_ZOOM_FOV,VitcoSettings.SIDE_VIEW_ZOOM_FOV);
+        camera.setFOVLimits(VitcoSettings.SIDE_VIEW_ZOOM_FOV, VitcoSettings.SIDE_VIEW_ZOOM_FOV);
         camera.setFOV(VitcoSettings.SIDE_VIEW_ZOOM_FOV);
     }
 
@@ -284,10 +284,11 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         container.addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                if (e.getWheelRotation() == -1) {
-                    camera.zoomIn(VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
+                int rotation = e.getWheelRotation();
+                if (rotation < 0) {
+                    camera.zoomIn(Math.abs(rotation) * VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
                 } else {
-                    camera.zoomOut(VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
+                    camera.zoomOut(rotation * VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
                 }
                 animationAdapter.mouseMoved(e); // keep selection refreshed (zoom ~ mouse move)
                 forceRepaint();

@@ -21,11 +21,11 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
     private boolean isAnimate = VitcoSettings.INITIAL_MODE_IS_ANIMATION;
     // status of selection moved
-    private boolean voxelsAreMoved = true; // todo should be false
+    private boolean voxelsAreMoved = false;
     // true iff there are selected voxels
     private boolean voxelsAreSelected = true; // todo should be false
     // true iff there are voxels in layer
-    private boolean voxelsAreInLayer = true;
+    private boolean voxelsAreInLayer = true; // todo should be false
 
     private Integer[] convertVoxelsToIdArray(Voxel[] voxels) {
         Integer[] voxelIds = new Integer[voxels.length];
@@ -237,6 +237,50 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                     int[] shift = data.getVoxelSelectionShift();
                     if (selectedVoxels.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
                         data.massMoveVoxel(data.getSelectedVoxels(), shift);
+                    }
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreMoved && voxelsAreSelected;
+            }
+        });
+
+        // finalize shifting as copy
+        actionGroupManager.addAction("selection_interaction", "selection_tool_finalize_shifting_as_copy", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    // note: shifting will deselect voxels (so no need to do it here)
+                    Voxel[] selectedVoxels = data.getSelectedVoxels();
+                    int[] shift = data.getVoxelSelectionShift();
+
+                    if (selectedVoxels.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
+
+                        // make a copy of the voxels, but shifted
+                        Integer[] voxelIds = new Integer[selectedVoxels.length];
+                        Voxel[] shiftedVoxels = new Voxel[selectedVoxels.length];
+                        for (int i = 0; i < selectedVoxels.length; i++) {
+                            Voxel voxel = selectedVoxels[i];
+                            voxelIds[i] = voxel.id;
+                            int[] pos = voxel.getPosAsInt();
+                            shiftedVoxels[i] = new Voxel(-1, new int[] {
+                                    pos[0] - shift[0],
+                                    pos[1] - shift[1],
+                                    pos[2] - shift[2]
+                            }, voxel.getColor(), voxel.getLayerId());
+                        }
+
+                        // note: the following order makes sense if we want to copy the selection again to another place
+                        // add the shifted voxels
+                        // execute the (shifted) add
+                        if (!data.massAddVoxel(shiftedVoxels)) {
+                            console.addLine(langSelector.getString("min_max_voxel_error"));
+                        } else {
+                            // deselect voxels
+                            data.massSetVoxelSelected(voxelIds, false);
+                        }
                     }
                 }
             }

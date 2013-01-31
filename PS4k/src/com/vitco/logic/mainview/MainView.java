@@ -84,10 +84,11 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) { // scroll = zoom in and out
-                if (e.getWheelRotation() == -1) {
-                    camera.zoomIn(VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                int rotation = e.getWheelRotation();
+                if (rotation < 0) {
+                    camera.zoomIn(Math.abs(rotation) * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
                 } else {
-                    camera.zoomOut(VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                    camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
                 }
                 forceRepaint();
             }

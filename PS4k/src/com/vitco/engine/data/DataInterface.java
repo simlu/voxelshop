@@ -10,6 +10,8 @@ public interface DataInterface {
     boolean loadFromFile(File file);
     // stores all data to file
     boolean saveToFile(File file);
+    // stores all data to file
+    boolean exportToCollada(File file);
     // delete all history
     void clearHistoryA();
     void clearHistoryV();

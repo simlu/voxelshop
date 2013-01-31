@@ -132,8 +132,8 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     }
 
     // constructor
-    public WindowManager(String title) throws HeadlessException {
-        super(title);
+    public WindowManager() throws HeadlessException {
+        super(VitcoSettings.VERSION_ID);
         // save the state on exit of the program
         // this needs to be done BEFORE the window is closing
         addWindowListener(new WindowAdapter() {
