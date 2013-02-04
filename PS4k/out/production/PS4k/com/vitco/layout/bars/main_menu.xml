@@ -16,6 +16,7 @@
         <menu caption="tool_windows_btn">
             <item caption="console_caption" action="console_state-action_show" checkable="true"/>
             <item caption="shortcutManager_caption" action="shortcut-mg_state-action_show" checkable="true"/>
+            <item caption="textureManager_caption" action="textureManager_state-action_show" checkable="true"/>
             <item caption="xyView_caption" action="side-view_state-action_show1" checkable="true"/>
             <item caption="xzView_caption" action="side-view_state-action_show2" checkable="true"/>
             <item caption="yzView_caption" action="side-view_state-action_show3" checkable="true"/>

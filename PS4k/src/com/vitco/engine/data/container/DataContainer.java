@@ -1,5 +1,6 @@
 package com.vitco.engine.data.container;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,13 @@ import java.util.HashMap;
  */
 public final class DataContainer implements Serializable {
     private static final long serialVersionUID = 1L;
+    // ###################### DATA (Texture)
+    // all existing texture maps
+    // todo: remove legacy support / make this final again
+    public HashMap<Integer, ImageIcon> textures = new HashMap<Integer, ImageIcon>();
+    // the selected texture
+    public int selectedTexture = -1;
+
     // ###################### DATA (Voxel)
     // holds all layers (layers map to voxel ids)
     public int selectedLayer = -1;

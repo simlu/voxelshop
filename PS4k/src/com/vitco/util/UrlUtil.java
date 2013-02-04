@@ -32,7 +32,9 @@ public class UrlUtil {
         } catch (ConnectException ignored) {
             // this can happen when there is no internet connection
         } catch (IOException e) {
-            errorHandler.handle(e);
+            // this can also happen when there is no internet connection
+            // (if the isp provides an error page?)
+            // errorHandler.handle(e);
         }
 
         return result.toString();

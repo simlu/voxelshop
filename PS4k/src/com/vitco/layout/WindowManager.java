@@ -105,7 +105,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     public final DockableFrame prepareFrame(String key) {
         DockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
-            frame = frameLinkageMap.get(key).buildFrame(key);
+            frame = frameLinkageMap.get(key).buildFrame(key, thisFrame);
             shortcutManager.registerFrame(frame);
         } else {
             System.err.println("Error: No linkage class defined for frame \"" + key + "\"");

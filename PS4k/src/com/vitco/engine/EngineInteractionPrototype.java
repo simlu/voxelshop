@@ -411,7 +411,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                     if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
                                         if (data.searchVoxel(highlighted, false) == null) {
                                             // only draw if there is no voxels already here
-                                            data.addVoxel(ColorTools.hsbToColor(currentColor), highlighted);
+                                            data.addVoxel(ColorTools.hsbToColor(currentColor), data.getSelectedTexture(), highlighted);
                                         }
                                     }
                                     break;
@@ -433,11 +433,17 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         if (highlightedVoxel != null) {
                             preferences.storeObject("currently_used_color",
                                     ColorTools.colorToHSB(highlightedVoxel.getColor()));
+                            data.selectTextureSoft(highlightedVoxel.getTexture());
                         }
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {
                         Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
                         if (highlightedVoxel != null) {
-                            data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
+                            int selectedTexture = data.getSelectedTexture();
+                            if (selectedTexture == -1) {
+                                data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
+                            } else {
+                                data.setTexture(highlightedVoxel.id, selectedTexture);
+                            }
                         }
                     } else if (voxelMode == VOXELMODE.VIEW) {
                         // quick select for side view "current" planes

@@ -56,4 +56,11 @@ public final class NotificationService implements NotificationServiceInterface {
         }
     }
 
+    @Override
+    public void onTextureDataChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onTextureDataChanged();
+        }
+    }
+
 }

@@ -112,4 +112,7 @@
 
     <frame name="colorslider">
     </frame>
+
+    <frame name="textureManager">
+    </frame>
 </head>

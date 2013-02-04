@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
  */
 public class SnapshotLinkage extends FrameLinkagePrototype {
     @Override
-    public DockableFrame buildFrame(String key) {
+    public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
         frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource("resource/img/icons/frames/snapshot.png")

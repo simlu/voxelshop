@@ -235,6 +235,7 @@ public class CWorld extends World {
                                 voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
                                 voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE),
                         voxel.getColor(),
+                        voxel.getTexture(),
                         // draw the appropriate site only
                         side == -1
                                 ? calculateRequiredSides(voxel.getPosAsFloat())

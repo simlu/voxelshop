@@ -34,7 +34,7 @@ public class ColorSliderLinkage extends FrameLinkagePrototype {
     }
 
     @Override
-    public DockableFrame buildFrame(String key) {
+    public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
         frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource("resource/img/icons/frames/colorslider.png")

@@ -6,6 +6,7 @@ import com.vitco.util.lang.LangSelectorInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Prototype of class that links frame to content.
@@ -76,6 +77,6 @@ public abstract class FrameLinkagePrototype {
     // holds the reference of the actual frame container
     protected DockableFrame frame;
     // constructs the frame (with content)
-    public abstract DockableFrame buildFrame(String key);
+    public abstract DockableFrame buildFrame(String key, Frame mainFrame);
 }
 

@@ -13,8 +13,14 @@ import java.awt.image.BufferedImage;
  */
 public final class VitcoSettings {
 
+    // texture window settings
+    public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
+    public static final Color TEXTURE_BORDER = Color.BLACK;
+    public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
+    public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
+
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.0.26)";
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.0.27)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);

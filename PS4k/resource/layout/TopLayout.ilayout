@@ -190,6 +190,22 @@
                 sideDockAllowed="true" sideTitle="# Color Slider"
                 slidingAutohide="true" tabDockAllowed="true"
                 tabTitle="# Color Slider" title="# Color Slider" undockedBounds="819; 396; 200; 110"/>
+            <DockableFrame autohidable="false" autohide="false"
+                autohideHeight="200" autohideShowing="false"
+                autohideWhenActive="false" autohideWidth="200"
+                availableButtons="15" defaultCloseAction="0"
+                defaultEscapeAction="0" dockable="true" docked="true"
+                dockedHeight="200" dockedWidth="200" floatable="true"
+                floated="false" hidable="true" hidden="false"
+                initIndex="0" initMode="4" initSide="4"
+                key="textureManager" maximizable="true"
+                maximized="false" preferredAutohideSide="-1"
+                preferredSize="200; 200" rearrangable="true"
+                showContextMenu="false" showGripper="false"
+                showTitleBar="true" sideDockAllowed="true"
+                sideTitle="# Texture Manager" slidingAutohide="true"
+                tabDockAllowed="true" tabTitle="# Texture Manager"
+                title="# Texture Manager" undockedBounds="805; 150; 200; 200"/>
         </DockableFrames>
     </DockingManager>
     <DockableBarManager floatable="true" hidable="false"

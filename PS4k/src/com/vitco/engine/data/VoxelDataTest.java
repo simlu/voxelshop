@@ -30,13 +30,13 @@ public class VoxelDataTest {
 
     @Test
     public void testAddDeleteVoxel() throws Exception {
-        assert -1 == data.addVoxel(Color.RED, new int[]{0,0,0});
+        assert -1 == data.addVoxel(Color.RED, -1, new int[]{0,0,0});
         int lid1 = data.createLayer("layer1");
-        assert -1 == data.addVoxel(Color.RED, new int[]{0,0,0});
+        assert -1 == data.addVoxel(Color.RED, -1, new int[]{0,0,0});
         data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.RED, new int[]{0,0,0});
+        int id1 = data.addVoxel(Color.RED, -1, new int[]{0,0,0});
         assert id1 > -1;
-        assert -1 == data.addVoxel(Color.RED, new int[]{0,0,0});
+        assert -1 == data.addVoxel(Color.RED, -1, new int[]{0,0,0});
         assert data.removeVoxel(id1);
         assert data.getVoxel(id1) == null;
         data.undoV();
@@ -46,12 +46,12 @@ public class VoxelDataTest {
         assert data.getVoxel(id1) == null;
         data.undoV();
         assert data.getVoxel(id1).id == id1;
-        assert data.addVoxel(Color.RED, new int[]{0,0,0}) == -1;
+        assert data.addVoxel(Color.RED, -1, new int[]{0,0,0}) == -1;
         data.selectLayer(lid2);
-        int id2 = data.addVoxel(Color.RED, new int[]{0,0,0});
+        int id2 = data.addVoxel(Color.RED, -1, new int[]{0,0,0});
         assert id2 > -1;
         assert data.getVoxel(id2).id == id2;
-        int id3 = data.addVoxel(Color.GREEN,  new int[]{5,0,0});
+        int id3 = data.addVoxel(Color.GREEN, -1,  new int[]{5,0,0});
         data.deleteLayer(lid2);
         assert data.getVoxel(id3) == null;
         data.undoV();
@@ -63,8 +63,8 @@ public class VoxelDataTest {
         int lid1 = data.createLayer("layer1");
         data.createLayer("layer2");
         data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.RED, new int[]{5,6,7});
-        int id2 = data.addVoxel(Color.RED, new int[]{7,8,9});
+        int id1 = data.addVoxel(Color.RED, -1, new int[]{5,6,7});
+        int id2 = data.addVoxel(Color.RED, -1, new int[]{7,8,9});
         data.moveVoxel(id2, new int[]{5,6,7});
         assert data.getVoxel(id1) == null;
         data.undoV();
@@ -83,7 +83,7 @@ public class VoxelDataTest {
     public void testColorVoxel() throws Exception {
         int lid1 = data.createLayer("layer1");
         data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.RED, new int[] {0,0,0});
+        int id1 = data.addVoxel(Color.RED, -1, new int[] {0,0,0});
         assert data.getColor(id1) == Color.RED;
         data.setColor(id1, Color.GREEN);
         assert data.getColor(id1) == Color.GREEN;
@@ -98,7 +98,7 @@ public class VoxelDataTest {
     public void testAlphaVoxel() throws Exception {
         int lid1 = data.createLayer("layer1");
         data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.RED, new int[] {0,0,0});
+        int id1 = data.addVoxel(Color.RED, -1, new int[] {0,0,0});
         assert data.getAlpha(id1) == -1;
         data.setAlpha(id1, 10);
         assert data.getAlpha(id1) == 10;
@@ -113,10 +113,10 @@ public class VoxelDataTest {
     public void testClearRange() throws Exception {
         int lid1 = data.createLayer("layer1");
         data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.RED, new int[] {6,4,3});
-        int id2 = data.addVoxel(Color.RED, new int[] {4,4,4});
-        int id3 = data.addVoxel(Color.RED, new int[] {5,4,4});
-        int id4 = data.addVoxel(Color.RED, new int[] {6,5,2});
+        int id1 = data.addVoxel(Color.RED, -1, new int[] {6,4,3});
+        int id2 = data.addVoxel(Color.RED, -1, new int[] {4,4,4});
+        int id3 = data.addVoxel(Color.RED, -1, new int[] {5,4,4});
+        int id4 = data.addVoxel(Color.RED, -1, new int[] {6,5,2});
         data.clearRange(new int[]{6,4,3}, 1);
         assert data.getVoxel(id1) == null;
         assert data.getVoxel(id2).id == id2;
@@ -189,10 +189,10 @@ public class VoxelDataTest {
         int lid1 = data.createLayer("layer1");
         int lid2 = data.createLayer("layer2");
         data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.RED, new int[] {1,1,1});
-        int id2 = data.addVoxel(Color.GREEN, new int[] {1,1,2});
+        int id1 = data.addVoxel(Color.RED, -1, new int[] {1,1,1});
+        int id2 = data.addVoxel(Color.GREEN, -1, new int[] {1,1,2});
         data.selectLayer(lid2);
-        int id3 = data.addVoxel(Color.ORANGE, new int[] {1,1,1});
+        int id3 = data.addVoxel(Color.ORANGE, -1, new int[] {1,1,1});
         data.mergeVisibleLayers();
         assert data.getLayers().length == 1;
         assert data.getVoxel(id1) == null;
@@ -208,10 +208,10 @@ public class VoxelDataTest {
         int lid1 = data.createLayer("layer1");
         data.selectLayer(lid1);
         assert !data.mergeVisibleLayers();
-        data.addVoxel(Color.RED, new int[] {0,0,0});
-        data.addVoxel(Color.RED, new int[] {5,2,0});
-        data.addVoxel(Color.RED, new int[] {4,-10,0});
-        data.addVoxel(Color.RED, new int[] {4,-10,2});
+        data.addVoxel(Color.RED, -1, new int[] {0,0,0});
+        data.addVoxel(Color.RED, -1, new int[] {5,2,0});
+        data.addVoxel(Color.RED, -1, new int[] {4,-10,0});
+        data.addVoxel(Color.RED, -1, new int[] {4,-10,2});
         assert data.getVoxelsXY(0).length == 3;
         assert data.getVoxelsXY(1).length == 0;
         assert data.getVoxelsXY(2).length == 1;
@@ -458,14 +458,14 @@ public class VoxelDataTest {
         int lid2 = data.createLayer("layer2");
         int lid3 = data.createLayer("layer2");
         data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.BLACK, new int[]{1,2,3});
-        int id2 = data.addVoxel(Color.GREEN, new int[]{1,2,4});
+        int id1 = data.addVoxel(Color.BLACK, -1, new int[]{1,2,3});
+        int id2 = data.addVoxel(Color.GREEN, -1, new int[]{1,2,4});
         data.selectLayer(lid2);
-        int id3 = data.addVoxel(Color.ORANGE, new int[]{1,1,3});
-        int id4 = data.addVoxel(Color.WHITE, new int[]{1,2,4});
+        int id3 = data.addVoxel(Color.ORANGE, -1, new int[]{1,1,3});
+        int id4 = data.addVoxel(Color.WHITE, -1, new int[]{1,2,4});
         data.selectLayer(lid2);
-        data.addVoxel(Color.BLUE, new int[]{1,1,3});
-        data.addVoxel(Color.GRAY, new int[]{1,2,4});
+        data.addVoxel(Color.BLUE, -1, new int[]{1,1,3});
+        data.addVoxel(Color.GRAY, -1, new int[]{1,2,4});
         data.massSetVoxelSelected(new Integer[]{id1, id2, id3, id4}, true);
         data.setVisible(lid3, false);
         data.migrateVoxels(data.getSelectedVoxels());
@@ -574,7 +574,7 @@ public class VoxelDataTest {
             public void addVoxel() {
                 if (data.getSelectedLayer() != -1) {
                     int voxCount = data.getLayerVoxels(data.getSelectedLayer()).length;
-                    int id1 = data.addVoxel(randCol(), randPos());
+                    int id1 = data.addVoxel(randCol(), -1, randPos());
                     if (id1 != -1) {
                         assert voxCount+1 == data.getLayerVoxels(data.getSelectedLayer()).length;
                     }
@@ -716,7 +716,7 @@ public class VoxelDataTest {
                 Voxel[] voxel = new Voxel[length];
                 int layerId = data.getSelectedLayer();
                 for (int i = 0; i < length; i++) {
-                    voxel[i] = new Voxel(-1, randPos(), randCol(), layerId);
+                    voxel[i] = new Voxel(-1, randPos(), randCol(), -1, layerId);
                 }
                 data.massAddVoxel(voxel);
             }

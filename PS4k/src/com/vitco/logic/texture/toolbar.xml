@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <icon-item src="resource/img/framebars/texturemg/add.png"
+               tool-tip="texturemg_add_tooltip"
+               action="texturemg_action_add"/>
+    <icon-item src="resource/img/framebars/texturemg/remove.png"
+               tool-tip="texturemg_remove_tooltip"
+               action="texturemg_action_remove"
+               grayable="true"/>
+    <icon-item src="resource/img/framebars/texturemg/replace.png"
+               tool-tip="texturemg_replace_tooltip"
+               action="texturemg_action_replace"
+               grayable="true"/>
+    <icon-item src="resource/img/framebars/texturemg/clear.png"
+               tool-tip="texturemg_clear_tooltip"
+               action="texturemg_action_clear"
+               grayable="true"/>
+</head>

@@ -120,7 +120,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                             pos[0] -= shift[2];
                             pos[1] -= shift[1];
                             pos[2] -= shift[0];
-                            voxels[i++] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getLayerId());
+                            voxels[i++] = new Voxel(voxel.id, pos, voxel.getColor(), -1, voxel.getLayerId());
                         }
                         // execute the (shifted) add
                         if (!data.massAddVoxel(voxels)) {
@@ -269,7 +269,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                                     pos[0] - shift[0],
                                     pos[1] - shift[1],
                                     pos[2] - shift[2]
-                            }, voxel.getColor(), voxel.getLayerId());
+                            }, voxel.getColor(), voxel.getTexture(), voxel.getLayerId());
                         }
 
                         // note: the following order makes sense if we want to copy the selection again to another place

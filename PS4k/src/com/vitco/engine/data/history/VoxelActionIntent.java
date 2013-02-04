@@ -10,4 +10,9 @@ public abstract class VoxelActionIntent extends BasicActionIntent {
 
     // returns the affected voxel positions
     public abstract int[][] effected();
+
+    // return true if this action effects textures
+    public boolean effectsTexture() {
+        return false;
+    }
 }

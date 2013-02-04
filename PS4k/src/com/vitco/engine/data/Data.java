@@ -9,9 +9,11 @@ import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.xml.XmlTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.swing.*;
 import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * Data class that puts everything together and defines general data interaction (e.g. save/load)
@@ -51,6 +53,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
         clearHistoryV();
         notifier.onAnimationDataChanged();
         notifier.onVoxelDataChanged();
+        notifier.onTextureDataChanged();
         // file has not changed yet
         hasChanged = false;
     }
@@ -63,8 +66,12 @@ public final class Data extends VoxelHighlighting implements DataInterface {
             clearHistoryA();
             clearHistoryV();
             dataContainer = (DataContainer)loaded;
+            if (dataContainer.textures == null) { // todo: remove legacy support / make this final again
+                dataContainer.textures = new HashMap<Integer, ImageIcon>();
+            }
             invalidateA();
             invalidateV(null);
+            notifier.onTextureDataChanged();
             // file has not changed yet
             hasChanged = false;
             result = true;

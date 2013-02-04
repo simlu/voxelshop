@@ -15,6 +15,7 @@ public final class Voxel implements Serializable {
     private Color color; // color of voxel
     private int alpha = -1; // alpha of this voxel
     private final int layerId; // the id of the layer this voxel lives in
+    private int textureId = -1; // get the texture id of this voxel
 
     // default initialization
     private void readObject(java.io.ObjectInputStream in)
@@ -30,11 +31,12 @@ public final class Voxel implements Serializable {
         return lastUpdate;
     }
 
-    // constructor
-    public Voxel(int id, int[] pos, Color color, int layerId) {
+    // constructor (with texture)
+    public Voxel(int id, int[] pos, Color color, int textureId, int layerId) {
         this.id = id;
         this.color = color;
         this.layerId = layerId;
+        this.textureId = textureId;
         posI = pos.clone();
         for (int i = 0; i < pos.length; i++) {
             this.posF[i] = pos[i];
@@ -61,6 +63,17 @@ public final class Voxel implements Serializable {
     // get the color of this voxel
     public final Color getColor() {
         return color;
+    }
+
+    // set the texture of this voxel
+    protected final void setTexture(Integer textureId) {
+        this.textureId = textureId;
+        lastUpdate = new Object();
+    }
+
+    // get the texture of this voxel
+    public final int getTexture() {
+        return textureId;
     }
 
     // set the alpha of this voxel

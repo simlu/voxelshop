@@ -2,6 +2,7 @@ package com.vitco.engine.data;
 
 import com.vitco.engine.data.container.Voxel;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -12,7 +13,7 @@ public interface VoxelDataInterface {
     // only to be used for back imports etc
     int addVoxelDirect(Color color, int[] pos);
     // adds a voxel to current layer and returns voxel id
-    int addVoxel(Color color, int[] pos);
+    int addVoxel(Color color, int textureId, int[] pos);
     // deleted the voxel
     boolean removeVoxel(int voxelId);
     // move a voxel
@@ -120,7 +121,31 @@ public interface VoxelDataInterface {
     // move several voxels at once
     boolean massMoveVoxel(Voxel[] voxel, int[] shift);
 
+    // todo describe functions below
+
     boolean rotateVoxel(Voxel[] voxel, int axe, float degree);
 
     boolean mirrorVoxel(Voxel[] voxel, int axe);
+
+    boolean addTexture(ImageIcon texture);
+
+    boolean removeTexture(int textureId);
+
+    boolean removeAllTexture();
+
+    boolean replaceTexture(int textureId, ImageIcon texture);
+
+    Integer[] getTextureList();
+
+    ImageIcon getTexture(Integer textureId);
+
+    String getTextureHash(Integer textureId);
+
+    void selectTexture(int textureId);
+
+    void selectTextureSoft(int textureId);
+
+    int getSelectedTexture();
+
+    boolean setTexture(int voxelId, int textureId);
 }

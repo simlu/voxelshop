@@ -67,6 +67,9 @@
     <!-- manages threads -->
     <bean id="ThreadManager" class="com.vitco.util.thread.ThreadManager"/>
 
+    <!-- handles texture manager -->
+    <bean id="TextureManager" class="com.vitco.logic.texture.TextureManager"/>
+
     <!-- create ShortcutManager -->
     <!-- allow registering the windows with the shortcuts -->
     <bean id="ShortcutManager" class="com.vitco.logic.shortcut.ShortcutManager">
@@ -215,6 +218,12 @@
                 <entry>
                     <key><value>colorslider</value></key>
                     <bean id="ColorSliderLinkage" class="com.vitco.layout.frames.ColorSliderLinkage" />
+                </entry>
+                <entry>
+                    <key><value>textureManager</value></key>
+                    <bean id="TextureManagerLinkage" class="com.vitco.layout.frames.TextureManagerLinkage">
+                        <property name="textureManager" ref="TextureManager"/>
+                    </bean>
                 </entry>
             </map>
         </property>

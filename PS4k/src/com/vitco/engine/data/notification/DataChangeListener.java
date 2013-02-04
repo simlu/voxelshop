@@ -9,4 +9,5 @@ public interface DataChangeListener {
     void onVoxelDataChanged();
     void onVoxelHighlightingChanged();
     void onVoxelSelectionShiftChanged();
+    void onTextureDataChanged();
 }
