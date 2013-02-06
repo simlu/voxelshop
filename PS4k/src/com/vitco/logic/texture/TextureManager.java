@@ -20,6 +20,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -107,6 +108,9 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
     // import texture file chooser
     final JFileChooser fc_import = new JFileChooser();
 
+    // export texture file chooser
+    final JFileChooser fc_export = new JFileChooser();
+
     // handles the textures of the data class object
     @Override
     public JComponent build(final Frame mainFrame) {
@@ -135,6 +139,10 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
         fc_import.setAcceptAllFileFilterUsed(false);
         fc_import.setFileFilter(filter);
 
+        fc_export.addChoosableFileFilter(filter);
+        fc_export.setAcceptAllFileFilterUsed(false);
+        fc_export.setFileFilter(filter);
+
         // create the menu actions
         actionManager.registerAction("texturemg_action_add", new AbstractAction() {
             @Override
@@ -162,9 +170,11 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
             @Override
             public void action(ActionEvent e) {
-                boolean success = data.removeTexture(selectedTexture);
-                if (!success) {
-                    console.addLine(langSelector.getString("texturemg_delete_failed_texture_in_use"));
+                if (getStatus()) {
+                    boolean success = data.removeTexture(selectedTexture);
+                    if (!success) {
+                        console.addLine(langSelector.getString("texturemg_delete_failed_texture_in_use"));
+                    }
                 }
             }
         });
@@ -176,7 +186,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
             @Override
             public void action(ActionEvent e) {
-                if (fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
+                if (getStatus() && fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
                     try {
                         ImageIcon texture = new ImageIcon(ImageIO.read(fc_import.getSelectedFile()));
                         if (texture.getIconWidth() != 64 || texture.getIconHeight() != 96) {
@@ -191,6 +201,44 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 }
             }
         });
+        actionGroupManager.addAction("texture_manager_buttons", "texturemg_action_export", new StateActionPrototype() {
+            @Override
+            public boolean getStatus() {
+                return selectedTexture != -1;
+            }
+
+            @Override
+            public void action(ActionEvent e) {
+                if (getStatus() && fc_export.showSaveDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
+
+                    // make sure filename ends with *.png
+                    String dir = fc_export.getSelectedFile().getPath();
+                    if(!dir.toLowerCase().endsWith(".png")) {
+                        dir += ".png";
+                    }
+                    File exportTo = new File(dir);
+
+                    // query if file already exists
+                    if (!exportTo.exists() ||
+                            JOptionPane.showConfirmDialog(mainFrame,
+                                    dir + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+
+                        ImageIcon texture = data.getTexture(selectedTexture);
+                        BufferedImage img = new BufferedImage(texture.getIconWidth(),
+                                texture.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                        img.getGraphics().drawImage(texture.getImage(), 0, 0, null);
+                        try {
+                            ImageIO.write(img, "png", exportTo);
+                            console.addLine(langSelector.getString("texturemg_export_success"));
+                        } catch (IOException e1) {
+                            console.addLine(langSelector.getString("texturemg_export_failed"));
+                        }
+                    }
+                }
+            }
+        });
         actionGroupManager.addAction("texture_manager_buttons", "texturemg_action_clear", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
@@ -199,7 +247,9 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
             @Override
             public void action(ActionEvent e) {
-                data.removeAllTexture();
+                if (getStatus()) {
+                    data.removeAllTexture();
+                }
             }
         });
         actionGroupManager.registerGroup("texture_manager_buttons");
@@ -314,6 +364,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
     @PreDestroy
     public final void finish() {
         preferences.storeString("texture_import_dialog_last_directory", fc_import.getCurrentDirectory().getAbsolutePath());
+        preferences.storeString("texture_export_dialog_last_directory", fc_export.getCurrentDirectory().getAbsolutePath());
     }
 
     @PostConstruct
@@ -322,6 +373,12 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
             File file = new File(preferences.loadString("texture_import_dialog_last_directory"));
             if (file.isDirectory()) {
                 fc_import.setCurrentDirectory(file);
+            }
+        }
+        if (preferences.contains("texture_export_dialog_last_directory")) {
+            File file = new File(preferences.loadString("texture_export_dialog_last_directory"));
+            if (file.isDirectory()) {
+                fc_export.setCurrentDirectory(file);
             }
         }
     }

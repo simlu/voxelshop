@@ -41,6 +41,7 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="A" action="selection_tool_select_all" caption="selection_tool_select_all_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="N" action="selection_tool_as_new_layer" caption="selection_tool_as_new_layer_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="R" action="selection_tool_recolor" caption="selection_tool_recolor_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="T" action="selection_tool_retexture" caption="selection_tool_retexture_caption" />
 
         <shortcut ctrl="no" alt="no" shift="no" key="ENTER" action="selection_tool_finalize_shifting" caption="selection_tool_finalize_shifting_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="ENTER" action="selection_tool_finalize_shifting_as_copy" caption="selection_tool_finalize_shifting_as_copy_caption" />
@@ -114,5 +115,9 @@
     </frame>
 
     <frame name="textureManager">
+        <shortcut ctrl="yes" alt="yes" shift="no" key="A" action="texturemg_action_add" caption="texturemg_add_caption" />
+        <shortcut ctrl="yes" alt="yes" shift="no" key="D" action="texturemg_action_remove" caption="texturemg_remove_caption" />
+        <shortcut ctrl="yes" alt="yes" shift="no" key="R" action="texturemg_action_replace" caption="texturemg_replace_caption" />
+        <shortcut ctrl="yes" alt="yes" shift="no" key="E" action="texturemg_action_export" caption="texturemg_export_caption" />
     </frame>
 </head>

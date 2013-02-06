@@ -440,8 +440,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         if (highlightedVoxel != null) {
                             int selectedTexture = data.getSelectedTexture();
                             if (selectedTexture == -1) {
+                                // change color
                                 data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
                             } else {
+                                // change texture
                                 data.setTexture(highlightedVoxel.id, selectedTexture);
                             }
                         }

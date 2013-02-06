@@ -116,35 +116,36 @@ public class WorldUtil {
     public static void loadTexture(String name, Image image) {
         // Create a texture from image
         BufferedImage text_top = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
-        text_top.getGraphics().drawImage(image, 7, 7, 41, 41, 0, 0, 32, 32, null); // draw edges
-        text_top.getGraphics().drawImage(image, 8, 7, 40, 41, 0, 0, 32, 32, null); // draw edges
-        text_top.getGraphics().drawImage(image, 7, 8, 41, 40, 0, 0, 32, 32, null); // draw edges
-        text_top.getGraphics().drawImage(image, 8, 8, 40, 40, 0, 0, 32, 32, null);
+        Graphics g2 = text_top.getGraphics();
+        g2.drawImage(image, 7, 7, 41, 41, 0, 0, 32, 32, null); // draw edges
+        g2.drawImage(image, 8, 7, 40, 41, 0, 0, 32, 32, null); // draw edges
+        g2.drawImage(image, 7, 8, 41, 40, 0, 0, 32, 32, null); // draw edges
+        g2.drawImage(image, 8, 8, 40, 40, 0, 0, 32, 32, null);
 
-        text_top.getGraphics().drawImage(image, 47, 7, 81, 41, 64, 0, 32, 32, null); // draw edges
-        text_top.getGraphics().drawImage(image, 48, 7, 80, 41, 64, 0, 32, 32, null); // draw edges
-        text_top.getGraphics().drawImage(image, 47, 8, 81, 40, 64, 0, 32, 32, null); // draw edges
-        text_top.getGraphics().drawImage(image, 48, 8, 80, 40, 64, 0, 32, 32, null);
+        g2.drawImage(image, 47, 7, 81, 41, 64, 0, 32, 32, null); // draw edges
+        g2.drawImage(image, 48, 7, 80, 41, 64, 0, 32, 32, null); // draw edges
+        g2.drawImage(image, 47, 8, 81, 40, 64, 0, 32, 32, null); // draw edges
+        g2.drawImage(image, 48, 8, 80, 40, 64, 0, 32, 32, null);
 
-        text_top.getGraphics().drawImage(image, 7, 47, 41, 81, 32, 32, 0, 64, null); // draw edges
-        text_top.getGraphics().drawImage(image, 8, 47, 40, 81, 32, 32, 0, 64, null); // draw edges
-        text_top.getGraphics().drawImage(image, 7, 48, 41, 80, 32, 32, 0, 64, null); // draw edges
-        text_top.getGraphics().drawImage(image, 8, 48, 40, 80, 32, 32, 0, 64, null);
+        g2.drawImage(image, 7, 47, 41, 81, 32, 32, 0, 64, null); // draw edges
+        g2.drawImage(image, 8, 47, 40, 81, 32, 32, 0, 64, null); // draw edges
+        g2.drawImage(image, 7, 48, 41, 80, 32, 32, 0, 64, null); // draw edges
+        g2.drawImage(image, 8, 48, 40, 80, 32, 32, 0, 64, null);
 
-        text_top.getGraphics().drawImage(image, 47, 47, 81, 81, 32, 32, 64, 64, null); // draw edges
-        text_top.getGraphics().drawImage(image, 48, 47, 80, 81, 32, 32, 64, 64, null); // draw edges
-        text_top.getGraphics().drawImage(image, 47, 48, 81, 80, 32, 32, 64, 64, null); // draw edges
-        text_top.getGraphics().drawImage(image, 48, 48, 80, 80, 32, 32, 64, 64, null);
+        g2.drawImage(image, 47, 47, 81, 81, 32, 32, 64, 64, null); // draw edges
+        g2.drawImage(image, 48, 47, 80, 81, 32, 32, 64, 64, null); // draw edges
+        g2.drawImage(image, 47, 48, 81, 80, 32, 32, 64, 64, null); // draw edges
+        g2.drawImage(image, 48, 48, 80, 80, 32, 32, 64, 64, null);
 
-        text_top.getGraphics().drawImage(image, 7, 87, 41, 121, 32, 64, 0, 96, null); // draw edges
-        text_top.getGraphics().drawImage(image, 8, 87, 40, 121, 32, 64, 0, 96, null); // draw edges
-        text_top.getGraphics().drawImage(image, 7, 88, 41, 120, 32, 64, 0, 96, null); // draw edges
-        text_top.getGraphics().drawImage(image, 8, 88, 40, 120, 32, 64, 0, 96, null);
+        g2.drawImage(image, 7, 87, 41, 121, 32, 64, 0, 96, null); // draw edges
+        g2.drawImage(image, 8, 87, 40, 121, 32, 64, 0, 96, null); // draw edges
+        g2.drawImage(image, 7, 88, 41, 120, 32, 64, 0, 96, null); // draw edges
+        g2.drawImage(image, 8, 88, 40, 120, 32, 64, 0, 96, null);
 
-        text_top.getGraphics().drawImage(image, 47, 87, 81, 121, 32, 64, 64, 96, null); // draw edges
-        text_top.getGraphics().drawImage(image, 48, 87, 80, 121, 32, 64, 64, 96, null); // draw edges
-        text_top.getGraphics().drawImage(image, 47, 88, 81, 120, 32, 64, 64, 96, null); // draw edges
-        text_top.getGraphics().drawImage(image, 48, 88, 80, 120, 32, 64, 64, 96, null);
+        g2.drawImage(image, 47, 87, 81, 121, 32, 64, 64, 96, null); // draw edges
+        g2.drawImage(image, 48, 87, 80, 121, 32, 64, 64, 96, null); // draw edges
+        g2.drawImage(image, 47, 88, 81, 120, 32, 64, 64, 96, null); // draw edges
+        g2.drawImage(image, 48, 88, 80, 120, 32, 64, 64, 96, null);
 
         Texture texture = new Texture(text_top);
         if (TextureManager.getInstance().containsTexture(name)) {

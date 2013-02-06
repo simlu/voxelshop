@@ -11,6 +11,8 @@ import java.util.HashMap;
  * IMPORTANT: This class should never be changes!
  */
 public final class DataContainer implements Serializable {
+    // todo proper legacy support (read tutorial!)
+    // 1L without texture support, 2L texture support added
     private static final long serialVersionUID = 1L;
     // ###################### DATA (Texture)
     // all existing texture maps

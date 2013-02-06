@@ -332,12 +332,15 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (mouse_down_point != null) {
-                    // keep speed the same for different container sizes (uses shift2D!)
-                    camera.shift2D(150 * (float) (e.getX() - mouse_down_point.getX()) / container.getWidth(),
-                            150 * (float) (e.getY() - mouse_down_point.getY()) / container.getHeight(),
-                            VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
-                    mouse_down_point = e.getPoint();
-                    forceRepaint();
+                    if (camera.isEnabled()) {
+                        // keep speed the same for different container sizes (uses shift2D!)
+                        camera.shift2D(150 * (float) (e.getX() - mouse_down_point.getX()) / container.getWidth(),
+                                150 * (float) (e.getY() - mouse_down_point.getY()) / container.getHeight(),
+                                VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
+                        mouse_down_point = e.getPoint();
+                        container.doNotSkipNextWorldRender();
+                        forceRepaint();
+                    }
                 }
             }
         };

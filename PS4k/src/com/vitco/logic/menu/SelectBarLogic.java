@@ -226,6 +226,20 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 return !isAnimate && voxelsAreSelected;
             }
         });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_retexture", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
+                    data.massSetTexture(voxelIds, data.getSelectedTexture());
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
+            }
+        });
 
         // finalize shifting
         actionGroupManager.addAction("selection_interaction", "selection_tool_finalize_shifting", new StateActionPrototype() {

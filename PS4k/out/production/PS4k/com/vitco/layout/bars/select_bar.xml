@@ -34,7 +34,7 @@
                action="selection_tool_delete"/>
     <separator/>
 
-    <!--select all, move to new layer, recolor-->
+    <!--select all, move to new layer, recolor, retexture-->
     <icon-item src="resource/img/bars/select_bar/select_layer.png"
                tool-tip="selection_tool_select_all_tooltip"
                grayable="true"
@@ -47,6 +47,10 @@
                tool-tip="selection_tool_recolor_tooltip"
                grayable="true"
                action="selection_tool_recolor"/>
+    <icon-item src="resource/img/bars/select_bar/retexture.png"
+               tool-tip="selection_tool_retexture_tooltip"
+               grayable="true"
+               action="selection_tool_retexture"/>
     <separator/>
 
     <!--rotate-->

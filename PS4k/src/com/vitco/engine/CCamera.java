@@ -31,6 +31,11 @@ public class CCamera extends Camera {
         enableCamera = b;
     }
 
+    // getter for enabled
+    public final boolean isEnabled() {
+        return enableCamera;
+    }
+
     // camera change listener
     private final ArrayList<CameraChangeListener> listener = new ArrayList<CameraChangeListener>();
     // add listener

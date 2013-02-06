@@ -11,6 +11,10 @@
                tool-tip="texturemg_replace_tooltip"
                action="texturemg_action_replace"
                grayable="true"/>
+    <icon-item src="resource/img/framebars/texturemg/export.png"
+               tool-tip="texturemg_export_tooltip"
+               action="texturemg_action_export"
+               grayable="true"/>
     <icon-item src="resource/img/framebars/texturemg/clear.png"
                tool-tip="texturemg_clear_tooltip"
                action="texturemg_action_clear"

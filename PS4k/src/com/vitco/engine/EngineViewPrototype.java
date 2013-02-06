@@ -608,7 +608,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // draw some ghosting lines (the voxel outline)
         private BufferedImage overlayBuffer = new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
-        private void drawGhostOverlay(Graphics2D g1, boolean forceRepaint) {
+        private void drawGhostOverlay(Graphics2D g1, boolean cameraChanged) {
             boolean resized =
                     buffer.getOutputWidth() != overlayBuffer.getWidth() ||
                             buffer.getOutputHeight() != overlayBuffer.getHeight();
@@ -616,7 +616,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 overlayBuffer = new BufferedImage(buffer.getOutputWidth(), buffer.getOutputHeight(), BufferedImage.TYPE_INT_ARGB);
             }
             boolean updated = updateGhostOverlay();
-            if (updated || forceRepaint || resized) {
+            if (updated || cameraChanged || resized) {
                 // draw the lines
                 Graphics2D g = (Graphics2D)overlayBuffer.getGraphics();
                 // Anti-alias

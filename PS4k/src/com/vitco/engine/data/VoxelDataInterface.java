@@ -148,4 +148,6 @@ public interface VoxelDataInterface {
     int getSelectedTexture();
 
     boolean setTexture(int voxelId, int textureId);
+
+    boolean massSetTexture(Integer[] voxelIds, int textureId);
 }

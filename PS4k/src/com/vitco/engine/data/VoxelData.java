@@ -949,6 +949,44 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    private final class MassTextureVoxelIntent extends VoxelActionIntent  {
+        private final Integer[] voxelIds;
+        private final int textureId;
+
+        protected MassTextureVoxelIntent(Integer[] voxelIds, int textureId, boolean attach) {
+            super(attach);
+
+            // what is effected (there could be duplicate positions here)
+            effected = new int[voxelIds.length][];
+            for (int i = 0; i < effected.length; i++) {
+                effected[i] = dataContainer.voxels.get(voxelIds[i]).getPosAsInt();
+            }
+
+            this.voxelIds = voxelIds;
+            this.textureId = textureId;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                for (Integer voxelId : voxelIds) {
+                    historyManagerV.applyIntent(new TextureVoxelIntent(voxelId, textureId, true));
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+
+        private int[][] effected = null;
+        @Override
+        public int[][] effected() {
+            return effected;
+        }
+    }
+
     // layer events
 
     // move to new layer
@@ -2389,6 +2427,24 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             result = true;
         }
         return result;
+    }
+
+    @Override
+    public final boolean massSetTexture(Integer[] voxelIds, int textureId) {
+        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+        for (int voxelId : voxelIds) {
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                validVoxel.add(voxelId);
+            }
+        }
+        if (validVoxel.size() > 0) {
+            Integer[] valid = new Integer[validVoxel.size()];
+            validVoxel.toArray(valid);
+            historyManagerV.applyIntent(new MassTextureVoxelIntent(valid, textureId, false));
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

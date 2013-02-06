@@ -63,7 +63,7 @@ public class FileTools {
             InputStream inputStream = new FileInputStream( file );
             InputStream buffer = new BufferedInputStream( inputStream );
             ObjectInput input = new ObjectInputStream ( buffer );
-            try{
+            try {
                 result = input.readObject();
             }
             finally{
