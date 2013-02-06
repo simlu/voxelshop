@@ -61,7 +61,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     @Override
     public final boolean loadFromFile(File file) {
         boolean result = false;
-        // VSDS file format
+        // VSD file format
         DataContainer loaded = new DataContainer(file, errorHandler);
         if (loaded.hasLoaded) {
             clearHistoryA();
@@ -96,8 +96,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
 
     @Override
     public final boolean saveToFile(File file) {
-        boolean result = false;
-        result = dataContainer.saveToVsdFile(file, errorHandler);
+        boolean result = dataContainer.saveToVsdFile(file, errorHandler);
         if (result) {
             hasChanged = false;
         }

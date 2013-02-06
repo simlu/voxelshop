@@ -59,22 +59,24 @@ public class FileTools {
     // de-serialize object from file
     public static Object loadFromFile(File file, ErrorHandlerInterface errorHandler) {
         Object result = null;
-        try{
-            InputStream inputStream = new FileInputStream( file );
-            InputStream buffer = new BufferedInputStream( inputStream );
-            ObjectInput input = new ObjectInputStream ( buffer );
-            try {
-                result = input.readObject();
+        if (file != null && file.exists()) {
+            try{
+                InputStream inputStream = new FileInputStream( file );
+                InputStream buffer = new BufferedInputStream( inputStream );
+                ObjectInput input = new ObjectInputStream ( buffer );
+                try {
+                    result = input.readObject();
+                }
+                finally{
+                    input.close();
+                }
             }
-            finally{
-                input.close();
+            catch(ClassNotFoundException ex){
+                errorHandler.handle(ex);
             }
-        }
-        catch(ClassNotFoundException ex){
-            errorHandler.handle(ex);
-        }
-        catch(IOException ex){
-            errorHandler.handle(ex);
+            catch(IOException ex){
+                errorHandler.handle(ex);
+            }
         }
         return result;
     }

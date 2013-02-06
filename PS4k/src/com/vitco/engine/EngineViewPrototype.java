@@ -547,7 +547,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                         VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
             }
 
-
             // draw center cross
             ig.setColor(VitcoSettings.ANIMATION_CENTER_CROSS_COLOR);
             ig.setStroke(new BasicStroke(1.0f));

@@ -119,9 +119,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     // prepare all bars
     @Override
     public final CommandMenuBar prepareBar(String key) {
-
         CommandMenuBar bar = null;
-
         if (barLinkageMap.containsKey(key)) {
             bar = barLinkageMap.get(key).buildBar(key, thisFrame);
         } else {
@@ -241,6 +239,10 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
                 this.getLayoutPersistence().loadLayoutData();
             }
             this.toFront();
+
+            // allow frames to fill empty space
+            getDockingManager().getWorkspace().setAcceptDockableFrame(true);
+            getDockingManager().setEasyTabDock(true);
 
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen

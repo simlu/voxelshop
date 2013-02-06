@@ -234,10 +234,11 @@
                 chevronAlwaysVisible="false" floatable="true"
                 floating="false" hidable="false" hidden="false"
                 horiDocked="false" initIndex="0" initMode="3"
-                initSide="8" initSubindex="153" key="selectBar"
+                initSide="4" initSubindex="0" key="selectBar"
                 menuBar="false" paintBackground="true"
                 rearrangable="true" stretch="false"
-                title="Selection Bar" undockedBounds="306; 312; 290; 47" vertDocked="true"/>
+                title="Selection Bar"
+                undockedBounds="1062; 144; 290; 47" vertDocked="true"/>
         </DockableBars>
     </DockableBarManager>
 </Managers>

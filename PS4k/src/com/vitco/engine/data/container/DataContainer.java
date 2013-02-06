@@ -72,7 +72,7 @@ public final class DataContainer implements Serializable {
         int activeFrame = -1;
         HashMap<Integer, Frame> frames = new HashMap<Integer, Frame>();
 
-        if (file != null) {
+        if (file != null && file.exists()) {
             try{
                 InputStream inputStream = new FileInputStream( file );
                 InputStream buffer = new BufferedInputStream( inputStream );
