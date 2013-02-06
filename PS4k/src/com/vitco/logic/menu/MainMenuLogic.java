@@ -175,7 +175,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
     public void registerLogic(final Frame frame) {
         // initialize the filter
-        fc_vsd.setFileFilter(new VSDFilter());
+        FileFilter vsdFilter = new VSDFilter();
+        fc_vsd.addChoosableFileFilter(vsdFilter);
+        fc_vsd.setFileFilter(vsdFilter);
         fc_vsd.setAcceptAllFileFilterUsed(false);
 
         FileFilter pngFilter = new MainMenuLogic.GeneralFilter(new String[] {"png"});

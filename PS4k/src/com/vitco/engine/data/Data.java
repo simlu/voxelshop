@@ -61,27 +61,43 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     @Override
     public final boolean loadFromFile(File file) {
         boolean result = false;
-        Object loaded = FileTools.loadFromFile(file, errorHandler);
-        if (loaded != null) {
+        // VSDS file format
+        DataContainer loaded = new DataContainer(file, errorHandler);
+        if (loaded.hasLoaded) {
             clearHistoryA();
             clearHistoryV();
-            dataContainer = (DataContainer)loaded;
-            if (dataContainer.textures == null) { // todo: remove legacy support / make this final again
-                dataContainer.textures = new HashMap<Integer, ImageIcon>();
-            }
+            dataContainer = loaded;
             invalidateA();
             invalidateV(null);
             notifier.onTextureDataChanged();
             // file has not changed yet
             hasChanged = false;
             result = true;
+        } else { // todo remove legacy support (later)
+            // old file format
+            Object loadedLegacy = FileTools.loadFromFile(file, errorHandler);
+            if (loadedLegacy != null) {
+                clearHistoryA();
+                clearHistoryV();
+                dataContainer = (DataContainer) loadedLegacy;
+                if (dataContainer.textures == null) {
+                    dataContainer.textures = new HashMap<Integer, ImageIcon>();
+                }
+                invalidateA();
+                invalidateV(null);
+                notifier.onTextureDataChanged();
+                // file has not changed yet
+                hasChanged = false;
+                result = true;
+            }
         }
         return result;
     }
 
     @Override
     public final boolean saveToFile(File file) {
-        boolean result = FileTools.saveToFile(file, dataContainer, errorHandler);
+        boolean result = false;
+        result = dataContainer.saveToVsdFile(file, errorHandler);
         if (result) {
             hasChanged = false;
         }
