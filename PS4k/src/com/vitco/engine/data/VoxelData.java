@@ -805,6 +805,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // clear the texture list, remove unused texture
     private final class RemoveAllTextureIntent extends VoxelActionIntent {
 
         protected RemoveAllTextureIntent(boolean attach) {
@@ -848,6 +849,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // replace texture in the texture list
     private final class ReplaceTextureIntent extends VoxelActionIntent {
         private final ImageIcon textureNew;
         private final ImageIcon textureOld;
@@ -882,6 +884,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // select texture in the texture list
     private final class SelectTextureIntent extends VoxelActionIntent {
         private final int oldTextureId;
         private final int newTextureId;
@@ -914,6 +917,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // texture a voxel with a given texture (id)
     private final class TextureVoxelIntent extends VoxelActionIntent {
         private final int voxelId;
         private final int newTextureId;
@@ -949,6 +953,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    // texture many voxel at the same time
     private final class MassTextureVoxelIntent extends VoxelActionIntent  {
         private final Integer[] voxelIds;
         private final int textureId;
@@ -978,6 +983,35 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void unapplyAction() {
             // nothing to do
+        }
+
+        private int[][] effected = null;
+        @Override
+        public int[][] effected() {
+            return effected;
+        }
+    }
+
+    // rotate the voxel "texture"
+    private final class RotateVoxelIntent extends VoxelActionIntent {
+        private final Voxel voxel;
+        private final int rotateBy;
+
+        protected RotateVoxelIntent(int voxelId, int rotateBy, boolean attach) {
+            super(attach);
+            voxel = dataContainer.voxels.get(voxelId);
+            this.rotateBy = rotateBy;
+            effected = new int[][]{voxel.getPosAsInt()};
+        }
+
+        @Override
+        protected void applyAction() {
+            voxel.rotateBy(rotateBy);
+        }
+
+        @Override
+        protected void unapplyAction() {
+            voxel.rotateBy(-rotateBy);
         }
 
         private int[][] effected = null;
@@ -1260,12 +1294,13 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
-    private final class RotateVoxelIntent extends VoxelActionIntent  {
+    // rotate voxel around their center (but not the voxel "texture" itself)
+    private final class RotateVoxelCenterIntent extends VoxelActionIntent  {
         private final Voxel[] voxels;
         private final int axe;
         private final float angle;
 
-        protected RotateVoxelIntent(Voxel[] voxels, int axe, float angle, boolean attach) {
+        protected RotateVoxelCenterIntent(Voxel[] voxels, int axe, float angle, boolean attach) {
             super(attach);
             this.voxels = voxels;
             this.axe = axe;
@@ -1578,11 +1613,12 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         return result;
     }
 
+    // rotate voxel around their center (but not the voxel "texture" itself)
     @Override
-    public final boolean rotateVoxel(Voxel[] voxel, int axe, float degree) {
+    public final boolean rotateVoxelCenter(Voxel[] voxel, int axe, float degree) {
         boolean result = false;
         if (voxel.length > 0 && degree/360 != 0 && axe <= 2 && axe >= 0) {
-            historyManagerV.applyIntent(new RotateVoxelIntent(voxel, axe, degree, false));
+            historyManagerV.applyIntent(new VoxelData.RotateVoxelCenterIntent(voxel, axe, degree, false));
             result = true;
         }
         return result;
@@ -2445,6 +2481,26 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         } else {
             return false;
         }
+    }
+
+    // get texture id of a voxel
+    @Override
+    public final Integer getVoxelTextureId(int voxelId) {
+        if (dataContainer.voxels.containsKey(voxelId)) {
+            return dataContainer.voxels.get(voxelId).getTexture();
+        }
+        return null; // error
+    }
+
+    // rotate voxel "texture"
+    @Override
+    public final boolean rotateVoxel(int voxelId) {
+        if (dataContainer.voxels.containsKey(voxelId)) {
+            // rotation intent
+            historyManagerV.applyIntent(new RotateVoxelIntent(voxelId, 1, false));
+            return true;
+        }
+        return false;
     }
 
 }

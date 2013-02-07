@@ -736,7 +736,7 @@ public class VoxelDataTest {
             }
 
             public void rotate() {
-                data.rotateVoxel(data.getSelectedVoxels(), rand.nextInt(3), 90 * rand.nextInt(3));
+                data.rotateVoxelCenter(data.getSelectedVoxels(), rand.nextInt(3), 90 * rand.nextInt(3));
             }
 
             public void mirror() {

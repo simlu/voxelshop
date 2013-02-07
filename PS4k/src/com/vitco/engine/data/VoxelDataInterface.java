@@ -123,7 +123,7 @@ public interface VoxelDataInterface {
 
     // todo describe functions below
 
-    boolean rotateVoxel(Voxel[] voxel, int axe, float degree);
+    boolean rotateVoxelCenter(Voxel[] voxel, int axe, float degree);
 
     boolean mirrorVoxel(Voxel[] voxel, int axe);
 
@@ -150,4 +150,8 @@ public interface VoxelDataInterface {
     boolean setTexture(int voxelId, int textureId);
 
     boolean massSetTexture(Integer[] voxelIds, int textureId);
+
+    Integer getVoxelTextureId(int voxelId);
+
+    boolean rotateVoxel(int voxelId);
 }

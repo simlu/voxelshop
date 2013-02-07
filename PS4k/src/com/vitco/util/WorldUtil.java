@@ -15,6 +15,8 @@ import java.util.HashMap;
 public class WorldUtil {
     //todo move this class somewhere else (not really a util anymore)
 
+    private final static SimpleVector ZEROS = new SimpleVector(0,0,0);
+
     // add a light-source
     public static void addLight (World world, SimpleVector position, float strength) {
         Light light = new Light(world);
@@ -39,13 +41,15 @@ public class WorldUtil {
 
     private final static HashMap<String, Object3D> boxTypes = new HashMap<String, Object3D>();
 
+    private final static HashMap<String, String> rotationTranslation = new HashMap<String, String>();
+
     static {
         // pre-generate all the boxes
         float cdis = VitcoSettings.VOXEL_SIZE/2;
-        SimpleVector upperLeftFront=new SimpleVector(-cdis,-cdis,-cdis);
-        SimpleVector upperRightFront=new SimpleVector(cdis,-cdis,-cdis);
-        SimpleVector lowerLeftFront=new SimpleVector(-cdis,cdis,-cdis);
-        SimpleVector lowerRightFront=new SimpleVector(cdis,cdis,-cdis);
+        SimpleVector upperLeftFront = new SimpleVector(-cdis,-cdis,-cdis);
+        SimpleVector upperRightFront = new SimpleVector(cdis,-cdis,-cdis);
+        SimpleVector lowerLeftFront = new SimpleVector(-cdis,cdis,-cdis);
+        SimpleVector lowerRightFront = new SimpleVector(cdis,cdis,-cdis);
 
         SimpleVector upperLeftBack = new SimpleVector( -cdis, -cdis, cdis);
         SimpleVector upperRightBack = new SimpleVector(cdis, -cdis, cdis);
@@ -97,6 +101,42 @@ public class WorldUtil {
             }
 
             boxTypes.put(bin, box);
+
+            // generate the rotation translation hashmap
+            // change box type according to rotation
+            // (left, right, bottom, top, back, front)
+            for (int rotation = 0; rotation < 4; rotation++) {
+                char[] rot = bin.toCharArray();
+                char tmp;
+                switch (rotation) {
+                    case 3:
+                        // rotate
+                        tmp = rot[0];
+                        rot[0] = rot[4];
+                        rot[4] = rot[1];
+                        rot[1] = rot[5];
+                        rot[5] = tmp;
+                        break;
+                    case 2:
+                        // rotate
+                        tmp = rot[0];
+                        rot[0] = rot[1];
+                        rot[1] = tmp;
+                        tmp = rot[4];
+                        rot[4] = rot[5];
+                        rot[5] = tmp;
+                        break;
+                    case 1:
+                        // rotate
+                        tmp = rot[0];
+                        rot[0] = rot[5];
+                        rot[5] = rot[1];
+                        rot[1] = rot[4];
+                        rot[4] = tmp;
+                        break;
+                }
+                rotationTranslation.put(bin + "_" + rotation, new String(rot) );
+            }
 
         }
 
@@ -167,7 +207,12 @@ public class WorldUtil {
     }
 
     // add a box to the world
-    public static int addBoxSides (World world, SimpleVector pos, Color color, int textureId, String boxType, boolean culling) {
+    public static int addBoxSides (World world, SimpleVector pos, Color color,
+                                   int textureId, String boxType, int rotation,
+                                   boolean culling) {
+        // translate the rotation
+        boxType = rotationTranslation.get(boxType + "_" + rotation);
+
         Object3D box = boxTypes.get(boxType).cloneObject();
         // set other settings, build and add
 
@@ -179,6 +224,11 @@ public class WorldUtil {
             box.setTexture(String.valueOf(textureId));
         }
 
+        // rotate the voxel
+        if (rotation > 0) {
+            box.rotateY((float)Math.PI * rotation / 2);
+        }
+
         box.setOrigin(pos);
         box.setShadingMode(Object3D.SHADING_FAKED_FLAT);
         box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
@@ -188,6 +238,9 @@ public class WorldUtil {
             box.setVisibility(false);
         }
         box.build();
+        // set true rotation center (this needs to be done after call build())
+        // this is needed since build will compute the weighted center
+        box.setRotationPivot(ZEROS);
         world.addObject(box);
         return box.getID();
     }

@@ -461,8 +461,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 // change color
                                 data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
                             } else {
-                                // change texture
-                                data.setTexture(highlightedVoxel.id, selectedTexture);
+                                if (data.getVoxelTextureId(highlightedVoxel.id) == selectedTexture) {
+                                    // texture is already set, so we rotate
+                                    data.rotateVoxel(highlightedVoxel.id);
+                                } else {
+                                    // change texture
+                                    data.setTexture(highlightedVoxel.id, selectedTexture);
+                                }
                             }
                         }
                     } else if (voxelMode == VOXELMODE.VIEW) {

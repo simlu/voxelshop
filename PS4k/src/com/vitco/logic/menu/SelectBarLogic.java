@@ -326,7 +326,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 0, 90);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 0, 90);
                 }
             }
 
@@ -339,7 +339,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 0, 180);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 0, 180);
                 }
             }
 
@@ -352,7 +352,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 0, 270);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 0, 270);
                 }
             }
 
@@ -366,7 +366,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 1, 90);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 1, 90);
                 }
             }
 
@@ -379,7 +379,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 1, 180);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 1, 180);
                 }
             }
 
@@ -392,7 +392,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 1, 270);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 1, 270);
                 }
             }
 
@@ -406,7 +406,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 2, 90);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 2, 90);
                 }
             }
 
@@ -419,7 +419,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 2, 180);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 2, 180);
                 }
             }
 
@@ -432,7 +432,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    data.rotateVoxel(data.getSelectedVoxels(), 2, 270);
+                    data.rotateVoxelCenter(data.getSelectedVoxels(), 2, 270);
                 }
             }
 

@@ -1,7 +1,6 @@
 package com.vitco.engine.data.container;
 
 import java.awt.*;
-import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -17,18 +16,14 @@ public final class Voxel implements Serializable {
     private final int layerId; // the id of the layer this voxel lives in
     private int textureId = -1; // get the texture id of this voxel
 
-    // default initialization
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        lastUpdate = new Object();
+    private int rotation = 0; // rotation 0-3
+    public int getRotation() {
+        return rotation;
     }
-
-    // utilized to update visualization
-    private transient Object lastUpdate = new Object();
-
-    public final Object getLastUpdate() {
-        return lastUpdate;
+    public void rotateBy(int value) {
+        assert value > -4;
+        assert value < 4;
+        this.rotation = (rotation + value + 4) % 4;
     }
 
     // constructor (with texture)
@@ -57,7 +52,6 @@ public final class Voxel implements Serializable {
     // set the color of this voxel
     protected final void setColor(Color color) {
         this.color = color;
-        lastUpdate = new Object();
     }
 
     // get the color of this voxel
@@ -68,7 +62,6 @@ public final class Voxel implements Serializable {
     // set the texture of this voxel
     protected final void setTexture(Integer textureId) {
         this.textureId = textureId;
-        lastUpdate = new Object();
     }
 
     // get the texture of this voxel
@@ -79,7 +72,6 @@ public final class Voxel implements Serializable {
     // set the alpha of this voxel
     protected final void setAlpha(int alpha) {
         this.alpha = alpha;
-        lastUpdate = new Object();
     }
 
     // get the color of this voxel
@@ -102,7 +94,6 @@ public final class Voxel implements Serializable {
 
     public final void setSelected(boolean b) {
         selected = b;
-        lastUpdate = new Object();
     }
 
 }

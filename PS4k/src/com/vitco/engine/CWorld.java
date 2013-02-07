@@ -14,10 +14,6 @@ import java.util.HashSet;
  */
 public class CWorld extends World {
     private static final long serialVersionUID = 1L;
-    // static variables
-    private final static float[] ZEROS = new float[] {0,0,0};
-    // reference to this world
-    private final CWorld world = this;
 
     // constructor
     private final boolean culling;
@@ -65,11 +61,12 @@ public class CWorld extends World {
             toUpdate.add(this);
         }
 
-        public void replaceVoxel(Voxel voxel) {
-            if (this.voxel != voxel) {
-                this.voxel = voxel;
-                toUpdate.add(this);
-            }
+        // the voxel might be the same that is already stored
+        public void refresh(Voxel voxel) {
+            // note: this might be the same voxel,
+            // e.g. this.voxel == voxel can happen
+            this.voxel = voxel;
+            toUpdate.add(this);
         }
 
         public void addNeighbour(VoxelW neighbour, int side) {
@@ -153,6 +150,9 @@ public class CWorld extends World {
         public int getVoxelId() {
             return voxel.id;
         }
+        public int getRotation() {
+            return voxel.getRotation();
+        }
     }
 
     // ==============================
@@ -206,7 +206,7 @@ public class CWorld extends World {
     public final void updateVoxel(Voxel voxel) {
         String pos = voxel.getPosAsString();
         if (voxelPos.containsKey(pos)) {
-            voxelPos.get(pos).replaceVoxel(voxel); // update voxel
+            voxelPos.get(pos).refresh(voxel); // update voxel
         } else {
             new VoxelW(voxel); // add new voxel
         }
@@ -246,6 +246,7 @@ public class CWorld extends World {
                         voxel.getTexture(),
                         // draw the appropriate site only
                         voxel.getSides(),
+                        voxel.getRotation(),
                         culling);
                 // remember the world id
                 voxel.setWorldId(newWorldId);
