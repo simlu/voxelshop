@@ -393,6 +393,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             }
         }
 
+        // the voxel position that was last added
+        // in this massVoxel add event
+        private int[] lastAddedVoxel = null;
+
         // execute on mouse event
         protected void executeNormalMode(MouseEvent e) {
             if (container.getBounds().contains(e.getPoint())) {
@@ -409,9 +413,23 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         dragDrawStartPos = highlighted;
                                     }
                                     if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
+                                        if (lastAddedVoxel != null) {
+                                            // try to add voxels in between
+                                            int[] mid = new int[] {
+                                                    (lastAddedVoxel[0] + highlighted[0]) / 2,
+                                                    (lastAddedVoxel[1] + highlighted[1]) / 2,
+                                                    (lastAddedVoxel[2] + highlighted[2]) / 2,
+                                            };
+                                            if (data.searchVoxel(mid, false) == null) {
+                                                // only draw if there is no voxels already here
+                                                data.addVoxel(ColorTools.hsbToColor(currentColor), data.getSelectedTexture(), mid);
+                                            }
+                                        }
+
                                         if (data.searchVoxel(highlighted, false) == null) {
                                             // only draw if there is no voxels already here
                                             data.addVoxel(ColorTools.hsbToColor(currentColor), data.getSelectedTexture(), highlighted);
+                                            lastAddedVoxel = highlighted;
                                         }
                                     }
                                     break;
@@ -581,6 +599,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             dragStartReferencePos = null;
             selectMode = 0;
             massVoxel = false;
+            lastAddedVoxel = null;
             container.setPreviewRect(null);
             container.setCursor(Cursor.getDefaultCursor());
         }
@@ -628,6 +647,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         public final void mouseReleased(MouseEvent e) {
             camera.setEnabled(true);
             massVoxel = false;
+            lastAddedVoxel = null;
             dragDrawStartPos = null;
             switch (selectMode) {
                 case 1:
