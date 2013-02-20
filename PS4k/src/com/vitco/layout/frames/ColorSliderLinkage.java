@@ -5,8 +5,6 @@ import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.colors.SliderColorChooser;
 import com.vitco.util.colors.basics.ColorChangeListener;
 import com.vitco.util.pref.PrefChangeListener;
-import com.vitco.util.pref.PreferencesInterface;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PreDestroy;
 import javax.swing.*;
@@ -18,12 +16,6 @@ import java.awt.event.ActionEvent;
  */
 public class ColorSliderLinkage extends FrameLinkagePrototype {
 
-    // var & setter
-    protected PreferencesInterface preferences;
-    @Autowired(required=true)
-    public final void setPreferences(PreferencesInterface preferences) {
-        this.preferences = preferences;
-    }
 
     // the color chooser
     final SliderColorChooser scc = new SliderColorChooser();

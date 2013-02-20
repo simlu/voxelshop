@@ -346,9 +346,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private final class AddVoxelIntent extends VoxelActionIntent {
         private final Voxel voxel;
 
-        protected AddVoxelIntent(int voxelId, int[] pos, Color color, int textureId, int layerId, boolean attach) {
+        protected AddVoxelIntent(int voxelId, int[] pos, Color color, boolean selected, int textureId, int layerId, boolean attach) {
             super(attach);
-            voxel = new Voxel(voxelId, pos, color, textureId, layerId);
+            voxel = new Voxel(voxelId, pos, color, selected, textureId, layerId);
         }
 
         @Override
@@ -454,7 +454,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 }
 
                 // add the voxel at new position
-                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, newPos, voxel.getColor(), voxel.getTexture(), voxel.getLayerId(), true));
+                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, newPos, voxel.getColor(), voxel.isSelected(), voxel.getTexture(), voxel.getLayerId(), true));
 
                 // what is effected
                 effected = new int[][]{voxel.getPosAsInt(), newPos};
@@ -488,7 +488,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             if (isFirstCall()) {
                 Voxel voxel = dataContainer.voxels.get(voxelId);
                 historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
-                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(), newColor, -1, voxel.getLayerId(), true));
+                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(), newColor, voxel.isSelected(), -1, voxel.getLayerId(), true));
 
                 // what is effected
                 effected = new int[][]{voxel.getPosAsInt()};
@@ -609,7 +609,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                         for (int z = pos[2] - radius;z <= pos[2] + radius; z++) {
                             int[] pos = new int[]{x,y,z};
                             if (layer.search(pos, 0).length == 0) {
-                                historyManagerV.applyIntent(new AddVoxelIntent(getFreeVoxelId(), pos, color, -1, layerId, true));
+                                historyManagerV.applyIntent(new AddVoxelIntent(getFreeVoxelId(), pos, color, false, -1, layerId, true));
                                 effected.add(pos);
                             }
                         }
@@ -695,7 +695,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                                 effected.add(voxel.getPosAsInt());
                                 historyManagerV.applyIntent( // we <need> a new id for this voxel
                                         new AddVoxelIntent(getFreeVoxelId(), voxel.getPosAsInt(),
-                                                voxel.getColor(), voxel.getTexture(), mergedLayerId, true)
+                                                voxel.getColor(), voxel.isSelected(), voxel.getTexture(), mergedLayerId, true)
                                 );
                             }
                         }
@@ -934,7 +934,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 Voxel voxel = dataContainer.voxels.get(voxelId);
                 historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
                 historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(),
-                        voxel.getColor(), newTextureId, voxel.getLayerId(), true));
+                        voxel.getColor(), voxel.isSelected(), newTextureId, voxel.getLayerId(), true));
 
                 // what is effected
                 effected = new int[][]{voxel.getPosAsInt()};
@@ -1179,7 +1179,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 for (Voxel voxel : voxels) {
                     historyManagerV.applyIntent(
                             new AddVoxelIntent(getFreeVoxelId(), voxel.getPosAsInt(),
-                                    voxel.getColor(), voxel.getTexture(), layerIdSet ? layerId : voxel.getLayerId(), true));
+                                    voxel.getColor(), voxel.isSelected(), voxel.getTexture(), layerIdSet ? layerId : voxel.getLayerId(), true));
                 }
             }
         }
@@ -1270,7 +1270,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     pos[1] -= shift[1];
                     pos[2] -= shift[2];
                     effected[i + voxels.length] = pos.clone(); // what is effected
-                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getTexture(), voxel.getLayerId());
+                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.isSelected(), voxel.getTexture(), voxel.getLayerId());
                     // remove existing voxels in this layer
                     Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
                     for (Voxel remVoxel : result) {
@@ -1377,7 +1377,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     pos[rot2] = (int)Math.round(pt[1]);
 
                     effected[i + voxels.length] = pos.clone(); // what is effected
-                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getTexture(), voxel.getLayerId());
+                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.isSelected(), voxel.getTexture(), voxel.getLayerId());
                     // remove existing voxels in this layer
                     Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
                     for (Voxel remVoxel : result) {
@@ -1459,7 +1459,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     pos[axe] = Math.round(- pos[axe] + 2*center[axe]);
 
                     effected[i + voxels.length] = pos.clone(); // what is effected
-                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.getTexture(), voxel.getLayerId());
+                    shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.isSelected(), voxel.getTexture(), voxel.getLayerId());
                     // remove existing voxels in this layer
                     Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
                     for (Voxel remVoxel : result) {
@@ -1521,7 +1521,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
         if (layer != null && layer.voxelPositionFree(pos)) {
             result = getFreeVoxelId();
-            Voxel voxel = new Voxel(result, pos, color, -1, dataContainer.selectedLayer);
+            Voxel voxel = new Voxel(result, pos, color, false, -1, dataContainer.selectedLayer);
             dataContainer.voxels.put(voxel.id, voxel);
             dataContainer.layers.get(voxel.getLayerId()).addVoxel(voxel);
         }
@@ -1534,7 +1534,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
         if (layer != null && layer.getSize() < VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER && layer.voxelPositionFree(pos)) {
             result = getFreeVoxelId();
-            historyManagerV.applyIntent(new AddVoxelIntent(result, pos, color, textureId, dataContainer.selectedLayer, false));
+            historyManagerV.applyIntent(new AddVoxelIntent(result, pos, color, false, textureId, dataContainer.selectedLayer, false));
         }
         return result;
     }
@@ -1805,7 +1805,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 if (voxel != null && voxel.isSelected()) {
                     added.add(voxel);
                 } else {
-                    removed.add(new Voxel(-1, pos, null, -1, -1));
+                    removed.add(new Voxel(-1, pos, null, false, -1, -1));
                 }
             }
             Voxel[][] result = new Voxel[2][];
@@ -1906,7 +1906,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 if (voxel != null) {
                     added.add(voxel);
                 } else {
-                    removed.add(new Voxel(-1, pos, null, -1, -1));
+                    removed.add(new Voxel(-1, pos, null, false, -1, -1));
                 }
             }
             Voxel[][] result = new Voxel[2][];
@@ -1962,6 +1962,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             for (Voxel removed : newV[0]) {
                 float[] pos = removed.getPosAsFloat();
                 List<Voxel> search = visVoxelRTree.search(pos, ZEROS);
+                assert search.size() == 1;
                 for (Voxel vox : search) {
                     visVoxelRTree.delete(pos, ZEROS, vox);
                     visVoxelList.remove(vox);
@@ -2042,7 +2043,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 if (voxel != null) {
                     added.add(voxel);
                 } else {
-                    removed.add(new Voxel(-1, pos, null, -1, -1));
+                    removed.add(new Voxel(-1, pos, null, false, -1, -1));
                 }
             }
             result = new Voxel[2][];
@@ -2391,7 +2392,12 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     @Override
     public final ImageIcon getTexture(Integer textureId) {
-        return dataContainer.textures.get(textureId);
+        Image internalImg = dataContainer.textures.get(textureId).getImage();
+        BufferedImage result = new BufferedImage(
+                internalImg.getWidth(null), internalImg.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB);
+        result.getGraphics().drawImage(internalImg, 0, 0, null);
+        return new ImageIcon(result);
     }
 
     @Override

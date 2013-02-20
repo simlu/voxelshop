@@ -716,7 +716,7 @@ public class VoxelDataTest {
                 Voxel[] voxel = new Voxel[length];
                 int layerId = data.getSelectedLayer();
                 for (int i = 0; i < length; i++) {
-                    voxel[i] = new Voxel(-1, randPos(), randCol(), -1, layerId);
+                    voxel[i] = new Voxel(-1, randPos(), randCol(), false, -1, layerId);
                 }
                 data.massAddVoxel(voxel);
             }

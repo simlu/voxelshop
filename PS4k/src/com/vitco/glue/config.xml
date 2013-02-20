@@ -225,6 +225,10 @@
                         <property name="textureManager" ref="TextureManager"/>
                     </bean>
                 </entry>
+                <entry>
+                    <key><value>hexPicker</value></key>
+                    <bean id="HexPickerLinkage" class="com.vitco.layout.frames.HexPickerLinkage" />
+                </entry>
             </map>
         </property>
     </bean>

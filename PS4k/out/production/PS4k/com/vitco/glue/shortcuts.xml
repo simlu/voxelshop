@@ -120,4 +120,7 @@
         <shortcut ctrl="yes" alt="yes" shift="no" key="R" action="texturemg_action_replace" caption="texturemg_replace_caption" />
         <shortcut ctrl="yes" alt="yes" shift="no" key="E" action="texturemg_action_export" caption="texturemg_export_caption" />
     </frame>
+
+    <frame name="hexPicker">
+    </frame>
 </head>

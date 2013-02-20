@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *  textfield that only allows numbers and has an easy way to retrieve the current one
+ *  Text-field that only allows numbers and has an easy way to retrieve the current one
  *  also allows for notification listen (and change "onChange")
 */
 public class NumberBox extends JTextField {
@@ -84,9 +84,10 @@ public class NumberBox extends JTextField {
             notifyListeners();
         }
 
+        private final Pattern pattern = Pattern.compile("\\d{0," + (String.valueOf(MAX).length() + 1) + "}?");
+
         public boolean invalidContent(String text)
         {
-            Pattern pattern = Pattern.compile("\\d{0," + (String.valueOf(MAX).length() + 1) + "}?");
             Matcher matcher = pattern.matcher(text);
             boolean isMatch = matcher.matches();
             return !text.equals("") && !isMatch;

@@ -3,6 +3,7 @@ package com.vitco.layout.frames;
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.util.pref.PreferencesInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
@@ -12,6 +13,14 @@ import java.awt.*;
  * Prototype of class that links frame to content.
  */
 public abstract class FrameLinkagePrototype {
+
+    // var & setter
+    protected PreferencesInterface preferences;
+    @Autowired(required=true)
+    public final void setPreferences(PreferencesInterface preferences) {
+        this.preferences = preferences;
+    }
+
     // var & setter
     protected LangSelectorInterface langSelector;
     @Autowired(required=true)

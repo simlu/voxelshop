@@ -6,6 +6,7 @@ import com.vitco.engine.data.Data;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.ThumbnailFileChooser;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.WrapLayout;
 import com.vitco.util.action.types.StateActionPrototype;
@@ -106,7 +107,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
     }
 
     // import texture file chooser
-    final JFileChooser fc_import = new JFileChooser();
+    final ThumbnailFileChooser fc_import = new ThumbnailFileChooser(64, 96);
 
     // export texture file chooser
     final JFileChooser fc_export = new JFileChooser();
@@ -193,7 +194,9 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                             console.addLine(langSelector.getString("texturemg_file_dim_error"));
                         } else {
                             // make sure we can identify the texture
-                            data.replaceTexture(selectedTexture, texture);
+                            ImageIcon textureDrawnOnTop = data.getTexture(selectedTexture);
+                            textureDrawnOnTop.getImage().getGraphics().drawImage(texture.getImage(), 0, 0, null);
+                            data.replaceTexture(selectedTexture, textureDrawnOnTop);
                         }
                     } catch (IOException error) {
                         console.addLine(langSelector.getString("texturemg_general_file_error"));

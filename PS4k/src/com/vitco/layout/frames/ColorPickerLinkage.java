@@ -7,7 +7,6 @@ import com.vitco.util.colors.HSBPanelSliderChooser;
 import com.vitco.util.colors.basics.ColorChangeListener;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.pref.PrefChangeListener;
-import com.vitco.util.pref.PreferencesInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
@@ -18,13 +17,6 @@ import java.awt.event.ActionEvent;
  * construct personal frame (upload, etc)
  */
 public class ColorPickerLinkage extends FrameLinkagePrototype {
-
-    // var & setter
-    protected PreferencesInterface preferences;
-    @Autowired(required=true)
-    public final void setPreferences(PreferencesInterface preferences) {
-        this.preferences = preferences;
-    }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;

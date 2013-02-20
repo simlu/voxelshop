@@ -27,11 +27,12 @@ public final class Voxel implements Serializable {
     }
 
     // constructor (with texture)
-    public Voxel(int id, int[] pos, Color color, int textureId, int layerId) {
+    public Voxel(int id, int[] pos, Color color, boolean selected, int textureId, int layerId) {
         this.id = id;
         this.color = color;
         this.layerId = layerId;
         this.textureId = textureId;
+        this.selected = selected;
         posI = pos.clone();
         for (int i = 0; i < pos.length; i++) {
             this.posF[i] = pos[i];

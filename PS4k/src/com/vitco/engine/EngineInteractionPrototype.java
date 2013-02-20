@@ -18,9 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -516,19 +514,50 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     Math.max(e.getPoint().y, selectStartPoint.y)
             );
 
-            Voxel[] voxels = getVoxels();
-            RTree<Integer> queryTree = new RTree<Integer>(50, 2, 2);
-            for (Voxel voxel : voxels) {
-                float[] pos = voxel.getPosAsFloat();
-                SimpleVector vec = convert3D2D(new SimpleVector(
-                        pos[0] * VitcoSettings.VOXEL_SIZE,
-                        pos[1] * VitcoSettings.VOXEL_SIZE,
-                        pos[2] * VitcoSettings.VOXEL_SIZE));
-                queryTree.insert(new float[] {vec.x, vec.y}, voxel.id);
-            }
-            List<Integer> searchResult = queryTree.search(new float[]{start.x, start.y},
-                    new float[]{stop.x - start.x, stop.y -start.y});
+            List<Integer> searchResult = new LinkedList<Integer>();
 
+            // only search range if start != stop
+            if (!start.equals(stop)) {
+                Voxel[] voxels = getVoxels();
+                // generate the quad tree that we'll use to
+                // find the selected voxels
+//                //======================
+//                // use only visible voxels:
+//                Enumeration objects = world.getObjects();
+//                while (objects.hasMoreElements()) {
+//                    Object3D obj = (Object3D)objects.nextElement();
+//                    if (obj.wasVisible()) {
+//                        Integer voxelId = world.getVoxelId(obj.getID());
+//                        if (voxelId != null) {
+//                            Voxel voxel = data.getVoxel(voxelId);
+//                            float[] pos = voxel.getPosAsFloat();
+//                            SimpleVector vec = convert3D2D(new SimpleVector(
+//                                    pos[0] * VitcoSettings.VOXEL_SIZE,
+//                                    pos[1] * VitcoSettings.VOXEL_SIZE,
+//                                    pos[2] * VitcoSettings.VOXEL_SIZE));
+//                            if (vec != null) {
+//                                if (vec.x >= start.x && vec.x <= stop.x && vec.y >= start.y && vec.y <= stop.y) {
+//                                    searchResult.add(voxel.id);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+                //======================
+                // use all voxles
+                for (Voxel voxel : voxels) {
+                    float[] pos = voxel.getPosAsFloat();
+                    SimpleVector vec = convert3D2D(new SimpleVector(
+                            pos[0] * VitcoSettings.VOXEL_SIZE,
+                            pos[1] * VitcoSettings.VOXEL_SIZE,
+                            pos[2] * VitcoSettings.VOXEL_SIZE));
+                    if (vec != null) {
+                        if (vec.x >= start.x && vec.x <= stop.x && vec.y >= start.y && vec.y <= stop.y) {
+                            searchResult.add(voxel.id);
+                        }
+                    }
+                }
+            }
             // do a single click search as well
             SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
             Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);

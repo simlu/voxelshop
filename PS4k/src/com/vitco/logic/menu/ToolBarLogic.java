@@ -7,8 +7,8 @@ import com.vitco.res.VitcoSettings;
 import com.vitco.util.ColorTools;
 import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.action.types.StateActionPrototype;
-import com.vitco.util.colors.basics.ColorChangeListener;
 import com.vitco.util.colors.PresetColorChooser;
+import com.vitco.util.colors.basics.ColorChangeListener;
 import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -76,6 +76,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         complexActionManager.registerAction("current_color_button_popup", scc);
         // to perform validity check we need to register this name
         complexActionManager.registerActionIsUsed("current_color_button_icon");
+
         // todo move this to global (more general class)
         // make sure the currently used color is set
         if (!preferences.contains("currently_used_color")) {

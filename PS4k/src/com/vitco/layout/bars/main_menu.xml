@@ -25,6 +25,7 @@
             <item caption="personal_caption" action="personal_state-action_show" checkable="true"/>
             <item caption="colorpicker_caption" action="colorpicker_state-action_show" checkable="true"/>
             <item caption="colorslider_caption" action="colorslider_state-action_show" checkable="true"/>
+            <item caption="hexPicker_caption" action="hexPicker_state-action_show" checkable="true"/>
             <item caption="layer_caption" action="layer_state-action_show" checkable="true"/>
         </menu>
     </menu>

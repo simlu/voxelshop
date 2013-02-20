@@ -32,6 +32,8 @@ public class Console implements ConsoleInterface {
                 consoleData.add((String)line);
             }
         }
+        // clear the console on start
+        clear();
     }
 
     @PreDestroy

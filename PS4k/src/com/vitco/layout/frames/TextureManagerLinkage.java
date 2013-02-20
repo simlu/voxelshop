@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 /**
- * construct the time line frame
+ * construct the texture manager frame
  */
 public class TextureManagerLinkage extends FrameLinkagePrototype {
 
