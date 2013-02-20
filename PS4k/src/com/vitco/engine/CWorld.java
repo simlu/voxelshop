@@ -138,7 +138,7 @@ public class CWorld extends World {
         public Color getColor() {
             return voxel.getColor();
         }
-        public int getTexture() {
+        public int[] getTexture() {
             return voxel.getTexture();
         }
         public SimpleVector getVectorPos() {
@@ -149,9 +149,6 @@ public class CWorld extends World {
         }
         public int getVoxelId() {
             return voxel.id;
-        }
-        public int getRotation() {
-            return voxel.getRotation();
         }
     }
 
@@ -246,7 +243,6 @@ public class CWorld extends World {
                         voxel.getTexture(),
                         // draw the appropriate site only
                         voxel.getSides(),
-                        voxel.getRotation(),
                         culling);
                 // remember the world id
                 voxel.setWorldId(newWorldId);

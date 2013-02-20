@@ -107,7 +107,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
     }
 
     // import texture file chooser
-    final ThumbnailFileChooser fc_import = new ThumbnailFileChooser(64, 96);
+    final ThumbnailFileChooser fc_import = new ThumbnailFileChooser(32, 32);
 
     // export texture file chooser
     final JFileChooser fc_export = new JFileChooser();
@@ -133,7 +133,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
             public String getDescription()
             {
-                return "PNG @ 64x96 (*.png)";
+                return "PNG @ 32x32 (*.png)";
             }
         };
         fc_import.addChoosableFileFilter(filter);
@@ -151,7 +151,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 if (fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
                     try {
                         ImageIcon texture = new ImageIcon(ImageIO.read(fc_import.getSelectedFile()));
-                        if (texture.getIconWidth() != 64 || texture.getIconHeight() != 96) {
+                        if (texture.getIconWidth() != 32 || texture.getIconHeight() != 32) {
                             console.addLine(langSelector.getString("texturemg_file_dim_error"));
                         } else {
                             // make sure we can identify the texture
@@ -190,7 +190,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 if (getStatus() && fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
                     try {
                         ImageIcon texture = new ImageIcon(ImageIO.read(fc_import.getSelectedFile()));
-                        if (texture.getIconWidth() != 64 || texture.getIconHeight() != 96) {
+                        if (texture.getIconWidth() != 32 || texture.getIconHeight() != 32) {
                             console.addLine(langSelector.getString("texturemg_file_dim_error"));
                         } else {
                             // make sure we can identify the texture

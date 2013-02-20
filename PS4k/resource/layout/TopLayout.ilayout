@@ -10,7 +10,7 @@
         hidable="true" hideAllTabs="false"
         hideFloatingFramesOnSwitchOutOfApplication="false"
         hideFloatingFramesWhenDeactivate="false"
-        initBounds="5; 5; 1066; 600" initCenterSplit="1" initDelay="250"
+        initBounds="5; 5; 1044; 600" initCenterSplit="1" initDelay="250"
         initEastSplit="0" initNorthSplit="1" initSouthSplit="1"
         initSplitPriority="0" initState="6" initWestSplit="0"
         maximizeAllTabs="true" nestedFloatingAllowed="true"
@@ -225,7 +225,7 @@
     </DockingManager>
     <DockableBarManager floatable="true" hidable="false"
         hideFloatingDockableBarsWhenDeactivate="true"
-        initBounds="5; 5; 1066; 600" initState="6"
+        initBounds="5; 5; 1044; 600" initState="6"
         profileKey="designer-workspace" rearrangable="true"
         showContextMenu="false" usePref="true">
         <DockableBars>

@@ -272,6 +272,17 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     // Voxel
     // ===============================
 
+    // holds all the direction vectors (right, left, lower, upper, back, front)
+    private final static SimpleVector[] directionVectors = new SimpleVector[] {
+        new SimpleVector(1,0,0),
+        new SimpleVector(-1,0,0),
+        new SimpleVector(0,1,0),
+        new SimpleVector(0,-1,0),
+        new SimpleVector(0,0,1),
+        new SimpleVector(0,0,-1)
+    };
+    // holds the voxel side that was last hit by a hover event
+    private int lastVoxelHitSide = 0;
     // can be override (sideview)
     protected int[] voxelPosForHoverPos(Point point) {
         int[] voxelPos = null;
@@ -283,32 +294,29 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             Voxel hitVoxel = data.getVoxel(world.getVoxelId(obj3D.getID()));
             if (hitVoxel != null) {
                 voxelPos = hitVoxel.getPosAsInt();
-                if (voxelMode == VOXELMODE.DRAW) { // select next to voxel
-                    // find collision point
-                    SimpleVector colPoint = camera.getPosition();
-                    dir.scalarMul((Float)res[0]);
-                    colPoint.add(dir);
-                    // find side that it hits
-                    ArrayList<float[]> planes = new ArrayList<float[]>();
-                    planes.add(new float[] {1, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,-1,0)))});
-                    planes.add(new float[] {2, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,1,0)))});
-                    planes.add(new float[] {3, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(-1,0,0)))});
-                    planes.add(new float[] {4, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(1,0,0)))});
-                    planes.add(new float[] {5, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,-1)))});
-                    planes.add(new float[] {6, colPoint.distance(obj3D.getOrigin().calcAdd(new SimpleVector(0,0,1)))});
-                    Collections.sort(planes, new Comparator<float[]>() {
-                        @Override
-                        public int compare(float[] o1, float[] o2) {
-                            return (int) Math.signum(o1[1] - o2[1]);
-                        }
-                    });
-                    switch ((int)planes.get(0)[0]) {
-                        case 1: voxelPos[1] -= 1; break;
+                // find collision point
+                SimpleVector colPoint = camera.getPosition();
+                dir.scalarMul((Float)res[0]);
+                colPoint.add(dir);
+                colPoint.sub(obj3D.getOrigin());
+                // find side that it hits
+                float dist = colPoint.distance(directionVectors[0]);
+                lastVoxelHitSide = 0;
+                for (int i = 1; i < directionVectors.length; i++) {
+                    float tempDist = colPoint.distance(directionVectors[i]);
+                    if (dist > tempDist) {
+                        dist = tempDist;
+                        lastVoxelHitSide = i;
+                    }
+                }
+                if (voxelMode == VOXELMODE.DRAW) {
+                    switch (lastVoxelHitSide) {
+                        case 0: voxelPos[0] += 1; break;
+                        case 1: voxelPos[0] -= 1; break;
                         case 2: voxelPos[1] += 1; break;
-                        case 3: voxelPos[0] -= 1; break;
-                        case 4: voxelPos[0] += 1; break;
+                        case 3: voxelPos[1] -= 1; break;
+                        case 4: voxelPos[2] += 1; break;
                         case 5: voxelPos[2] -= 1; break;
-                        case 6: voxelPos[2] += 1; break;
                     }
                 }
             }
@@ -420,13 +428,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                             };
                                             if (data.searchVoxel(mid, false) == null) {
                                                 // only draw if there is no voxels already here
-                                                data.addVoxel(ColorTools.hsbToColor(currentColor), data.getSelectedTexture(), mid);
+                                                data.addVoxel(ColorTools.hsbToColor(currentColor), null, mid);
                                             }
                                         }
 
                                         if (data.searchVoxel(highlighted, false) == null) {
                                             // only draw if there is no voxels already here
-                                            data.addVoxel(ColorTools.hsbToColor(currentColor), data.getSelectedTexture(), highlighted);
+                                            data.addVoxel(ColorTools.hsbToColor(currentColor), null, highlighted);
                                             lastAddedVoxel = highlighted;
                                         }
                                     }
@@ -449,7 +457,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         if (highlightedVoxel != null) {
                             preferences.storeObject("currently_used_color",
                                     ColorTools.colorToHSB(highlightedVoxel.getColor()));
-                            data.selectTextureSoft(highlightedVoxel.getTexture());
+                            data.selectTextureSoft(highlightedVoxel.getTexture()[lastVoxelHitSide]);
                         }
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {
                         Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
@@ -459,13 +467,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 // change color
                                 data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
                             } else {
-                                if (data.getVoxelTextureId(highlightedVoxel.id) == selectedTexture) {
-                                    // texture is already set, so we rotate
-                                    data.rotateVoxel(highlightedVoxel.id);
-                                } else {
-                                    // change texture
-                                    data.setTexture(highlightedVoxel.id, selectedTexture);
-                                }
+                                data.setTexture(highlightedVoxel.id, lastVoxelHitSide, selectedTexture);
                             }
                         }
                     } else if (voxelMode == VOXELMODE.VIEW) {

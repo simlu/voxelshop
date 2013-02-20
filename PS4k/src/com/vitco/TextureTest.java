@@ -34,14 +34,26 @@ public class TextureTest extends WindowAdapter implements MouseMotionListener {
         Config.fadeoutLight = false;
 
         // Create a texture from image
-        BufferedImage text_top = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-        Image image = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/texture/texture1.png")
-        )).getImage();
-        text_top.getGraphics().drawImage(image, 0, 0, null);
-        Texture texture = new Texture(text_top);
-        texture.setMipmap(true);
-        TextureManager.getInstance().addTexture("texture", texture);
+        {
+            BufferedImage text_top = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Image image = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                    ClassLoader.getSystemResource("resource/tex1.png")
+            )).getImage();
+            text_top.getGraphics().drawImage(image, 0, 0, null);
+            Texture texture = new Texture(text_top, true);
+            texture.setMipmap(true);
+            TextureManager.getInstance().addTexture("tex1", texture);
+        }
+        {
+            BufferedImage text_top = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Image image = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                    ClassLoader.getSystemResource("resource/tex2.png")
+            )).getImage();
+            text_top.getGraphics().drawImage(image, 0, 0, null);
+            Texture texture = new Texture(text_top, true);
+            texture.setMipmap(true);
+            TextureManager.getInstance().addTexture("tex2", texture);
+        }
 
 //        try {
 //            ImageIO.write(text_top, "png", new File("test.png"));
@@ -51,6 +63,8 @@ public class TextureTest extends WindowAdapter implements MouseMotionListener {
 
 
         cube = new Object3D(12);
+
+        //cube.setTransparency(0);
 
         float cdis = VitcoSettings.VOXEL_SIZE/2;
         SimpleVector upperLeftFront=new SimpleVector(-cdis,-cdis,-cdis);
@@ -89,7 +103,9 @@ public class TextureTest extends WindowAdapter implements MouseMotionListener {
         cube.addTriangle(upperRightBack,1,0, lowerRightFront, 0,1, lowerRightBack,1,1);
 
         cube.setSpecularLighting(true);
-        cube.setTexture("texture");
+        cube.setAdditionalColor(Color.ORANGE);
+        cube.setTexture("tex1");
+        cube.getPolygonManager().setPolygonTexture(0, TextureManager.getInstance().getTextureID("tex2"));
         cube.compile();
         cube.strip();
         cube.build();

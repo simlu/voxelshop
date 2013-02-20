@@ -14,24 +14,14 @@ public final class Voxel implements Serializable {
     private Color color; // color of voxel
     private int alpha = -1; // alpha of this voxel
     private final int layerId; // the id of the layer this voxel lives in
-    private int textureId = -1; // get the texture id of this voxel
-
-    private int rotation = 0; // rotation 0-3
-    public int getRotation() {
-        return rotation;
-    }
-    public void rotateBy(int value) {
-        assert value > -4;
-        assert value < 4;
-        this.rotation = (rotation + value + 4) % 4;
-    }
+    private int[] textureIds = null; // get the texture id of this voxel (for all sides)
 
     // constructor (with texture)
-    public Voxel(int id, int[] pos, Color color, boolean selected, int textureId, int layerId) {
+    public Voxel(int id, int[] pos, Color color, boolean selected, int[] textureIds, int layerId) {
         this.id = id;
         this.color = color;
         this.layerId = layerId;
-        this.textureId = textureId;
+        this.textureIds = textureIds == null ? null : textureIds.clone();
         this.selected = selected;
         posI = pos.clone();
         for (int i = 0; i < pos.length; i++) {
@@ -61,13 +51,13 @@ public final class Voxel implements Serializable {
     }
 
     // set the texture of this voxel
-    protected final void setTexture(Integer textureId) {
-        this.textureId = textureId;
+    protected final void setTexture(int[] textureIds) {
+        this.textureIds = textureIds == null ? null : textureIds.clone();
     }
 
     // get the texture of this voxel
-    public final int getTexture() {
-        return textureId;
+    public final int[] getTexture() {
+        return textureIds == null ? null : textureIds.clone();
     }
 
     // set the alpha of this voxel

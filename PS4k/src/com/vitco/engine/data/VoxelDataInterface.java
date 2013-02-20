@@ -13,7 +13,7 @@ public interface VoxelDataInterface {
     // only to be used for back imports etc
     int addVoxelDirect(Color color, int[] pos);
     // adds a voxel to current layer and returns voxel id
-    int addVoxel(Color color, int textureId, int[] pos);
+    int addVoxel(Color color, int[] textureId, int[] pos);
     // deleted the voxel
     boolean removeVoxel(int voxelId);
     // move a voxel
@@ -147,11 +147,10 @@ public interface VoxelDataInterface {
 
     int getSelectedTexture();
 
-    boolean setTexture(int voxelId, int textureId);
+    boolean setTexture(int voxelId, int voxelSide, int textureId);
 
     boolean massSetTexture(Integer[] voxelIds, int textureId);
 
-    Integer getVoxelTextureId(int voxelId);
+    int[] getVoxelTextureId(int voxelId);
 
-    boolean rotateVoxel(int voxelId);
 }

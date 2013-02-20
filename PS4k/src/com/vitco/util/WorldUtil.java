@@ -41,8 +41,6 @@ public class WorldUtil {
 
     private final static HashMap<String, Object3D> boxTypes = new HashMap<String, Object3D>();
 
-    private final static HashMap<String, String> rotationTranslation = new HashMap<String, String>();
-
     static {
         // pre-generate all the boxes
         float cdis = VitcoSettings.VOXEL_SIZE/2;
@@ -71,78 +69,46 @@ public class WorldUtil {
             // add the triangles
             if (bin.charAt(0) == '0') {
                 // Right
-                box.addTriangle(upperRightFront,0.25f+0.0625f*2,0.25f+0.0625f*2, lowerRightFront,0.25f+0.0625f*2,0.5f+0.0625f*2, upperRightBack,0.5f+0.0625f*2,0.25f+0.0625f*2);
-                box.addTriangle(upperRightBack,0.5f+0.0625f*2,0.25f+0.0625f*2, lowerRightFront, 0.25f+0.0625f*2,0.5f+0.0625f*2, lowerRightBack,0.5f+0.0625f*2,0.5f+0.0625f*2);
+                box.addTriangle(upperRightFront,0,0, lowerRightFront,0,1, upperRightBack,1,0);
+                box.addTriangle(upperRightBack,1,0, lowerRightFront, 0,1, lowerRightBack,1,1);
             }
             if (bin.charAt(1) == '0') {
                 // Left
-                box.addTriangle(upperLeftFront,0+0.0625f,0.25f+0.0625f*2, upperLeftBack,0.25f+0.0625f,0.25f+0.0625f*2, lowerLeftFront,0+0.0625f,0.5f+0.0625f*2);
-                box.addTriangle(upperLeftBack,0.25f+0.0625f,0.25f+0.0625f*2, lowerLeftBack,0.25f+0.0625f,0.5f+0.0625f*2, lowerLeftFront,0+0.0625f,0.5f+0.0625f*2);
+                box.addTriangle(upperLeftFront,0,0, upperLeftBack,1,0, lowerLeftFront,0,1);
+                box.addTriangle(upperLeftBack,1,0, lowerLeftBack,1,1, lowerLeftFront,0,1);
             }
             if (bin.charAt(2) == '0') {
                 // Lower
-                box.addTriangle(lowerLeftBack,0.25f+0.0625f*2,0+0.0625f, lowerRightBack,0.5f+0.0625f*2,0+0.0625f, lowerLeftFront,0.25f+0.0625f*2,0.25f+0.0625f);
-                box.addTriangle(lowerRightBack,0.5f+0.0625f*2,0+0.0625f, lowerRightFront,0.5f+0.0625f*2,0.25f+0.0625f, lowerLeftFront,0.25f+0.0625f*2,0.25f+0.0625f);
+                box.addTriangle(lowerLeftBack,0,0, lowerRightBack,1,0, lowerLeftFront,0,1);
+                box.addTriangle(lowerRightBack,1,0, lowerRightFront,1,1, lowerLeftFront,0,1);
             }
             if (bin.charAt(3) == '0') {
                 // Upper
-                box.addTriangle(upperLeftBack,0+0.0625f,0+0.0625f, upperLeftFront,0+0.0625f,0.25f+0.0625f, upperRightBack,0.25f+0.0625f,0+0.0625f);
-                box.addTriangle(upperRightBack,0.25f+0.0625f,0+0.0625f, upperLeftFront,0+0.0625f,0.25f+0.0625f, upperRightFront,0.25f+0.0625f,0.25f+0.0625f);
+                box.addTriangle(upperLeftBack,0,0, upperLeftFront,0,1, upperRightBack,1,0);
+                box.addTriangle(upperRightBack,1,0, upperLeftFront,0,1, upperRightFront,1,1);
             }
             if (bin.charAt(4) == '0') {
                 // Back
-                box.addTriangle(upperLeftBack,0+0.0625f,0.5f+0.0625f*3, upperRightBack,0.25f+0.0625f,0.5f+0.0625f*3, lowerLeftBack,0+0.0625f,0.75f+0.0625f*3);
-                box.addTriangle(upperRightBack,0.25f+0.0625f,0.5f+0.0625f*3, lowerRightBack,0.25f+0.0625f,0.75f+0.0625f*3, lowerLeftBack,0+0.0625f,0.75f+0.0625f*3);
+                box.addTriangle(upperLeftBack,0,0, upperRightBack,1,0, lowerLeftBack,0,1);
+                box.addTriangle(upperRightBack,1,0, lowerRightBack,1,1, lowerLeftBack,0,1);
             }
             if (bin.charAt(5) == '0') {
                 // Front
-                box.addTriangle(upperLeftFront,0.25f+0.0625f*2,0.5f+0.0625f*3, lowerLeftFront,0.25f+0.0625f*2,0.75f+0.0625f*3, upperRightFront,0.5f+0.0625f*2,0.5f+0.0625f*3);
-                box.addTriangle(upperRightFront,0.5f+0.0625f*2,0.5f+0.0625f*3, lowerLeftFront,0.25f+0.0625f*2,0.75f+0.0625f*3, lowerRightFront,0.5f+0.0625f*2,0.75f+0.0625f*3);
+                box.addTriangle(upperLeftFront,0,0, lowerLeftFront,0,1, upperRightFront,1,0);
+                box.addTriangle(upperRightFront,1,0, lowerLeftFront,0,1, lowerRightFront,1,1);
             }
 
             boxTypes.put(bin, box);
-
-            // generate the rotation translation hashmap
-            // change box type according to rotation
-            // (left, right, bottom, top, back, front)
-            for (int rotation = 0; rotation < 4; rotation++) {
-                char[] rot = bin.toCharArray();
-                char tmp;
-                switch (rotation) {
-                    case 3:
-                        // rotate
-                        tmp = rot[0];
-                        rot[0] = rot[4];
-                        rot[4] = rot[1];
-                        rot[1] = rot[5];
-                        rot[5] = tmp;
-                        break;
-                    case 2:
-                        // rotate
-                        tmp = rot[0];
-                        rot[0] = rot[1];
-                        rot[1] = tmp;
-                        tmp = rot[4];
-                        rot[4] = rot[5];
-                        rot[5] = tmp;
-                        break;
-                    case 1:
-                        // rotate
-                        tmp = rot[0];
-                        rot[0] = rot[5];
-                        rot[5] = rot[1];
-                        rot[1] = rot[4];
-                        rot[4] = tmp;
-                        break;
-                }
-                rotationTranslation.put(bin + "_" + rotation, new String(rot) );
-            }
 
         }
 
         // disable anti-aliasing for textures
         Config.texelFilter = false;
+
+        textureManager = TextureManager.getInstance();
     }
+
+    private final static TextureManager textureManager;
 
     // load a texture to the world (from string)
     public static void loadTexture(String name, String url) {
@@ -154,45 +120,14 @@ public class WorldUtil {
 
     // load a texture to the world (from image)
     public static void loadTexture(String name, Image image) {
-        // Create a texture from image
-        BufferedImage text_top = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
-        Graphics g2 = text_top.getGraphics();
-        g2.drawImage(image, 7, 7, 41, 41, 0, 0, 32, 32, null); // draw edges
-        g2.drawImage(image, 8, 7, 40, 41, 0, 0, 32, 32, null); // draw edges
-        g2.drawImage(image, 7, 8, 41, 40, 0, 0, 32, 32, null); // draw edges
-        g2.drawImage(image, 8, 8, 40, 40, 0, 0, 32, 32, null);
-
-        g2.drawImage(image, 47, 7, 81, 41, 64, 0, 32, 32, null); // draw edges
-        g2.drawImage(image, 48, 7, 80, 41, 64, 0, 32, 32, null); // draw edges
-        g2.drawImage(image, 47, 8, 81, 40, 64, 0, 32, 32, null); // draw edges
-        g2.drawImage(image, 48, 8, 80, 40, 64, 0, 32, 32, null);
-
-        g2.drawImage(image, 7, 47, 41, 81, 32, 32, 0, 64, null); // draw edges
-        g2.drawImage(image, 8, 47, 40, 81, 32, 32, 0, 64, null); // draw edges
-        g2.drawImage(image, 7, 48, 41, 80, 32, 32, 0, 64, null); // draw edges
-        g2.drawImage(image, 8, 48, 40, 80, 32, 32, 0, 64, null);
-
-        g2.drawImage(image, 47, 47, 81, 81, 32, 32, 64, 64, null); // draw edges
-        g2.drawImage(image, 48, 47, 80, 81, 32, 32, 64, 64, null); // draw edges
-        g2.drawImage(image, 47, 48, 81, 80, 32, 32, 64, 64, null); // draw edges
-        g2.drawImage(image, 48, 48, 80, 80, 32, 32, 64, 64, null);
-
-        g2.drawImage(image, 7, 87, 41, 121, 32, 64, 0, 96, null); // draw edges
-        g2.drawImage(image, 8, 87, 40, 121, 32, 64, 0, 96, null); // draw edges
-        g2.drawImage(image, 7, 88, 41, 120, 32, 64, 0, 96, null); // draw edges
-        g2.drawImage(image, 8, 88, 40, 120, 32, 64, 0, 96, null);
-
-        g2.drawImage(image, 47, 87, 81, 121, 32, 64, 64, 96, null); // draw edges
-        g2.drawImage(image, 48, 87, 80, 121, 32, 64, 64, 96, null); // draw edges
-        g2.drawImage(image, 47, 88, 81, 120, 32, 64, 64, 96, null); // draw edges
-        g2.drawImage(image, 48, 88, 80, 120, 32, 64, 64, 96, null);
-
-        Texture texture = new Texture(text_top);
-        if (TextureManager.getInstance().containsTexture(name)) {
-            TextureManager.getInstance().replaceTexture(name, texture);
+        Texture texture = new Texture(image);
+        if (textureManager.containsTexture(name)) {
+            textureManager.replaceTexture(name, texture);
         } else {
-            TextureManager.getInstance().addTexture(name, texture);
+            textureManager.addTexture(name, texture);
         }
+        // make sure the id is assigned
+        textureManager.getTextureID(name);
     }
 
     public static void loadTexture(String name, ImageIcon image) {
@@ -203,31 +138,33 @@ public class WorldUtil {
     }
 
     public static void removeTexture(String name) {
-        TextureManager.getInstance().removeTexture(name);
+        textureManager.removeTexture(name);
     }
 
     // add a box to the world
     public static int addBoxSides (World world, SimpleVector pos, Color color,
-                                   int textureId, String boxType, int rotation,
-                                   boolean culling) {
-        // translate the rotation
-        boxType = rotationTranslation.get(boxType + "_" + rotation);
+                                   int[] textureIds, String boxType, boolean culling) {
 
         Object3D box = boxTypes.get(boxType).cloneObject();
         // set other settings, build and add
 
         // select: color or texture
-        if (textureId == -1 || !TextureManager.getInstance().containsTexture(String.valueOf(textureId))) { // for color overlay
+        if (textureIds == null) { // for color overlay
             box.setAdditionalColor(color);
         } else { // for texture overlay
             box.setAdditionalColor(Color.WHITE);
-            box.setTexture(String.valueOf(textureId));
+            PolygonManager polygonManager = box.getPolygonManager();
+            char[] charArray = boxType.toCharArray();
+            int polyCount = 0;
+            for (int i = 0; i < charArray.length; i++) {
+                if (charArray[i] == '0') {
+                    int id = textureManager.getTextureID(String.valueOf(textureIds[i]));
+                    polygonManager.setPolygonTexture(polyCount++, id);
+                    polygonManager.setPolygonTexture(polyCount++, id);
+                }
+            }
         }
 
-        // rotate the voxel
-        if (rotation > 0) {
-            box.rotateY((float)Math.PI * rotation / 2);
-        }
 
         box.setOrigin(pos);
         box.setShadingMode(Object3D.SHADING_FAKED_FLAT);
@@ -238,9 +175,6 @@ public class WorldUtil {
             box.setVisibility(false);
         }
         box.build();
-        // set true rotation center (this needs to be done after call build())
-        // this is needed since build will compute the weighted center
-        box.setRotationPivot(ZEROS);
         world.addObject(box);
         return box.getID();
     }
