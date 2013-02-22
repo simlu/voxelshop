@@ -10,6 +10,7 @@ import com.vitco.util.ThumbnailFileChooser;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.WrapLayout;
 import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -133,7 +134,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
             public String getDescription()
             {
-                return "PNG @ 32x32 (*.png)";
+                return "PNG (*.png)";
             }
         };
         fc_import.addChoosableFileFilter(filter);
@@ -150,13 +151,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
             public void actionPerformed(ActionEvent e) {
                 if (fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        ImageIcon texture = new ImageIcon(ImageIO.read(fc_import.getSelectedFile()));
-                        if (texture.getIconWidth() != 32 || texture.getIconHeight() != 32) {
-                            console.addLine(langSelector.getString("texturemg_file_dim_error"));
-                        } else {
-                            // make sure we can identify the texture
-                            data.addTexture(texture);
-                        }
+                        data.addTexture(ImageIO.read(fc_import.getSelectedFile()));
                     } catch (IOException error) {
                         console.addLine(langSelector.getString("texturemg_general_file_error"));
                     }
@@ -352,6 +347,14 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 if (prevSelectedTexturePanel != null) {
                     prevSelectedTexturePanel.refresh();
                 }
+            }
+        });
+
+        // deselect any texture when the color changes
+        preferences.addPrefChangeListener("currently_used_color", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object newValue) {
+                data.selectTexture(-1);
             }
         });
 

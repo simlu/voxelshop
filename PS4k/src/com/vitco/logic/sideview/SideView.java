@@ -59,7 +59,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     }
 
     @Override
-    protected final int[] voxelPosForHoverPos(Point point) {
+    protected final int[] voxelPosForHoverPos(Point point, boolean selectNeighbour) {
         // calculate position
         SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
                 new SimpleVector(

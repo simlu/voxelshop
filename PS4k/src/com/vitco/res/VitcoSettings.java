@@ -20,7 +20,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.0.29)";
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.1.0)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -147,6 +147,6 @@ public final class VitcoSettings {
     };
 
     // file import
-    public static final Integer MAX_VOXEL_COUNT_PER_LAYER = 1000;
+    public static final Integer MAX_VOXEL_COUNT_PER_LAYER = 10000;
 
 }

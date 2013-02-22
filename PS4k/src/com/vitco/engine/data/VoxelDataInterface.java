@@ -4,6 +4,7 @@ import com.vitco.engine.data.container.Voxel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -127,7 +128,7 @@ public interface VoxelDataInterface {
 
     boolean mirrorVoxel(Voxel[] voxel, int axe);
 
-    boolean addTexture(ImageIcon texture);
+    void addTexture(BufferedImage image);
 
     boolean removeTexture(int textureId);
 
@@ -151,6 +152,10 @@ public interface VoxelDataInterface {
 
     boolean massSetTexture(Integer[] voxelIds, int textureId);
 
-    int[] getVoxelTextureId(int voxelId);
+    int[] getVoxelTextureIds(int voxelId);
+
+    boolean flipVoxelTexture(int voxelId, int voxelSide);
+
+    boolean rotateVoxelTexture(int voxelId, int voxelSide);
 
 }

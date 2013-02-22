@@ -29,6 +29,7 @@ public class HexPickerLinkage extends FrameLinkagePrototype {
             @Override
             public void colorChanged(float[] hsb) {
                 preferences.storeObject("currently_used_color", hsb);
+
             }
         });
         // refresh the hex color chooser when the current color changes

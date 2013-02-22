@@ -21,6 +21,8 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
+// todo restructure / rewrite this class (very complex...)
+
 /**
  * Defines general (common) interactions available for this engine view and sets them up.
  */
@@ -284,7 +286,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     // holds the voxel side that was last hit by a hover event
     private int lastVoxelHitSide = 0;
     // can be override (sideview)
-    protected int[] voxelPosForHoverPos(Point point) {
+    protected int[] voxelPosForHoverPos(Point point, boolean selectNeighbour) {
         int[] voxelPos = null;
         // check if we hit something
         SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
@@ -309,7 +311,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         lastVoxelHitSide = i;
                     }
                 }
-                if (voxelMode == VOXELMODE.DRAW) {
+                if (selectNeighbour) {
                     switch (lastVoxelHitSide) {
                         case 0: voxelPos[0] += 1; break;
                         case 1: voxelPos[0] -= 1; break;
@@ -419,6 +421,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         dragDrawStartPos = highlighted;
                                     }
                                     if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
+                                        // get the texture
+                                        int selectedTexture = data.getSelectedTexture();
+                                        int[] texture = selectedTexture == -1 ? null : new int[] {
+                                                selectedTexture, selectedTexture, selectedTexture,
+                                                selectedTexture, selectedTexture, selectedTexture
+                                        };
+
                                         if (lastAddedVoxel != null) {
                                             // try to add voxels in between
                                             int[] mid = new int[] {
@@ -428,13 +437,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                             };
                                             if (data.searchVoxel(mid, false) == null) {
                                                 // only draw if there is no voxels already here
-                                                data.addVoxel(ColorTools.hsbToColor(currentColor), null, mid);
+                                                data.addVoxel(ColorTools.hsbToColor(currentColor), texture, mid);
                                             }
                                         }
 
                                         if (data.searchVoxel(highlighted, false) == null) {
                                             // only draw if there is no voxels already here
-                                            data.addVoxel(ColorTools.hsbToColor(currentColor), null, highlighted);
+                                            data.addVoxel(ColorTools.hsbToColor(currentColor), texture, highlighted);
                                             lastAddedVoxel = highlighted;
                                         }
                                     }
@@ -455,9 +464,12 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else if (voxelMode == VOXELMODE.PICKER) {
                         Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
                         if (highlightedVoxel != null) {
-                            preferences.storeObject("currently_used_color",
+                            int[] textureIds = highlightedVoxel.getTexture();
+                            if (textureIds == null) {
+                                preferences.storeObject("currently_used_color",
                                     ColorTools.colorToHSB(highlightedVoxel.getColor()));
-                            data.selectTextureSoft(highlightedVoxel.getTexture()[lastVoxelHitSide]);
+                            }
+                            data.selectTextureSoft(textureIds == null ? -1 : textureIds[lastVoxelHitSide]);
                         }
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {
                         Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
@@ -467,7 +479,17 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 // change color
                                 data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
                             } else {
-                                data.setTexture(highlightedVoxel.id, lastVoxelHitSide, selectedTexture);
+                                int[] textureIds = highlightedVoxel.getTexture();
+                                if (textureIds != null && e.isControlDown()) {
+                                    // rotate the texture
+                                    data.rotateVoxelTexture(highlightedVoxel.id, lastVoxelHitSide);
+                                } else if (textureIds != null && e.isShiftDown()) {
+                                    // flip the texture
+                                    data.flipVoxelTexture(highlightedVoxel.id, lastVoxelHitSide);
+                                } else {
+                                    // set the texture
+                                    data.setTexture(highlightedVoxel.id, lastVoxelHitSide, selectedTexture);
+                                }
                             }
                         }
                     } else if (voxelMode == VOXELMODE.VIEW) {
@@ -595,7 +617,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             if (voxelMode != VOXELMODE.SELECT) {
                 int[] voxelPos = null;
                 if (dragDrawStartPos == null) { // normal hover
-                    voxelPos = voxelPosForHoverPos(e.getPoint());
+                    voxelPos = voxelPosForHoverPos(e.getPoint(),
+                            voxelMode == VOXELMODE.DRAW && !rightMouseDown);
                 } else { // find voxel in same plane
                     SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
                     // hit nothing, draw preview on zero level
@@ -648,8 +671,15 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             }
         }
 
+        //true iff right mouse is down
+        private boolean rightMouseDown = false;
+
         @Override
         public final void mousePressed(MouseEvent e) {
+            rightMouseDown = e.getButton() == MouseEvent.BUTTON3;
+            if (rightMouseDown) {
+                hover(e);
+            }
             // remember voxel mode
             massVoxelMode = voxelMode;
             // make sure there is a layer selected or display a warning
@@ -682,6 +712,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         @Override
         public final void mouseReleased(MouseEvent e) {
             camera.setEnabled(true);
+            rightMouseDown = rightMouseDown && e.getButton() != MouseEvent.BUTTON3;
             massVoxel = false;
             lastAddedVoxel = null;
             dragDrawStartPos = null;

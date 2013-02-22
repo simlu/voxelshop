@@ -120,7 +120,8 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                             pos[0] -= shift[2];
                             pos[1] -= shift[1];
                             pos[2] -= shift[0];
-                            voxels[i++] = new Voxel(voxel.id, pos, voxel.getColor(), false, null, voxel.getLayerId());
+                            voxels[i++] = new Voxel(voxel.id, pos, voxel.getColor(),
+                                    voxel.isSelected(), voxel.getTexture(), voxel.getLayerId());
                         }
                         // execute the (shifted) add
                         if (!data.massAddVoxel(voxels)) {

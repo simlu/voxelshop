@@ -14,7 +14,10 @@ public final class Voxel implements Serializable {
     private Color color; // color of voxel
     private int alpha = -1; // alpha of this voxel
     private final int layerId; // the id of the layer this voxel lives in
-    private int[] textureIds = null; // get the texture id of this voxel (for all sides)
+    private int[] textureIds = null; // get the texture ids of this voxel (for all sides)
+
+    private int[] sideRotation = null;
+    private boolean[] sideFlip = null;
 
     // constructor (with texture)
     public Voxel(int id, int[] pos, Color color, boolean selected, int[] textureIds, int layerId) {
@@ -50,9 +53,38 @@ public final class Voxel implements Serializable {
         return color;
     }
 
-    // set the texture of this voxel
-    protected final void setTexture(int[] textureIds) {
-        this.textureIds = textureIds == null ? null : textureIds.clone();
+    // rotate this voxel
+    public final void rotate(Integer side) {
+        if (sideRotation == null) {
+            sideRotation = new int[6];
+        }
+        sideRotation[side] = (sideRotation[side] + 1)%4;
+    }
+
+    // rotate this voxel (reverse)
+    public final void rotateReverse(Integer side) {
+        if (sideRotation == null) {
+            sideRotation = new int[6];
+        }
+        sideRotation[side] = (sideRotation[side] + 3)%4;
+    }
+
+    // get the rotation of this voxel
+    public final int[] getRotation() {
+        return sideRotation == null ? null : sideRotation.clone();
+    }
+
+    // set the flip of this voxel
+    public final void flip(Integer side) {
+        if (sideFlip == null) {
+            sideFlip = new boolean[6];
+        }
+        sideFlip[side] = !sideFlip[side];
+    }
+
+    // get the flip of this voxel
+    public final boolean[] getFlip() {
+        return sideFlip == null ? null : sideFlip.clone();
     }
 
     // get the texture of this voxel
@@ -61,7 +93,7 @@ public final class Voxel implements Serializable {
     }
 
     // set the alpha of this voxel
-    protected final void setAlpha(int alpha) {
+    public final void setAlpha(int alpha) {
         this.alpha = alpha;
     }
 

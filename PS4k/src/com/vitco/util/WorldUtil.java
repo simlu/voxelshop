@@ -41,6 +41,9 @@ public class WorldUtil {
 
     private final static HashMap<String, Object3D> boxTypes = new HashMap<String, Object3D>();
 
+    // holds the uv rotation data
+    private final static HashMap<String, float[]> uvRotation = new HashMap<String, float[]>();
+
     static {
         // pre-generate all the boxes
         float cdis = VitcoSettings.VOXEL_SIZE/2;
@@ -69,37 +72,102 @@ public class WorldUtil {
             // add the triangles
             if (bin.charAt(0) == '0') {
                 // Right
-                box.addTriangle(upperRightFront,0,0, lowerRightFront,0,1, upperRightBack,1,0);
-                box.addTriangle(upperRightBack,1,0, lowerRightFront, 0,1, lowerRightBack,1,1);
+                box.addTriangle(upperRightFront,0.001f,0.001f, lowerRightFront,0.001f,0.999f, upperRightBack,0.999f,0);
+                box.addTriangle(upperRightBack,0.999f,0.001f, lowerRightFront, 0.001f,0.999f, lowerRightBack,0.999f,0.999f);
             }
             if (bin.charAt(1) == '0') {
                 // Left
-                box.addTriangle(upperLeftFront,0,0, upperLeftBack,1,0, lowerLeftFront,0,1);
-                box.addTriangle(upperLeftBack,1,0, lowerLeftBack,1,1, lowerLeftFront,0,1);
+                box.addTriangle(upperLeftFront,0.999f,0.001f, upperLeftBack,0.001f,0.001f, lowerLeftFront,0.999f,0.999f);
+                box.addTriangle(upperLeftBack,0.001f,0.001f, lowerLeftBack,0.001f,0.999f, lowerLeftFront,0.999f,0.999f);
             }
             if (bin.charAt(2) == '0') {
                 // Lower
-                box.addTriangle(lowerLeftBack,0,0, lowerRightBack,1,0, lowerLeftFront,0,1);
-                box.addTriangle(lowerRightBack,1,0, lowerRightFront,1,1, lowerLeftFront,0,1);
+                box.addTriangle(lowerLeftBack,0.999f,0.001f, lowerRightBack,0.001f,0.001f, lowerLeftFront,0.999f,0.999f);
+                box.addTriangle(lowerRightBack,0.001f,0.001f, lowerRightFront,0.001f,0.999f, lowerLeftFront,0.999f,0.999f);
             }
             if (bin.charAt(3) == '0') {
                 // Upper
-                box.addTriangle(upperLeftBack,0,0, upperLeftFront,0,1, upperRightBack,1,0);
-                box.addTriangle(upperRightBack,1,0, upperLeftFront,0,1, upperRightFront,1,1);
+                box.addTriangle(upperLeftBack,0.001f,0.001f, upperLeftFront,0.001f,0.999f, upperRightBack,0.999f,0);
+                box.addTriangle(upperRightBack,0.999f,0.001f, upperLeftFront,0.001f,0.999f, upperRightFront,0.999f,0.999f);
             }
             if (bin.charAt(4) == '0') {
                 // Back
-                box.addTriangle(upperLeftBack,0,0, upperRightBack,1,0, lowerLeftBack,0,1);
-                box.addTriangle(upperRightBack,1,0, lowerRightBack,1,1, lowerLeftBack,0,1);
+                box.addTriangle(upperLeftBack,0.999f,0.001f, upperRightBack,0.001f,0.001f, lowerLeftBack,0.999f,0.999f);
+                box.addTriangle(upperRightBack,0.001f,0.001f, lowerRightBack,0.001f,0.999f, lowerLeftBack,0.999f,0.999f);
             }
             if (bin.charAt(5) == '0') {
                 // Front
-                box.addTriangle(upperLeftFront,0,0, lowerLeftFront,0,1, upperRightFront,1,0);
-                box.addTriangle(upperRightFront,1,0, lowerLeftFront,0,1, lowerRightFront,1,1);
+                box.addTriangle(upperLeftFront,0.001f,0.001f, lowerLeftFront,0.001f,0.999f, upperRightFront,0.999f,0);
+                box.addTriangle(upperRightFront,0.999f,0.001f, lowerLeftFront,0.001f,0.999f, lowerRightFront,0.999f,0.999f);
             }
 
             boxTypes.put(bin, box);
 
+        }
+
+        // pre-compute rotation + flipping (in that order!)
+        int[][][] uvData = new int[][][]{
+                new int[][]{
+                        new int[]{0, 0, 0, 1, 1, 0},
+                        new int[]{1, 0, 0, 1, 1, 1}
+                },
+                new int[][]{
+                        new int[]{1, 0, 0, 0, 1, 1},
+                        new int[]{0, 0, 0, 1, 1, 1}
+                },
+                new int[][]{
+                        new int[]{1, 0, 0, 0, 1, 1},
+                        new int[]{0, 0, 0, 1, 1, 1}
+                },
+                new int[][]{
+                        new int[]{0, 0, 0, 1, 1, 0},
+                        new int[]{1, 0, 0, 1, 1, 1}
+                },
+                new int[][]{
+                        new int[]{1, 0, 0, 0, 1, 1},
+                        new int[]{0, 0, 0, 1, 1, 1}
+                },
+                new int[][]{
+                        new int[]{0, 0, 0, 1, 1, 0},
+                        new int[]{1, 0, 0, 1, 1, 1}
+                }
+        };
+
+        for (int index = 0; index < uvData.length; index++) {
+            int[][] uvs = uvData[index];
+            for (int flip = 0; flip <= 1; flip++) {
+                for (int rotate = 0; rotate <= 3; rotate++) {
+                    // holds the result data
+                    float[] result = new float[12];
+
+                    int[] t1 = uvs[0];
+                    int[] t2 = uvs[1];
+
+                    for (int i = 0; i < 3; i ++) {
+                        int[] uv1 = new int[] {t1[i*2], t1[i*2+1]};
+                        int[] uv2 = new int[] {t2[i*2], t2[i*2+1]};
+                        for (int r = 0; r < rotate; r++) {
+                            uv1 = rotate(uv1);
+                            uv2 = rotate(uv2);
+                        }
+                        if (flip == 1) {
+                            uv1 = flip(uv1);
+                            uv2 = flip(uv2);
+                        }
+                        result[i*2] = uv1[0];
+                        result[i*2+1] = uv1[1];
+                        result[i*2+6] = uv2[0];
+                        result[i*2+6+1] = uv2[1];
+                    }
+
+                    // interpolation of result
+                    for (int i = 0; i < result.length; i++) {
+                        result[i] = result[i] == 1 ? result[i] - 0.001f : result[i] + 0.001f;
+                    }
+
+                    uvRotation.put(index + "_" + rotate + "_" + flip, result);
+                }
+            }
         }
 
         // disable anti-aliasing for textures
@@ -107,6 +175,27 @@ public class WorldUtil {
 
         textureManager = TextureManager.getInstance();
     }
+
+    private static int[] rotate(int[] uv) {
+        switch (uv[0]*2 + uv[1]) {
+            case 0: return new int[] {1,0};
+            case 1: return new int[] {0,0};
+            case 2: return new int[] {1,1};
+            case 3: return new int[] {0,1};
+        }
+        return null;
+    }
+
+    private static int[] flip(int[] uv) {
+        switch (uv[0]*2 + uv[1]) {
+            case 0: return new int[] {1,0};
+            case 1: return new int[] {1,1};
+            case 2: return new int[] {0,0};
+            case 3: return new int[] {0,1};
+        }
+        return null;
+    }
+
 
     private final static TextureManager textureManager;
 
@@ -143,6 +232,7 @@ public class WorldUtil {
 
     // add a box to the world
     public static int addBoxSides (World world, SimpleVector pos, Color color,
+                                   int[] rotation, boolean[] flip,
                                    int[] textureIds, String boxType, boolean culling) {
 
         Object3D box = boxTypes.get(boxType).cloneObject();
@@ -156,11 +246,29 @@ public class WorldUtil {
             PolygonManager polygonManager = box.getPolygonManager();
             char[] charArray = boxType.toCharArray();
             int polyCount = 0;
+            boolean hasRotation = rotation != null;
+            boolean hasFlip = flip != null;
             for (int i = 0; i < charArray.length; i++) {
                 if (charArray[i] == '0') {
                     int id = textureManager.getTextureID(String.valueOf(textureIds[i]));
-                    polygonManager.setPolygonTexture(polyCount++, id);
-                    polygonManager.setPolygonTexture(polyCount++, id);
+                    if ((hasRotation && rotation[i] != 0) || (hasFlip && flip[i])) {
+                        int rotationValue = rotation == null ? 0 : rotation[i];
+                        int flipValue = flip == null ? 0 : (flip[i] ? 1 : 0);
+                        float[] uvMapping = uvRotation.get(i + "_" + rotationValue + "_" + flipValue);
+                        polygonManager.setPolygonTexture(polyCount, new TextureInfo(id,
+                                uvMapping[0],uvMapping[1],uvMapping[2],
+                                uvMapping[3],uvMapping[4],uvMapping[5]
+                        ));
+                        polygonManager.setPolygonTexture(polyCount+1, new TextureInfo(id,
+                                uvMapping[6],uvMapping[7],uvMapping[8],
+                                uvMapping[9],uvMapping[10],uvMapping[11]
+                        ));
+                    } else {
+                        // no rotation or flip on this side
+                        polygonManager.setPolygonTexture(polyCount, id);
+                        polygonManager.setPolygonTexture(polyCount+1, id);
+                    }
+                    polyCount+=2;
                 }
             }
         }

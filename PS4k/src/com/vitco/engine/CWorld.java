@@ -138,6 +138,12 @@ public class CWorld extends World {
         public Color getColor() {
             return voxel.getColor();
         }
+        public int[] getRotation() {
+            return voxel.getRotation();
+        }
+        public boolean[] getFlip() {
+            return voxel.getFlip();
+        }
         public int[] getTexture() {
             return voxel.getTexture();
         }
@@ -240,6 +246,8 @@ public class CWorld extends World {
                 int newWorldId = WorldUtil.addBoxSides(this,
                         voxel.getVectorPos(),
                         voxel.getColor(),
+                        voxel.getRotation(),
+                        voxel.getFlip(),
                         voxel.getTexture(),
                         // draw the appropriate site only
                         voxel.getSides(),
