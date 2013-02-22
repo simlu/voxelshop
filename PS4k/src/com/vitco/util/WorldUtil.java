@@ -176,6 +176,7 @@ public class WorldUtil {
         textureManager = TextureManager.getInstance();
     }
 
+    // internal - helper
     private static int[] rotate(int[] uv) {
         switch (uv[0]*2 + uv[1]) {
             case 0: return new int[] {1,0};
@@ -186,6 +187,7 @@ public class WorldUtil {
         return null;
     }
 
+    // internal - helper
     private static int[] flip(int[] uv) {
         switch (uv[0]*2 + uv[1]) {
             case 0: return new int[] {1,0};
@@ -216,7 +218,7 @@ public class WorldUtil {
             textureManager.addTexture(name, texture);
         }
         // make sure the id is assigned
-        textureManager.getTextureID(name);
+        //textureManager.getNameByID(textureManager.getTextureID(name));
     }
 
     public static void loadTexture(String name, ImageIcon image) {

@@ -2040,7 +2040,6 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private Voxel[] visibleLayerVoxelBuffer = new Voxel[0];
     private boolean anyVoxelsVisibleBuffer = false;
     private final HashMap<String, Voxel> visVoxelList = new HashMap<String, Voxel>();
-    private final static float[] ZEROS = new float[] {0,0,0};
     private void updateVisVoxTreeInternal() {
         Voxel[][] newV = getNewVisibleLayerVoxel("___internal___visible_list");
         if (newV[0] == null) {

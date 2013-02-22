@@ -185,14 +185,10 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 if (getStatus() && fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
                     try {
                         ImageIcon texture = new ImageIcon(ImageIO.read(fc_import.getSelectedFile()));
-                        if (texture.getIconWidth() != 32 || texture.getIconHeight() != 32) {
-                            console.addLine(langSelector.getString("texturemg_file_dim_error"));
-                        } else {
-                            // make sure we can identify the texture
-                            ImageIcon textureDrawnOnTop = data.getTexture(selectedTexture);
-                            textureDrawnOnTop.getImage().getGraphics().drawImage(texture.getImage(), 0, 0, null);
-                            data.replaceTexture(selectedTexture, textureDrawnOnTop);
-                        }
+                        // make sure we can identify the texture
+                        ImageIcon textureDrawnOnTop = data.getTexture(selectedTexture);
+                        textureDrawnOnTop.getImage().getGraphics().drawImage(texture.getImage(), 0, 0, null);
+                        data.replaceTexture(selectedTexture, textureDrawnOnTop);
                     } catch (IOException error) {
                         console.addLine(langSelector.getString("texturemg_general_file_error"));
                     }
