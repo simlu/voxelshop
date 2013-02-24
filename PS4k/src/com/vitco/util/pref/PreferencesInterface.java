@@ -22,4 +22,8 @@ public interface PreferencesInterface {
     void storeBoolean(String key, boolean value);
 
     boolean loadBoolean(String key);
+
+    void addPrefChangeListener(String key, PrefChangeListener pcl);
+
+    void notifyListeners(String key, Object value);
 }

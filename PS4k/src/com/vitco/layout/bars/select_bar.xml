@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <!-- copy, cut, paste -->
+    <icon-item src="resource/img/bars/select_bar/cut.png"
+               tool-tip="selection_tool_cut_tooltip"
+               grayable="true"
+               action="selection_tool_cut"/>
+    <icon-item src="resource/img/bars/select_bar/copy.png"
+               tool-tip="selection_tool_copy_tooltip"
+               grayable="true"
+               action="selection_tool_copy"/>
+    <icon-item src="resource/img/bars/select_bar/paste.png"
+               tool-tip="selection_tool_paste_tooltip"
+               grayable="true"
+               action="selection_tool_paste"/>
+    <separator/>
+
+    <!--deselect / delete-->
+    <icon-item src="resource/img/bars/select_bar/finalize_move.png"
+               tool-tip="selection_tool_finalize_shifting_tooltip"
+               grayable="true"
+               action="selection_tool_finalize_shifting"/>
+    <icon-item src="resource/img/bars/select_bar/finalize_move_as_copy.png"
+               tool-tip="selection_tool_finalize_shifting_as_copy_tooltip"
+               grayable="true"
+               action="selection_tool_finalize_shifting_as_copy"/>
+    <icon-item src="resource/img/bars/select_bar/deselect.png"
+               tool-tip="selection_tool_deselect_tooltip"
+               grayable="true"
+               action="selection_tool_deselect"/>
+    <icon-item src="resource/img/bars/select_bar/delete_select.png"
+               tool-tip="selection_tool_delete_tooltip"
+               grayable="true"
+               action="selection_tool_delete"/>
+    <separator/>
+
+    <!--select all, move to new layer, recolor, retexture-->
+    <icon-item src="resource/img/bars/select_bar/select_layer.png"
+               tool-tip="selection_tool_select_all_tooltip"
+               grayable="true"
+               action="selection_tool_select_all"/>
+    <icon-item src="resource/img/bars/select_bar/as_new_layer.png"
+               tool-tip="selection_tool_as_new_layer_tooltip"
+               grayable="true"
+               action="selection_tool_as_new_layer"/>
+    <icon-item src="resource/img/bars/select_bar/recolor.png"
+               tool-tip="selection_tool_recolor_tooltip"
+               grayable="true"
+               action="selection_tool_recolor"/>
+    <icon-item src="resource/img/bars/select_bar/retexture.png"
+               tool-tip="selection_tool_retexture_tooltip"
+               grayable="true"
+               action="selection_tool_retexture"/>
+    <separator/>
+
+    <!--rotate-->
+    <split-item src="resource/img/bars/select_bar/rotate/rotatex.png"
+                tool-tip="selection_tool_rotatex_tooltip"
+                grayable="true"
+                disable-action="true"
+                action="selection_tool_rotatex"
+                complex-action="selection_tool_rotatex_popup"/>
+    <split-item src="resource/img/bars/select_bar/rotate/rotatey.png"
+                tool-tip="selection_tool_rotatey_tooltip"
+                grayable="true"
+                disable-action="true"
+                action="selection_tool_rotatey"
+                complex-action="selection_tool_rotatey_popup"/>
+    <split-item src="resource/img/bars/select_bar/rotate/rotatez.png"
+                tool-tip="selection_tool_rotatez_tooltip"
+                grayable="true"
+                disable-action="true"
+                action="selection_tool_rotatez"
+                complex-action="selection_tool_rotatez_popup"/>
+
+    <!--mirror-->
+    <icon-item src="resource/img/bars/select_bar/mirror/mirrorx.png"
+               tool-tip="selection_tool_mirrorx_tooltip"
+               grayable="true"
+               action="selection_tool_mirrorx"/>
+    <icon-item src="resource/img/bars/select_bar/mirror/mirrory.png"
+               tool-tip="selection_tool_mirrory_tooltip"
+               grayable="true"
+               action="selection_tool_mirrory"/>
+    <icon-item src="resource/img/bars/select_bar/mirror/mirrorz.png"
+               tool-tip="selection_tool_mirrorz_tooltip"
+               grayable="true"
+               action="selection_tool_mirrorz"/>
+</head>

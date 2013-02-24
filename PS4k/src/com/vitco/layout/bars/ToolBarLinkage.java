@@ -1,34 +1,39 @@
 package com.vitco.layout.bars;
 
-import com.jidesoft.action.CommandBar;
-import com.vitco.util.action.types.StateActionPrototype;
+import com.jidesoft.action.CommandMenuBar;
+import com.vitco.util.action.ComplexActionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.awt.event.ActionEvent;
+import java.awt.*;
 
 /**
  * the tool bar, uses menu generator to load content from file
+ *
+ * defines interactions
  */
 public class ToolBarLinkage extends BarLinkagePrototype {
-    @Override
-    public CommandBar buildBar(String key) {
-        CommandBar bar = new CommandBar(key);
 
+    // var & setter
+    private ComplexActionManager complexActionManager;
+    @Autowired
+    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
+        this.complexActionManager = complexActionManager;
+    }
+
+    @Override
+    public final CommandMenuBar buildBar(String key, final Frame frame) {
+        CommandMenuBar bar = new CommandMenuBar(key);
+
+        // build the toolbar
         menuGenerator.buildMenuFromXML(bar, "com/vitco/layout/bars/tool_bar.xml");
 
-        // register the toggle animation mode action
-        actionManager.registerAction("toggle_animation_mode", new StateActionPrototype() {
-            private boolean animationMode = true;
+        // build the settings sub-menu
+        CommandMenuBar settingsBar = new CommandMenuBar();
+        menuGenerator.buildMenuFromXML(settingsBar, "com/vitco/layout/bars/settings.xml");
+        complexActionManager.registerAction("settings_menubar", settingsBar);
 
-            @Override
-            public void action(ActionEvent actionEvent) {
-                animationMode = !animationMode;
-            }
-
-            @Override
-            public boolean getStatus() {
-                return animationMode;
-            }
-        });
+        // register the logic for this menu
+        menuLogic.registerLogic(frame);
 
         return bar;
     }

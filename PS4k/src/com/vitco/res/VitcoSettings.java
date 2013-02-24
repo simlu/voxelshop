@@ -1,20 +1,56 @@
 package com.vitco.res;
 
 import com.threed.jpct.SimpleVector;
+import com.vitco.engine.data.container.VOXELMODE;
 
+import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Hold all used colors. Aids in keeping a consistent color schema.
  */
 public final class VitcoSettings {
+
+    // texture window settings
+    public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
+    public static final Color TEXTURE_BORDER = Color.BLACK;
+    public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
+    public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
+
+    // version id
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.1.1)";
+
+    // wire-frame / select
+    public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
+    public static final Color SELECTED_VOXEL_WIREFRAME_COLOR = new Color(255, 255, 255);
+    public static final Color SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED = new Color(175, 255, 172);
+
+    // ghost overlay line color
+    public static final Color GHOST_VOXEL_OVERLAY_LINE_COLOR = new Color(255, 255, 255, 50);
+
+    // these can change externally
+    public static final String PROGRAM_UPDATER_URL = "http://www.fantasy-mmorpg.com/tools/ps4k/upd/digest.txt";
+
+    // cursor
+    public static final Cursor CURSOR_DEFAULT = Cursor.getDefaultCursor();
+    public static final Cursor CURSOR_BLANK = Toolkit.getDefaultToolkit().createCustomCursor(
+            new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "blank cursor");
+
+    // initial settings
+    public static final Color INITIAL_CURRENT_COLOR = new Color(199, 89, 68);
+    public static final VOXELMODE INITIAL_VOXEL_MODE = VOXELMODE.DRAW;
+    public static final boolean INITIAL_MODE_IS_ANIMATION = false;
+
     // e.g. for shortcut manager
-    public static final Color EDIT_BG_COLOR = new Color(83, 155, 173); // new Color(187, 209, 255);
-    public static final Color EDIT_TEXT_COLOR = new Color(255, 255, 255); // new Color(0, 0, 0);
-    public static final Color EDIT_ERROR_BG_COLOR = new Color(208,49,28); // new Color(255,200,200);
-    public static final Color DEFAULT_TEXT_COLOR = new Color(10,10,10);
-    public static final Color DEFAULT_BG_COLOR =  new Color(255, 255, 255);
-    public static final Color DEFAULT_HOVER_COLOR = new Color(235,241,251);
+    public static final Color EDIT_BG_COLOR = new Color(250, 250, 250); // new Color(187, 209, 255);
+    public static final Color EDIT_TEXT_COLOR = new Color(30, 30, 30); // new Color(0, 0, 0);
+    public static final Color EDIT_ERROR_BG_COLOR = new Color(255, 171, 161); // new Color(255,200,200);
+    public static final Color DEFAULT_TEXT_COLOR = new Color(233,233,233);
+    public static final Color DEFAULT_BG_COLOR =  new Color(85, 85, 85);
+    public static final Color DEFAULT_HOVER_COLOR = new Color(90,100,120);
+    public static final Color DEFAULT_DARK_BG_COLOR = new Color(40, 40, 40);
 
     // e.g. for side view
     public static final Color ANIMATION_LINE_INNER_COLOR = new Color(230, 20, 30, 200);
@@ -40,11 +76,12 @@ public final class VitcoSettings {
     public static final float SIDE_VIEW_ZOOM_START = 20000f;
     public static final float SIDE_VIEW_ZOOM_FOV = 0.015f;
     public static final float SIDE_VIEW_SIDE_MOVE_FACTOR = 1f; // "drag" move content
+    public static final SimpleVector SIDE_VIEW1_CAMERA_POSITION = new SimpleVector(0,-1,-VitcoSettings.SIDE_VIEW_ZOOM_START);
+    public static final SimpleVector SIDE_VIEW2_CAMERA_POSITION = new SimpleVector(0,-VitcoSettings.SIDE_VIEW_ZOOM_START,-1);
+    public static final SimpleVector SIDE_VIEW3_CAMERA_POSITION = new SimpleVector(-VitcoSettings.SIDE_VIEW_ZOOM_START,0,-1);
 
     // xyz orientation
     public static final Color ANIMATION_AXIS_OUTER_COLOR = new Color(0, 0, 0, 255);
-    // can be removed...
-    public static final Color ANIMATION_AXIS_CENTER_COLOR = new Color(65, 65, 65, 255); // center color
     public static final Color ANIMATION_AXIS_COLOR_X = new Color(141, 0, 0, 255);
     public static final Color ANIMATION_AXIS_COLOR_Y = new Color(8, 141, 1, 255);
     public static final Color ANIMATION_AXIS_COLOR_Z = new Color(0, 92, 180, 255);
@@ -52,17 +89,64 @@ public final class VitcoSettings {
     public static final Color ANIMATION_CENTER_CROSS_COLOR = new Color(0, 0, 0, 255); // cross in the center
 
     // main view
-    public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 10;
+    public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 15;
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
-    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 500;
+    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1000;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
-    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(0, -200, -200);
+    public static final float MAIN_VIEW_ZOOM_FOV = 1.25f;
+    public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-400, -500, -500);
     public static final float MAIN_VIEW_SIDE_MOVE_FACTOR = 0.2f; // "drag" move content
     public static final float MAIN_VIEW_ROTATION_X_FACTOR = 0.02f;
     public static final float MAIN_VIEW_ROTATION_Y_FACTOR = 0.01f;
-    public static final Color MAIN_VIEW_GROUND_PLANE_COLOR = new Color(181, 181, 181);
 
     // general
-    public static final Color DEFAULT_BORDER_COLOR = new Color(56, 56, 56);
+    public static final Color DEFAULT_BORDER_COLOR = new Color(90, 90, 90);
+    public static final Color DEFAULT_BORDER_COLOR_LIGHT = new Color(130, 135, 144);
+
+    // layer
+    public static final Color VISIBLE_LAYER_BG = new Color(85, 85, 85);
+    public static final Color HIDDEN_LAYER_BG = new Color(120, 85, 85);
+    public static final Color VISIBLE_SELECTED_LAYER_BG = new Color(56, 77, 115);
+    public static final Color HIDDEN_SELECTED_LAYER_BG = new Color(127, 48, 43);
+    public static final Integer MAX_LAYER_COUNT = 50;
+
+    // general table
+    public static final Font TABLE_FONT = new Font(
+            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
+            UIManager.getDefaults().getFont("TabbedPane.font").getStyle(),
+            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
+    );
+    public static final Font TABLE_FONT_BOLD = new Font(
+            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
+            Font.BOLD,
+            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
+    );
+    public static final int DEFAULT_TABLE_INCREASE = 10;
+    public static final Border DEFAULT_CELL_BORDER =
+            BorderFactory.createEmptyBorder(0, 10, 0, 0);
+    public static final Border DEFAULT_CELL_BORDER_EDIT =
+            BorderFactory.createEmptyBorder(DEFAULT_TABLE_INCREASE / 2, 10, 0, 0);
+
+    // general config
+    public static final Float VOXEL_SIZE = 10f;
+    public static final Float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
+    public static final Float VOXEL_GROUND_PLANE_SIZE = 35 * VOXEL_SIZE; // when changing this make sure the edges are ok
+    public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
+    public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
+    public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
+    public static final Color VOXEL_PREVIEW_LINE_COLOR_BRIGHT = new Color(255,255,255,100);
+
+    public static final Color[] GRAYSCALE_COLOR_SWATCH = new Color[]{
+            new Color(0, 0, 0), new Color(14, 14, 14), new Color(27, 27, 27),
+            new Color(41, 41, 41), new Color(54, 54, 54), new Color(68, 68, 68),
+            new Color(81, 81, 81), new Color(95, 95, 95), new Color(108, 108, 108),
+            new Color(122, 122, 122), new Color(135, 135, 135), new Color(149, 149, 149),
+            new Color(162, 162, 162), new Color(176, 176, 176), new Color(189, 189, 189),
+            new Color(203, 203, 203), new Color(216, 216, 216), new Color(230, 230, 230),
+            new Color(243, 243, 243), new Color(255, 255, 255)
+    };
+
+    // file import
+    public static final Integer MAX_VOXEL_COUNT_PER_LAYER = 10000;
 
 }

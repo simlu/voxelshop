@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.frames.console.ConsoleViewInterface;
+import com.vitco.logic.console.ConsoleViewInterface;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
@@ -15,12 +15,12 @@ public class ConsoleLinkage extends FrameLinkagePrototype {
 
     // var & setter
     private ConsoleViewInterface consoleView;
-    public void setConsoleView(ConsoleViewInterface consoleView) {
+    public final void setConsoleView(ConsoleViewInterface consoleView) {
         this.consoleView = consoleView;
     }
 
     @Override
-    public DockableFrame buildFrame(String key) {
+    public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
         frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource("resource/img/icons/frames/console.png")
@@ -33,7 +33,7 @@ public class ConsoleLinkage extends FrameLinkagePrototype {
         actionManager.registerAction("console_state-action_show", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
-                return isVisible();
+                return frame.isVisible();
             }
 
             @Override

@@ -1,6 +1,8 @@
 package com.vitco;
 
+import com.vitco.logic.shortcut.ShortcutManager;
 import com.vitco.util.action.ActionManager;
+import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.error.ErrorHandler;
 import com.vitco.util.pref.Preferences;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,12 +14,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        // some licences I found online
-        //com.jidesoft.utils.Lm.verifyLicense("Gareth Pidgeon", "ZoeOS", "DJoqM6VZ5apzIiGYUqwaFfnAXmREFrm1");
-        //com.jidesoft.utils.Lm.verifyLicense("Marios Skounakis", "JOverseer", "L1R4Nx7vEp0nMbsoaHdH7nkRrx5F.dO");
-        //com.jidesoft.utils.Lm.verifyLicense("Softham", "White Label Forex Trading System", "B0QACFIA9DMfBogl8KvwJkUd6fDUzaD2");
-        //com.jidesoft.utils.Lm.verifyLicense("Marc Fiume", "Savant Genome Browser", "1BimsQGmP.vjmoMbfkPdyh0gs3bl3932");
-        //com.jidesoft.utils.Lm.verifyLicense("Bill Snyder", "CashForward", "U4Fnx9Ak6M1DGKsRXc2fNF8nTG0c2aC");
+        // the JIDE license
+        com.jidesoft.utils.Lm.verifyLicense("Pixelated Games", "PS4K", "__JIDE_PASSWORD__");
 
         // check if we are in debug mode
         if ((args.length > 0) && args[0].equals("debug")) {
@@ -25,11 +23,12 @@ public class Main {
         }
 
         // build the application
-        final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("com/vitco/logic/config.xml");
+        final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("com/vitco/glue/config.xml");
 
         // for debugging
         ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
-
+        ((ComplexActionManager) context.getBean("ComplexActionManager")).performValidityCheck();
+        ((ShortcutManager) context.getBean("ShortcutManager")).doSanityCheck();
 //        // test console
 //        final Console console = ((Console) context.getBean("Console"));
 //        new Thread() {

@@ -25,15 +25,17 @@ public class G2DUtil {
     public static void drawLine(SimpleVector p1, SimpleVector p2,
                                 Graphics2D ig, Color innerColor, Color outerColor,
                                 float size) {
-        // outer line
-        ig.setColor(outerColor); // line color
-        ig.setStroke(new BasicStroke(size * 1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
-        ig.drawLine(Math.round(p1.x), Math.round(p1.y),
-                Math.round(p2.x), Math.round(p2.y));
-        // inner line
-        ig.setColor(innerColor); // line color
-        ig.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
-        ig.drawLine(Math.round(p1.x), Math.round(p1.y),
-                Math.round(p2.x), Math.round(p2.y));
+        if (p1 != null && p2 != null) {
+            // outer line
+            ig.setColor(outerColor); // line color
+            ig.setStroke(new BasicStroke(size * 1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+            ig.drawLine(Math.round(p1.x), Math.round(p1.y),
+                    Math.round(p2.x), Math.round(p2.y));
+            // inner line
+            ig.setColor(innerColor); // line color
+            ig.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+            ig.drawLine(Math.round(p1.x), Math.round(p1.y),
+                    Math.round(p2.x), Math.round(p2.y));
+        }
     }
 }

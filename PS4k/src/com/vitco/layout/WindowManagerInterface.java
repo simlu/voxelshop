@@ -2,13 +2,18 @@ package com.vitco.layout;
 
 import com.jidesoft.action.DockableBar;
 import com.jidesoft.docking.DockableFrame;
+import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
-import com.vitco.frames.shortcut.ShortcutManagerInterface;
+import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.util.pref.PreferencesInterface;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.awt.*;
 import java.util.Map;
 
 /**
@@ -29,10 +34,21 @@ public interface WindowManagerInterface {
     void setShortcutManager(ShortcutManagerInterface shortcutManager);
     // set error handler
     void setErrorHandler(ErrorHandlerInterface errorHandler);
+    // set the action manager
+    void setActionManager(ActionManager actionManager);
+    // set pref
+    void setPreferences(PreferencesInterface preferences);
+    // set data container
+    void setData(Data data);
+    // set language selector
+    void setLangSelector(LangSelectorInterface langSelector);
 
     @PostConstruct
     void init();
 
     @PreDestroy
     void finish();
+
+    // handle cursor (global)
+    void setCustomCursor(Cursor cursor);
 }

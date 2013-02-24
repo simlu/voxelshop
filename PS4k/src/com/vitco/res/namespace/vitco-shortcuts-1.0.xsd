@@ -13,19 +13,18 @@
     <xs:element name="head">
         <xs:complexType>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="shortcut" />
                 <xs:element name="global">
                     <xs:complexType>
-                        <xs:sequence>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element ref="shortcut" minOccurs="0" maxOccurs="unbounded" />
-                        </xs:sequence>
+                        </xs:choice>
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="frame">
                     <xs:complexType>
-                        <xs:sequence>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element ref="shortcut" minOccurs="0" maxOccurs="unbounded" />
-                        </xs:sequence>
+                        </xs:choice>
                         <xs:attribute name="name" form="unqualified" type="xs:string" />
                     </xs:complexType>
                 </xs:element>

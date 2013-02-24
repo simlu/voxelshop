@@ -1,7 +1,8 @@
 package com.vitco.util.menu;
 
-import com.vitco.frames.shortcut.ShortcutManagerInterface;
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.util.action.ActionManager;
+import com.vitco.util.action.ComplexActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 
@@ -12,9 +13,11 @@ import javax.swing.*;
  */
 public interface MenuGeneratorInterface {
     public void setLangSelector(LangSelectorInterface langSel);
-    public void setActionManager(ActionManagerInterface actionManager);
+    public void setActionManager(ActionManager actionManager);
     public void buildMenuFromXML(JComponent jComponent, String xmlFile);
     public void setErrorHandler(ErrorHandlerInterface errorHandler);
 
     void setShortcutManager(ShortcutManagerInterface shortcutManager);
+
+    void setComplexActionManager(ComplexActionManager complexActionManager);
 }

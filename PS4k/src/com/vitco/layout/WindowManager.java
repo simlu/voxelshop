@@ -1,15 +1,21 @@
 package com.vitco.layout;
 
-import com.jidesoft.action.CommandBar;
+import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.jidesoft.action.DockableBar;
 import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
+import com.jidesoft.docking.DockingManager;
+import com.jidesoft.plaf.UIDefaultsLookup;
+import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
-import com.vitco.frames.shortcut.ShortcutManagerInterface;
+import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.res.VitcoSettings;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -21,6 +27,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -39,20 +46,28 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     private Map<String, BarLinkagePrototype> barLinkageMap;
     // set the map
     @Override
-    public void setBarLinkageMap(Map<String, BarLinkagePrototype> map) {
+    public final void setBarLinkageMap(Map<String, BarLinkagePrototype> map) {
         this.barLinkageMap = map;
     }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
-    public void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
+    }
+
+    // var & setter (can not be interface!!)
+    protected Data data;
+    @Override
+    public final void setData(Data data) {
+        this.data = data;
     }
 
     // var & setter
     private PreferencesInterface preferences;
-    public void setPreferences(PreferencesInterface preferences) {
+    @Override
+    public final void setPreferences(PreferencesInterface preferences) {
         this.preferences = preferences;
     }
 
@@ -60,23 +75,37 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     private Map<String, FrameLinkagePrototype> frameLinkageMap;
     // set the map
     @Override
-    public void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map) {
+    public final void setFrameLinkageMap(Map<String, FrameLinkagePrototype> map) {
         this.frameLinkageMap = map;
     }
 
     // to hook the shortcut manager to the frames
     private ShortcutManagerInterface shortcutManager;
     @Override
-    public void setShortcutManager(ShortcutManagerInterface shortcutManager) {
+    public final void setShortcutManager(ShortcutManagerInterface shortcutManager) {
         this.shortcutManager = shortcutManager;
+    }
+
+    private ActionManager actionManager;
+    // set the action handler
+    @Override
+    public final void setActionManager(ActionManager actionManager) {
+        this.actionManager = actionManager;
+    }
+
+    // var & setter
+    protected LangSelectorInterface langSelector;
+    @Override
+    public final void setLangSelector(LangSelectorInterface langSelector) {
+        this.langSelector = langSelector;
     }
 
     // prepare all frames
     @Override
-    public DockableFrame prepareFrame(String key) {
+    public final DockableFrame prepareFrame(String key) {
         DockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
-            frame = frameLinkageMap.get(key).buildFrame(key);
+            frame = frameLinkageMap.get(key).buildFrame(key, thisFrame);
             shortcutManager.registerFrame(frame);
         } else {
             System.err.println("Error: No linkage class defined for frame \"" + key + "\"");
@@ -85,13 +114,14 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         return frame;
     }
 
+    final Frame thisFrame = this;
+
     // prepare all bars
     @Override
-    public DockableBar prepareBar(String key) {
-
-        CommandBar bar = null;
+    public final CommandMenuBar prepareBar(String key) {
+        CommandMenuBar bar = null;
         if (barLinkageMap.containsKey(key)) {
-            bar = barLinkageMap.get(key).buildBar(key);
+            bar = barLinkageMap.get(key).buildBar(key, thisFrame);
         } else {
             System.err.println("Error: No linkage class defined for bar \"" + key + "\"");
         }
@@ -100,42 +130,71 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     }
 
     // constructor
-    public WindowManager(String title) throws HeadlessException {
-        super(title);
-
+    public WindowManager() throws HeadlessException {
+        super(VitcoSettings.VERSION_ID);
         // save the state on exit of the program
         // this needs to be done BEFORE the window is closing
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                preferences.storeObject("custom_raw_layout_data", getLayoutPersistence().getLayoutRawData());
+
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                // execute closing action
+                actionManager.performWhenActionIsReady("close_program_action", new Runnable() {
+                    @Override
+                    public void run() {
+                        actionManager.getAction("close_program_action").actionPerformed(
+                                new ActionEvent(e.getSource(), e.getID(), e.paramString())
+                        );
+                    }
+                });
             }
         });
 
     }
 
+    // handle cursor (global)
+    @Override
+    public final void setCustomCursor(Cursor cursor) {
+        for (String frameName : getDockingManager().getAllFrames()) {
+            getDockingManager().getFrame(frameName).setCursor(cursor);
+        }
+        for (DockableBar dockableBar : getDockableBarManager().getAllDockableBars()) {
+            dockableBar.setCursor(cursor);
+        }
+    }
+
     @PreDestroy
     @Override
-    public void finish() {
+    public final void finish() {
         // store the boundary of the program (current window position)
         preferences.storeObject("program_boundary_rect", this.getBounds());
     }
 
     @PostConstruct
     @Override
-    public void init() {
+    public final void init() {
+
         if (preferences.contains("program_boundary_rect")) {
             // load the boundary of the program (current window position)
             this.setBounds((Rectangle)preferences.loadObject("program_boundary_rect"));
         }
         // default close action
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // set the icon
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/application/paintbucket.png")
+            ClassLoader.getSystemResource("resource/img/icons/application/paintbucket.png")
         ));
 
         try {
+
+            // custom style (would go here)
+            // UIManager.setLookAndFeel(WindowsLookAndFeel.class.getName());
+            // LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_XERTO);
+
+            // make the frame background match the tabbed pane background (border)
+            UIManager.getDefaults().put("DockableFrame.background", UIDefaultsLookup.getColor("JideTabbedPane.background"));
+
             // init loading
             ////////////////
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -165,8 +224,11 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             getDockingManager().loadInitialLayout(document);
             ////////////////////
 
-            // gload the global hotkeys
-            shortcutManager.activateGlobalShortcuts();
+            // register the shortcut action names
+            shortcutManager.registerGlobalShortcutActions();
+
+            // load the global hotkeys
+            shortcutManager.registerShortcuts(thisFrame);
 
             // try to load the saved layout
             this.getLayoutPersistence().beginLoadLayoutData();
@@ -177,6 +239,11 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
                 this.getLayoutPersistence().loadLayoutData();
             }
             this.toFront();
+
+            // allow frames to fill empty space
+            getDockingManager().getWorkspace().setAcceptDockableFrame(true);
+            getDockingManager().setEasyTabDock(true);
+
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
         } catch (SAXException e) {
@@ -184,6 +251,41 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         } catch (IOException e) {
             errorHandler.handle(e); // should not happen
         }
+
+        actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
+            private static final String frame = "xyView";
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleFrameSwap(frame);
+            }
+        });
+
+        actionManager.registerAction("swap_mainView_with_xzView", new AbstractAction() {
+            private static final String frame = "xzView";
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleFrameSwap(frame);
+            }
+        });
+
+        actionManager.registerAction("swap_mainView_with_yzView", new AbstractAction() {
+            private static final String frame = "yzView";
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleFrameSwap(frame);
+            }
+        });
+
+    }
+
+    // handle swap of frames
+    private void handleFrameSwap(String frame) {
+        DockingManager dm = getDockingManager();
+        dm.addFrame(new DockableFrame("__dummy"));
+        dm.moveFrame("__dummy", frame);
+        dm.moveFrame(frame, "mainView");
+        dm.moveFrame("mainView", "__dummy");
+        dm.removeFrame("__dummy");
     }
 
 }

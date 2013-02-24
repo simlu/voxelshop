@@ -1,6 +1,6 @@
 package com.vitco.util.error;
 
-import com.vitco.frames.console.ConsoleInterface;
+import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 
 /**

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <split-item src="resource/img/framebars/mainview/color_plane.png"
+                tool-tip="pick_color_voxel_ground_plane_tooltip"
+                complex-action="pick_color_voxel_ground_plane"/>
+    <split-item src="resource/img/framebars/mainview/color_bg.png"
+                tool-tip="pick_color_voxel_bg_tooltip"
+                complex-action="pick_color_voxel_bg"/>
+</head>

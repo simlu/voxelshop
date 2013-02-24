@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <icon-item src="resource/img/framebars/mainview/plus.png"
+               tool-tip="main-view_zoom_in_caption"
+               action="mainview_zoom_in"/>
+    <icon-item src="resource/img/framebars/mainview/minus.png"
+               tool-tip="main-view_zoom_out_caption"
+               action="mainview_zoom_out"/>
+    <icon-item src="resource/img/framebars/mainview/reset.png"
+               tool-tip="reset_camera_main-view_tooltip"
+               action="reset_main_view_camera"/>
+    <separator/>
+    <icon-item src="resource/img/framebars/mainview/wireframe.png"
+               tool-tip="main_window_toggle_wireframe_tooltip"
+               action="main_window_toggle_wireframe"
+               checkable="true"/>
+    <separator/>
+    <icon-item src="resource/img/framebars/view/yzSwap.png"
+               tool-tip="swap_mainView_with_yzView_tooltip"
+               action="swap_mainView_with_yzView"/>
+    <icon-item src="resource/img/framebars/view/xzSwap.png"
+               tool-tip="swap_mainView_with_xzView_tooltip"
+               action="swap_mainView_with_xzView"/>
+    <icon-item src="resource/img/framebars/view/xySwap.png"
+               tool-tip="swap_mainView_with_xyView_tooltip"
+               action="swap_mainView_with_xyView"/>
+</head>

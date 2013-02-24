@@ -40,7 +40,7 @@
     <option name="_detectors">
       <map>
         <entry key="AppendingToAnObjectOutputStream" value="true" />
-        <entry key="BCPMethodReturnCheck" value="false" />
+        <entry key="AtomicityProblem" value="true" />
         <entry key="BadAppletConstructor" value="false" />
         <entry key="BadResultSetAccess" value="true" />
         <entry key="BadSyntaxForRegularExpression" value="true" />
@@ -60,6 +60,7 @@
         <entry key="ConfusedInheritance" value="true" />
         <entry key="ConfusionBetweenInheritedAndOuterMethod" value="true" />
         <entry key="CrossSiteScripting" value="true" />
+        <entry key="DefaultEncodingDetector" value="true" />
         <entry key="DoInsideDoPrivileged" value="true" />
         <entry key="DontCatchIllegalMonitorStateException" value="true" />
         <entry key="DontIgnoreResultOfPutIfAbsent" value="true" />
@@ -69,13 +70,11 @@
         <entry key="DumbMethods" value="true" />
         <entry key="DuplicateBranches" value="true" />
         <entry key="EmptyZipFileEntry" value="true" />
-        <entry key="EqStringTest" value="false" />
         <entry key="EqualsOperandShouldHaveClassCompatibleWithThis" value="true" />
+        <entry key="ExplicitSerialization" value="true" />
         <entry key="FieldItemSummary" value="true" />
         <entry key="FinalizerNullsFields" value="true" />
-        <entry key="FindBadCast" value="false" />
         <entry key="FindBadCast2" value="true" />
-        <entry key="FindBadEqualsImplementation" value="false" />
         <entry key="FindBadForLoop" value="true" />
         <entry key="FindBugsSummaryStats" value="true" />
         <entry key="FindCircularDependencies" value="false" />
@@ -116,8 +115,10 @@
         <entry key="FindUnreleasedLock" value="true" />
         <entry key="FindUnsatisfiedObligation" value="true" />
         <entry key="FindUnsyncGet" value="true" />
+        <entry key="FindUseOfNonSerializableValue" value="true" />
         <entry key="FindUselessControlFlow" value="true" />
         <entry key="FormatStringChecker" value="true" />
+        <entry key="FunctionsThatMightBeMistakenForProcedures" value="true" />
         <entry key="HugeSharedStringConstants" value="true" />
         <entry key="IDivResultCastToDouble" value="true" />
         <entry key="IncompatMask" value="true" />
@@ -126,15 +127,15 @@
         <entry key="InefficientToArray" value="true" />
         <entry key="InfiniteLoop" value="true" />
         <entry key="InfiniteRecursiveLoop" value="true" />
-        <entry key="InfiniteRecursiveLoop2" value="false" />
         <entry key="InheritanceUnsafeGetResource" value="true" />
         <entry key="InitializationChain" value="true" />
+        <entry key="InitializeNonnullFieldsInConstructor" value="true" />
         <entry key="InstantiateStaticClass" value="true" />
+        <entry key="IntCast2LongAsInstant" value="true" />
         <entry key="InvalidJUnitTest" value="true" />
         <entry key="IteratorIdioms" value="true" />
         <entry key="LazyInit" value="true" />
         <entry key="LoadOfKnownNullValue" value="true" />
-        <entry key="LockedFields" value="false" />
         <entry key="LostLoggerDueToWeakReference" value="true" />
         <entry key="MethodReturnCheck" value="true" />
         <entry key="Methods" value="true" />
@@ -145,7 +146,6 @@
         <entry key="Noise" value="false" />
         <entry key="NoiseNullDeref" value="false" />
         <entry key="NoteAnnotationRetention" value="true" />
-        <entry key="NoteCheckReturnValue" value="true" />
         <entry key="NoteCheckReturnValueAnnotations" value="true" />
         <entry key="NoteDirectlyRelevantTypeQualifiers" value="true" />
         <entry key="NoteJCIPAnnotation" value="true" />
@@ -179,14 +179,15 @@
         <entry key="TestASM" value="false" />
         <entry key="TestDataflowAnalysis" value="false" />
         <entry key="TestingGround" value="false" />
+        <entry key="TestingGround2" value="false" />
         <entry key="TrainFieldStoreTypes" value="true" />
+        <entry key="TrainLongInstantfParams" value="true" />
         <entry key="TrainNonNullAnnotations" value="true" />
         <entry key="TrainUnconditionalDerefParams" value="true" />
         <entry key="URLProblems" value="true" />
         <entry key="UncallableMethodOfAnonymousClass" value="true" />
         <entry key="UnnecessaryMath" value="true" />
         <entry key="UnreadFields" value="true" />
-        <entry key="UseObjectEquals" value="false" />
         <entry key="UselessSubclassMethod" value="false" />
         <entry key="VarArgsProblems" value="true" />
         <entry key="VolatileUsage" value="true" />

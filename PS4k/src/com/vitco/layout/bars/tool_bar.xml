@@ -1,11 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <head xmlns="http://www.unfine.de/schema/menu">
-    <!--<icon-item src="resource/img/icons/tools/draw.png"-->
-          <!--tool-tip="draw_tooltip"-->
-          <!--action="toggle_animation_mode"-->
-          <!--checkable="true"/>-->
-    <icon-item src="resource/img/icons/tools/animate.png"
-          tool-tip="animate_tooltip"
-          checkable="true"
-          action="toggle_animation_mode"/>
+    <icon-item src="resource/img/bars/tool_bar/animate.png"
+               tool-tip="animate_tooltip"
+               checkable="true"
+               action="toggle_animation_mode"/>
+
+    <split-item src="resource/img/bars/tool_bar/settings.png"
+                tool-tip="settings_menubar_tooltip"
+                complex-action="settings_menubar"/>
+    <separator/>
+
+    <icon-item src="resource/img/bars/tool_bar/undo.png"
+               src-gray="resource/img/bars/tool_bar/undo_disabled.png"
+               tool-tip="global_undo_tooltip"
+               grayable="true"
+               action="global_action_undo"/>
+    <icon-item src="resource/img/bars/tool_bar/redo.png"
+               src-gray="resource/img/bars/tool_bar/redo_disabled.png"
+               tool-tip="global_redo_tooltip"
+               grayable="true"
+               action="global_action_redo"/>
+    <icon-item src="resource/img/bars/tool_bar/clear_history.png"
+               tool-tip="clear_history_tooltip"
+               grayable="true"
+               action="clear_history_action"/>
+    <separator/>
+
+    <!--voxel mode-->
+    <icon-item src="resource/img/bars/tool_bar/view.png"
+               tool-tip="voxel_mode_select_type_view_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_view"/>
+    <icon-item src="resource/img/bars/tool_bar/draw.png"
+               tool-tip="voxel_mode_select_type_draw_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_draw"/>
+    <icon-item src="resource/img/bars/tool_bar/erase.png"
+               tool-tip="voxel_mode_select_type_erase_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_erase"/>
+    <icon-item src="resource/img/bars/tool_bar/color_picker.png"
+               tool-tip="voxel_mode_select_type_picker_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_picker"/>
+    <icon-item src="resource/img/bars/tool_bar/color_changer.png"
+               tool-tip="voxel_mode_select_type_color_changer_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_color_changer"/>
+    <icon-item src="resource/img/bars/tool_bar/select_tool.png"
+               tool-tip="voxel_mode_select_type_select_tool_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_select_tool"/>
+
+    <!--animation mode-->
+    <icon-item src="resource/img/framebars/mainview/snap.png"
+               tool-tip="toggle_voxel_snap_tooltip"
+               checkable="true" hideable="true"
+               action="toggle_voxel_snap"/>
+    <separator/>
+    <!--color picker (dynamic button)-->      <!--icon is required(!) placeholder!-->
+    <split-item src="resource/img/bars/tool_bar/animate.png"
+                tool-tip="colorchooser_menubar_tooltip"
+                complex-action="current_color_button_popup"
+                register-button-as-complex-action="current_color_button_icon"/>
 </head>

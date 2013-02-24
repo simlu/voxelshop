@@ -1,32 +1,42 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.util.action.ActionManagerInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.lang.LangSelectorInterface;
+import com.vitco.util.pref.PreferencesInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Prototype of class that links frame to content.
  */
 public abstract class FrameLinkagePrototype {
+
+    // var & setter
+    protected PreferencesInterface preferences;
+    @Autowired(required=true)
+    public final void setPreferences(PreferencesInterface preferences) {
+        this.preferences = preferences;
+    }
+
     // var & setter
     protected LangSelectorInterface langSelector;
     @Autowired(required=true)
-    public void setLangSelector(LangSelectorInterface langSelector) {
+    public final void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
     }
 
     // var & setter
-    protected ActionManagerInterface actionManager;
+    protected ActionManager actionManager;
     @Autowired(required=true)
-    public void setActionManager(ActionManagerInterface actionManager) {
+    public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
     }
 
     // show frame
-    public void setVisible(boolean b) {
+    public final void setVisible(boolean b) {
         if (frame.getDockingManager() != null) {
             if (b) {
                 frame.getDockingManager().showFrame(frame.getName());
@@ -76,6 +86,6 @@ public abstract class FrameLinkagePrototype {
     // holds the reference of the actual frame container
     protected DockableFrame frame;
     // constructs the frame (with content)
-    public abstract DockableFrame buildFrame(String key);
+    public abstract DockableFrame buildFrame(String key, Frame mainFrame);
 }
 

@@ -2,7 +2,7 @@ package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.util.action.types.StateActionPrototype;
-import com.vitco.frames.shortcut.ShortcutManagerViewInterface;
+import com.vitco.logic.shortcut.ShortcutManagerViewInterface;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,12 +15,12 @@ public class ShortcutManagerLinkage extends FrameLinkagePrototype {
 
     // var & setter (we only need the shortcutManager in this frame!)
     private ShortcutManagerViewInterface shortcutManagerView;
-    public void setShortcutManagerView(ShortcutManagerViewInterface shortcutManagerView) {
+    public final void setShortcutManagerView(ShortcutManagerViewInterface shortcutManagerView) {
         this.shortcutManagerView = shortcutManagerView;
     }
 
     @Override
-    public DockableFrame buildFrame(String key) {
+    public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
         frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource("resource/img/icons/frames/shortcutManager.png")
@@ -34,7 +34,7 @@ public class ShortcutManagerLinkage extends FrameLinkagePrototype {
         actionManager.registerAction("shortcut-mg_state-action_show", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
-                return isVisible();
+                return frame.isVisible();
             }
 
             @Override

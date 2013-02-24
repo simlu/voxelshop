@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
  */
 public class PersonalLinkage extends FrameLinkagePrototype {
     @Override
-    public DockableFrame buildFrame(String key) {
+    public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
         frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource("resource/img/icons/frames/personal.png")
@@ -25,7 +25,7 @@ public class PersonalLinkage extends FrameLinkagePrototype {
         actionManager.registerAction("personal_state-action_show", new StateActionPrototype() {
             @Override
             public boolean getStatus() {
-                return isVisible();
+                return frame.isVisible();
             }
 
             @Override

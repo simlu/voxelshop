@@ -8,6 +8,7 @@
             <xs:attribute name="action" form="unqualified" type="xs:string" />
             <xs:attribute name="checkable" form="unqualified" type="xs:string" />
             <xs:attribute name="grayable" form="unqualified" type="xs:string" />
+            <xs:attribute name="hideable" form="unqualified" type="xs:string" />
             <xs:attribute name="invert" form="unqualified" type="xs:string" />
         </xs:complexType>
     </xs:element>
@@ -15,10 +16,30 @@
     <xs:element name="icon-item">
         <xs:complexType>
             <xs:attribute name="src" form="unqualified" type="xs:string" />
+            <xs:attribute name="src-gray" form="unqualified" type="xs:string" />
             <xs:attribute name="tool-tip" form="unqualified" type="xs:string" />
             <xs:attribute name="action" form="unqualified" type="xs:string" />
             <xs:attribute name="checkable" form="unqualified" type="xs:string" />
+            <xs:attribute name="grayable" form="unqualified" type="xs:string" />
+            <xs:attribute name="hideable" form="unqualified" type="xs:string" />
             <xs:attribute name="invert" form="unqualified" type="xs:string" />
+            <xs:attribute name="register-button-as-complex-action" form="unqualified" type="xs:string" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="split-item">
+        <xs:complexType>
+            <xs:attribute name="src" form="unqualified" type="xs:string" />
+            <xs:attribute name="src-gray" form="unqualified" type="xs:string" />
+            <xs:attribute name="tool-tip" form="unqualified" type="xs:string" />
+            <xs:attribute name="complex-action" form="unqualified" type="xs:string" />
+            <xs:attribute name="action" form="unqualified" type="xs:string" />
+            <xs:attribute name="disable-action" form="unqualified" type="xs:string" />
+            <xs:attribute name="checkable" form="unqualified" type="xs:string" />
+            <xs:attribute name="grayable" form="unqualified" type="xs:string" />
+            <xs:attribute name="hideable" form="unqualified" type="xs:string" />
+            <xs:attribute name="invert" form="unqualified" type="xs:string" />
+            <xs:attribute name="register-button-as-complex-action" form="unqualified" type="xs:string" />
         </xs:complexType>
     </xs:element>
 
@@ -28,6 +49,8 @@
                 <xs:element ref="menu" />
                 <xs:element ref="item" />
                 <xs:element ref="icon-item" />
+                <xs:element ref="split-item" />
+                <xs:element name="separator"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
