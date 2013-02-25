@@ -1,5 +1,6 @@
 package vitco.group;
 
+import com.google.common.collect.Sets;
 import vitco.main.Config;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class TileTools {
 
 		// loop over all tiles
 		for (int i = 0; i < tiles.size(); i++) {
-			if (!used.contains(i)) {
+			if (!used.contains(i) && tiles.get(i).getCol().size() <= thres) {
 				// hold the current group ids
 				Set<Integer> curGroupIds = new HashSet<Integer>();
 				curGroupIds.add(i);
@@ -75,9 +76,11 @@ public class TileTools {
 					int index = -1;
 					// ***
 					for (Integer j = 0, len = tiles.size(); j < len; j++) {
-						if (!curGroupIds.contains(j) && !used.contains(j)) {
-							int newcoldep = newColCount(curGroup, tiles.get(j));
-							int overlap = getOverlapColCount(curGroup, tiles.get(j));
+						if (!curGroupIds.contains(j) && !used.contains(j) && tiles.get(j).getCol().size() <= thres) {
+                            int newcoldep = Sets.union(curGroup.getCol(), tiles.get(j).getCol()).size();
+							//int newcoldep = newColCount(curGroup, tiles.get(j));
+							int overlap = Sets.intersection(curGroup.getCol(), tiles.get(j).getCol()).size();
+                            //int overlap = getOverlapColCount(curGroup, tiles.get(j));
 							int diff = newcoldep - overlap;
 							if (newcoldep < thres && (!valueSet || overlap - diff > dist)) {
 								index = j;

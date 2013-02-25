@@ -1,15 +1,14 @@
 package vitco.helper;
 
 import com.google.code.ekmeans.EKmeans;
+import vitco.cluster.TileCluster;
+import vitco.cluster.TileClusterManager;
 import vitco.datastruct.Tile;
 import vitco.group.GroupRep;
 import vitco.group.TileRep;
 import vitco.group.TileTools;
 import vitco.main.Config;
-import vitco.tools.FileTools;
-import vitco.tools.MySQLConnection;
-import vitco.tools.Out;
-import vitco.tools.Zip;
+import vitco.tools.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -207,7 +206,7 @@ public class WorldGenerator {
         // loop over all the possible maps in the world (some might not be set)
         for (int x = 0; x < worldSize.x; x++) {
             for (int y = 0; y < worldSize.y; y++) {
-                // get the map file uri for defines maps
+                // get the map file uri for defined maps
                 String[] mapFileName = xmlLinkage.getMapFile(x, y);
                 if (mapFileName != null) {
                     if (new File(workingDir + mapFileName[0] + mapFileName[1]).exists()) {
@@ -337,6 +336,76 @@ public class WorldGenerator {
     private short[] newMapTileIdData = null;
     // will map the tile sheet ids to the png images
     private ArrayList<String> tileSheetPng = new ArrayList<String>();
+
+    public void clusterDensityWrite(String sheetDir) {
+        TileClusterManager tileClusterManager = new TileClusterManager(tiles);
+        ArrayList<TileCluster> clusters = tileClusterManager.getClusters();
+
+        // holds the new map tile id data
+        newMapTileIdData = new short[walkable.length];
+
+        // current id number
+        int idcount = 0;
+
+        for (int i = 0; i < clusters.size(); i++) {
+            int dist = -1;
+            int sizex = 12;
+            // calculate the best width
+            for (int j = 12; j > 4; j--) {
+                int tmp2 = j - (clusters.get(i).getTiles().size() - 1) % j;
+                if (dist == -1 || tmp2 < dist) {
+                    dist = tmp2;
+                    sizex = j;
+                }
+            }
+            // create the tile sheet
+            BufferedImage newTileImage = new BufferedImage(
+                    tileSize * sizex,
+                    tileSize * (int) Math.ceil(clusters.get(i).getTiles().size() / (double) sizex),
+                    BufferedImage.TYPE_INT_RGB
+            );
+            // write the icons to the tile sheets and update the position information
+            int j = 0;
+            for (vitco.cluster.Tile tile : clusters.get(i).getTiles()) {
+                // hold the id
+                int id = tile.getId();
+                // get the image
+                newTileImage.getGraphics().drawImage(
+                        tiles.get(id),
+                        (j % sizex) * tileSize,
+                        (int) Math.floor(j / (double)sizex) * tileSize,
+                        (j % sizex) * tileSize + tileSize,
+                        (int) Math.floor(j / (double)sizex) * tileSize + tileSize,
+                        0, 0, tileSize, tileSize, null);
+                // update the map tile id data
+                for (int k = 0; k < tileIds.length; k++) {
+                    if (tileIds[k] == id) {
+                        newMapTileIdData[k] = (short) (idcount);
+                    }
+                }
+                // update the tile information
+                tilesLogic.add(new Tile(i, (j % sizex) * tileSize, (int) Math.floor(j / (double)sizex) * tileSize, idcount));
+                idcount++;
+                j++;
+            }
+
+            try {
+                String filename = sheetDir + "tile" + i + ".png";
+                File outputfile = new File(filename);
+                ImageIO.write(newTileImage, "png", outputfile);
+                Process process = new ProcessBuilder("pngout\\pngout.exe","/y","/q",
+                        outputfile.getAbsolutePath()
+                ).start();
+                process.waitFor();
+                tileSheetPng.add(filename);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     // cluster tiles and write images
     public void clusterWrite(String sheetDir) {
@@ -597,6 +666,82 @@ public class WorldGenerator {
             }
         }
         return sizeBefore - tiles.size();
+    }
+
+    // assign flips and rotations
+    public void findRotationMirroring() {
+        // maps tile md5 hash to Integer[]: (tileid, tilerotation, tilemirror)
+        HashMap<String, Integer[]> tileMD5 = new HashMap<String, Integer[]>();
+
+        int count = 0;
+
+        // add all variations
+        for (Map.Entry<Integer, BufferedImage> entry : tiles.entrySet()) {
+            // generate variations
+            HashMap<String, Integer[]> variations = new HashMap<String, Integer[]>();
+
+            BufferedImage img = ImgTools.deepCopy(entry.getValue());
+            // rotate image once
+            BufferedImage rotImg = ImgTools.deepCopy(entry.getValue());
+            Graphics2D g = rotImg.createGraphics();
+            g.rotate(Math.toRadians(90), 16, 16);
+            g.drawImage(img, 0, 0, null);
+            g.dispose();
+
+            // add without variations
+            variations.put(ImgTools.getHash(img), new Integer[]{entry.getKey(), 0, 0});
+            // add mirroring
+            img.getGraphics().drawImage(entry.getValue(), 0, 0, 32, 32, 32, 0, 0, 32, null);
+            variations.put(ImgTools.getHash(img), new Integer[]{entry.getKey(), 0, 1});
+            // add mirroring + 2x rotation
+            img.getGraphics().drawImage(entry.getValue(), 0, 0, 32, 32, 0, 32, 32, 0, null);
+            variations.put(ImgTools.getHash(img), new Integer[]{entry.getKey(), 2, 1});
+            // add 2x rotation
+            img.getGraphics().drawImage(entry.getValue(), 0, 0, 32, 32, 32, 32, 0, 0, null);
+            variations.put(ImgTools.getHash(img), new Integer[]{entry.getKey(), 2, 0});
+
+            // add 1x rotation
+            variations.put(ImgTools.getHash(rotImg), new Integer[]{entry.getKey(), 1, 0});
+            // add mirroring + 3x rotation
+            img.getGraphics().drawImage(rotImg, 0, 0, 32, 32, 32, 0, 0, 32, null);
+            variations.put(ImgTools.getHash(img), new Integer[]{entry.getKey(), 3, 1});
+            // add mirroring + 1x rotation
+            img.getGraphics().drawImage(rotImg, 0, 0, 32, 32, 0, 32, 32, 0, null);
+            variations.put(ImgTools.getHash(img), new Integer[]{entry.getKey(), 1, 1});
+            // add 3x rotation
+            img.getGraphics().drawImage(rotImg, 0, 0, 32, 32, 32, 32, 0, 0, null);
+            variations.put(ImgTools.getHash(img), new Integer[]{entry.getKey(), 3, 0});
+
+            boolean isVariation = false;
+
+            // check that non of the variations is already containsed
+            for (Map.Entry<String, Integer[]> variation : variations.entrySet()) {
+                if (tileMD5.containsKey(variation.getKey())) {
+                    isVariation = true;
+                    // remember this
+                    BufferedImage compare = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
+                    compare.getGraphics().drawImage(
+                            entry.getValue(), 0, 0, null);
+                    compare.getGraphics().drawImage(
+                            tiles.get(tileMD5.get(variation.getKey())[0]), 32, 0, null);
+                    try {
+                        ImageIO.write(compare, "png", new File(entry.getKey() + "_" +
+                                tileMD5.get(variation.getKey())[0] + ".png"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+
+            // remember all the variations
+            if (!isVariation) {
+                tileMD5.putAll(variations);
+                count++;
+            }
+
+        }
+        System.out.println(count);
     }
 
 }

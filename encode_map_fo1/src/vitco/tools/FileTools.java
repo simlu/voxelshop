@@ -1,9 +1,6 @@
 package vitco.tools;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -105,5 +102,54 @@ public class FileTools {
 
     public static boolean createDir(String directory) {
         return (new File(directory)).mkdirs();
+    }
+
+
+    // de-serialize object from file
+    public static Object loadFromFile(File file) {
+        Object result = null;
+        if (file != null && file.exists()) {
+            try{
+                InputStream inputStream = new FileInputStream( file );
+                InputStream buffer = new BufferedInputStream( inputStream );
+                ObjectInput input = new ObjectInputStream ( buffer );
+                try {
+                    result = input.readObject();
+                }
+                finally{
+                    input.close();
+                }
+            }
+            catch(ClassNotFoundException ex){
+                ex.printStackTrace();
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    // serialize object to file
+    public static boolean saveToFile(File file, Object object) {
+        boolean result = false;
+
+        try{
+            OutputStream outputStream = new FileOutputStream( file );
+            OutputStream buffer = new BufferedOutputStream( outputStream );
+            ObjectOutput output = new ObjectOutputStream( buffer );
+            try{
+                output.writeObject(object);
+                result = true;
+            }
+            finally{
+                output.close();
+            }
+        }
+        catch(IOException ex){
+            ex.printStackTrace();
+        }
+
+        return result;
     }
 }

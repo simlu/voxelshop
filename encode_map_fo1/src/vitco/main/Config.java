@@ -26,6 +26,9 @@ public class Config {
     public final static boolean recompileOverview = true;
     public final static boolean compileMinimaps = false;
 
+    // map difference buffer
+    public final static String tile_difference_buffer = "tile_color_difference_buffer.ser";
+
     // log file
     public final static LogFile logFile = new LogFile(logFileName);
 

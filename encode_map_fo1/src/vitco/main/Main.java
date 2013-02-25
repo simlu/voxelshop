@@ -40,7 +40,10 @@ public class Main {
         }
 
         Config.logFile.log("Clustering and writing tile sheets... ");
-        worldGenerator.clusterWrite(Config.tileSheetDir);
+        //worldGenerator.clusterWrite(Config.tileSheetDir);
+        worldGenerator.clusterDensityWrite(Config.tileSheetDir);
+
+        //*
 
         // writing everything to zip
         Config.logFile.log("Writing final zip file... ");
@@ -61,5 +64,8 @@ public class Main {
         }
 
         Config.logFile.log("All done.");
+
+        //*/
+
     }
 }
