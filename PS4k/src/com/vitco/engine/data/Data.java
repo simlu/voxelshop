@@ -1,11 +1,10 @@
 package com.vitco.engine.data;
 
-import com.newbrightidea.util.RTree;
+import com.vitco.Main;
 import com.vitco.engine.CWorld;
 import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.Voxel;
-import com.vitco.export.ColladaFileMerge;
-import com.vitco.res.VitcoSettings;
+import com.vitco.export.ColladaFile;
 import com.vitco.util.FileTools;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.xml.XmlTools;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import javax.xml.transform.stream.StreamSource;
-import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +108,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     public final boolean exportToCollada(File file) {
         boolean result = true;
 
-        ColladaFileMerge colladaExport = new ColladaFileMerge();
+        ColladaFile colladaExport = new ColladaFile();
 
         // build the world that we will use for exporting
         Voxel[] voxels = getVisibleLayerVoxel();
@@ -136,12 +134,15 @@ public final class Data extends VoxelHighlighting implements DataInterface {
             result = false;
         }
 
-        // validate the file
-        if (!XmlTools.validateAgainstXSD(
-                file.getAbsolutePath(),
-                new StreamSource(ClassLoader.getSystemResourceAsStream("resource/xsd/collada_schema_1_4_1.xsd")),
-                errorHandler)) {
-            result = false;
+        // only check in debug mode
+        if (Main.isDebugMode()) {
+            // validate the file
+            if (!XmlTools.validateAgainstXSD(
+                    file.getAbsolutePath(),
+                    new StreamSource(ClassLoader.getSystemResourceAsStream("resource/xsd/collada_schema_1_4_1.xsd")),
+                    errorHandler)) {
+                result = false;
+            }
         }
 
         return result;

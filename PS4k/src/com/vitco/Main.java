@@ -13,6 +13,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class Main {
 
+    private static boolean debug = false;
+
+    public static boolean isDebugMode() {
+        return debug;
+    }
+
     public static void main(String[] args) throws Exception {
         // the JIDE license
         com.jidesoft.utils.Lm.verifyLicense("Pixelated Games", "PS4K", "__JIDE_PASSWORD__");
@@ -20,6 +26,7 @@ public class Main {
         // check if we are in debug mode
         if ((args.length > 0) && args[0].equals("debug")) {
             ErrorHandler.setDebugMode();
+            debug = true;
         }
 
         // build the application
