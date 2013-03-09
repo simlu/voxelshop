@@ -23,33 +23,33 @@ public class ColladaFile {
     // holds the planes
     private final HashMap<float[], Color> planes = new HashMap<float[], Color>();
 
-    // holds all the planes
-
-    public void addPlane(float x, float y, float z, float rotx, float roty, float rotz, Color color) {
+    // internal - holds all the planes
+    private void addPlane(float x, float y, float z, float rotx, float roty, float rotz, Color color) {
         colors.put(String.valueOf(color.getRGB()), color);
         planes.put(new float[]{x, y, z, rotx, roty, rotz}, color);
     }
 
-    // helper for certain planes
+    // add planes
     public void addPlane(float[] pos, int type, Color color) {
+        // NOTE: Z AXIS IS ALWAYS UP (for blender at least)
         switch (type) {
-            case 0:
-                addPlane(pos[0], pos[1], pos[2] - 0.5f, 0, 180, 0, color);
-                break;
             case 1:
-                addPlane(pos[0], pos[1], pos[2] + 0.5f, 0, 0, 0, color);
+                addPlane(-pos[0] + 0.5f, -pos[2], -pos[1], 0, 90, 0, color);
                 break;
-            case 2:
-                addPlane(pos[0], pos[1] - 0.5f, pos[2], 0, 0, 90, color);
-                break;
-            case 3:
-                addPlane(pos[0], pos[1] + 0.5f, pos[2], 180, 0, 90, color);
-                break;
-            case 4:
-                addPlane(pos[0] - 0.5f, pos[1], pos[2], 0, 90, 180, color);
+            case 0:
+                addPlane(-pos[0] - 0.5f, -pos[2], -pos[1], 0, 90, 180, color);
                 break;
             case 5:
-                addPlane(pos[0] + 0.5f, pos[1], pos[2], 0, 90, 0, color);
+                addPlane(-pos[0], -pos[2] + 0.5f, -pos[1], 180, 0, 90, color);
+                break;
+            case 4:
+                addPlane(-pos[0], -pos[2] - 0.5f, -pos[1], 0, 0, 90, color);
+                break;
+            case 3:
+                addPlane(-pos[0], -pos[2], -pos[1] + 0.5f, 0, 0, 0, color);
+                break;
+            case 2:
+                addPlane(-pos[0], -pos[2], -pos[1] - 0.5f, 0, 180, 0, color);
                 break;
         }
     }
@@ -69,6 +69,7 @@ public class ColladaFile {
         xmlFile.addTextContent("created", now);
         xmlFile.addTextContent("modified", now);
         xmlFile.addAttributes("unit", new String[] {"name=meter","meter=1"});
+        // blender default (can not be changed since blender ignores it!)
         xmlFile.addTextContent("up_axis", "Z_UP");
 
         xmlFile.resetTopNode("library_effects");

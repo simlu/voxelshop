@@ -156,6 +156,9 @@ public class CWorld extends World {
         public int getVoxelId() {
             return voxel.id;
         }
+        public Voxel getVoxel() {
+            return voxel;
+        }
     }
 
     // ==============================
@@ -267,6 +270,18 @@ public class CWorld extends World {
     // retrieve voxel for object id
     public final Integer getVoxelId(Integer objectId) {
         return worldIdToVoxelId.get(objectId);
+    }
+
+    // retrieve all visible voxels in this world
+    public HashMap<Voxel, String> getVisibleVoxel() {
+        HashMap<Voxel, String> result = new HashMap<Voxel, String>();
+        for (VoxelW voxel : voxelPos.values()) {
+            String sides = voxel.getSides();
+            if (!sides.equals("111111")) {
+                result.put(voxel.getVoxel(), voxel.getSides());
+            }
+        }
+        return result;
     }
 
 }

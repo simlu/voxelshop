@@ -284,7 +284,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         new SimpleVector(0,0,-1)
     };
     // holds the voxel side that was last hit by a hover event
-    private int lastVoxelHitSide = 0;
+    protected int lastVoxelHitSide = 0;
     // can be override (sideview)
     protected int[] voxelPosForHoverPos(Point point, boolean selectNeighbour) {
         int[] voxelPos = null;

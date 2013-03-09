@@ -1,9 +1,11 @@
 package com.vitco.engine.data;
 
 import com.newbrightidea.util.RTree;
+import com.vitco.engine.CWorld;
 import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.Voxel;
-import com.vitco.export.ColladaFile;
+import com.vitco.export.ColladaFileMerge;
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.xml.XmlTools;
@@ -14,6 +16,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data class that puts everything together and defines general data interaction (e.g. save/load)
@@ -107,48 +110,22 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     public final boolean exportToCollada(File file) {
         boolean result = true;
 
-        ColladaFile colladaExport = new ColladaFile();
+        ColladaFileMerge colladaExport = new ColladaFileMerge();
 
+        // build the world that we will use for exporting
         Voxel[] voxels = getVisibleLayerVoxel();
-
-        // build rtree for fast access
-        RTree<Voxel> positions = new RTree<Voxel>(50,2,3);
+        CWorld world = new CWorld(true, -1);
         for (Voxel voxel : voxels) {
-            positions.insert(voxel.getPosAsFloat(), voxel);
+            world.updateVoxel(voxel);
         }
 
-        for (Voxel voxel : voxels) {
-
-            float[] pos = voxel.getPosAsFloat();
-            float[] ZEROS = new float[]{0,0,0};
-
-            float[] colladaPos = pos.clone();
-            colladaPos[2] = - pos[1] + 0.5f;
-            colladaPos[1] = pos[2];
-
-            Color col = voxel.getColor();
-
-            // only add those plans that are visible
-
-            if (positions.search(new float[] {pos[0], pos[1] + 1, pos[2]}, ZEROS).size() == 0) {
-                colladaExport.addPlane(colladaPos, 0, col);
-            }
-            if (positions.search(new float[] {pos[0], pos[1] - 1, pos[2]}, ZEROS).size() == 0) {
-                colladaExport.addPlane(colladaPos, 1, col);
-            }
-
-            if (positions.search(new float[] {pos[0], pos[1], pos[2] - 1}, ZEROS).size() == 0) {
-                colladaExport.addPlane(colladaPos, 2, col);
-            }
-            if (positions.search(new float[] {pos[0], pos[1], pos[2] + 1}, ZEROS).size() == 0) {
-                colladaExport.addPlane(colladaPos, 3, col);
-            }
-
-            if (positions.search(new float[] {pos[0] - 1, pos[1], pos[2]}, ZEROS).size() == 0) {
-                colladaExport.addPlane(colladaPos, 4, col);
-            }
-            if (positions.search(new float[] {pos[0] + 1, pos[1], pos[2]}, ZEROS).size() == 0) {
-                colladaExport.addPlane(colladaPos, 5, col);
+        for (Map.Entry<Voxel, String> entry : world.getVisibleVoxel().entrySet()) {
+            char[] sides = entry.getValue().toCharArray();
+            for (int i = 0; i < sides.length; i++) {
+                if (sides[i] == '0') {
+                    Voxel voxel = entry.getKey();
+                    colladaExport.addPlane(voxel.getPosAsFloat(), i, voxel.getColor());
+                }
             }
         }
 

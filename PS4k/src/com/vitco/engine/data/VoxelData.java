@@ -2502,6 +2502,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final String getTextureHash(Integer textureId) {
         if (dataContainer.textures.containsKey(textureId)) {
             if (dataContainer.textures.get(textureId).getDescription() == null) {
+                // todo: move this to util class
                 ImageIcon img = dataContainer.textures.get(textureId);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 BufferedImage bi = new BufferedImage(
