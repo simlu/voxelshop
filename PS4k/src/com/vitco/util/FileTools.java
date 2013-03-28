@@ -150,4 +150,14 @@ public class FileTools {
         }
         return output;
     }
+
+    // change the extension of a file e.g. "test.txt", ".dat" -> "test.dat"
+    public static String changeExtension(String originalName, String newExtension) {
+        int lastDot = originalName.lastIndexOf(".");
+        if (lastDot != -1) {
+            return originalName.substring(0, lastDot) + newExtension;
+        } else {
+            return originalName + newExtension;
+        }
+    }
 }

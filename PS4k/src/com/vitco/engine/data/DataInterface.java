@@ -11,7 +11,7 @@ public interface DataInterface {
     // stores all data to file
     boolean saveToFile(File file);
     // stores all data to file
-    boolean exportToCollada(File file);
+    boolean exportToCollada(File file, File textureFile);
     // delete all history
     void clearHistoryA();
     void clearHistoryV();

@@ -5,6 +5,7 @@ import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
 import com.vitco.util.UrlUtil;
 import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,13 @@ import java.net.URLDecoder;
  * Handles update notification of the program
  */
 public class Updater {
+
+    // var & setter
+    protected LangSelectorInterface langSelector;
+    @Autowired(required=true)
+    public final void setLangSelector(LangSelectorInterface langSelector) {
+        this.langSelector = langSelector;
+    }
 
     private ThreadManagerInterface threadManager;
     // set the action handler
@@ -57,6 +65,7 @@ public class Updater {
             if (digestFile.exists()) {
                 String localUpdaterInfo = FileTools.readFileAsString(digestFile, errorHandler);
                 digest = FileTools.md5Hash(localUpdaterInfo, errorHandler);
+                //console.addLine("===" + localUpdaterInfo + "===");
             }
         } catch (UnsupportedEncodingException e) {
             errorHandler.handle(e);
@@ -71,13 +80,14 @@ public class Updater {
             public void loop() throws InterruptedException {
                 if (++i >= 60) { // check for update every minute
                     if (notify) { // wait an additional minute before notifying
-                        console.addLine("There is an update available. Please restart to apply it.");
+                        console.addLine(langSelector.getString("update_available_please_restart"));
                         stopThread();
                     } else {
                         String updaterInfo = UrlUtil.readUrl(VitcoSettings.PROGRAM_UPDATER_URL, errorHandler);
+                        //console.addLine("===" + updaterInfo + "===");
                         String newDigest = FileTools.md5Hash(updaterInfo, errorHandler);
                         if (digest != null) {
-                            if (!digest.equals(newDigest)) {
+                            if (!digest.equals(newDigest) && !newDigest.equals("")) {
                                 notify = true;
                             }
                         }

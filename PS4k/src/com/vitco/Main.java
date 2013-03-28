@@ -15,6 +15,7 @@ public class Main {
 
     private static boolean debug = false;
 
+    // true if the program runs in debug mode
     public static boolean isDebugMode() {
         return debug;
     }

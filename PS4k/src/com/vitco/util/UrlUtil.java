@@ -11,7 +11,6 @@ import java.net.UnknownHostException;
 
 public class UrlUtil {
 
-    // read the content of a url and return as string
     public static String readUrl(String url, ErrorHandlerInterface errorHandler) {
         URL url2;
         StringBuilder result = new StringBuilder();
@@ -25,19 +24,16 @@ public class UrlUtil {
             while ((inputLine = in.readLine()) != null) {
                 result.append(inputLine).append("\n");
             }
-
             in.close();
         } catch (UnknownHostException ignored) {
             // this can happen when there is no internet connection
         } catch (ConnectException ignored) {
             // this can happen when there is no internet connection
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             // this can also happen when there is no internet connection
             // (if the isp provides an error page?)
             // errorHandler.handle(e);
         }
-
         return result.toString();
-
     }
 }

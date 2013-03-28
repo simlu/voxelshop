@@ -105,7 +105,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     }
 
     @Override
-    public final boolean exportToCollada(File file) {
+    public final boolean exportToCollada(File file, File textureFile) {
         boolean result = true;
 
         ColladaFile colladaExport = new ColladaFile();
@@ -119,19 +119,37 @@ public final class Data extends VoxelHighlighting implements DataInterface {
 
         for (Map.Entry<Voxel, String> entry : world.getVisibleVoxel().entrySet()) {
             char[] sides = entry.getValue().toCharArray();
+            Voxel voxel = entry.getKey();
+            int[] textureId = voxel.getTexture();
+            int[] rotation = voxel.getRotation();
+            boolean[] flip = voxel.getFlip();
             for (int i = 0; i < sides.length; i++) {
                 if (sides[i] == '0') {
-                    Voxel voxel = entry.getKey();
-                    colladaExport.addPlane(voxel.getPosAsFloat(), i, voxel.getColor());
+                    colladaExport.addPlane(
+                            voxel.getPosAsFloat(),
+                            i,
+                            voxel.getColor(),
+                            textureId == null ? null : textureId[i],
+                            rotation == null ? 0 : rotation[i],
+                            flip != null && flip[i]
+                    );
+                    if (textureId != null) {
+                        colladaExport.registerTexture(textureId[i], this.getTexture(textureId[i]));
+                    }
                 }
             }
         }
 
-        colladaExport.finish();
+        colladaExport.finish(textureFile.getName());
 
         // write the file
         if (!colladaExport.writeToFile(file, errorHandler)) {
             result = false;
+        }
+
+        // write the texture image file (if there is one)
+        if (colladaExport.hasTextureMap()) {
+            colladaExport.writeTextureMap(textureFile, errorHandler);
         }
 
         // only check in debug mode

@@ -70,7 +70,7 @@ public class XmlFile {
         String[] pathArray = path.split("/");
         for (String dir : pathArray) {
 
-            // Find the identification
+            // find the identification
             Integer pos = null;
             String name = dir;
             Matcher m = datePatt.matcher(dir);
@@ -106,6 +106,58 @@ public class XmlFile {
         }
 
         return cur;
+    }
+
+    // go up one step
+    public boolean goUp() {
+        if (curTop != doc.getDocumentElement()) {
+            curTop = (Element) curTop.getParentNode();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // go up "level" steps
+    public boolean goUp(int level) {
+        int clevel = level;
+        boolean result = true;
+        while (clevel > 0 && result) {
+            result = goUp();
+            clevel--;
+        }
+        return result;
+    }
+
+    // delete the current node and go up
+    public boolean deleteChild(String child) {
+        boolean result = false;
+        // find the identification
+        Integer pos = null;
+        String name = child;
+        Matcher m = datePatt.matcher(child);
+        if (m.matches()) {
+            pos = Integer.valueOf(m.group(3));
+            name = m.group(1);
+        }
+
+        NodeList list = curTop.getElementsByTagName(name);
+        int length = list.getLength();
+
+        if (pos == null) { // position not set
+            if (length > 0) { // exists (take the first)
+                curTop.removeChild(list.item(0));
+                result = true;
+            }
+        } else { // position is set
+            if (pos >= 0) { // position valid
+                if (length > pos) { // can select
+                    curTop.removeChild(list.item(pos));
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 
     // creates a path (public)

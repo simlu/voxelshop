@@ -2,6 +2,7 @@ package com.vitco.logic.menu;
 
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.FileTools;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.annotation.PostConstruct;
@@ -243,15 +244,24 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                     if(!dir.toLowerCase().endsWith(".dae")) {
                         dir += ".dae";
                     }
+                    // dae file
                     File exportTo = new File(dir);
+                    // attached texture file
+                    String textureImgDir = FileTools.changeExtension(dir, ".png");
+                    File exportTextureTo = new File(textureImgDir);
                     // query if file already exists
-                    if (!exportTo.exists() ||
+                    if ((!exportTo.exists() ||
                             JOptionPane.showConfirmDialog(frame,
                                     dir + " " + langSelector.getString("replace_file_query"),
                                     langSelector.getString("replace_file_query_title"),
-                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) &&
+                            (!exportTextureTo.exists() ||
+                                    JOptionPane.showConfirmDialog(frame,
+                                            textureImgDir + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
 
-                        if (data.exportToCollada(exportTo)) {
+                        if (data.exportToCollada(exportTo, exportTextureTo)) {
                             console.addLine(langSelector.getString("export_file_successful"));
                         } else {
                             console.addLine(langSelector.getString("export_file_error"));

@@ -717,6 +717,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // set up world objects
         world = new CWorld(true, side);
+        // no culling, since we want to see all selected voxels
         selectedVoxelsWorld = new CWorld(false, side);
         camera = new CCamera();
         world.setCameraTo(camera);
