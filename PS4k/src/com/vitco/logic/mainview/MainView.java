@@ -3,6 +3,8 @@ package com.vitco.logic.mainview;
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
+import com.threed.jpct.util.Light;
+import com.vitco.engine.CameraChangeListener;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
@@ -53,6 +55,14 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         return data.getNewSelectedVoxel("main_view");
     }
 
+    // true if the "light is on"
+    private boolean lightOn = false;
+    private void moveLightBehindCamera(Light light) {
+        SimpleVector direction = camera.getPosition().normalize();
+        direction.scalarMul(2000f);
+        light.setPosition(direction);
+    }
+
     @Override
     public final JPanel build() {
 
@@ -60,15 +70,62 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
         selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
 
+        // lighting
+        final Light dark_light = WorldUtil.addLight(world, SimpleVector.ORIGIN, -10);
+        final Light light1 = WorldUtil.addLight(world, new SimpleVector(-1500, -2000, -1000), 3);
+        final Light light2 = WorldUtil.addLight(world, new SimpleVector(1500, 2000, 1000), 3);
+        camera.addCameraChangeListener(new CameraChangeListener() {
+            @Override
+            public void onCameraChange() {
+                if (!lightOn) {
+                    moveLightBehindCamera(dark_light);
+                }
+            }
+        });
+
+        if (!preferences.contains("light_mode_active")) {
+            preferences.storeBoolean("light_mode_active", lightOn);
+        }
+
+        // react to changes on the light status
+        preferences.addPrefChangeListener("light_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                lightOn = (Boolean) o;
+                if (lightOn) {
+                    dark_light.disable();
+                    light1.enable();
+                    light2.enable();
+                    world.setAmbientLight(0, 0, 0);
+                } else {
+                    dark_light.enable();
+                    light1.disable();
+                    light2.disable();
+                    world.setAmbientLight(60, 60, 60);
+                }
+                moveLightBehindCamera(dark_light);
+                forceRepaint();
+            }
+        });
+
+        // register the toggle animate mode action (always possible)
+        actionManager.registerAction("toggle_light_mode", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                preferences.storeBoolean("light_mode_active", !lightOn);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return lightOn;
+            }
+        });
+
         // camera settings
         camera.setFOVLimits(VitcoSettings.MAIN_VIEW_ZOOM_FOV,VitcoSettings.MAIN_VIEW_ZOOM_FOV);
         camera.setFOV(VitcoSettings.MAIN_VIEW_ZOOM_FOV);
         camera.setZoomLimits(VitcoSettings.MAIN_VIEW_ZOOM_IN_LIMIT, VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT);
         camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION); // camera initial position
-
-        world.setAmbientLight(0, 0, 0); // compensate a bit for the lights
-        WorldUtil.addLight(world, new SimpleVector(-1500, -2000, -1000), 3);
-        WorldUtil.addLight(world, new SimpleVector(1500, 2000, 1000), 3);
 
         // add ground plane
         final int worldPlane = WorldUtil.addPlane(

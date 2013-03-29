@@ -18,11 +18,12 @@ public class WorldUtil {
     private final static SimpleVector ZEROS = new SimpleVector(0,0,0);
 
     // add a light-source
-    public static void addLight (World world, SimpleVector position, float strength) {
+    public static Light addLight (World world, SimpleVector position, float strength) {
         Light light = new Light(world);
         light.setDiscardDistance(-1);
         light.setIntensity(strength, strength, strength);
         light.setPosition(position);
+        return light;
     }
 
     // add a box to the world

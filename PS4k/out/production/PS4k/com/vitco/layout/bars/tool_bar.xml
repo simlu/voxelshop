@@ -4,10 +4,13 @@
                tool-tip="animate_tooltip"
                checkable="true"
                action="toggle_animation_mode"/>
-
     <split-item src="resource/img/bars/tool_bar/settings.png"
                 tool-tip="settings_menubar_tooltip"
                 complex-action="settings_menubar"/>
+    <icon-item src="resource/img/bars/tool_bar/light.png"
+                tool-tip="toggle_light_menubar_tooltip"
+                checkable="true"
+                action="toggle_light_mode"/>
     <separator/>
 
     <icon-item src="resource/img/bars/tool_bar/undo.png"
