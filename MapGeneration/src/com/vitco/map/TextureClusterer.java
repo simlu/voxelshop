@@ -3,6 +3,7 @@ package com.vitco.map;
 import com.vitco.export.ColladaFile;
 import com.vitco.map.container.MapColor;
 import com.vitco.util.ColorTools;
+import com.vitco.util.ImgTools;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.apache.commons.math3.ml.distance.DistanceMeasure;
@@ -21,15 +22,17 @@ import java.util.Map;
  */
 public class TextureClusterer {
     private final BufferedImage texture;
+    private int clusterCount;
 
-    public TextureClusterer(BufferedImage texture) {
+    public TextureClusterer(BufferedImage texture, int clusterCount) {
         this.texture = texture;
+        this.clusterCount = clusterCount;
     }
 
     public TiledImage[] supervisedClustering() {
         // extract the colors from the image
         KMeansPlusPlusClusterer<MapColor> transformer =
-                new KMeansPlusPlusClusterer<MapColor>(3, 100, new DistanceMeasure() {
+                new KMeansPlusPlusClusterer<MapColor>(clusterCount, 1000, new DistanceMeasure() {
                     @Override
                     public double compute(double[] rgb1, double[] rgb2) {
                         return ColorTools.colorDistanceNatural(rgb1, rgb2);
@@ -54,10 +57,13 @@ public class TextureClusterer {
         // loop over all the clusters
         for (CentroidCluster<MapColor> cluster : clusters) {
             TiledImage src = ImageUtils.createConstantImage(IMAGE_WIDTH, IMAGE_HEIGHT, 0);
+            //BufferedImage img = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_RGB);
             for (MapColor mapColor : cluster.getPoints()) {
                 src.setSample(mapColor.getPos()[0], mapColor.getPos()[1], 0, 1);
+                //img.setRGB(mapColor.getPos()[0], mapColor.getPos()[1], texture.getRGB(mapColor.getPos()[0], mapColor.getPos()[1]));
             }
             resultList.add(src);
+            //ImgTools.writeAsPNG(img, "result/cluster" + resultList.size() + ".png");
         }
 
         TiledImage[] result = new TiledImage[resultList.size()];

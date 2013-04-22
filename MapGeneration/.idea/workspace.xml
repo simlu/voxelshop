@@ -1,12 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="31aea091-489d-446f-9a80-da92b438e48a" name="Default" comment="" />
+    <list default="true" id="31aea091-489d-446f-9a80-da92b438e48a" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\MapGeneration\src\com\vitco\map\container\LineInfo.java" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\TextureTest.class" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\src\com\vitco\TextureTest.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/CWorld.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/CWorld.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/export/ColladaFile.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Config.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Config.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$3$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$3$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$4.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$5.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$6.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$6.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$AnimationMouseAdapter$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$AnimationMouseAdapter$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$AnimationMouseAdapter$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$AnimationMouseAdapter$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$AnimationMouseAdapter.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$AnimationMouseAdapter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$VoxelAdapter$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$VoxelAdapter$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$VoxelAdapter$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$VoxelAdapter$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$VoxelAdapter.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype$VoxelAdapter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineInteractionPrototype.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$4.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$5.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Main.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Main.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/mainview/MainView$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/mainview/MainView$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/mainview/MainView.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/mainview/MainView.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$AxisJTextFilter.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox$AxisJTextFilter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/basics/components/NumberBox.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/PS4k.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/PS4k.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/PS4k.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/PS4k.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$1$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$ActivatableAction.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager$ActivatableAction.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManager.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManagerView$4.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManagerView$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManagerView.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/shortcut/ShortcutManagerView.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/SliderColorChooser.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/colors/SliderColorChooser.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/Tile.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/Tile.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileCluster.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileCluster.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager$1.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/res/VitcoSettings.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/res/VitcoSettings.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$2.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$3.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$4.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$4.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$5.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$5.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$6.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$6.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/helper/WorldGenerator.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/helper/WorldGenerator.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/xml/XmlFile.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/xml/XmlFile.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/lib/jpct.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/lib/jpct.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/lib/jpct.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/lib/jpct.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/pngout/pngout.exe" afterPath="$PROJECT_DIR$/../encode_map_fo1/pngout/pngout.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/settings/pref.ser" afterPath="$PROJECT_DIR$/../PS4k/settings/pref.ser" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result/result_file.png" afterPath="$PROJECT_DIR$/result/result_file.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result/ result_file.dae" afterPath="$PROJECT_DIR$/result/ result_file.dae" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/CWorld.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/CWorld.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/export/ColladaFile.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/export/ColladaFile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Config.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Config.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/EngineInteractionPrototype.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/EngineInteractionPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/EngineViewPrototype.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/EngineViewPrototype.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/G2DUtil.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/G2DUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/resource/bundle/LangBundle.properties" afterPath="$PROJECT_DIR$/../PS4k/resource/bundle/LangBundle.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/../PS4k/src/META-INF/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/Main.java" afterPath="$PROJECT_DIR$/src/com/vitco/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/Main.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Main.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/mainview/MainView.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/mainview/MainView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/colors/basics/components/NumberBox.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/colors/basics/components/NumberBox.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/PS4k.iml" afterPath="$PROJECT_DIR$/../PS4k/PS4k.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/shortcut/ShortcutManager.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/shortcut/ShortcutManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/shortcut/ShortcutManagerView.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/shortcut/ShortcutManagerView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/colors/SliderColorChooser.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/colors/SliderColorChooser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/map/TextureClusterer.java" afterPath="$PROJECT_DIR$/src/com/vitco/map/TextureClusterer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java" afterPath="$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/Tile.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/Tile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileCluster.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileCluster.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileClusterManager.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileClusterManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/res/VitcoSettings.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/res/VitcoSettings.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/WindowManager.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/WindowManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/helper/WorldGenerator.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/helper/WorldGenerator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/xml/XmlFile.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/xml/XmlFile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/.idea/ant.xml" afterPath="$PROJECT_DIR$/../PS4k/.idea/ant.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/glue/config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/glue/config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/digest.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/getdown.txt" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/getdown.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/.idea/libraries/jide.xml" afterPath="$PROJECT_DIR$/../PS4k/.idea/libraries/jide.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/.idea/artifacts/lib.xml" afterPath="$PROJECT_DIR$/../PS4k/.idea/artifacts/lib.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../encode_map_fo1/.idea/workspace.xml" />
+    </list>
     <ignored path="MapGeneration.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Main.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366488408430" ignored="false" />
+    <file path="/Main.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366566521543" ignored="false" />
     <file path="/Cluster.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366488601804" ignored="false" />
-    <file path="/TextureColorCluster.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366556499773" ignored="false" />
+    <file path="/TextureColorCluster.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366561134273" ignored="false" />
     <file path="$PROJECT_DIR$/src/org/jaitools/numeric/MeanVarianceProcessor.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366494052567" ignored="false" />
     <file path="$PROJECT_DIR$/src/org/jaitools/swing/ImageFrame.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366494052567" ignored="false" />
     <file path="$PROJECT_DIR$/src/org/jaitools/numeric/ApproxMedianProcessor.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366494052567" ignored="false" />
@@ -41,17 +153,18 @@
     <file path="/EdgeDedection.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366494891120" ignored="false" />
     <file path="/ColorDist.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366494957865" ignored="false" />
     <file path="/VectorRepresentation.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366549899542" ignored="false" />
-    <file path="/Dummy.txt" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366506956749" ignored="false" />
-    <file path="/fragment.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366550075544" ignored="false" />
+    <file path="/Dummy.txt" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366616014891" ignored="false" />
+    <file path="/fragment.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366558945474" ignored="false" />
     <file path="/XmlFile.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366502678977" ignored="false" />
-    <file path="/ColladaFile.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366541354989" ignored="false" />
+    <file path="/ColladaFile.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366558992782" ignored="false" />
     <file path="/Vertex.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366504008393" ignored="false" />
     <file path="/UVPoint.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366504299669" ignored="false" />
     <file path="/MapColor.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366545162441" ignored="false" />
     <file path="/ImgTools.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366556477654" ignored="false" />
-    <file path="/TextureClusterer.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366548307314" ignored="false" />
-    <file path="/PlaneManager.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366555948842" ignored="false" />
+    <file path="/TextureClusterer.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366619651233" ignored="false" />
+    <file path="/PlaneManager.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366643353683" ignored="false" />
     <file path="/LineInfo.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366550080834" ignored="false" />
+    <file path="/a.dummy" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366559003610" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,10 +227,8 @@
             <file leaf-file-name="TextureColorCluster.java" pinned="false" current="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="42" column="39" selection-start="1481" selection-end="1481" vertical-scroll-proportion="0.7579618">
-                    <folding>
-                      <element signature="imports" expanded="true" />
-                    </folding>
+                  <state line="38" column="27" selection-start="1389" selection-end="1389" vertical-scroll-proportion="0.45116773">
+                    <folding />
                   </state>
                 </provider>
               </entry>
@@ -125,10 +236,8 @@
             <file leaf-file-name="VectorTools.java" pinned="false" current="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/src/com/vitco/map/VectorTools.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="19" column="37" selection-start="623" selection-end="623" vertical-scroll-proportion="0.0">
-                    <folding>
-                      <element signature="imports" expanded="false" />
-                    </folding>
+                  <state line="25" column="27" selection-start="853" selection-end="853" vertical-scroll-proportion="0.0">
+                    <folding />
                   </state>
                 </provider>
               </entry>
@@ -145,51 +254,45 @@
               <entry file="file://$PROJECT_DIR$/src/com/vitco/export/ColladaFile.java">
                 <provider selected="true" editor-type-id="text-editor">
                   <state line="86" column="20" selection-start="3042" selection-end="3042" vertical-scroll-proportion="0.0">
-                    <folding>
-                      <element signature="e#7251#7426#0" expanded="true" />
-                      <element signature="e#7415#7416#0" expanded="true" />
-                      <element signature="e#8929#9107#0" expanded="true" />
-                      <element signature="e#9096#9097#0" expanded="true" />
-                    </folding>
+                    <folding />
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="TextureClusterer.java" pinned="false" current="false" current-in-tab="false">
+            <file leaf-file-name="TextureClusterer.java" pinned="false" current="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/src/com/vitco/map/TextureClusterer.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="44" column="42" selection-start="1576" selection-end="1576" vertical-scroll-proportion="0.0">
+                  <state line="34" column="70" selection-start="1131" selection-end="1131" vertical-scroll-proportion="0.3476857">
                     <folding>
-                      <element signature="imports" expanded="true" />
-                      <element signature="e#982#992#0" expanded="true" />
-                      <element signature="e#1300#1310#0" expanded="true" />
-                      <element signature="e#1890#1902#0" expanded="true" />
+                      <element signature="e#1135#1378#0" expanded="true" />
+                      <element signature="e#1359#1360#0" expanded="true" />
                     </folding>
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="PlaneManager.java" pinned="false" current="false" current-in-tab="true">
+            <file leaf-file-name="PlaneManager.java" pinned="false" current="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state line="32" column="29" selection-start="1010" selection-end="1010" vertical-scroll-proportion="-0.7384284">
+                  <state line="290" column="53" selection-start="12753" selection-end="12753" vertical-scroll-proportion="0.0">
                     <folding>
                       <element signature="imports" expanded="true" />
-                      <element signature="e#2159#2179#0" expanded="true" />
-                      <element signature="e#2743#2751#0" expanded="true" />
-                      <element signature="e#2809#2823#0" expanded="true" />
-                      <element signature="e#4006#4014#0" expanded="true" />
-                      <element signature="e#5866#5874#0" expanded="true" />
+                      <element signature="e#745#764#0" expanded="true" />
+                      <element signature="e#879#910#0" expanded="true" />
+                      <element signature="class#LineInfo#0;class#PlaneManager#0" expanded="false" />
+                      <element signature="class#PointInfo#0;class#PlaneManager#0" expanded="false" />
+                      <element signature="method#PlaneManager#0;class#PlaneManager#0" expanded="false" />
+                      <element signature="method#distance#0;class#PlaneManager#0" expanded="false" />
+                      <element signature="e#3928#3939#0" expanded="true" />
+                      <element signature="e#3998#4009#0" expanded="true" />
+                      <element signature="e#5590#5601#0" expanded="true" />
+                      <element signature="e#6750#7019#0" expanded="true" />
+                      <element signature="e#7000#7001#0" expanded="true" />
+                      <element signature="e#8472#8480#0" expanded="true" />
+                      <element signature="e#11165#11173#0" expanded="true" />
+                      <element signature="e#11231#11245#0" expanded="true" />
+                      <element signature="e#13025#13033#0" expanded="true" />
                     </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="LineInfo.java" pinned="false" current="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/src/com/vitco/map/container/LineInfo.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state line="2" column="0" selection-start="34" selection-end="93" vertical-scroll-proportion="0.0">
-                    <folding />
                   </state>
                 </provider>
               </entry>
@@ -208,7 +311,7 @@
       <file leaf-file-name="Main.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="52" selection-start="266" selection-end="266" vertical-scroll-proportion="0.46831957">
+            <state line="13" column="20" selection-start="292" selection-end="292" vertical-scroll-proportion="0.60881543">
               <folding />
             </state>
           </provider>
@@ -218,9 +321,7 @@
         <entry file="file://$PROJECT_DIR$/src/com/vitco/util/ImgTools.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="21" column="1" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -232,10 +333,17 @@
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitLogSettings">
+    <option name="myDateState">
+      <MyDateState />
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/vitco/export/container/UVPoint.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/export/container/Vertex.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/xml/XmlFile.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/holes.java" />
@@ -246,11 +354,12 @@
         <option value="$PROJECT_DIR$/src/com/vitco/map/VectorRepresentation.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/map/VectorTools.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/map/container/LineInfo.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/ImgTools.java" />
+        <option value="$PROJECT_DIR$/src/com/util/RTree.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/Main.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/map/TextureClusterer.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/ImgTools.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/Main.java" />
       </list>
     </option>
   </component>
@@ -260,14 +369,14 @@
     <option name="width" value="1382" />
     <option name="height" value="754" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
     <OptionsSetting value="true" id="Checkout" />
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="2" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectReloadState">
@@ -292,7 +401,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -419,6 +527,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -426,22 +535,27 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
+    <property name="options.splitter.main.proportions" value="0.3" />
     <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/lib" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="FullScreen" value="false" />
-    <property name="Repository.Attach.Sources" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="Downloaded.Files.Path" value="C:\Users\VM Win 7\Dropbox\IntelliJ\MapGeneration\lib" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="Downloaded.Files.Path" value="C:\Users\VM Win 7\Dropbox\IntelliJ\MapGeneration\lib" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.util" />
       <recent name="com.vitco.util" />
       <recent name="export" />
     </key>
@@ -496,6 +610,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -521,19 +648,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -616,9 +730,10 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39865997" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -627,11 +742,10 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3098485" sideWeight="0.6515913" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3098485" sideWeight="0.6515913" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3484087" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -701,44 +815,24 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/canny/EdgeDetection.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/lang/Object.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="13" selection-start="216" selection-end="216" vertical-scroll-proportion="0.055555556">
-          <folding />
-        </state>
+        <state line="217" column="18" selection-start="10329" selection-end="10329" vertical-scroll-proportion="0.33333334" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/export/container/Vertex.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/lang/StrictMath.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="5" selection-start="961" selection-end="961" vertical-scroll-proportion="1.9201102">
-          <folding />
-        </state>
+        <state line="386" column="25" selection-start="15072" selection-end="15072" vertical-scroll-proportion="0.11677282" />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/poly2tri-core-0.1.1-SNAPSHOT.jar!/org/poly2tri/Poly2Tri.class">
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/lang/Math.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="0" selection-start="1293" selection-end="1293" vertical-scroll-proportion="0.6861538">
-          <folding />
-        </state>
+        <state line="976" column="24" selection-start="40310" selection-end="40310" vertical-scroll-proportion="4.3938427" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/xml/XmlFile.java">
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/RTree.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="134" column="19" selection-start="4338" selection-end="4338" vertical-scroll-proportion="0.046831954">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/export/container/UVPoint.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="21" selection-start="260" selection-end="268" vertical-scroll-proportion="0.4214876">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/container/MapColor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="9" selection-start="251" selection-end="251" vertical-scroll-proportion="0.56198347">
+        <state line="127" column="17" selection-start="3193" selection-end="3193" vertical-scroll-proportion="0.44241118">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -748,50 +842,15 @@
     <entry file="file://$PROJECT_DIR$/src/com/vitco/export/ColladaFile.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="86" column="20" selection-start="3042" selection-end="3042" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#7251#7426#0" expanded="true" />
-            <element signature="e#7415#7416#0" expanded="true" />
-            <element signature="e#8929#9107#0" expanded="true" />
-            <element signature="e#9096#9097#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/VectorTools.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="37" selection-start="623" selection-end="623" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/container/LineInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="34" selection-end="93" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/jts-1.8.jar!/com/vividsolutions/jts/geom/Polygon.class">
+    <entry file="jar://$PROJECT_DIR$/lib/jai_core.jar!/javax/media/jai/JAI.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="33" selection-start="2034" selection-end="2037" vertical-scroll-proportion="0.9402655">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/lang/Math.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="19" selection-start="3316" selection-end="3316" vertical-scroll-proportion="0.33333334">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="39" selection-start="1481" selection-end="1481" vertical-scroll-proportion="0.7579618">
+        <state line="4" column="8" selection-start="127" selection-end="142" vertical-scroll-proportion="0.07522124">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#0#15592#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -799,42 +858,83 @@
     <entry file="file://$PROJECT_DIR$/src/com/vitco/util/ImgTools.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="1" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/poly2tri-core-0.1.1-SNAPSHOT.jar!/org/poly2tri/Poly2Tri.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="13" selection-start="155" selection-end="155" vertical-scroll-proportion="0.09402655">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/jai_core.jar!/javax/media/jai/TiledImage.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="13" selection-start="158" selection-end="158" vertical-scroll-proportion="0.09402655">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="247" column="18" selection-start="9237" selection-end="9237" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/VectorTools.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="27" selection-start="853" selection-end="853" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="27" selection-start="1389" selection-end="1389" vertical-scroll-proportion="0.45116773">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="20" selection-start="292" selection-end="292" vertical-scroll-proportion="0.60881543">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="290" column="53" selection-start="12753" selection-end="12753" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#745#764#0" expanded="true" />
+            <element signature="e#879#910#0" expanded="true" />
+            <element signature="class#LineInfo#0;class#PlaneManager#0" expanded="false" />
+            <element signature="class#PointInfo#0;class#PlaneManager#0" expanded="false" />
+            <element signature="method#PlaneManager#0;class#PlaneManager#0" expanded="false" />
+            <element signature="method#distance#0;class#PlaneManager#0" expanded="false" />
+            <element signature="e#3928#3939#0" expanded="true" />
+            <element signature="e#3998#4009#0" expanded="true" />
+            <element signature="e#5590#5601#0" expanded="true" />
+            <element signature="e#6750#7019#0" expanded="true" />
+            <element signature="e#7000#7001#0" expanded="true" />
+            <element signature="e#8472#8480#0" expanded="true" />
+            <element signature="e#11165#11173#0" expanded="true" />
+            <element signature="e#11231#11245#0" expanded="true" />
+            <element signature="e#13025#13033#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/map/TextureClusterer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="42" selection-start="1576" selection-end="1576" vertical-scroll-proportion="0.0">
+        <state line="34" column="70" selection-start="1131" selection-end="1131" vertical-scroll-proportion="0.3476857">
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#982#992#0" expanded="true" />
-            <element signature="e#1300#1310#0" expanded="true" />
-            <element signature="e#1890#1902#0" expanded="true" />
+            <element signature="e#1135#1378#0" expanded="true" />
+            <element signature="e#1359#1360#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="29" selection-start="1010" selection-end="1010" vertical-scroll-proportion="-0.7384284">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2159#2179#0" expanded="true" />
-            <element signature="e#2743#2751#0" expanded="true" />
-            <element signature="e#2809#2823#0" expanded="true" />
-            <element signature="e#4006#4014#0" expanded="true" />
-            <element signature="e#5866#5874#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="52" selection-start="266" selection-end="266" vertical-scroll-proportion="0.46831957">
-          <folding />
         </state>
       </provider>
     </entry>

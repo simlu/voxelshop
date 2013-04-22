@@ -25,7 +25,7 @@ public class TextureColorCluster {
         BufferedImage texture = ImgTools.loadImage(textureName);
         if (texture != null) {
             // get the clusters
-            TiledImage[] clusters = new TextureClusterer(texture).supervisedClustering();
+            TiledImage[] clusters = new TextureClusterer(texture, 3).supervisedClustering();
 
             // manages planes and creates dae file
             PlaneManager planeManager = new PlaneManager(texture.getWidth(), texture.getHeight());
@@ -38,6 +38,8 @@ public class TextureColorCluster {
                 }
                 height += 3f;
             }
+
+            planeManager.generateSides();
 
             // write the texture file
             ImgTools.writeAsPNG(texture, "result/" + writeTo + ".png");
