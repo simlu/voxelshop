@@ -7,6 +7,7 @@ import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.jidesoft.docking.DockingManager;
+import com.jidesoft.plaf.UIDefaultsLookup;
 import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
@@ -18,7 +19,6 @@ import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import sun.java2d.SunGraphicsEnvironment;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -27,7 +27,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Map;
 
@@ -185,6 +187,9 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         ));
 
         try {
+            // set the panel background color
+            UIManager.getDefaults().put("DockableFrame.background", UIDefaultsLookup.getColor("JideTabbedPane.background"));
+
             // init loading
             ////////////////
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

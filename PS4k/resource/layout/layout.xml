@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<synth>
+    <style id="backingStyle">
+        <opaque value="TRUE"/>
+        <font name="Dialog" size="12"/>
+        <state>
+            <color value="WHITE" type="BACKGROUND"/>
+            <color value="BLACK" type="FOREGROUND"/>
+        </state>
+    </style>
+    <bind style="backingStyle" type="region" key=".*"/>
+
+    <style id="SliderTrackStyle">
+        <opaque value="TRUE"/>
+        <state>
+            <color type="BACKGROUND" value="ORANGE"/>
+        </state>
+    </style>
+    <bind style="SliderTrackStyle" type="region" key="SliderTrack" />
+
+    <style id="SliderThumbStyle">
+        <opaque value="TRUE"/>
+        <state>
+            <color type="BACKGROUND" value="RED"/>
+        </state>
+        <state value="PRESSED">
+            <color type="BACKGROUND" value="GREEN"/>
+        </state>
+        <!-- state value="MOUSE_OVER">
+          <color type="BACKGROUND" value="BLUE"/>
+        </state -->
+    </style>
+    <bind style="SliderThumbStyle" type="region" key="SliderThumb" />
+</synth>

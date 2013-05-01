@@ -14,17 +14,15 @@ import java.awt.image.BufferedImage;
  */
 public final class VitcoSettings {
 
-    /*
-    * Alternative (slower but better quality):
-    * public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
-    * public static final float SAMPLING_MODE_MULTIPLICAND = 2f;
-    * public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
-    */
+    // Alternative (slower but better quality):
+    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
+    public static final float SAMPLING_MODE_MULTIPLICAND = 2f;
+    public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
 
-    // sampling mode
-    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS_FAST;
-    public static final float SAMPLING_MODE_MULTIPLICAND = 1.5f;
-    public static final float SAMPLING_MODE_DIVIDEND = 2/3f;
+//    // sampling mode (faster but crappy quality)
+//    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS_FAST;
+//    public static final float SAMPLING_MODE_MULTIPLICAND = 1.5f;
+//    public static final float SAMPLING_MODE_DIVIDEND = 2/3f;
 
     // texture window settings
     public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
@@ -33,7 +31,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.1.8)";
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.1.9)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);

@@ -256,7 +256,8 @@ public class CWorld extends World {
                         voxel.getTexture(),
                         // draw the appropriate site only
                         voxel.getSides(),
-                        culling);
+                        culling,
+                        side == -1);
                 // remember the world id
                 voxel.setWorldId(newWorldId);
                 // remember the mapping

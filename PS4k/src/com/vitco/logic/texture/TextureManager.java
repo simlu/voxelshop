@@ -321,7 +321,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                         // store/update internal hash
                         textureHash.put(texId, data.getTextureHash(texId));
                         // load/update texture into world
-                        WorldUtil.loadTexture(String.valueOf(texId), data.getTexture(texId));
+                        WorldUtil.loadTexture(String.valueOf(texId), data.getTexture(texId), true);
                     }
                 }
 

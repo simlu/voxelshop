@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Creates the main view instance and attaches the specific user interaction.
@@ -54,6 +55,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
     protected Voxel[][] getChangedSelectedVoxels() {
         return data.getNewSelectedVoxel("main_view");
     }
+
+    // true if the "grid mode is on"
+    private boolean gridModeOn = true;
 
     // true if the "light is on"
     private boolean staticLightOn = false;
@@ -108,7 +112,28 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
         });
 
-        // register the toggle animate mode action (always possible)
+        // react to changes on the light status
+        preferences.addPrefChangeListener("light_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                staticLightOn = (Boolean) o;
+                if (staticLightOn) {
+                    dark_light.disable();
+                    light1.enable();
+                    light2.enable();
+                    world.setAmbientLight(0, 0, 0);
+                } else {
+                    dark_light.enable();
+                    light1.disable();
+                    light2.disable();
+                    world.setAmbientLight(60, 60, 60);
+                }
+                moveLightBehindCamera(dark_light);
+                forceRepaint();
+            }
+        });
+
+        // register the toggle light mode action (always possible)
         actionManager.registerAction("toggle_light_mode", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
@@ -118,6 +143,33 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             public boolean getStatus() {
                 return !staticLightOn;
+            }
+        });
+
+        if (!preferences.contains("grid_mode_active")) {
+            preferences.storeBoolean("grid_mode_active", gridModeOn);
+        }
+
+        // react to changes on the grid status
+        preferences.addPrefChangeListener("grid_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                gridModeOn = (Boolean) o;
+                WorldUtil.enableGrid(gridModeOn);
+                forceRepaint();
+            }
+        });
+
+        // register the toggle grid mode action (always possible)
+        actionManager.registerAction("toggle_grid_mode", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                preferences.storeBoolean("grid_mode_active", !gridModeOn);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return gridModeOn;
             }
         });
 

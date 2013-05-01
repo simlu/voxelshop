@@ -22,25 +22,6 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-//        LookAndFeelFactory.addUIDefaultsInitializer(new SyntheticaInitializer());
-//        LookAndFeelFactory.addUIDefaultsCustomizer(new SyntheticaCustomizer());
-//        try {
-//            UIManager.setLookAndFeel(new SyntheticaBlackEyeLookAndFeel() {
-//                @Override
-//                protected void loadCustomXML() throws ParseException {
-//                    loadXMLConfig("/resource/layout/custom.xml");
-//                }
-//            });
-//        } catch (UnsupportedLookAndFeelException e) {
-//            e.printStackTrace();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        LookAndFeelFactory.installJideExtension();
-        //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        //LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_OFFICE2007);
-
-
         // the JIDE license
         com.jidesoft.utils.Lm.verifyLicense("Pixelated Games", "PS4K", "__JIDE_PASSWORD__");
 

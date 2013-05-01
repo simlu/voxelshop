@@ -175,6 +175,26 @@ public class WorldUtil {
         Config.texelFilter = false;
 
         textureManager = TextureManager.getInstance();
+
+    }
+
+    public static void enableGrid(boolean enabled) {
+        if (!enabled) {
+            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = (Graphics2D) overlay.getGraphics();
+            g2.setColor(new Color(255,255,255,255));
+            g2.fillRect(0,0,32,32);
+            WorldUtil.loadTexture("__overlay__", overlay, false);
+        } else {
+            // load the voxel overlay
+            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = (Graphics2D) overlay.getGraphics();
+            g2.setColor(new Color(0,0,0,0));
+            g2.fillRect(0,0,32,32);
+            g2.setColor(new Color(255,255,255,255));
+            g2.fillRect(1,1,30,30);
+            WorldUtil.loadTexture("__overlay__", overlay, false);
+        }
     }
 
     // internal - helper
@@ -203,30 +223,32 @@ public class WorldUtil {
     private final static TextureManager textureManager;
 
     // load a texture to the world (from string)
-    public static void loadTexture(String name, String url) {
+    public static void loadTexture(String name, String url, boolean useAlpha) {
         Image image = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource(url)
         )).getImage();
-        loadTexture(name, image);
+        loadTexture(name, image, useAlpha);
     }
 
     // load a texture to the world (from image)
-    public static void loadTexture(String name, Image image) {
-        Texture texture = new Texture(image);
+    public static void loadTexture(String name, Image image, boolean useAlpha) {
+        Texture texture = new Texture(image, useAlpha);
+        loadTexture(name, texture, useAlpha);
+    }
+
+    public static void loadTexture(String name, Texture texture, boolean useAlpha) {
         if (textureManager.containsTexture(name)) {
             textureManager.replaceTexture(name, texture);
         } else {
             textureManager.addTexture(name, texture);
         }
-        // make sure the id is assigned
-        //textureManager.getNameByID(textureManager.getTextureID(name));
     }
 
-    public static void loadTexture(String name, ImageIcon image) {
+    public static void loadTexture(String name, ImageIcon image, boolean useAlpha) {
         // Create a texture from image
         BufferedImage text_top = new BufferedImage(image.getIconWidth(), image.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         text_top.getGraphics().drawImage(image.getImage(), 0, 0, null);
-        loadTexture(name, text_top);
+        loadTexture(name, text_top, useAlpha);
     }
 
     public static void removeTexture(String name) {
@@ -236,7 +258,8 @@ public class WorldUtil {
     // add a box to the world
     public static int addBoxSides (World world, SimpleVector pos, Color color,
                                    int[] rotation, boolean[] flip,
-                                   int[] textureIds, String boxType, boolean culling) {
+                                   int[] textureIds, String boxType,
+                                   boolean culling, boolean useGrid) {
 
         Object3D box = boxTypes.get(boxType).cloneObject();
         // set other settings, build and add
@@ -244,6 +267,26 @@ public class WorldUtil {
         // select: color or texture
         if (textureIds == null) { // for color overlay
             box.setAdditionalColor(color);
+            if (useGrid) {
+                PolygonManager polygonManager = box.getPolygonManager();
+                char[] charArray = boxType.toCharArray();
+                int polyCount = 0;
+                int id = textureManager.getTextureID(String.valueOf("__overlay__"));
+                for (int i = 0; i < charArray.length; i++) {
+                    if (charArray[i] == '0') {
+                        float[] uvMapping = uvRotation.get(i + "_0_0");
+                        polygonManager.setPolygonTexture(polyCount, new TextureInfo(id,
+                                uvMapping[0],uvMapping[1],uvMapping[2],
+                                uvMapping[3],uvMapping[4],uvMapping[5]
+                        ));
+                        polygonManager.setPolygonTexture(polyCount+1, new TextureInfo(id,
+                                uvMapping[6],uvMapping[7],uvMapping[8],
+                                uvMapping[9],uvMapping[10],uvMapping[11]
+                        ));
+                        polyCount+=2;
+                    }
+                }
+            }
         } else { // for texture overlay
             box.setAdditionalColor(Color.WHITE);
             PolygonManager polygonManager = box.getPolygonManager();
