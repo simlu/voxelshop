@@ -51,7 +51,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     // conversion
     protected final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
-        SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer, x*2, y*2).normalize();
+        SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer,
+                (int)Math.round(x*VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
+                (int)Math.round(y*VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
         result.scalarMul(camera.getPosition().distance(referencePoint));
         result.add(camera.getPosition());
         return result;
@@ -61,7 +63,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected final SimpleVector convert3D2D(SimpleVector point) {
         SimpleVector result = Interact2D.project3D2D(camera, buffer, point);
         if (result != null) {
-            result.scalarMul(0.5f);
+            result.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
         }
         return result;
     }
@@ -71,7 +73,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         ExtendedVector result = null;
         SimpleVector point2d = Interact2D.project3D2D(camera, buffer, point);
         if (point2d != null) {
-            point2d.scalarMul(0.5f);
+            point2d.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
             result = new ExtendedVector(point2d, point.id);
         }
         return result;
@@ -200,7 +202,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             });
         }
 
-        // this draws opengl content if enabled
+        // this draws jpct engine content if enabled
         private boolean drawWorld = true;
         public final void setDrawWorld(boolean b) {
             drawWorld = b;
@@ -420,7 +422,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 ExtendedVector point2db = convertExt3D2D(line[1]);
                 if (point2da != null && point2db != null) {
                     ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                    mid.scalarMul(0.5f);
+                    mid.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
                     objects.add(new ExtendedVector[] {point2da, point2db, mid});
                 }
             }
@@ -432,7 +434,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 ExtendedVector point2db = convertExt3D2D(preview_line[1]);
                 if (point2da != null && point2db != null) {
                     ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                    mid.scalarMul(0.5f);
+                    mid.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
                     objects.add(new ExtendedVector[] {point2da, point2db, mid});
                 }
             }
@@ -722,7 +724,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         camera = new CCamera();
         world.setCameraTo(camera);
         selectedVoxelsWorld.setCameraTo(camera);
-        buffer = new FrameBuffer(100, 100, FrameBuffer.SAMPLINGMODE_OGSS);
+        buffer = new FrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
 
         // lighting (1,1,1) = true color
         world.setAmbientLight(1, 1, 1);
@@ -737,7 +739,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
                     buffer.dispose();
                     buffer = null; // so the gc can collect before creation if necessary
-                    buffer = new FrameBuffer(container.getWidth(), container.getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
+                    buffer = new FrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
                     container.doNotSkipNextWorldRender();
                     forceRepaint();
                 }

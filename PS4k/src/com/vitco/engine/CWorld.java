@@ -196,7 +196,9 @@ public class CWorld extends World {
         SimpleVector result = null;
         Camera camera = getCamera();
         camera.moveCamera(offset, length);
-        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int) Math.round(point.getX() * 2), (int) Math.round(point.getY() * 2)).normalize();
+        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
+                (int) Math.round(point.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
+                (int) Math.round(point.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
         Object[] res = calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
         if (res[1] != null) { // something hit
             // find collision point

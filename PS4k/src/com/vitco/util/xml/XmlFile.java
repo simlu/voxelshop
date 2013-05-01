@@ -3,6 +3,7 @@ package com.vitco.util.xml;
 import com.vitco.util.error.ErrorHandlerInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,6 +16,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +26,31 @@ import java.util.regex.Pattern;
  */
 public class XmlFile {
     private Document doc;
+
+    // get the direct node children of an element as NodeList
+    // that have a name equal to name
+    public static NodeList getDirectChildren(Element parent, String name)
+    {
+        final List<Node> list = new LinkedList<Node>();
+        NodeList nodeList = new NodeList() {
+            @Override
+            public Node item(int index) {
+                return list.get(index);
+            }
+
+            @Override
+            public int getLength() {
+                return list.size();
+            }
+        };
+        for(Node child = parent.getFirstChild(); child != null; child = child.getNextSibling())
+        {
+            if(child instanceof Element && name.equals(child.getNodeName())) {
+                list.add(child);
+            }
+        }
+        return nodeList;
+    }
 
     // pattern
     Pattern datePatt = Pattern.compile("(.+?)(\\[)((\\-)?[0-9]+?)(\\])");
@@ -79,7 +107,7 @@ public class XmlFile {
                 name = m.group(1);
             }
 
-            NodeList list = cur.getElementsByTagName(name);
+            NodeList list = getDirectChildren(cur, name);
             int length = list.getLength();
 
             if (pos == null) { // position not set
@@ -141,7 +169,7 @@ public class XmlFile {
             name = m.group(1);
         }
 
-        NodeList list = curTop.getElementsByTagName(name);
+        NodeList list = getDirectChildren(curTop, name);
         int length = list.getLength();
 
         if (pos == null) { // position not set

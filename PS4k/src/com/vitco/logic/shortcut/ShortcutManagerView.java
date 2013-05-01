@@ -187,7 +187,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
 
     // return a JideTabbedPane that is autonomous and manages shortcuts
     @Override
-    public JideTabbedPane getEditTables() {
+    public JTabbedPane getEditTables() {
         // create the content of this frame (Shortcut Manager)
         // default header
         String[] columnNames = {
@@ -195,10 +195,10 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 langSelector.getString("shortcut_mg_header_shortcut")
         };
         // the different frame shortcuts are in different tabs
-        final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.RIGHT,JideTabbedPane.SCROLL_TAB_LAYOUT);
+        final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.TOP, JideTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.setFocusable(false); // looks nicer
-        tabbedPane.setTabShape(JideTabbedPane.SHAPE_WINDOWS); // make square
-        tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);
+        //tabbedPane.setTabShape(JideTabbedPane.SHAPE_WINDOWS); // make square
+        //tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);
         // add the global shortcuts
         String[][] globalShortcuts = shortcutManager.getShortcuts(null);
         tabbedPane.addTab(

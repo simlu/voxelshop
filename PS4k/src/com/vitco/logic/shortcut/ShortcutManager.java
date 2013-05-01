@@ -27,10 +27,7 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Handles shortcut linking (logic)
@@ -210,9 +207,12 @@ public class ShortcutManager implements ShortcutManagerInterface {
     @Override
     public final String[][] getFrames() {
         String[][] result = new String[map.size()][];
+        // fetch and sort frames (note: global is created separate!)
+        ArrayList<String> list = new ArrayList<String>(map.keySet());
+        Collections.sort(list);
         // loop over all the frames
         int i = 0;
-        for (String key : map.keySet()) {
+        for (String key : list) {
             result[i++] = new String[]{
                     key,
                     langSel.getString(key + "_caption")

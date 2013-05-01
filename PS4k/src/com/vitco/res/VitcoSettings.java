@@ -1,5 +1,6 @@
 package com.vitco.res;
 
+import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.data.container.VOXELMODE;
 
@@ -13,6 +14,18 @@ import java.awt.image.BufferedImage;
  */
 public final class VitcoSettings {
 
+    /*
+    * Alternative (slower but better quality):
+    * public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
+    * public static final float SAMPLING_MODE_MULTIPLICAND = 2f;
+    * public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
+    */
+
+    // sampling mode
+    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS_FAST;
+    public static final float SAMPLING_MODE_MULTIPLICAND = 1.5f;
+    public static final float SAMPLING_MODE_DIVIDEND = 2/3f;
+
     // texture window settings
     public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
     public static final Color TEXTURE_BORDER = Color.BLACK;
@@ -20,7 +33,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.1.6)";
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.1.8)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -111,16 +124,8 @@ public final class VitcoSettings {
     public static final Integer MAX_LAYER_COUNT = 50;
 
     // general table
-    public static final Font TABLE_FONT = new Font(
-            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
-            UIManager.getDefaults().getFont("TabbedPane.font").getStyle(),
-            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
-    );
-    public static final Font TABLE_FONT_BOLD = new Font(
-            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
-            Font.BOLD,
-            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
-    );
+    public static final Font TABLE_FONT = new Font("Tohama", Font.PLAIN, 12);
+    public static final Font TABLE_FONT_BOLD = new Font("Tohama", Font.BOLD, 12);
     public static final int DEFAULT_TABLE_INCREASE = 10;
     public static final Border DEFAULT_CELL_BORDER =
             BorderFactory.createEmptyBorder(0, 10, 0, 0);

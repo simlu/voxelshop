@@ -1,5 +1,6 @@
 package com.vitco;
 
+import com.jidesoft.plaf.LookAndFeelFactory;
 import com.vitco.logic.shortcut.ShortcutManager;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.action.ComplexActionManager;
@@ -21,8 +22,29 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+//        LookAndFeelFactory.addUIDefaultsInitializer(new SyntheticaInitializer());
+//        LookAndFeelFactory.addUIDefaultsCustomizer(new SyntheticaCustomizer());
+//        try {
+//            UIManager.setLookAndFeel(new SyntheticaBlackEyeLookAndFeel() {
+//                @Override
+//                protected void loadCustomXML() throws ParseException {
+//                    loadXMLConfig("/resource/layout/custom.xml");
+//                }
+//            });
+//        } catch (UnsupportedLookAndFeelException e) {
+//            e.printStackTrace();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        LookAndFeelFactory.installJideExtension();
+        //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        //LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_OFFICE2007);
+
+
         // the JIDE license
         com.jidesoft.utils.Lm.verifyLicense("Pixelated Games", "PS4K", "__JIDE_PASSWORD__");
+
+        LookAndFeelFactory.installDefaultLookAndFeel();
 
         // check if we are in debug mode
         if ((args.length > 0) && args[0].equals("debug")) {

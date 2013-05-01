@@ -27,13 +27,6 @@
         </property>
     </bean>
 
-    <!-- invoke default look and feel (jide) -->
-    <!-- needs to go first !! -->
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass"><value>com.jidesoft.plaf.LookAndFeelFactory</value></property>
-        <property name="targetMethod"><value>installDefaultLookAndFeelAndExtension</value></property>
-    </bean>
-
     <!-- manages the console data -->
     <bean id="Console" class="com.vitco.logic.console.Console"/>
     <!-- manages the console data display -->

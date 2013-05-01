@@ -2,7 +2,6 @@
   <library name="jide">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/lib/jide" />
-      <root url="file://$PROJECT_DIR$/lib/jide" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

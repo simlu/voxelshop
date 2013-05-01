@@ -73,7 +73,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private SimpleVector getPoint(MouseEvent e, SimpleVector refPoint) {
             SimpleVector result;
             if (voxelSnap) {
-                SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX()*2, e.getY()*2).normalize();
+                SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
+                        (int)Math.round(e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
+                        (int)Math.round(e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
                 Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 1000000);
                 if (res[1] != null) {
                     Object3D obj3D = ((Object3D)res[1]);
@@ -128,7 +130,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             // find if there is a point nearby
             List<ExtendedVector> search = points2D.search(new float[]{e.getX() - VitcoSettings.ANIMATION_CIRCLE_RADIUS,e.getY() - VitcoSettings.ANIMATION_CIRCLE_RADIUS},
-                    new float[]{VitcoSettings.ANIMATION_CIRCLE_RADIUS * 2, VitcoSettings.ANIMATION_CIRCLE_RADIUS * 2});
+                    new float[]{
+                            VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                            VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND});
 
             // make sure this is in circle (and not just in square!)
             for (int i = 0, len = search.size(); i < len; i++) {
@@ -289,7 +293,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
     protected int[] voxelPosForHoverPos(Point point, boolean selectNeighbour) {
         int[] voxelPos = null;
         // check if we hit something
-        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int)Math.round(point.getX() * 2), (int)Math.round(point.getY() * 2)).normalize();
+        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
+                (int)Math.round(point.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
+                (int)Math.round(point.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
         Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
         if (res[1] != null) { // something hit
             Object3D obj3D = ((Object3D)res[1]);
@@ -583,7 +589,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 }
             }
             // do a single click search as well
-            SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
+            SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
+                    (int)Math.round(e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
+                    (int)Math.round(e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
             Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
             if (res[1] != null) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
@@ -620,7 +628,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     voxelPos = voxelPosForHoverPos(e.getPoint(),
                             voxelMode == VOXELMODE.DRAW && !rightMouseDown);
                 } else { // find voxel in same plane
-                    SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, e.getX() * 2, e.getY() * 2).normalize();
+                    SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
+                            (int)Math.round(e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
+                            (int)Math.round(e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
                     // hit nothing, draw preview on zero level
                     if (dir.y > 0.05) { // angle big enough
                         // calculate position

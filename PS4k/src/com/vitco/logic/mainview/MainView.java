@@ -56,7 +56,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
     }
 
     // true if the "light is on"
-    private boolean lightOn = false;
+    private boolean staticLightOn = false;
     private void moveLightBehindCamera(Light light) {
         SimpleVector direction = camera.getPosition().normalize();
         direction.scalarMul(2000f);
@@ -77,22 +77,22 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         camera.addCameraChangeListener(new CameraChangeListener() {
             @Override
             public void onCameraChange() {
-                if (!lightOn) {
+                if (!staticLightOn) {
                     moveLightBehindCamera(dark_light);
                 }
             }
         });
 
         if (!preferences.contains("light_mode_active")) {
-            preferences.storeBoolean("light_mode_active", lightOn);
+            preferences.storeBoolean("light_mode_active", staticLightOn);
         }
 
         // react to changes on the light status
         preferences.addPrefChangeListener("light_mode_active", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {
-                lightOn = (Boolean) o;
-                if (lightOn) {
+                staticLightOn = (Boolean) o;
+                if (staticLightOn) {
                     dark_light.disable();
                     light1.enable();
                     light2.enable();
@@ -112,12 +112,12 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         actionManager.registerAction("toggle_light_mode", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
-                preferences.storeBoolean("light_mode_active", !lightOn);
+                preferences.storeBoolean("light_mode_active", !staticLightOn);
             }
 
             @Override
             public boolean getStatus() {
-                return lightOn;
+                return !staticLightOn;
             }
         });
 

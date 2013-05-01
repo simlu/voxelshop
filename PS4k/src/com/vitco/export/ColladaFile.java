@@ -26,34 +26,34 @@ public class ColladaFile {
     // the xml Collada file
     private XmlFile xmlFile = new XmlFile("COLLADA");
 
-    // holds all the used colors (color of textured voxels is not stored!)
-    private final HashMap<String, Color> colors = new HashMap<String, Color>();
     // holds all the used texture Ids and maps them to their texture images
     private final HashMap<Integer, ImageIcon> textureIds = new HashMap<Integer, ImageIcon>();
+
     // holds the vertices
     private final HashMap<String, Vertex> colorVertices = new HashMap<String, Vertex>();
     private final HashMap<String, Vertex> texVertices = new HashMap<String, Vertex>();
+
     // holds the planes (consisting of vertices) and maps them to their material
     private final HashMap<Vertex[], PlaneMaterial> colorPlanes = new HashMap<Vertex[], PlaneMaterial>();
     private final HashMap<Vertex[], PlaneMaterial> texPlanes = new HashMap<Vertex[], PlaneMaterial>();
-    // maps materials uid strings to materials
-    private final HashMap<String, PlaneMaterial> materialMap = new HashMap<String, PlaneMaterial>();
+
+    // holds all the used colors (color of textured voxels is not stored!)
+    private final HashMap<String, Color> colors = new HashMap<String, Color>();
+
     // holds the texture image (if there are any textures)
     // "null iff there are no textures"
     private BufferedImage textureMap = null;
 
     // the id of the last assigned vertex (needed for plane adding)
-    private int nextColorPlaneId = 0;
-    private int nextTexPlaneId = 0;
+    private int[] nextColorPlaneId = new int[]{0};
+    private int[] nextTexPlaneId = new int[]{0};
+
     // internal - holds all the planes
     private void addPlane(float x, float y, float z, int type, PlaneMaterial material) {
         // store the color (only iff no texture is used)
         if (!material.hasTexture) {
             colors.put(String.valueOf(material.color.getRGB()), material.color);
         }
-
-        // store the material (always)
-        materialMap.put(material.toString(), material);
 
         // generate the points for this plane
         Vertex[] planeVertices = new Vertex[4];
@@ -95,38 +95,36 @@ public class ColladaFile {
                 planeVertices[3] = new Vertex(x - 0.5f, y + 0.5f, z);
                 break;
         }
-        // store this plane (with the material)
-        if (!material.hasTexture) { // color
-            // check if there are already points defined
-            for (int i = 0; i < 4; i++) {
-                Vertex existingVertex = colorVertices.get(planeVertices[i].toString());
-                if (existingVertex != null) {
-                    // there is already a vertex
-                    planeVertices[i] = existingVertex;
-                } else {
-                    // assign an id to this vertex
-                    planeVertices[i].setId(nextColorPlaneId++);
-                    // and store the vertex
-                    colorVertices.put(planeVertices[i].toString(), planeVertices[i]);
-                }
-            }
-            colorPlanes.put(planeVertices, material);
-        } else { // texture
-            // check if there are already points defined
-            for (int i = 0; i < 4; i++) {
-                Vertex existingVertex = texVertices.get(planeVertices[i].toString());
-                if (existingVertex != null) {
-                    // there is already a vertex
-                    planeVertices[i] = existingVertex;
-                } else {
-                    // assign an id to this vertex
-                    planeVertices[i].setId(nextTexPlaneId++);
-                    // and store the vertex
-                    texVertices.put(planeVertices[i].toString(), planeVertices[i]);
-                }
-            }
-            texPlanes.put(planeVertices, material);
+        // ===================
+        // store this plane (with the material) either
+        // to color or tex lists
+        HashMap<String, Vertex> vertices;
+        HashMap<Vertex[], PlaneMaterial> planes;
+        int[] nextPlaneId;
+        if (!material.hasTexture) {
+            vertices = colorVertices;
+            planes = colorPlanes;
+            nextPlaneId = nextColorPlaneId;
+        } else {
+            vertices = texVertices;
+            planes = texPlanes;
+            nextPlaneId = nextTexPlaneId;
         }
+        // check if there are already points defined
+        for (int i = 0; i < 4; i++) {
+            Vertex existingVertex = vertices.get(planeVertices[i].toString());
+            if (existingVertex != null) {
+                // there is already a vertex
+                planeVertices[i] = existingVertex;
+            } else {
+                // assign an id to this vertex
+                planeVertices[i].setId(nextPlaneId[0]++);
+                // and store the vertex
+                vertices.put(planeVertices[i].toString(), planeVertices[i]);
+            }
+        }
+        planes.put(planeVertices, material);
+        // ===================
     }
 
     // register a texture id -> bufferedImage mapping
@@ -392,7 +390,7 @@ public class ColladaFile {
             xmlFile.deleteChild("library_images");
         }
         // =======================
-
+        // store the colors that are being used on any plane
         if (colors.size() > 0) {
             // create the texture object
             xmlFile.resetTopNode("library_visual_scenes/visual_scene/node[-1]");
@@ -407,7 +405,13 @@ public class ColladaFile {
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationY"}, "0 1 0 0");
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationX"}, "1 0 0 0");
             // scale the object down
-            xmlFile.addAttrAndTextContent("scale", new String[]{"sid=scale"}, "0.5 0.5 0.5");
+            if (texPlanes.size() > 0) {
+                // large voxel for textured objects
+                xmlFile.addAttrAndTextContent("scale", new String[]{"sid=scale"}, "0.5 0.5 0.5");
+            } else {
+                // small voxel for props
+                xmlFile.addAttrAndTextContent("scale", new String[]{"sid=scale"}, "0.05 0.05 0.05");
+            }
             // add the material to the object
             xmlFile.setTopNode("instance_geometry[-1]");
             xmlFile.addAttributes("", new String[] {"url=#Plane-color-mesh"});
@@ -425,40 +429,41 @@ public class ColladaFile {
                         "target=#" + baseName + "-material"
                 });
             }
-        }
-        // write all colors
-        for (Color color : colors.values()) {
-            int r = color.getRed();
-            int g = color.getGreen();
-            int b = color.getBlue();
-            String baseName = "Material_" + r + "_" + g + "_" + b;
 
-            // add the effect
-            xmlFile.resetTopNode("library_effects/effect[-1]");
-            xmlFile.addAttributes("", new String[]{"id=" + baseName + "-effect"});
-            xmlFile.setTopNode("profile_COMMON/technique");
-            xmlFile.addAttributes("", new String[]{"sid=common"});
-            xmlFile.setTopNode("lambert");
-            xmlFile.addAttrAndTextContent("emission/color", new String[] {"sid=emission"}, "0 0 0 1");
-            xmlFile.addAttrAndTextContent("ambient/color", new String[] {"sid=ambient"}, "0 0 0 1");
-            xmlFile.addAttrAndTextContent("diffuse/color", new String[] {"sid=diffuse"},
-                    r/(float)255 + " " + g/(float)255 + " " + b/(float)255 + " 1");
-            xmlFile.addAttrAndTextContent("index_of_refraction/float", new String[] {"sid=index_of_refraction"}, "1");
+            // write all colors
+            for (Color color : colors.values()) {
+                int r = color.getRed();
+                int g = color.getGreen();
+                int b = color.getBlue();
+                String baseName = "Material_" + r + "_" + g + "_" + b;
 
-            // add the material
-            xmlFile.resetTopNode("library_materials/material[-1]");
-            xmlFile.addAttributes("", new String[]{
-                    "id=" + baseName + "-material",
-                    "name=" + baseName
-            });
-            xmlFile.addAttributes("instance_effect", new String[] {
-                    "url=#" + baseName + "-effect"
-            });
+                // add the effect
+                xmlFile.resetTopNode("library_effects/effect[-1]");
+                xmlFile.addAttributes("", new String[]{"id=" + baseName + "-effect"});
+                xmlFile.setTopNode("profile_COMMON/technique");
+                xmlFile.addAttributes("", new String[]{"sid=common"});
+                xmlFile.setTopNode("lambert");
+                xmlFile.addAttrAndTextContent("emission/color", new String[] {"sid=emission"}, "0 0 0 1");
+                xmlFile.addAttrAndTextContent("ambient/color", new String[] {"sid=ambient"}, "0 0 0 1");
+                xmlFile.addAttrAndTextContent("diffuse/color", new String[] {"sid=diffuse"},
+                        r/(float)255 + " " + g/(float)255 + " " + b/(float)255 + " 1");
+                xmlFile.addAttrAndTextContent("index_of_refraction/float", new String[] {"sid=index_of_refraction"}, "1");
+
+                // add the material
+                xmlFile.resetTopNode("library_materials/material[-1]");
+                xmlFile.addAttributes("", new String[]{
+                        "id=" + baseName + "-material",
+                        "name=" + baseName
+                });
+                xmlFile.addAttributes("instance_effect", new String[] {
+                        "url=#" + baseName + "-effect"
+                });
+            }
         }
         // =========================
 
         // ######################################################
-        // color information
+        // write color information and object
         // ######################################################
         if (colorPlanes.size() > 0) {
             // reset top node
@@ -518,20 +523,18 @@ public class ColladaFile {
 
             // group planes according to the different colors
             // (those that have no texture)
-            HashMap<String, ArrayList<Vertex[]>> colorMaterialToPlanes = new HashMap<String, ArrayList<Vertex[]>>();
+            HashMap<Color, ArrayList<Vertex[]>> colorMaterialToPlanes = new HashMap<Color, ArrayList<Vertex[]>>();
             for (Map.Entry<Vertex[], PlaneMaterial> entry : colorPlanes.entrySet()) {
-                if (!entry.getValue().hasTexture) { // only add planes that have no texture
-                    ArrayList<Vertex[]> planes = colorMaterialToPlanes.get(entry.getValue().toString());
-                    if (planes == null) {
-                        planes = new ArrayList<Vertex[]>();
-                        colorMaterialToPlanes.put(entry.getValue().toString(), planes);
-                    }
-                    planes.add(entry.getKey());
+                ArrayList<Vertex[]> planes = colorMaterialToPlanes.get(entry.getValue().color);
+                if (planes == null) {
+                    planes = new ArrayList<Vertex[]>();
+                    colorMaterialToPlanes.put(entry.getValue().color, planes);
                 }
+                planes.add(entry.getKey());
             }
 
             // write the different poly-lists for colors (each is linked to a material)
-            for (Map.Entry<String, ArrayList<Vertex[]>> entry : colorMaterialToPlanes.entrySet()) {
+            for (Map.Entry<Color, ArrayList<Vertex[]>> entry : colorMaterialToPlanes.entrySet()) {
                 // polylist
                 StringBuilder pList = new StringBuilder();
                 StringBuilder vcount = new StringBuilder();
@@ -547,7 +550,7 @@ public class ColladaFile {
                     count++;
                 }
                 // generate the material information (color material)
-                Color color = materialMap.get(entry.getKey()).color;
+                Color color = entry.getKey();
                 String baseName = "Material_" + color.getRed() + "_" + color.getGreen() + "_" + color.getBlue();
                 // write data
                 xmlFile.setTopNode("polylist[-1]");
@@ -569,7 +572,7 @@ public class ColladaFile {
         // ######################################################
 
         // ######################################################
-        // texture information
+        // write texture information and object
         // ######################################################
         // =================
         // write texture details (below)
@@ -672,6 +675,7 @@ public class ColladaFile {
                 // get the texture point
                 Point point = texturePos.get(material.textureId);
                 int[] planeUV = new int[] {
+                        // the @i_j is for the interpolation
                         uvIds.get((point.x+1) + "_" + (point.y+1) + "@1_1").id,
                         uvIds.get((point.x+1) + "_" + (point.y) + "@1_0").id,
                         uvIds.get((point.x) + "_" + (point.y) + "@0_0").id,
@@ -718,7 +722,7 @@ public class ColladaFile {
         return textureMap != null;
     }
 
-    // write the texture image
+    // write the texture image to file
     public boolean writeTextureMap(File file, ErrorHandlerInterface errorHandler) {
         boolean result = false;
         if (hasTextureMap()) {
@@ -732,7 +736,7 @@ public class ColladaFile {
         return result;
     }
 
-    // save this file
+    // save this file (xml code)
     public boolean writeToFile(String filename, ErrorHandlerInterface errorHandler) {
         return xmlFile.writeToFile(filename, errorHandler);
     }

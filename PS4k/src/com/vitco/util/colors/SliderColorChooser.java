@@ -463,7 +463,7 @@ public class SliderColorChooser extends ColorChooserPrototype {
     }
 
     // the tabbed pane
-    private final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.RIGHT, JideTabbedPane.SCROLL_TAB_LAYOUT);
+    private final JTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.RIGHT, JideTabbedPane.SCROLL_TAB_LAYOUT);
 
     // ======================
 
@@ -503,8 +503,6 @@ public class SliderColorChooser extends ColorChooserPrototype {
 
         // set up the tabbed pane
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder());
-        setBackground(new Color(0, 0, 0, 0));
 
         // add the tabs
         JScrollPane RGBscrollPane = new JScrollPane(rgbTab);
@@ -525,8 +523,8 @@ public class SliderColorChooser extends ColorChooserPrototype {
         // disable focus for tabs themselves
         tabbedPane.setFocusable(false);
 
-        tabbedPane.setTabShape(JideTabbedPane.SHAPE_ROUNDED_FLAT); // make square
-        tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT); // fit them all
+        //tabbedPane.setTabShape(JideTabbedPane.SHAPE_ROUNDED_FLAT); // make square
+        //tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT); // fit them all
 
         // set tooltips
         for (int i = 0; i < tabbedPane.getTabCount(); i ++) {
