@@ -1,6 +1,7 @@
 package com.vitco.logic.layer;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.threed.jpct.FrameBuffer;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.logic.ViewPrototype;
@@ -133,14 +134,18 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
             component.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == 10) { // apply changes (return key)
-                        finishCellEditing(table);
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        if (e.getKeyCode() == 10) { // apply changes (return key)
+                            finishCellEditing(table);
+                        }
                     }
                 }
 
                 @Override
                 public void keyReleased(KeyEvent e) {
-                    e.consume(); // prevent further use of this keystroke
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        e.consume(); // prevent further use of this keystroke
+                    }
                 }
 
             });
@@ -218,18 +223,20 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                JTable aTable = (JTable)e.getSource();
-                int row = aTable.rowAtPoint(e.getPoint());
-                int col = aTable.columnAtPoint(e.getPoint());
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    JTable aTable = (JTable)e.getSource();
+                    int row = aTable.rowAtPoint(e.getPoint());
+                    int col = aTable.columnAtPoint(e.getPoint());
 
-                if (e.getClickCount() == 1) { // select layer
-                    data.selectLayerSoft(layers[row]);
-                } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
-                    data.setVisible(layers[row], !data.getLayerVisible(layers[row]));
-                }
-                // cancel editing if we are editing
-                if (e.getClickCount() == 1 && table.isEditing()) {
-                    finishCellEditing(table);
+                    if (e.getClickCount() == 1) { // select layer
+                        data.selectLayerSoft(layers[row]);
+                    } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
+                        data.setVisible(layers[row], !data.getLayerVisible(layers[row]));
+                    }
+                    // cancel editing if we are editing
+                    if (e.getClickCount() == 1 && table.isEditing()) {
+                        finishCellEditing(table);
+                    }
                 }
             }
         });

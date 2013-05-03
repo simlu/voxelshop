@@ -1,5 +1,6 @@
 package com.vitco.util.colors;
 
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.ColorTools;
 import com.vitco.util.colors.basics.ColorChooserPrototype;
 
@@ -33,35 +34,43 @@ public final class SatBrightPanelChooser extends ColorChooserPrototype {
         // register mouse down events
         MouseAdapter ma = new MouseAdapter() {
             private void internalColorUpdate(Point point, boolean notify) {
-                point = new Point(
-                        (int)Math.max(0, Math.min(getWidth(), point.getX())),
-                        (int)Math.max(0, Math.min(getHeight(), point.getY()))
-                );
-                currentColor = new float[] {
-                        Math.max(0, Math.min(1, currentColor[0])),
-                        Math.max(0, Math.min(1, (float)((point.getX() / (double) getWidth())))),
-                        Math.max(0, Math.min(1, 1-(float)((point.getY() / (double) getHeight()))))
-                };
-                if (notify) {
-                    // set the main color
-                    notifyListeners(currentColor);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    point = new Point(
+                            (int)Math.max(0, Math.min(getWidth(), point.getX())),
+                            (int)Math.max(0, Math.min(getHeight(), point.getY()))
+                    );
+                    currentColor = new float[] {
+                            Math.max(0, Math.min(1, currentColor[0])),
+                            Math.max(0, Math.min(1, (float)((point.getX() / (double) getWidth())))),
+                            Math.max(0, Math.min(1, 1-(float)((point.getY() / (double) getHeight()))))
+                    };
+                    if (notify) {
+                        // set the main color
+                        notifyListeners(currentColor);
+                    }
+                    repaint();
                 }
-                repaint();
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                internalColorUpdate(e.getPoint(), false);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    internalColorUpdate(e.getPoint(), false);
+                }
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                internalColorUpdate(e.getPoint(), false);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    internalColorUpdate(e.getPoint(), false);
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                internalColorUpdate(e.getPoint(), true);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    internalColorUpdate(e.getPoint(), true);
+                }
             }
         };
         addMouseListener(ma);

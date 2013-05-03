@@ -297,6 +297,10 @@ public class WorldUtil {
             for (int i = 0; i < charArray.length; i++) {
                 if (charArray[i] == '0') {
                     int id = textureManager.getTextureID(String.valueOf(textureIds[i]));
+                    if (id == -1) { // if the texture is not loaded
+                        loadTexture(String.valueOf(textureIds[i]), new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB), false);
+                        id = textureManager.getTextureID(String.valueOf(textureIds[i]));
+                    }
                     if ((hasRotation && rotation[i] != 0) || (hasFlip && flip[i])) {
                         int rotationValue = rotation == null ? 0 : rotation[i];
                         int flipValue = flip == null ? 0 : (flip[i] ? 1 : 0);

@@ -1,5 +1,6 @@
 package com.vitco.util.colors.basics.components;
 
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.colors.basics.Settings;
 
 import javax.swing.*;
@@ -161,10 +162,12 @@ public class HexBox extends JTextField {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == 10) {
-                    thisField.setText(String.valueOf(getValue()));
-                    // remove focus from this component
-                    thisField.transferFocusBackward();
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    if (e.getKeyCode() == 10) {
+                        thisField.setText(String.valueOf(getValue()));
+                        // remove focus from this component
+                        thisField.transferFocusBackward();
+                    }
                 }
             }
         });

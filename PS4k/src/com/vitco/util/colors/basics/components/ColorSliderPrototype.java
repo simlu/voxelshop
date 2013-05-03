@@ -1,5 +1,6 @@
 package com.vitco.util.colors.basics.components;
 
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.colors.basics.Settings;
 
 import javax.swing.*;
@@ -132,12 +133,14 @@ public abstract class ColorSliderPrototype extends JSlider {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (orientation == JSlider.HORIZONTAL) {
-                    setValue(sliderUI.valueForXPosition(e.getX()));
-                } else {
-                    setValue(sliderUI.valueForYPosition(e.getY()));
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    if (orientation == JSlider.HORIZONTAL) {
+                        setValue(sliderUI.valueForXPosition(e.getX()));
+                    } else {
+                        setValue(sliderUI.valueForYPosition(e.getY()));
+                    }
+                    repaint();
                 }
-                repaint();
             }
         });
         // register - needs to go last

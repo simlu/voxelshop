@@ -4,6 +4,7 @@ import com.threed.jpct.*;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.engine.data.container.Voxel;
+import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
@@ -21,7 +22,11 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Rendering functionality of this World (data + overlay)
@@ -137,20 +142,22 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     }
 
     // true iff the world does not need to be updated with voxels
-    private boolean worldVoxelCurrent = false;
+    private boolean worldVoxelCurrent = true;
     // force update of world before next draw
     protected final void invalidateVoxels() {
         if (localMouseDown) { // instant update needed for interaction
-            refreshVoxels();
+            refreshVoxels(true);
         } else {
             worldVoxelCurrent = false;
         }
     }
 
     // make sure the voxels are valid "right now", no matter what
-    private void refreshVoxels() {
-        updateWorldWithVoxels();
-        worldVoxelCurrent = true;
+    private void refreshVoxels(boolean force) {
+        if (!worldVoxelCurrent || force) {
+            worldVoxelCurrent = true;
+            updateWorldWithVoxels();
+        }
     }
 
     // ==============================
@@ -559,10 +566,23 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
         }
 
-        // handle the redrawing of this component
-        @Override
-        protected final void paintComponent(Graphics g1) {
-            isRepainting = true;
+        private BufferedImage img;
+        private BufferedImage finalImg;
+
+        public void handleResize() {
+            if (img == null || img.getWidth() != container.getWidth() || img.getHeight() != container.getHeight()) {
+                img = new BufferedImage(buffer.getWidth(), buffer.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics g = img.getGraphics();
+                g.setColor(container.bgColor);
+                g.fillRect(0,0,buffer.getWidth(), buffer.getHeight());
+                finalImg = new BufferedImage(buffer.getWidth(), buffer.getHeight(), BufferedImage.TYPE_INT_RGB);
+                g = finalImg.getGraphics();
+                g.setColor(container.bgColor);
+                g.fillRect(0,0,buffer.getWidth(), buffer.getHeight());
+            }
+        }
+
+        protected final void render() {
             if (skipNextWorldRender && !doNotSkipNextWorldRender) {
                 skipNextWorldRender = false;
             } else {
@@ -572,9 +592,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 }
                 buffer.clear(bgColor);
                 if (drawWorld) {
-                    if (!worldVoxelCurrent) {
-                        refreshVoxels();
-                    }
+                    refreshVoxels(false);
                     world.renderScene(buffer);
                     if (useWireFrame) {
                         world.drawWireframe(buffer, VitcoSettings.WIREFRAME_COLOR);
@@ -592,19 +610,32 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
                 }
             }
-            buffer.display(g1);
+            buffer.display(img.getGraphics());
+
+            Graphics2D ig = (Graphics2D) finalImg.getGraphics();
+            ig.drawImage(img, 0, 0, null);
+
             // draw the under/overlay (voxels in parallel planes)
             if (drawGhostOverlay) {
-                drawGhostOverlay((Graphics2D) g1, cameraChanged);
+                drawGhostOverlay(ig, cameraChanged);
             }
             if (drawOverlay && drawAnimationOverlay) { // overlay part 2
-                drawAnimationOverlay((Graphics2D) g1); // refreshes with animation data
+                drawAnimationOverlay(ig); // refreshes with animation data
             }
             if (drawOverlay && drawVoxelOverlay) {
-                drawVoxelOverlay((Graphics2D) g1);
+                drawVoxelOverlay(ig);
+            }
+        }
+
+        // handle the redrawing of this component
+        @Override
+        protected final void paintComponent(Graphics g1) {
+            if (finalImg != null) {
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    g1.drawImage(finalImg, 0, 0, null);
+                }
             }
             cameraChanged = false; // camera is current for this redraw
-            isRepainting = false;
         }
 
         // draw some ghosting lines (the voxel outline)
@@ -638,17 +669,19 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             g1.drawImage(overlayBuffer, 0, 0, null);
         }
 
-        private boolean isRepainting = false;
-        protected boolean isRepainting() {
-            return isRepainting;
-        }
-
     }
+
+    private Thread thisThread = Thread.currentThread();
 
     private boolean needRepaint = true;
     protected final void forceRepaint() {
+        // expensive - with multi threading this has to be here though
+        // otherwise we risk a concurrency exception when fetching the voxels
+        //refreshVoxels(false);
         needRepaint = true;
     }
+
+    private boolean isRepainting = false;
 
     @PostConstruct
     public final void startup() {
@@ -656,9 +689,26 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         threadManager.manage(new LifeTimeThread() {
             @Override
             public void loop() throws InterruptedException {
-                if (needRepaint && !container.isRepainting()) {
-                    needRepaint = false;
-                    container.repaint();
+                if (needRepaint && !isRepainting) {
+                    isRepainting = true;
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        container.render();
+                    }
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {
+                            @Override
+                            public void run() {
+                                container.repaint();
+                                needRepaint = false;
+                            }
+                        });
+                    } catch (InterruptedException ignored) {
+                        needRepaint = true; // make sure we repaint
+                    } catch (InvocationTargetException e) {
+                        errorHandler.handle(e);
+                    } finally {
+                        isRepainting = false;
+                    }
                 }
                 sleep(33); // about 25 fps
                 // stop repaint when mouse is down on another view
@@ -677,43 +727,47 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         buffer.dispose();
     }
 
+    // only perform these actions once (even if the class is instantiated several times)
+    static {
+        Config.fadeoutLight = false;
+        Config.maxPolysVisible = 5000;
+
+        Config.useMultipleThreads = true;
+        Config.maxNumberOfCores = Math.min(4, Runtime.getRuntime().availableProcessors());
+        Config.loadBalancingStrategy = 1; // default 0
+
+        Config.mipmap = true;
+
+        //Config.mtDebug = true;
+        Logger.setLogLevel(Logger.ERROR);
+    }
+
     protected final int side;
     private boolean localMouseDown = false;
     private static boolean globalMouseDown = false;
-    private static boolean initialized = false;
+    // note: constructor - no need to synchronize this
     protected EngineViewPrototype(Integer side) {
         // make sure side defaults to -1
         if (side == null || side < 0 || side > 2) {
             side = -1;
         }
         this.side = side;
-        // only perform these actions once (even if the class is instantiated several times)
-        if (!initialized) {
-//            Config.tuneForIndoor();
-            Config.fadeoutLight=false;
-            Config.maxPolysVisible = 5000;
-            //Config.mtDebug = true;
-
-            // doesnt seem to have much effect ...
-//            Config.maxNumberOfCores = 2;
-//            Config.useMultipleThreads = true;
-//            Config.loadBalancingStrategy = 2; // default 0
-
-            Logger.setLogLevel(Logger.ERROR);
-            initialized = true;
-        }
 
         container.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                globalMouseDown = true;
-                localMouseDown = true;
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    globalMouseDown = true;
+                    localMouseDown = true;
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                globalMouseDown = false;
-                localMouseDown = false;
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    globalMouseDown = false;
+                    localMouseDown = false;
+                }
             }
         });
 
@@ -725,6 +779,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         world.setCameraTo(camera);
         selectedVoxelsWorld.setCameraTo(camera);
         buffer = new FrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
+        container.handleResize();
 
         // lighting (1,1,1) = true color
         world.setAmbientLight(1, 1, 1);
@@ -737,9 +792,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             @Override
             public void componentResized(ComponentEvent e) {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
-                    buffer.dispose();
+                    cleanup();
                     buffer = null; // so the gc can collect before creation if necessary
                     buffer = new FrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
+                    container.handleResize();
                     container.doNotSkipNextWorldRender();
                     forceRepaint();
                 }

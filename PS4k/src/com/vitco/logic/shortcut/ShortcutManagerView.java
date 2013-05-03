@@ -75,49 +75,55 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             component.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
-                    e.consume(); // prevent further use of this keystroke
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        e.consume(); // prevent further use of this keystroke
+                    }
                 }
 
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    KeyStroke keyStroke = e.getKeyCode() == 27
-                            ? null // escape
-                            : KeyStroke.getKeyStrokeForEvent(e); // else
-                    if (shortcutManager.isValidShortcut(keyStroke)) {
-                        if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
-                            // update the shortcut
-                            if (shortcutManager.updateShortcutObject(keyStroke, frame, rowIndex)) {
-                                String shortcutText = shortcutManager.asString(keyStroke);
-                                component.setText(shortcutText);
-                                // make sure the table is up to date
-                                // note: workaround for resize bug
-                                table.setValueAt(shortcutText, rowIndex, vColIndex);
-                            }
-                            component.setBackground(VitcoSettings.EDIT_BG_COLOR);
-                        } else { // this shortcut is already used (!)
-                            // show error color for one second
-                            component.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
-                            Toolkit.getDefaultToolkit().beep(); // play beep
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e1) {
-                                        // no need to track this
-                                        // e1.printStackTrace();
-                                    }
-                                    component.setBackground(VitcoSettings.EDIT_BG_COLOR);
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        KeyStroke keyStroke = e.getKeyCode() == 27
+                                ? null // escape
+                                : KeyStroke.getKeyStrokeForEvent(e); // else
+                        if (shortcutManager.isValidShortcut(keyStroke)) {
+                            if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
+                                // update the shortcut
+                                if (shortcutManager.updateShortcutObject(keyStroke, frame, rowIndex)) {
+                                    String shortcutText = shortcutManager.asString(keyStroke);
+                                    component.setText(shortcutText);
+                                    // make sure the table is up to date
+                                    // note: workaround for resize bug
+                                    table.setValueAt(shortcutText, rowIndex, vColIndex);
                                 }
-                            }.start();
+                                component.setBackground(VitcoSettings.EDIT_BG_COLOR);
+                            } else { // this shortcut is already used (!)
+                                // show error color for one second
+                                component.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
+                                Toolkit.getDefaultToolkit().beep(); // play beep
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e1) {
+                                            // no need to track this
+                                            // e1.printStackTrace();
+                                        }
+                                        component.setBackground(VitcoSettings.EDIT_BG_COLOR);
+                                    }
+                                }.start();
+                            }
                         }
+                        e.consume(); // prevent further use of this keystroke
                     }
-                    e.consume(); // prevent further use of this keystroke
                 }
 
                 @Override
                 public void keyReleased(KeyEvent e) {
-                    e.consume(); // prevent further use of this keystroke
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        e.consume(); // prevent further use of this keystroke
+                    }
                 }
             });
             component.setHighlighter(null); // do not show selection
@@ -157,22 +163,26 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             shortcut_table.addMouseMotionListener(new MouseMotionAdapter() {
                 @Override
                 public void mouseMoved(MouseEvent e) {
-                    JTable aTable = (JTable)e.getSource();
-                    int tRow = aTable.rowAtPoint(e.getPoint());
-                    int tCol = aTable.columnAtPoint(e.getPoint());
-                    if (curRow != tRow || curCol != tCol) {
-                        curRow = tRow;
-                        curCol = tCol;
-                        aTable.repaint();
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        JTable aTable = (JTable)e.getSource();
+                        int tRow = aTable.rowAtPoint(e.getPoint());
+                        int tCol = aTable.columnAtPoint(e.getPoint());
+                        if (curRow != tRow || curCol != tCol) {
+                            curRow = tRow;
+                            curCol = tCol;
+                            aTable.repaint();
+                        }
                     }
                 }
             });
             shortcut_table.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    curRow = -1;
-                    curCol = -1;
-                    ((JTable)e.getSource()).repaint();
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        curRow = -1;
+                        curCol = -1;
+                        ((JTable)e.getSource()).repaint();
+                    }
                 }
             });
             // custom layout for the cells

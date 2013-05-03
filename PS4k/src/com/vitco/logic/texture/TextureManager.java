@@ -70,20 +70,26 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
             this.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    super.mousePressed(e);
-                    // unselect if this is already selected
-                    data.selectTextureSoft(selected ? -1 : textureId);
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        super.mousePressed(e);
+                        // unselect if this is already selected
+                        data.selectTextureSoft(selected ? -1 : textureId);
+                    }
                 }
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    super.mouseEntered(e);
-                    setBorder(BorderFactory.createLineBorder(activeColor));
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        super.mouseEntered(e);
+                        setBorder(BorderFactory.createLineBorder(activeColor));
+                    }
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    super.mouseExited(e);
-                    setBorder(BorderFactory.createLineBorder(selected?selectedColor:inactiveColor));
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        super.mouseExited(e);
+                        setBorder(BorderFactory.createLineBorder(selected?selectedColor:inactiveColor));
+                    }
                 }
             });
             refresh();

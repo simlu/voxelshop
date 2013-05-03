@@ -1,6 +1,7 @@
 package com.vitco.logic.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
@@ -93,18 +94,20 @@ public class ShortcutManager implements ShortcutManagerInterface {
     private final KeyEventDispatcher globalProcessor = new KeyEventDispatcher() {
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
-            KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
-            if (globalByKeyStroke.containsKey(keyStroke)
-                    // only fire if all actions are activated
-                    && enableAllActivatableActions) {
-                // fire new action
-                actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                        new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
-                );
-                e.consume(); // no-one else needs to handle this now
-                return true; // no further action
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+                if (globalByKeyStroke.containsKey(keyStroke)
+                        // only fire if all actions are activated
+                        && enableAllActivatableActions) {
+                    // fire new action
+                    actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
+                            new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
+                    );
+                    e.consume(); // no-one else needs to handle this now
+                    return true; // no further action
+                }
+                return false; // might need further action
             }
-            return false; // might need further action
         }
     };
 

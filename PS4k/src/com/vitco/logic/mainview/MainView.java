@@ -2,6 +2,7 @@ package com.vitco.logic.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
+import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.util.Light;
 import com.vitco.engine.CameraChangeListener;
@@ -193,13 +194,16 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) { // scroll = zoom in and out
-                int rotation = e.getWheelRotation();
-                if (rotation < 0) {
-                    camera.zoomIn(Math.abs(rotation) * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
-                } else {
-                    camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    int rotation = e.getWheelRotation();
+                    if (rotation < 0) {
+                        camera.zoomIn(Math.abs(rotation) * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                    } else {
+                        camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                    }
+                    container.doNotSkipNextWorldRender();
+                    forceRepaint();
                 }
-                forceRepaint();
             }
 
             private Point leftMouseDown = null;
@@ -207,34 +211,40 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
             @Override
             public void mousePressed(MouseEvent e) {
-                switch (e.getButton()) {
-                    case 1: leftMouseDown = e.getPoint(); break;
-                    case 3: rightMouseDown = e.getPoint(); break;
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    switch (e.getButton()) {
+                        case 1: leftMouseDown = e.getPoint(); break;
+                        case 3: rightMouseDown = e.getPoint(); break;
+                    }
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                switch (e.getButton()) {
-                    case 1: leftMouseDown = null; break;
-                    case 3: rightMouseDown = null; break;
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    switch (e.getButton()) {
+                        case 1: leftMouseDown = null; break;
+                        case 3: rightMouseDown = null; break;
+                    }
                 }
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (leftMouseDown != null) {
-                    camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
-                    leftMouseDown.x = e.getX();
-                    leftMouseDown.y = e.getY();
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
-                } else if (rightMouseDown != null) {
-                    camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
-                    rightMouseDown.x = e.getX();
-                    rightMouseDown.y = e.getY();
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    if (leftMouseDown != null) {
+                        camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
+                        leftMouseDown.x = e.getX();
+                        leftMouseDown.y = e.getY();
+                        container.doNotSkipNextWorldRender();
+                        forceRepaint();
+                    } else if (rightMouseDown != null) {
+                        camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
+                        rightMouseDown.x = e.getX();
+                        rightMouseDown.y = e.getY();
+                        container.doNotSkipNextWorldRender();
+                        forceRepaint();
+                    }
                 }
             }
         };

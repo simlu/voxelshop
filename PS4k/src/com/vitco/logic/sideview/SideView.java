@@ -3,6 +3,7 @@ package com.vitco.logic.sideview;
 import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.swing.JideButton;
 import com.threed.jpct.Config;
+import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.VOXELMODE;
@@ -285,14 +286,17 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         container.addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                int rotation = e.getWheelRotation();
-                if (rotation < 0) {
-                    camera.zoomIn(Math.abs(rotation) * VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
-                } else {
-                    camera.zoomOut(rotation * VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    int rotation = e.getWheelRotation();
+                    if (rotation < 0) {
+                        camera.zoomIn(Math.abs(rotation) * VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
+                    } else {
+                        camera.zoomOut(rotation * VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
+                    }
+                    animationAdapter.mouseMoved(e); // keep selection refreshed (zoom ~ mouse move)
+                    container.doNotSkipNextWorldRender();
+                    forceRepaint();
                 }
-                animationAdapter.mouseMoved(e); // keep selection refreshed (zoom ~ mouse move)
-                forceRepaint();
             }
         });
 
@@ -305,11 +309,15 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             // =======================
             @Override
             public void mouseEntered(MouseEvent e) {
-                preferences.storeObject("engine_view_voxel_preview_plane", side*2);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    preferences.storeObject("engine_view_voxel_preview_plane", side*2);
+                }
             }
             @Override
             public void mouseExited(MouseEvent e) {
-                preferences.storeObject("engine_view_voxel_preview_plane", -1);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    preferences.storeObject("engine_view_voxel_preview_plane", -1);
+                }
             }
 
             // shifting
@@ -318,29 +326,35 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.getButton() == 1) {
-                    mouse_down_point = e.getPoint();
-                } else {
-                    mouse_down_point = null;
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    if (e.getButton() == 1) {
+                        mouse_down_point = e.getPoint();
+                    } else {
+                        mouse_down_point = null;
+                    }
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                mouse_down_point = null;
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    mouse_down_point = null;
+                }
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (mouse_down_point != null) {
-                    if (camera.isEnabled()) {
-                        // keep speed the same for different container sizes (uses shift2D!)
-                        camera.shift2D(150 * (float) (e.getX() - mouse_down_point.getX()) / container.getWidth(),
-                                150 * (float) (e.getY() - mouse_down_point.getY()) / container.getHeight(),
-                                VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
-                        mouse_down_point = e.getPoint();
-                        container.doNotSkipNextWorldRender();
-                        forceRepaint();
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    if (mouse_down_point != null) {
+                        if (camera.isEnabled()) {
+                            // keep speed the same for different container sizes (uses shift2D!)
+                            camera.shift2D(150 * (float) (e.getX() - mouse_down_point.getX()) / container.getWidth(),
+                                    150 * (float) (e.getY() - mouse_down_point.getY()) / container.getHeight(),
+                                    VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
+                            mouse_down_point = e.getPoint();
+                            container.doNotSkipNextWorldRender();
+                            forceRepaint();
+                        }
                     }
                 }
             }

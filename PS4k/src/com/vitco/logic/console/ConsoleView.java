@@ -1,8 +1,8 @@
 package com.vitco.logic.console;
 
 import com.jidesoft.action.CommandMenuBar;
-import com.vitco.logic.ViewPrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
+import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.types.StateActionPrototype;
 
@@ -58,10 +58,15 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                scrollPane.tempScrollStop = true;
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    scrollPane.tempScrollStop = true;
+                }
             }
-            @Override public void mouseReleased(MouseEvent e) {
-                scrollPane.tempScrollStop = false;
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    scrollPane.tempScrollStop = false;
+                }
             }
         });
         // handle console events

@@ -1,6 +1,7 @@
 package com.vitco.engine;
 
 import com.newbrightidea.util.RTree;
+import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
@@ -106,165 +107,173 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (dragPoint != -1) { // there is a point dragged
-                if (container.getBounds().contains(e.getPoint())) {
-                    if (wasDragged == -1) { // remember that this point was dragged
-                        wasDragged = System.currentTimeMillis();
-                    } else {
-                        data.undoA();
-                    }
-                    data.setPreviewLine(-1, -1); // reset the preview line
-                    // move the point to the correct position
-                    ExtendedVector tmp = data.getPoint(dragPoint);
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                if (dragPoint != -1) { // there is a point dragged
+                    if (container.getBounds().contains(e.getPoint())) {
+                        if (wasDragged == -1) { // remember that this point was dragged
+                            wasDragged = System.currentTimeMillis();
+                        } else {
+                            data.undoA();
+                        }
+                        data.setPreviewLine(-1, -1); // reset the preview line
+                        // move the point to the correct position
+                        ExtendedVector tmp = data.getPoint(dragPoint);
 
-                    SimpleVector point = getPoint(e, tmp);
-                    data.movePoint(dragPoint, point);
+                        SimpleVector point = getPoint(e, tmp);
+                        data.movePoint(dragPoint, point);
+                    }
                 }
             }
         }
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            rebuild2DIndex(); // only recomputes if necessary
-            int selected_point = data.getSelectedPoint();
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                rebuild2DIndex(); // only recomputes if necessary
+                int selected_point = data.getSelectedPoint();
 
-            // find if there is a point nearby
-            List<ExtendedVector> search = points2D.search(new float[]{e.getX() - VitcoSettings.ANIMATION_CIRCLE_RADIUS,e.getY() - VitcoSettings.ANIMATION_CIRCLE_RADIUS},
-                    new float[]{
-                            VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
-                            VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND});
+                // find if there is a point nearby
+                List<ExtendedVector> search = points2D.search(new float[]{e.getX() - VitcoSettings.ANIMATION_CIRCLE_RADIUS,e.getY() - VitcoSettings.ANIMATION_CIRCLE_RADIUS},
+                        new float[]{
+                                VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                                VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND});
 
-            // make sure this is in circle (and not just in square!)
-            for (int i = 0, len = search.size(); i < len; i++) {
-                if ( Math.pow(search.get(i).x - e.getX(),2.0) + Math.pow(search.get(i).y - e.getY(),2.0)
-                        > Math.pow((double)VitcoSettings.ANIMATION_CIRCLE_RADIUS,2.0)) {
-                    search.remove(i);
-                    i--;
-                    len--;
-                }
-            }
-
-            int tmp = -1;
-            if (search.size() > 0) {
-                // get the circle on top
-                Collections.sort(search, new Comparator<ExtendedVector>() {
-                    @Override
-                    public int compare(ExtendedVector o1, ExtendedVector o2) {
-                        return (int)Math.signum(o2.z - o1.z);
+                // make sure this is in circle (and not just in square!)
+                for (int i = 0, len = search.size(); i < len; i++) {
+                    if ( Math.pow(search.get(i).x - e.getX(),2.0) + Math.pow(search.get(i).y - e.getY(),2.0)
+                            > Math.pow((double)VitcoSettings.ANIMATION_CIRCLE_RADIUS,2.0)) {
+                        search.remove(i);
+                        i--;
+                        len--;
                     }
-                });
-                // remember id
-                tmp = search.get(0).id;
-            }
+                }
 
-            data.highlightPoint(tmp); // highlight that point
-            int highlighted_point = data.getHighlightedPoint();
+                int tmp = -1;
+                if (search.size() > 0) {
+                    // get the circle on top
+                    Collections.sort(search, new Comparator<ExtendedVector>() {
+                        @Override
+                        public int compare(ExtendedVector o1, ExtendedVector o2) {
+                            return (int)Math.signum(o2.z - o1.z);
+                        }
+                    });
+                    // remember id
+                    tmp = search.get(0).id;
+                }
 
-            // set the preview line iff highlighted and selected point exist and are different
-            if (selected_point != -1 && highlighted_point != selected_point && highlighted_point != -1) {
-                data.setPreviewLine(selected_point, highlighted_point);
-            } else {
-                data.setPreviewLine(-1, -1);
+                data.highlightPoint(tmp); // highlight that point
+                int highlighted_point = data.getHighlightedPoint();
+
+                // set the preview line iff highlighted and selected point exist and are different
+                if (selected_point != -1 && highlighted_point != selected_point && highlighted_point != -1) {
+                    data.setPreviewLine(selected_point, highlighted_point);
+                } else {
+                    data.setPreviewLine(-1, -1);
+                }
             }
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            camera.setEnabled(true);
-            needToRebuild = true;
-            if (e.getButton() == 1) { // left mb
-                if (dragPoint != -1 && wasDragged != -1) {
-                    // do not save this move action if the point position did not change
-                    ExtendedVector point = data.getPoint(dragPoint);
-                    data.undoA();
-                    ExtendedVector point2 = data.getPoint(dragPoint);
-                    if (!point.equals(point2)) {
-                        data.redoA();
-                    }
-                    // quick select for side view "current" planes
-                    SimpleVector position = data.getPoint(dragPoint);
-                    preferences.storeObject("currentplane_sideview1", Math.round(position.z/VitcoSettings.VOXEL_SIZE));
-                    preferences.storeObject("currentplane_sideview2", Math.round(position.y/VitcoSettings.VOXEL_SIZE));
-                    preferences.storeObject("currentplane_sideview3", Math.round(position.x/VitcoSettings.VOXEL_SIZE));
-                }
-                dragPoint = -1; // stop dragging
-                final int highlighted_point = data.getHighlightedPoint();
-                final int selected_point = data.getSelectedPoint();
-                if (highlighted_point != -1) { // there is a highlighted point
-                    // if it was not at all or only for a short time dragged
-                    if (wasDragged == -1 || (System.currentTimeMillis() - wasDragged < 75) ) {
-                        if (selected_point == highlighted_point) { // click on selected point
-                            data.selectPoint(-1); // deselect
-                        } else {
-                            if (selected_point == -1) { // click on new point
-                                data.selectPoint(highlighted_point); // select
-                            } else {
-                                // click on different point -> connect/disconnect line
-                                if (data.areConnected(selected_point, highlighted_point)) {
-                                    data.disconnect(selected_point, highlighted_point);
-                                    //animationData.selectPoint(-1); // unselect after disconnect
-                                } else {
-                                    data.connect(selected_point, highlighted_point);
-                                    //animationData.selectPoint(highlighted_point); // select after connect
-                                }
-                                data.selectPoint(-1); // unselect
-                                // reset "highlighting"
-                                data.setPreviewLine(-1, -1);
-                            }
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                camera.setEnabled(true);
+                needToRebuild = true;
+                if (e.getButton() == 1) { // left mb
+                    if (dragPoint != -1 && wasDragged != -1) {
+                        // do not save this move action if the point position did not change
+                        ExtendedVector point = data.getPoint(dragPoint);
+                        data.undoA();
+                        ExtendedVector point2 = data.getPoint(dragPoint);
+                        if (!point.equals(point2)) {
+                            data.redoA();
                         }
-                    } else {
-                        data.selectPoint(-1);
+                        // quick select for side view "current" planes
+                        SimpleVector position = data.getPoint(dragPoint);
+                        preferences.storeObject("currentplane_sideview1", Math.round(position.z/VitcoSettings.VOXEL_SIZE));
+                        preferences.storeObject("currentplane_sideview2", Math.round(position.y/VitcoSettings.VOXEL_SIZE));
+                        preferences.storeObject("currentplane_sideview3", Math.round(position.x/VitcoSettings.VOXEL_SIZE));
+                    }
+                    dragPoint = -1; // stop dragging
+                    final int highlighted_point = data.getHighlightedPoint();
+                    final int selected_point = data.getSelectedPoint();
+                    if (highlighted_point != -1) { // there is a highlighted point
+                        // if it was not at all or only for a short time dragged
+                        if (wasDragged == -1 || (System.currentTimeMillis() - wasDragged < 75) ) {
+                            if (selected_point == highlighted_point) { // click on selected point
+                                data.selectPoint(-1); // deselect
+                            } else {
+                                if (selected_point == -1) { // click on new point
+                                    data.selectPoint(highlighted_point); // select
+                                } else {
+                                    // click on different point -> connect/disconnect line
+                                    if (data.areConnected(selected_point, highlighted_point)) {
+                                        data.disconnect(selected_point, highlighted_point);
+                                        //animationData.selectPoint(-1); // unselect after disconnect
+                                    } else {
+                                        data.connect(selected_point, highlighted_point);
+                                        //animationData.selectPoint(highlighted_point); // select after connect
+                                    }
+                                    data.selectPoint(-1); // unselect
+                                    // reset "highlighting"
+                                    data.setPreviewLine(-1, -1);
+                                }
+                            }
+                        } else {
+                            data.selectPoint(-1);
+                        }
                     }
                 }
+                mouseMoved(e);
             }
-            mouseMoved(e);
         }
 
         @Override
         public void mousePressed(final MouseEvent e) {
-            final int highlighted_point = data.getHighlightedPoint();
-            final int selected_point = data.getSelectedPoint();
-            if (highlighted_point != -1) {
-                camera.setEnabled(false);
-            }
-            switch (e.getButton()) {
-                case 3:
-                    if (highlighted_point != -1) {
-                        // highlighted point -> ask to remove
-                        JPopupMenu popup = new JPopupMenu();
-                        JMenuItem remove = new JMenuItem(langSelector.getString("remove_point"));
-                        remove.addActionListener(new ActionListener() {
-                            private final int tmp_point = highlighted_point; // store point for later access
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                final int highlighted_point = data.getHighlightedPoint();
+                final int selected_point = data.getSelectedPoint();
+                if (highlighted_point != -1) {
+                    camera.setEnabled(false);
+                }
+                switch (e.getButton()) {
+                    case 3:
+                        if (highlighted_point != -1) {
+                            // highlighted point -> ask to remove
+                            JPopupMenu popup = new JPopupMenu();
+                            JMenuItem remove = new JMenuItem(langSelector.getString("remove_point"));
+                            remove.addActionListener(new ActionListener() {
+                                private final int tmp_point = highlighted_point; // store point for later access
 
-                            @Override
-                            public void actionPerformed(ActionEvent evt) {
-                                // add a point
-                                data.removePoint(tmp_point);
-                                data.highlightPoint(-1);
-                            }
-                        });
-                        popup.add(remove);
-                        popup.show(e.getComponent(), e.getX(), e.getY());
-                    } else {
-                        // right click on background -> deselect
-                        data.selectPoint(-1);
-                    }
-                    break;
-                case 1: // if left mouse
-                    if (highlighted_point != -1) { // highlighted -> select point
-                        wasDragged = -1;
-                        dragPoint = highlighted_point;
-                    } else if (e.getClickCount() == 2) {
-                        // not highlighted and double-click -> add a point
-                        // check if we hit something
-                        SimpleVector point = getPoint(e, getRefPoint());
-                        int added = data.addPoint(point);
-                        if (selected_point != -1) { // connect if possible
-                            data.connect(added, selected_point);
+                                @Override
+                                public void actionPerformed(ActionEvent evt) {
+                                    // add a point
+                                    data.removePoint(tmp_point);
+                                    data.highlightPoint(-1);
+                                }
+                            });
+                            popup.add(remove);
+                            popup.show(e.getComponent(), e.getX(), e.getY());
+                        } else {
+                            // right click on background -> deselect
+                            data.selectPoint(-1);
                         }
-                        data.selectPoint(added); // and select
-                    }
-                    break;
+                        break;
+                    case 1: // if left mouse
+                        if (highlighted_point != -1) { // highlighted -> select point
+                            wasDragged = -1;
+                            dragPoint = highlighted_point;
+                        } else if (e.getClickCount() == 2) {
+                            // not highlighted and double-click -> add a point
+                            // check if we hit something
+                            SimpleVector point = getPoint(e, getRefPoint());
+                            int added = data.addPoint(point);
+                            if (selected_point != -1) { // connect if possible
+                                data.connect(added, selected_point);
+                            }
+                            data.selectPoint(added); // and select
+                        }
+                        break;
+                }
             }
         }
     }
@@ -387,11 +396,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             modifierListener.add(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if (active && mouseInside) {
-                        if (lastMoveEvent != null) {
-                            hover(new MouseEvent(e.getComponent(), e.getID(), e.getWhen(),
-                                    e.getModifiers(), lastMoveEvent.getX(),
-                                    lastMoveEvent.getY(), 0, false));
+                    synchronized (VitcoSettings.SYNCHRONIZER) {
+                        if (active && mouseInside) {
+                            if (lastMoveEvent != null) {
+                                hover(new MouseEvent(e.getComponent(), e.getID(), e.getWhen(),
+                                        e.getModifiers(), lastMoveEvent.getX(),
+                                        lastMoveEvent.getY(), 0, false));
+                            }
                         }
                     }
                 }
@@ -686,96 +697,108 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
         @Override
         public final void mousePressed(MouseEvent e) {
-            rightMouseDown = e.getButton() == MouseEvent.BUTTON3;
-            if (rightMouseDown) {
-                hover(e);
-            }
-            // remember voxel mode
-            massVoxelMode = voxelMode;
-            // make sure there is a layer selected or display a warning
-            if (data.getSelectedLayer() == -1) {
-                Integer[] layers = data.getLayers();
-                if (layers.length > 0) {
-                    data.selectLayer(layers[0]);
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                rightMouseDown = e.getButton() == MouseEvent.BUTTON3;
+                if (rightMouseDown) {
+                    hover(e);
+                }
+                // remember voxel mode
+                massVoxelMode = voxelMode;
+                // make sure there is a layer selected or display a warning
+                if (data.getSelectedLayer() == -1) {
+                    Integer[] layers = data.getLayers();
+                    if (layers.length > 0) {
+                        data.selectLayer(layers[0]);
+                    } else {
+                        console.addLine(langSelector.getString("no_layer_warning"));
+                    }
+                }
+                // execute action
+                if (voxelMode == VOXELMODE.SELECT) {
+                    camera.setEnabled(false);
+                    switch (selectMode) {
+                        case 0:
+                            selectStartPoint = e.getPoint();
+                            selectMode = 1;
+                            break;
+                        case 2:
+                            currentSelectionShift = data.getVoxelSelectionShift().clone();
+                            dragStartPos = convert2D3D(e.getX(), e.getY(), dragStartReferencePos);
+                            break;
+                    }
                 } else {
-                    console.addLine(langSelector.getString("no_layer_warning"));
+                    executeNormalMode(e);
                 }
-            }
-            // execute action
-            if (voxelMode == VOXELMODE.SELECT) {
-                camera.setEnabled(false);
-                switch (selectMode) {
-                    case 0:
-                        selectStartPoint = e.getPoint();
-                        selectMode = 1;
-                        break;
-                    case 2:
-                        currentSelectionShift = data.getVoxelSelectionShift().clone();
-                        dragStartPos = convert2D3D(e.getX(), e.getY(), dragStartReferencePos);
-                        break;
-                }
-            } else {
-                executeNormalMode(e);
             }
         }
 
         @Override
         public final void mouseReleased(MouseEvent e) {
-            camera.setEnabled(true);
-            rightMouseDown = rightMouseDown && e.getButton() != MouseEvent.BUTTON3;
-            massVoxel = false;
-            lastAddedVoxel = null;
-            dragDrawStartPos = null;
-            switch (selectMode) {
-                case 1:
-                    Integer hitVoxelId = finishSelect(e);
-                    selectMode = 0;
-                    if (hitVoxelId != null && data.getVoxel(hitVoxelId).isSelected() && !e.isControlDown()) {
-                        // make sure the voxel is correctly selected
-                        container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-                    }
-                    break;
-                case 2:
-                    selectMode = 0;
-                    break;
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                camera.setEnabled(true);
+                rightMouseDown = rightMouseDown && e.getButton() != MouseEvent.BUTTON3;
+                massVoxel = false;
+                lastAddedVoxel = null;
+                dragDrawStartPos = null;
+                switch (selectMode) {
+                    case 1:
+                        Integer hitVoxelId = finishSelect(e);
+                        selectMode = 0;
+                        if (hitVoxelId != null && data.getVoxel(hitVoxelId).isSelected() && !e.isControlDown()) {
+                            // make sure the voxel is correctly selected
+                            container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                        }
+                        break;
+                    case 2:
+                        selectMode = 0;
+                        break;
+                }
+                hover(e);
+                invalidateVoxels();
+                forceRepaint();
             }
-            hover(e);
-            invalidateVoxels();
-            forceRepaint();
         }
 
         @Override
         public final void mouseEntered(MouseEvent e) {
-            mouseInside = true;
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                mouseInside = true;
+            }
         }
 
         @Override
         public final void mouseExited(MouseEvent e) {
-            mouseInside = false;
-            data.removeVoxelHighlights();
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                mouseInside = false;
+                data.removeVoxelHighlights();
+            }
         }
 
         @Override
         public final void mouseDragged(MouseEvent e) {
-            lastMoveEvent = e;
-            if (massVoxel) {
-                hover(e);
-                executeNormalMode(e);
-            } else {
-                switch (selectMode) {
-                    case 1:
-                    case 2:
-                        executeSelectionMode(e);
-                        forceRepaint();
-                        break;
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                lastMoveEvent = e;
+                if (massVoxel) {
+                    hover(e);
+                    executeNormalMode(e);
+                } else {
+                    switch (selectMode) {
+                        case 1:
+                        case 2:
+                            executeSelectionMode(e);
+                            forceRepaint();
+                            break;
+                    }
                 }
             }
         }
 
         @Override
         public final void mouseMoved(MouseEvent e) {
-            lastMoveEvent = e;
-            hover(e);
+            synchronized (VitcoSettings.SYNCHRONIZER) {
+                lastMoveEvent = e;
+                hover(e);
+            }
         }
     }
 
@@ -791,15 +814,17 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             @Override
             public boolean dispatchKeyEvent(KeyEvent e) {
-                if (ctrlDown != e.isControlDown() || altDown != e.isAltDown() || shiftDown != e.isShiftDown()) {
-                    ctrlDown = e.isControlDown();
-                    altDown = e.isAltDown();
-                    shiftDown = e.isShiftDown();
-                    for (KeyListener kl : modifierListener) {
-                        kl.keyPressed(e);
+                synchronized (VitcoSettings.SYNCHRONIZER) {
+                    if (ctrlDown != e.isControlDown() || altDown != e.isAltDown() || shiftDown != e.isShiftDown()) {
+                        ctrlDown = e.isControlDown();
+                        altDown = e.isAltDown();
+                        shiftDown = e.isShiftDown();
+                        for (KeyListener kl : modifierListener) {
+                            kl.keyPressed(e);
+                        }
                     }
+                    return false;
                 }
-                return false;
             }
         });
 
@@ -858,6 +883,13 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 forceRepaint();
             }
 
+            @Override
+            public void onTextureDataChanged() {
+                invalidateVoxels();
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
+            }
+
         };
         data.addDataChangeListener(dca);
 
@@ -901,7 +933,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         preferences.addPrefChangeListener("active_voxel_submode", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object newValue) {
-                voxelMode = (VOXELMODE)newValue;
+                voxelMode = (VOXELMODE) newValue;
                 voxelAdapter.notifyModeChange();
                 voxelAdapter.replayHover();
                 forceRepaint();
