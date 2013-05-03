@@ -2,10 +2,13 @@ package com.vitco.logic.texture;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.swing.JideScrollPane;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.ThumbnailFileChooser;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.WrapLayout;
@@ -34,6 +37,13 @@ import java.util.HashMap;
  * Manages the different Textures.
  */
 public class TextureManager extends ViewPrototype implements TextureManagerInterface {
+
+    protected AsyncActionManager asyncActionManager;
+
+    @Autowired
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
+    }
 
     // var & setter
     protected Data data;
@@ -69,27 +79,26 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
             //this.setToolTipText("Texture #" + textureId);
             this.addMouseListener(new MouseAdapter() {
                 @Override
-                public void mousePressed(MouseEvent e) {
-                    synchronized (VitcoSettings.SYNCHRONIZER) {
-                        super.mousePressed(e);
-                        // unselect if this is already selected
-                        data.selectTextureSoft(selected ? -1 : textureId);
-                    }
+                public void mousePressed(final MouseEvent e) {
+                    super.mousePressed(e);
+                    asyncActionManager.addAsyncAction(new AsyncAction() {
+                        @Override
+                        public void performAction() {
+                            // unselect if this is already selected
+                            data.selectTextureSoft(selected ? -1 : textureId);
+                        }
+                    });
                 }
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    synchronized (VitcoSettings.SYNCHRONIZER) {
-                        super.mouseEntered(e);
-                        setBorder(BorderFactory.createLineBorder(activeColor));
-                    }
+                    super.mouseEntered(e);
+                    setBorder(BorderFactory.createLineBorder(activeColor));
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    synchronized (VitcoSettings.SYNCHRONIZER) {
-                        super.mouseExited(e);
-                        setBorder(BorderFactory.createLineBorder(selected?selectedColor:inactiveColor));
-                    }
+                    super.mouseExited(e);
+                    setBorder(BorderFactory.createLineBorder(selected?selectedColor:inactiveColor));
                 }
             });
             refresh();
@@ -109,7 +118,12 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 selected = selectedNew;
                 this.setBorder(BorderFactory.createLineBorder(selected?selectedColor:inactiveColor));
             }
-            this.updateUI();
+            SwingAsyncHelper.handle(new Runnable() {
+                @Override
+                public void run() {
+                    updateUI();
+                }
+            }, errorHandler);
         }
     }
 
@@ -332,7 +346,13 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 }
 
                 // update the UI (force!)
-                textureWrapperPanel.updateUI();
+                SwingAsyncHelper.handle(new Runnable() {
+                    @Override
+                    public void run() {
+                        textureWrapperPanel.updateUI();
+                    }
+                }, errorHandler);
+
 
                 // this updates the values for the getBound() function
                 scrollPane.validate();

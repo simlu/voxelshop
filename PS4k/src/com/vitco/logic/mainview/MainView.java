@@ -5,6 +5,7 @@ import com.threed.jpct.Config;
 import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.util.Light;
+import com.vitco.async.AsyncAction;
 import com.vitco.engine.CameraChangeListener;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
@@ -193,59 +194,71 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         // user mouse input - change camera position
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
-            public void mouseWheelMoved(MouseWheelEvent e) { // scroll = zoom in and out
-                synchronized (VitcoSettings.SYNCHRONIZER) {
-                    int rotation = e.getWheelRotation();
-                    if (rotation < 0) {
-                        camera.zoomIn(Math.abs(rotation) * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
-                    } else {
-                        camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+            public void mouseWheelMoved(final MouseWheelEvent e) { // scroll = zoom in and out
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        int rotation = e.getWheelRotation();
+                        if (rotation < 0) {
+                            camera.zoomIn(Math.abs(rotation) * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                        } else {
+                            camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                        }
+                        container.doNotSkipNextWorldRender();
+                        forceRepaint();
                     }
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
-                }
+                });
             }
 
             private Point leftMouseDown = null;
             private Point rightMouseDown = null;
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                synchronized (VitcoSettings.SYNCHRONIZER) {
-                    switch (e.getButton()) {
-                        case 1: leftMouseDown = e.getPoint(); break;
-                        case 3: rightMouseDown = e.getPoint(); break;
+            public void mousePressed(final MouseEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        switch (e.getButton()) {
+                            case 1: leftMouseDown = e.getPoint(); break;
+                            case 3: rightMouseDown = e.getPoint(); break;
+                        }
                     }
-                }
+                });
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
-                synchronized (VitcoSettings.SYNCHRONIZER) {
-                    switch (e.getButton()) {
-                        case 1: leftMouseDown = null; break;
-                        case 3: rightMouseDown = null; break;
+            public void mouseReleased(final MouseEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        switch (e.getButton()) {
+                            case 1: leftMouseDown = null; break;
+                            case 3: rightMouseDown = null; break;
+                        }
                     }
-                }
+                });
             }
 
             @Override
-            public void mouseDragged(MouseEvent e) {
-                synchronized (VitcoSettings.SYNCHRONIZER) {
-                    if (leftMouseDown != null) {
-                        camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
-                        leftMouseDown.x = e.getX();
-                        leftMouseDown.y = e.getY();
-                        container.doNotSkipNextWorldRender();
-                        forceRepaint();
-                    } else if (rightMouseDown != null) {
-                        camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
-                        rightMouseDown.x = e.getX();
-                        rightMouseDown.y = e.getY();
-                        container.doNotSkipNextWorldRender();
-                        forceRepaint();
+            public void mouseDragged(final MouseEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        if (leftMouseDown != null) {
+                            camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
+                            leftMouseDown.x = e.getX();
+                            leftMouseDown.y = e.getY();
+                            container.doNotSkipNextWorldRender();
+                            forceRepaint();
+                        } else if (rightMouseDown != null) {
+                            camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
+                            rightMouseDown.x = e.getX();
+                            rightMouseDown.y = e.getY();
+                            container.doNotSkipNextWorldRender();
+                            forceRepaint();
+                        }
                     }
-                }
+                });
             }
         };
         container.addMouseWheelListener(mouseAdapter);

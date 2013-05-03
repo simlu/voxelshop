@@ -1,6 +1,5 @@
 package com.vitco.util.colors.basics.components;
 
-import com.vitco.res.VitcoSettings;
 import com.vitco.util.colors.basics.Settings;
 
 import javax.swing.*;
@@ -150,12 +149,10 @@ public class NumberBox extends JTextField {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                synchronized (VitcoSettings.SYNCHRONIZER) {
-                    if (e.getKeyCode() == 10) {
-                        thisField.setText(String.valueOf(getValue()));
-                        // remove focus from this component
-                        thisField.transferFocusBackward();
-                    }
+                if (e.getKeyCode() == 10) {
+                    thisField.setText(String.valueOf(getValue()));
+                    // remove focus from this component
+                    thisField.transferFocusBackward();
                 }
             }
         });

@@ -12,7 +12,7 @@ import java.util.HashSet;
 /**
  * This is a world wrapper that provides easy voxel interaction.
  */
-public class CWorld extends SyncWorld {
+public class CWorld extends World {
     private static final long serialVersionUID = 1L;
 
     // constructor

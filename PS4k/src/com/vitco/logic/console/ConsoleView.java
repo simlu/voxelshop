@@ -58,15 +58,11 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         scrollPane.getVerticalScrollBar().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                synchronized (VitcoSettings.SYNCHRONIZER) {
-                    scrollPane.tempScrollStop = true;
-                }
+                scrollPane.tempScrollStop = true;
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                synchronized (VitcoSettings.SYNCHRONIZER) {
-                    scrollPane.tempScrollStop = false;
-                }
+                scrollPane.tempScrollStop = false;
             }
         });
         // handle console events

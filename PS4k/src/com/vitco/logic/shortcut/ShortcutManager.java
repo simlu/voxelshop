@@ -1,12 +1,14 @@
 package com.vitco.logic.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
-import com.vitco.res.VitcoSettings;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
 import com.vitco.util.FileTools;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,6 +36,12 @@ import java.util.*;
  * Handles shortcut linking (logic)
  */
 public class ShortcutManager implements ShortcutManagerInterface {
+
+    protected AsyncActionManager asyncActionManager;
+    @Autowired
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
+    }
 
     // what shortcuts we allow
     private final ArrayList<Integer> VALID_KEYS_WITH_MODIFIER =
@@ -93,21 +101,24 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // hook that catches KeyStroke if this is registered as global
     private final KeyEventDispatcher globalProcessor = new KeyEventDispatcher() {
         @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            synchronized (VitcoSettings.SYNCHRONIZER) {
-                KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
-                if (globalByKeyStroke.containsKey(keyStroke)
-                        // only fire if all actions are activated
-                        && enableAllActivatableActions) {
-                    // fire new action
-                    actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                            new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
-                    );
-                    e.consume(); // no-one else needs to handle this now
-                    return true; // no further action
-                }
-                return false; // might need further action
+        public boolean dispatchKeyEvent(final KeyEvent e) {
+            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+            if (globalByKeyStroke.containsKey(keyStroke)
+                    // only fire if all actions are activated
+                    && enableAllActivatableActions) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        // fire new action
+                        actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
+                                new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
+                        );
+                    }
+                });
+                e.consume(); // no-one else needs to handle this now
+                return true; // no further action
             }
+            return false; // might need further action
         }
     };
 

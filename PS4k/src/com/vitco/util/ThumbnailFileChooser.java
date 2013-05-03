@@ -91,7 +91,9 @@ public class ThumbnailFileChooser extends JFileChooser {
             icon.setImage(img);
 
             // Repaint the dialog so we see the new icon.
-            SwingUtilities.invokeLater(new Runnable() {public void run() {repaint();}});
+            SwingUtilities.invokeLater(new Runnable() {public void run() {
+                repaint();
+            }});
         }
     }
 
