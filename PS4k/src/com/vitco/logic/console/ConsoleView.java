@@ -10,10 +10,9 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Displays console content and buttons to user.
@@ -31,7 +30,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         textArea.setForeground(VitcoSettings.DEFAULT_TEXT_COLOR);
         textArea.setBackground(VitcoSettings.DEFAULT_BG_COLOR);
         // load the previous console data
-        ArrayList<String> consoleData = console.getConsoleData();
+        final ArrayList<String> consoleData = console.getConsoleData();
         for (String line : consoleData) {
           textArea.append(line);
         }
@@ -101,8 +100,85 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             }
         });
 
+        final JTextField inputField = new JTextField();
+
+        // produce error
+        actionManager.registerAction("create_error_for_debug", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                errorHandler.handle(new Exception("Debug Exception"));
+            }
+        });
+
+        // holds all console actions
+        final HashMap<String, String> consoleAction = new HashMap<String, String>();
+        // needs to be all lower case
+        consoleAction.put("/clear", "console_action_clear");
+        consoleAction.put("/debug exception", "create_error_for_debug");
+
+        // register all console actions (so debug know that they are used)
+        for (String action : consoleAction.values()) {
+            actionManager.registerActionIsUsed(action);
+        }
+
+        inputField.addKeyListener(new KeyAdapter() {
+            // holds previous console commands
+            String tmpCommand = null;
+            ArrayList<String> commands = new ArrayList<String>();
+            int pos = 0;
+
+            @Override
+            public void keyPressed(final KeyEvent e) {
+                super.keyPressed(e);
+                switch (e.getKeyCode()) {
+                    case 10:
+                        String command = inputField.getText().toLowerCase().trim();
+                        final String action = consoleAction.get(command);
+                        if (action != null) {
+                            console.addLine(command); // notify about execution
+                            commands.remove(command); // delete older position
+                            commands.add(command); // add to the end
+                            tmpCommand = null; // reset the tmp command
+                            if (commands.size() > 10) { // keep the history to 10
+                                commands.remove(0);
+                            }
+                            pos = commands.size(); // latest position
+                            inputField.setText(""); // remove command
+                            actionManager.getAction(action).actionPerformed( // execute command
+                                    new ActionEvent(e.getSource(), e.hashCode(), e.toString())
+                            );
+                        }
+                        break;
+                    case KeyEvent.VK_UP: // previous command
+                        if (tmpCommand == null) {
+                            tmpCommand = inputField.getText().toLowerCase().trim();
+                        }
+                        if (commands.size() > 0 && pos > 0) {
+                            inputField.setText(commands.get(pos-1));
+                            pos--;
+                        }
+                        break;
+                    case KeyEvent.VK_DOWN: // next command
+                        if (pos + 1 < commands.size()) {
+                            inputField.setText(commands.get(pos + 1));
+                            pos++;
+                        } else if (tmpCommand != null) {
+                            inputField.setText(tmpCommand);
+                            tmpCommand = null;
+                            pos++;
+                        }
+                        break;
+                }
+            }
+        });
+
+        final JPanel consolePanel = new JPanel();
+        consolePanel.setLayout(new BorderLayout());
+        consolePanel.add(scrollPane, BorderLayout.CENTER);
+        consolePanel.add(inputField, BorderLayout.SOUTH);
+
         // the console itself is in the middle
-        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(consolePanel, BorderLayout.CENTER);
         // create menu bar to the left
         CommandMenuBar menuPanel = new CommandMenuBar();
         menuPanel.setOrientation(1); // top down orientation

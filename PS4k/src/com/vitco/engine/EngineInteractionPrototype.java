@@ -13,6 +13,7 @@ import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.ColorTools;
+import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
@@ -23,6 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -190,7 +192,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 public void performAction() {
                     camera.setEnabled(true);
                     needToRebuild = true;
-                    if (e.getButton() == 1) { // left mb
+                    if (e.getModifiers() == MouseEvent.BUTTON1_MASK) { // left mb
                         if (dragPoint != -1 && wasDragged != -1) {
                             // do not save this move action if the point position did not change
                             ExtendedVector point = data.getPoint(dragPoint);
@@ -250,8 +252,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     if (highlighted_point != -1) {
                         camera.setEnabled(false);
                     }
-                    switch (e.getButton()) {
-                        case 3:
+                    switch (e.getModifiers()) {
+                        case MouseEvent.BUTTON3_MASK:
                             if (highlighted_point != -1) {
                                 // highlighted point -> ask to remove
                                 JPopupMenu popup = new JPopupMenu();
@@ -273,7 +275,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 data.selectPoint(-1);
                             }
                             break;
-                        case 1: // if left mouse
+                        case MouseEvent.BUTTON1_MASK: // if left mouse
                             if (highlighted_point != -1) { // highlighted -> select point
                                 wasDragged = -1;
                                 dragPoint = highlighted_point;
@@ -637,7 +639,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             searchResult.toArray(toSet);
             if (toSet.length > 0) {
                 changedSelection = true;
-                data.massSetVoxelSelected(toSet, e.getButton() == 1);
+                data.massSetVoxelSelected(toSet, e.getModifiers() == MouseEvent.BUTTON1_MASK);
             }
 
             container.setPreviewRect(null);
@@ -719,7 +721,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             asyncActionManager.addAsyncAction(new AsyncAction() {
                 @Override
                 public void performAction() {
-                    rightMouseDown = e.getButton() == MouseEvent.BUTTON3;
+                    rightMouseDown = e.getModifiers() == MouseEvent.BUTTON3_MASK;
                     if (rightMouseDown) {
                         hover(e);
                     }
@@ -760,7 +762,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 @Override
                 public void performAction() {
                     camera.setEnabled(true);
-                    rightMouseDown = rightMouseDown && e.getButton() != MouseEvent.BUTTON3;
+                    rightMouseDown = rightMouseDown && e.getModifiers() == MouseEvent.BUTTON3_DOWN_MASK;
                     massVoxel = false;
                     lastAddedVoxel = null;
                     dragDrawStartPos = null;
@@ -841,8 +843,64 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
     private final ArrayList<KeyListener> modifierListener = new ArrayList<KeyListener>();
 
+    private static boolean initialized = false;
+
     @PostConstruct
     protected final void init() {
+
+        if (!initialized) {
+            initialized = true;
+            // register shortcuts for shifting the selection
+            actionManager.registerAction("shift_selected_voxels_up", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int[] shift = data.getVoxelSelectionShift();
+                    data.setVoxelSelectionShift(shift[0], shift[1]+1, shift[2]);
+                }
+            });
+            // register shortcuts for shifting the selection
+            actionManager.registerAction("shift_selected_voxels_down", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int[] shift = data.getVoxelSelectionShift();
+                    data.setVoxelSelectionShift(shift[0], shift[1]-1, shift[2]);
+                }
+            });
+
+            // register shortcuts for shifting the selection
+            actionManager.registerAction("shift_selected_voxels_left", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int[] shift = data.getVoxelSelectionShift();
+                    data.setVoxelSelectionShift(shift[0], shift[1], shift[2]-1);
+                }
+            });
+            // register shortcuts for shifting the selection
+            actionManager.registerAction("shift_selected_voxels_right", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int[] shift = data.getVoxelSelectionShift();
+                    data.setVoxelSelectionShift(shift[0], shift[1], shift[2]+1);
+                }
+            });
+
+            // register shortcuts for shifting the selection
+            actionManager.registerAction("shift_selected_voxels_out", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int[] shift = data.getVoxelSelectionShift();
+                    data.setVoxelSelectionShift(shift[0]-1, shift[1], shift[2]);
+                }
+            });
+            // register shortcuts for shifting the selection
+            actionManager.registerAction("shift_selected_voxels_in", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int[] shift = data.getVoxelSelectionShift();
+                    data.setVoxelSelectionShift(shift[0]+1, shift[1], shift[2]);
+                }
+            });
+        }
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
             private boolean ctrlDown = false;

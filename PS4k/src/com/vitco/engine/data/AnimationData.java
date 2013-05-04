@@ -466,12 +466,12 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     // =========================
 
     @Override
-    public final boolean isValid(int pointId) {
+    public synchronized final boolean isValid(int pointId) {
         return dataContainer.points.containsKey(pointId);
     }
 
     @Override
-    public final int addPoint(SimpleVector position) {
+    public synchronized final int addPoint(SimpleVector position) {
         int pointId = getFreePointId();
         ExtendedVector point = new ExtendedVector(position.x, position.y, position.z, pointId);
         historyManagerA.applyIntent(new AddPointIntent(point, false));
@@ -479,7 +479,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final boolean removePoint(int pointId) {
+    public synchronized final boolean removePoint(int pointId) {
         boolean result = false;
         if (isValid(pointId)) {
             historyManagerA.applyIntent(new RemovePointIntent(pointId, false));
@@ -489,7 +489,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final boolean movePoint(int pointId, SimpleVector pos) {
+    public synchronized final boolean movePoint(int pointId, SimpleVector pos) {
         boolean result = false;
         if (isValid(pointId)) {
             if (dataContainer.activeFrame == -1) { // move real point
@@ -503,12 +503,12 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final boolean areConnected(int id1, int id2) {
+    public synchronized final boolean areConnected(int id1, int id2) {
         return dataContainer.lines.containsKey(Math.min(id1, id2) + "_" + Math.max(id1, id2));
     }
 
     @Override
-    public final boolean connect(int id1, int id2) {
+    public synchronized final boolean connect(int id1, int id2) {
         boolean result = false;
         if (isValid(id1) && isValid(id2) && !areConnected(id1, id2)) {
             historyManagerA.applyIntent(new ConnectIntent(id1, id2, false));
@@ -518,7 +518,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final boolean clearA() {
+    public synchronized final boolean clearA() {
         boolean result = false;
         if (dataContainer.points.size() > 0) {
             historyManagerA.applyIntent(new ClearAIntent(false));
@@ -528,7 +528,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final boolean disconnect(int id1, int id2) {
+    public synchronized final boolean disconnect(int id1, int id2) {
         boolean result = false;
         if (isValid(id1) && isValid(id2) && areConnected(id1, id2)) {
             historyManagerA.applyIntent(new DisconnectIntent(id1, id2, false));
@@ -538,7 +538,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final ExtendedVector getPoint(int pointId) {
+    public synchronized final ExtendedVector getPoint(int pointId) {
         if (dataContainer.activeFrame != -1) { // return frame point if defined
             ExtendedVector point = dataContainer.frames.get(dataContainer.activeFrame).getPoint(pointId);
             if (point != null) {
@@ -551,7 +551,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     private ExtendedVector[] pointBuffer = new ExtendedVector[]{};
     private boolean pointBufferValid = false;
     @Override
-    public final ExtendedVector[] getPoints() {
+    public synchronized final ExtendedVector[] getPoints() {
         if (!pointBufferValid) {
             if (pointBuffer.length != dataContainer.points.size()) {
                 pointBuffer = new ExtendedVector[dataContainer.points.size()];
@@ -568,7 +568,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     private ExtendedVector[][] lineBuffer = new ExtendedVector[][]{};
     private boolean lineBufferValid = false;
     @Override
-    public final ExtendedVector[][] getLines() {
+    public synchronized final ExtendedVector[][] getLines() {
         if (!lineBufferValid) {
             if (lineBuffer.length != dataContainer.lines.size()) {
                 lineBuffer = new ExtendedVector[dataContainer.lines.size()][2];
@@ -585,27 +585,27 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final void undoA() {
+    public synchronized final void undoA() {
         historyManagerA.unapply();
     }
 
     @Override
-    public final void redoA() {
+    public synchronized final void redoA() {
         historyManagerA.apply();
     }
 
     @Override
-    public final boolean canUndoA() {
+    public synchronized final boolean canUndoA() {
         return historyManagerA.canUndo();
     }
 
     @Override
-    public final boolean canRedoA() {
+    public synchronized final boolean canRedoA() {
         return historyManagerA.canRedo();
     }
 
     @Override
-    public final boolean selectFrame(int frameId) {
+    public synchronized final boolean selectFrame(int frameId) {
         boolean result = false;
         if (dataContainer.frames.containsKey(frameId) || frameId == -1) {
             historyManagerA.applyIntent(new SetActiveFrameIntent(frameId, false));
@@ -615,19 +615,19 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final int getSelectedFrame() {
+    public synchronized final int getSelectedFrame() {
         return dataContainer.activeFrame;
     }
 
     @Override
-    public final int createFrame(String frameName) {
+    public synchronized final int createFrame(String frameName) {
         int frameId = getFreeFrameId();
         historyManagerA.applyIntent(new CreateFrameIntent(frameId, frameName, false));
         return frameId;
     }
 
     @Override
-    public final boolean deleteFrame(int frameId) {
+    public synchronized final boolean deleteFrame(int frameId) {
         boolean result = false;
         if (dataContainer.frames.containsKey(frameId)) {
             historyManagerA.applyIntent(new DeleteFrameIntent(frameId, false));
@@ -637,7 +637,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final boolean renameFrame(int frameId, String newName) {
+    public synchronized final boolean renameFrame(int frameId, String newName) {
         boolean result = false;
         if (dataContainer.frames.containsKey(frameId)) {
             historyManagerA.applyIntent(new RenameFrameIntent(frameId, newName, false));
@@ -649,7 +649,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     private Integer[] frameBuffer = new Integer[]{};
     private boolean frameBufferValid = false;
     @Override
-    public final Integer[] getFrames() {
+    public synchronized final Integer[] getFrames() {
         if (!frameBufferValid) {
             if (frameBuffer.length != dataContainer.frames.size()) {
                 frameBuffer = new Integer[dataContainer.frames.size()];
@@ -661,7 +661,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final boolean resetFrame(int frameId) {
+    public synchronized final boolean resetFrame(int frameId) {
         boolean result = false;
         if (dataContainer.frames.containsKey(frameId)) {
             historyManagerA.applyIntent(new ResetFrameIntent(frameId, false));
@@ -671,7 +671,7 @@ public abstract class AnimationData extends GeneralData implements AnimationData
     }
 
     @Override
-    public final String getFrameName(int frameId) {
+    public synchronized final String getFrameName(int frameId) {
         if (dataContainer.frames.containsKey(frameId)) {
             return dataContainer.frames.get(frameId).getName();
         }

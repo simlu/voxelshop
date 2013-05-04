@@ -22,12 +22,12 @@ import java.util.Map;
 public final class Data extends VoxelHighlighting implements DataInterface {
 
     @Override
-    public final void clearHistoryA() {
+    public synchronized final void clearHistoryA() {
         historyManagerA.clear();
     }
 
     @Override
-    public final void clearHistoryV() {
+    public synchronized final void clearHistoryV() {
         historyManagerV.clear();
     }
 
@@ -44,7 +44,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     }
 
     @Override
-    public final void freshStart() {
+    public synchronized final void freshStart() {
         // reset
         dataContainer = new DataContainer();
         // create initial layer and select it
@@ -60,7 +60,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     }
 
     @Override
-    public final boolean loadFromFile(File file) {
+    public synchronized final boolean loadFromFile(File file) {
         boolean result = false;
         // VSD file format
         DataContainer loaded = new DataContainer(file, errorHandler);
@@ -96,7 +96,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     }
 
     @Override
-    public final boolean saveToFile(File file) {
+    public synchronized final boolean saveToFile(File file) {
         boolean result = dataContainer.saveToVsdFile(file, errorHandler);
         if (result) {
             hasChanged = false;
@@ -105,7 +105,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
     }
 
     @Override
-    public final boolean exportToCollada(File file, File textureFile) {
+    public synchronized final boolean exportToCollada(File file, File textureFile) {
         boolean result = true;
 
         ColladaFile colladaExport = new ColladaFile();

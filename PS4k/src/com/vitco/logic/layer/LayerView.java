@@ -107,17 +107,27 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
             return col == 0;
         }
 
-        public final void setValueAt(Object value, int row, int col) {
-            if (!cancelEdit) {
-                switch (col) {
-                    case 0:
-                        data.renameLayer(layers[row], (String) value);
-                        break;
+        public final void setValueAt(final Object value, final int row, final int col) {
+            asyncActionManager.addAsyncAction(new AsyncAction() {
+                @Override
+                public void performAction() {
+                    if (!cancelEdit) {
+                        switch (col) {
+                            case 0:
+                                data.renameLayer(layers[row], (String) value);
+                                break;
+                        }
+                        SwingAsyncHelper.handle(new Runnable() {
+                            @Override
+                            public void run() {
+                                fireTableCellUpdated(row, col);
+                            }
+                        }, errorHandler);
+                    } else {
+                        cancelEdit = false;
+                    }
                 }
-                fireTableCellUpdated(row, col);
-            } else {
-                cancelEdit = false;
-            }
+            });
         }
 
     }
@@ -125,7 +135,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
     private final CellEditor cellEditor = new CellEditor();
     private class CellEditor extends AbstractCellEditor implements TableCellEditor {
         // handles the editing of the cell value
-        JTextArea component;
+        SaveTextArea component;
 
         @Override
         public boolean isCellEditable( EventObject e ) {
@@ -136,21 +146,20 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         // start editing
         public Component getTableCellEditorComponent(final JTable table, Object value,
                                                      boolean isSelected, final int rowIndex, final int vColIndex) {
-            component = new JTextArea();
-            component.setText(data.getLayerName(layers[rowIndex])); // set initial text
+            component = new SaveTextArea(data.getLayerName(layers[rowIndex]));
             component.setBorder(VitcoSettings.DEFAULT_CELL_BORDER_EDIT); // border
             component.setFont(VitcoSettings.TABLE_FONT_BOLD); // font
             component.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(final KeyEvent e) {
-                    asyncActionManager.addAsyncAction(new AsyncAction() {
-                        @Override
-                        public void performAction() {
-                            if (e.getKeyCode() == 10) { // apply changes (return key)
+                    if (e.getKeyCode() == 10) { // apply changes (return key)
+                        asyncActionManager.addAsyncAction(new AsyncAction() {
+                            @Override
+                            public void performAction() {
                                 finishCellEditing(table);
                             }
-                        }
-                    });
+                        });
+                    }
                 }
 
                 @Override
@@ -178,21 +187,26 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         this.data = data;
     }
 
-    protected void finishCellEditing(JTable table) {
-        if (table.isEditing()) {
-            // save the value
-            Component editField = table.getEditorComponent();
-            if (editField != null) {
-                data.renameLayer(layers[table.getEditingRow()], ((JTextArea)editField).getText());
+    protected void finishCellEditing(final JTable table) {
+        asyncActionManager.addAsyncAction(new AsyncAction() {
+            @Override
+            public void performAction() {
+                if (table.isEditing()) {
+                    // save the value
+                    Component editField = table.getEditorComponent();
+                    if (editField != null) {
+                        data.renameLayer(layers[table.getEditingRow()], ((JTextArea)editField).getText());
+                    }
+                    // cancel all further saving of edits
+                    cancelEdit = true;
+                    TableCellEditor tce = table.getCellEditor();
+                    if (tce != null) {
+                        tce.stopCellEditing();
+                    }
+                    cancelEdit = false;
+                }
             }
-            // cancel all further saving of edits
-            cancelEdit = true;
-            TableCellEditor tce = table.getCellEditor();
-            if (tce != null) {
-                tce.stopCellEditing();
-            }
-            cancelEdit = false;
-        }
+        });
     }
 
     // true if we are in animation mode, false if in voxel mode
@@ -244,7 +258,6 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                         JTable aTable = (JTable)e.getSource();
                         int row = aTable.rowAtPoint(e.getPoint());
                         int col = aTable.columnAtPoint(e.getPoint());
-
                         if (e.getClickCount() == 1) { // select layer
                             data.selectLayerSoft(layers[row]);
                         } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility

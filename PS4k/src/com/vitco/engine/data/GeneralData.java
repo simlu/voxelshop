@@ -31,12 +31,12 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
     }
 
     @Override
-    public boolean hasChanged() {
+    public synchronized boolean hasChanged() {
         return hasChanged;
     }
 
     @Override
-    public void resetHasChanged() {
+    public synchronized void resetHasChanged() {
         hasChanged = false;
     }
 

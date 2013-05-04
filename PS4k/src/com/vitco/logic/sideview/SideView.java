@@ -198,6 +198,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 container.doNotSkipNextWorldRender();
                 invalidateVoxels();
                 forceRepaint();
+
             }
         });
 
@@ -206,18 +207,21 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 preferences.storeObject("currentplane_sideview" + (side + 1), currentplane-1);
+                voxelAdapter.replayHover();
             }
         });
         actionManager.registerAction("sideview_move_plane_out" + (side + 1), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 preferences.storeObject("currentplane_sideview" + (side + 1), currentplane+1);
+                voxelAdapter.replayHover();
             }
         });
         actionManager.registerAction("sideview_set_plane_to_zero" + (side + 1), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 preferences.storeObject("currentplane_sideview" + (side + 1), 0);
+                voxelAdapter.replayHover();
             }
         });
         // complex action for repainting the icon with number
@@ -296,6 +300,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                         } else {
                             camera.zoomOut(rotation * VitcoSettings.SIDE_VIEW_FINE_ZOOM_SPEED);
                         }
+                        voxelAdapter.replayHover();
                         animationAdapter.mouseMoved(e); // keep selection refreshed (zoom ~ mouse move)
                         container.doNotSkipNextWorldRender();
                         forceRepaint();
@@ -339,7 +344,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        if (e.getButton() == 1) {
+                        if (e.getModifiers() == MouseEvent.BUTTON1_MASK) {
                             mouse_down_point = e.getPoint();
                         } else {
                             mouse_down_point = null;
@@ -370,6 +375,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                                         150 * (float) (e.getY() - mouse_down_point.getY()) / container.getHeight(),
                                         VitcoSettings.SIDE_VIEW_SIDE_MOVE_FACTOR);
                                 mouse_down_point = e.getPoint();
+                                voxelAdapter.replayHover();
                                 container.doNotSkipNextWorldRender();
                                 forceRepaint();
                             }

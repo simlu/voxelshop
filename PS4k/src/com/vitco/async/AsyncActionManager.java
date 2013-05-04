@@ -31,18 +31,17 @@ public class AsyncActionManager {
     }
 
     // list of actions
-    private final List<AsyncAction> stack = Collections.synchronizedList(new ArrayList<AsyncAction>());
+    private final List<String> stack = Collections.synchronizedList(new ArrayList<String>());
     // retry to execute when the main stack is empty
-    private final List<AsyncAction> idleStack = Collections.synchronizedList(new ArrayList<AsyncAction>());
+    private final List<String> idleStack = Collections.synchronizedList(new ArrayList<String>());
 
     // list of current action names
-    private final ConcurrentHashMap<String, String> actionNames = new ConcurrentHashMap<String, String>();
+    private final ConcurrentHashMap<String, AsyncAction> actionNames = new ConcurrentHashMap<String, AsyncAction>();
 
     public final void addAsyncAction(AsyncAction action) {
         String actionName = action.getName();
-        if (!actionNames.containsKey(actionName)) {
-            stack.add(action);
-            actionNames.put(actionName, "blank");
+        if (null == actionNames.put(actionName, action)) {
+            stack.add(actionName);
         }
     }
 
@@ -53,20 +52,14 @@ public class AsyncActionManager {
             @Override
             public void loop() throws InterruptedException {
                 if (stack.size() > 0) {
-                    //System.out.println(stack.size());
                     // fetch action
-                    final AsyncAction action = stack.remove(0);
+                    String actionName = stack.remove(0);
+                    AsyncAction action = actionNames.get(actionName);
                     if (action.ready()) {
-//                            SwingUtilities.invokeAndWait(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    action.performAction();
-//                                }
-//                            });
                         action.performAction();
-                        actionNames.remove(action.getName());
+                        actionNames.remove(actionName);
                     } else {
-                        idleStack.add(action);
+                        idleStack.add(actionName);
                     }
                 } else {
                     // add back to main stack

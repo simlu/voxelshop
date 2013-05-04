@@ -204,6 +204,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                         } else {
                             camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
                         }
+                        voxelAdapter.replayHover();
                         container.doNotSkipNextWorldRender();
                         forceRepaint();
                     }
@@ -218,9 +219,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        switch (e.getButton()) {
-                            case 1: leftMouseDown = e.getPoint(); break;
-                            case 3: rightMouseDown = e.getPoint(); break;
+                        switch (e.getModifiers()) {
+                            case MouseEvent.BUTTON1_MASK: leftMouseDown = e.getPoint(); break;
+                            case MouseEvent.BUTTON3_MASK: rightMouseDown = e.getPoint(); break;
                         }
                     }
                 });
@@ -231,9 +232,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        switch (e.getButton()) {
-                            case 1: leftMouseDown = null; break;
-                            case 3: rightMouseDown = null; break;
+                        switch (e.getModifiers()) {
+                            case MouseEvent.BUTTON1_MASK: leftMouseDown = null; break;
+                            case MouseEvent.BUTTON3_MASK: rightMouseDown = null; break;
                         }
                     }
                 });

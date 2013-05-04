@@ -1604,7 +1604,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     // =========================
 
     @Override
-    public final int addVoxelDirect(Color color, int[] pos) {
+    public synchronized final int addVoxelDirect(Color color, int[] pos) {
         int result = -1;
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
         if (layer != null && layer.voxelPositionFree(pos)) {
@@ -1617,7 +1617,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final int addVoxel(Color color, int[] textureId, int[] pos) {
+    public synchronized final int addVoxel(Color color, int[] textureId, int[] pos) {
         int result = -1;
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
         if (layer != null && layer.getSize() < VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER && layer.voxelPositionFree(pos)) {
@@ -1628,7 +1628,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean massAddVoxel(Voxel[] voxels) {
+    public synchronized final boolean massAddVoxel(Voxel[] voxels) {
         boolean result = false;
         VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
         if (layer != null) {
@@ -1653,7 +1653,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean removeVoxel(int voxelId) {
+    public synchronized final boolean removeVoxel(int voxelId) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId)) {
             historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, false));
@@ -1663,7 +1663,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean massRemoveVoxel(Integer[] voxelIds) {
+    public synchronized final boolean massRemoveVoxel(Integer[] voxelIds) {
         ArrayList<Integer> validVoxel = new ArrayList<Integer>();
         for (int voxelId : voxelIds) {
             if (dataContainer.voxels.containsKey(voxelId)) {
@@ -1681,7 +1681,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean moveVoxel(int voxelId, int[] newPos) {
+    public synchronized final boolean moveVoxel(int voxelId, int[] newPos) {
         boolean result = false;
         Voxel voxel = dataContainer.voxels.get(voxelId);
         if (voxel != null) {
@@ -1692,7 +1692,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean massMoveVoxel(Voxel[] voxel, int[] shift) {
+    public synchronized final boolean massMoveVoxel(Voxel[] voxel, int[] shift) {
         boolean result = false;
         if (voxel.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
             historyManagerV.applyIntent(new MassMoveVoxelIntent(voxel, shift.clone(), false));
@@ -1703,7 +1703,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // rotate voxel around their center (but not the voxel "texture" itself)
     @Override
-    public final boolean rotateVoxelCenter(Voxel[] voxel, int axe, float degree) {
+    public synchronized final boolean rotateVoxelCenter(Voxel[] voxel, int axe, float degree) {
         boolean result = false;
         if (voxel.length > 0 && degree/360 != 0 && axe <= 2 && axe >= 0) {
             historyManagerV.applyIntent(new VoxelData.RotateVoxelCenterIntent(voxel, axe, degree, false));
@@ -1713,7 +1713,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean mirrorVoxel(Voxel[] voxel, int axe) {
+    public synchronized final boolean mirrorVoxel(Voxel[] voxel, int axe) {
         boolean result = false;
         if (voxel.length > 0 && axe <= 2 && axe >= 0) {
             historyManagerV.applyIntent(new MirrorVoxelIntent(voxel, axe, false));
@@ -1723,7 +1723,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final Voxel getVoxel(int voxelId) {
+    public synchronized final Voxel getVoxel(int voxelId) {
         Voxel result = null;
         if (dataContainer.voxels.containsKey(voxelId)) {
             result = dataContainer.voxels.get(voxelId);
@@ -1732,7 +1732,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean setColor(int voxelId, Color color) {
+    public synchronized final boolean setColor(int voxelId, Color color) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId) &&
                 (!dataContainer.voxels.get(voxelId).getColor().equals(color) ||
@@ -1744,7 +1744,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean massSetColor(Integer[] voxelIds, Color color) {
+    public synchronized final boolean massSetColor(Integer[] voxelIds, Color color) {
         ArrayList<Integer> validVoxel = new ArrayList<Integer>();
         for (int voxelId : voxelIds) {
             if (dataContainer.voxels.containsKey(voxelId)) {
@@ -1762,7 +1762,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final Color getColor(int voxelId) {
+    public synchronized final Color getColor(int voxelId) {
         Color result = null;
         if (dataContainer.voxels.containsKey(voxelId)) {
             result = dataContainer.voxels.get(voxelId).getColor();
@@ -1771,7 +1771,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean setAlpha(int voxelId, int alpha) {
+    public synchronized final boolean setAlpha(int voxelId, int alpha) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).getAlpha() != alpha) {
             historyManagerV.applyIntent(new AlphaVoxelIntent(voxelId, alpha, false));
@@ -1781,7 +1781,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final int getAlpha(int voxelId) {
+    public synchronized final int getAlpha(int voxelId) {
         int result = -1;
         if (dataContainer.voxels.containsKey(voxelId)) {
             result = dataContainer.voxels.get(voxelId).getAlpha();
@@ -1790,7 +1790,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final int getLayer(int voxelId) {
+    public synchronized final int getLayer(int voxelId) {
         int result = -1;
         if (dataContainer.voxels.containsKey(voxelId)) {
             result = dataContainer.voxels.get(voxelId).getLayerId();
@@ -1799,7 +1799,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean clearRange(int[] center, int rad) {
+    public synchronized final boolean clearRange(int[] center, int rad) {
         boolean result = false;
         if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
             if (dataContainer.layers.get(dataContainer.selectedLayer).search(center, rad).length > 0) {
@@ -1811,7 +1811,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean fillRange(int[] center, int rad, Color color) {
+    public synchronized final boolean fillRange(int[] center, int rad, Color color) {
         boolean result = false;
         if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
             if (dataContainer.layers.get(dataContainer.selectedLayer).search(center, rad).length < Math.pow(rad*2 + 1, 3)) { // if there are still free voxels
@@ -1823,7 +1823,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean clearV(int layerId) {
+    public synchronized final boolean clearV(int layerId) {
         boolean result = false;
         if (dataContainer.layers.containsKey(layerId)) {
             if (dataContainer.layers.get(layerId).getSize() > 0) {
@@ -1835,7 +1835,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer) {
+    public synchronized final Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer) {
         Voxel[] result;
         if (onlyCurrentLayer) { // search only the current layers
             VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
@@ -1862,7 +1862,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // select a voxel
     @Override
-    public final boolean setVoxelSelected(int voxelId, boolean selected) {
+    public synchronized final boolean setVoxelSelected(int voxelId, boolean selected) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
             historyManagerV.applyIntent(new SelectVoxelIntent(voxelId, selected, false));
@@ -1872,13 +1872,13 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean isSelected(int voxelId) {
+    public synchronized final boolean isSelected(int voxelId) {
         return dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected();
     }
 
     private final HashMap<String, HashMap<String, int[]>> changedSelectedVoxel = new HashMap<String, HashMap<String, int[]>>();
     @Override
-    public final Voxel[][] getNewSelectedVoxel(String requestId) {
+    public synchronized final Voxel[][] getNewSelectedVoxel(String requestId) {
         if (!changedSelectedVoxel.containsKey(requestId)) {
             changedSelectedVoxel.put(requestId, null);
         }
@@ -1908,7 +1908,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // get selected visible voxels
     @Override
-    public final Voxel[] getSelectedVoxels() {
+    public synchronized final Voxel[] getSelectedVoxels() {
         if (!selectedVoxelBufferValid) {
             // get all presented voxels
             Voxel voxels[] = _getVisibleLayerVoxel();
@@ -1927,7 +1927,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected) {
+    public synchronized final boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected) {
         ArrayList<Integer> validVoxel = new ArrayList<Integer>();
         for (int voxelId : voxelIds) {
             if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
@@ -1945,7 +1945,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean migrateVoxels(Voxel[] voxels) {
+    public synchronized final boolean migrateVoxels(Voxel[] voxels) {
         boolean result = false;
         if (voxels.length > 0 && voxels.length <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
             historyManagerV.applyIntent(new MigrateIntent(voxels, false));
@@ -1961,7 +1961,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     boolean layerVoxelBufferValid = false;
     int layerVoxelBufferLastLayer;
     @Override
-    public final Voxel[] getLayerVoxels(int layerId) {
+    public synchronized final Voxel[] getLayerVoxels(int layerId) {
         if (!layerVoxelBufferValid || layerVoxelBufferLastLayer != layerId) {
             VoxelLayer layer = dataContainer.layers.get(layerId);
             if (layer != null) {
@@ -1979,7 +1979,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     // this means that everything is erased
     private final HashMap<String, HashMap<String, int[]>> changedVisibleVoxel = new HashMap<String, HashMap<String, int[]>>();
     @Override
-    public final Voxel[][] getNewVisibleLayerVoxel(String requestId) {
+    public synchronized final Voxel[][] getNewVisibleLayerVoxel(String requestId) {
         if (!changedVisibleVoxel.containsKey(requestId)) {
             changedVisibleVoxel.put(requestId, null);
         }
@@ -2031,7 +2031,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // returns visible voxels
     @Override
-    public final Voxel[] getVisibleLayerVoxel() {
+    public synchronized final Voxel[] getVisibleLayerVoxel() {
         updateVisVoxTreeInternal();
         return visibleLayerVoxelBuffer;
     }
@@ -2062,14 +2062,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // true iff any voxels visible
     @Override
-    public final boolean anyLayerVoxelVisible() {
+    public synchronized final boolean anyLayerVoxelVisible() {
         updateVisVoxTreeInternal();
         return anyVoxelsVisibleBuffer;
     }
 
     // to invalidate the side view buffer
     @Override
-    public final void invalidateSideViewBuffer(String requestId, Integer side, Integer plane) {
+    public synchronized final void invalidateSideViewBuffer(String requestId, Integer side, Integer plane) {
         // make sure this plane is set
         if (!changedVisibleVoxelPlane.containsKey(side)) {
             changedVisibleVoxelPlane.put(side, new HashMap<String, HashMap<Integer, HashMap<String, int[]>>>());
@@ -2086,7 +2086,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private final HashMap<Integer, HashMap<String, HashMap<Integer, HashMap<String, int[]>>>> changedVisibleVoxelPlane
             = new HashMap<Integer, HashMap<String, HashMap<Integer, HashMap<String, int[]>>>>();
     @Override
-    public final Voxel[][] getNewSideVoxel(String requestId, Integer side, Integer plane) {
+    public synchronized final Voxel[][] getNewSideVoxel(String requestId, Integer side, Integer plane) {
         // default result (delete all + empty)
         Voxel[][] result = new Voxel[][]{null, new Voxel[0]};
         // make sure this plane is set
@@ -2141,7 +2141,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     boolean layerVoxelXYBufferValid = false;
     Voxel[] layerVoxelXYBuffer = new Voxel[0];
     @Override
-    public final Voxel[] getVoxelsXY(int z) {
+    public synchronized final Voxel[] getVoxelsXY(int z) {
         if (!layerVoxelXYBufferValid || z != lastVoxelXYBufferZValue) {
 
             VoxelLayer result = new VoxelLayer(-1, "tmp");
@@ -2168,7 +2168,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     boolean layerVoxelXZBufferValid = false;
     Voxel[] layerVoxelXZBuffer = new Voxel[0];
     @Override
-    public final Voxel[] getVoxelsXZ(int y) {
+    public synchronized final Voxel[] getVoxelsXZ(int y) {
         if (!layerVoxelXZBufferValid || y != lastVoxelXZBufferYValue) {
 
             VoxelLayer result = new VoxelLayer(-1, "tmp");
@@ -2195,7 +2195,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     boolean layerVoxelYZBufferValid = false;
     Voxel[] layerVoxelYZBuffer = new Voxel[0];
     @Override
-    public final Voxel[] getVoxelsYZ(int x) {
+    public synchronized final Voxel[] getVoxelsYZ(int x) {
         if (!layerVoxelYZBufferValid || x != lastVoxelYZBufferXValue) {
 
             VoxelLayer result = new VoxelLayer(-1, "tmp");
@@ -2219,7 +2219,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final int getVoxelCount(int layerId) {
+    public synchronized final int getVoxelCount(int layerId) {
         int result = 0;
         if (dataContainer.layers.containsKey(layerId)) {
             result = dataContainer.layers.get(layerId).getSize();
@@ -2230,34 +2230,34 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     // ==================================
 
     @Override
-    public final void undoV() {
+    public synchronized final void undoV() {
         historyManagerV.unapply();
     }
 
     @Override
-    public final void redoV() {
+    public synchronized final void redoV() {
         historyManagerV.apply();
     }
 
     @Override
-    public final boolean canUndoV() {
+    public synchronized final boolean canUndoV() {
         return historyManagerV.canUndo();
     }
 
     @Override
-    public final boolean canRedoV() {
+    public synchronized final boolean canRedoV() {
         return historyManagerV.canRedo();
     }
 
     @Override
-    public final int createLayer(String layerName) {
+    public synchronized final int createLayer(String layerName) {
         int layerId = getFreeLayerId();
         historyManagerV.applyIntent(new CreateLayerIntent(layerId, layerName, false));
         return layerId;
     }
 
     @Override
-    public final boolean deleteLayer(int layerId) {
+    public synchronized final boolean deleteLayer(int layerId) {
         boolean result = false;
         if (dataContainer.layers.containsKey(layerId)) {
             historyManagerV.applyIntent(new DeleteLayerIntent(layerId, false));
@@ -2267,7 +2267,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean renameLayer(int layerId, String newName) {
+    public synchronized final boolean renameLayer(int layerId, String newName) {
         boolean result = false;
         if (dataContainer.layers.containsKey(layerId) && !newName.equals(dataContainer.layers.get(layerId).getName())) {
             historyManagerV.applyIntent(new RenameLayerIntent(layerId, newName, false));
@@ -2277,14 +2277,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final String getLayerName(int layerId) {
+    public synchronized final String getLayerName(int layerId) {
         return dataContainer.layers.containsKey(layerId) ? dataContainer.layers.get(layerId).getName() : null;
     }
 
     private boolean layerNameBufferValid = false;
     private String[] layerNameBuffer = new String[]{};
     @Override
-    public final String[] getLayerNames() {
+    public synchronized final String[] getLayerNames() {
         if (!layerNameBufferValid) {
             if (layerNameBuffer.length != dataContainer.layers.size()) {
                 layerNameBuffer = new String[dataContainer.layers.size()];
@@ -2299,7 +2299,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean selectLayer(int layerId) {
+    public synchronized final boolean selectLayer(int layerId) {
         boolean result = false;
         if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
             historyManagerV.applyIntent(new SelectLayerIntent(layerId, false));
@@ -2309,7 +2309,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean selectLayerSoft(int layerId) {
+    public synchronized final boolean selectLayerSoft(int layerId) {
         boolean result = false;
         if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
             dataContainer.selectedLayer = layerId;
@@ -2320,7 +2320,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final int getSelectedLayer() {
+    public synchronized final int getSelectedLayer() {
         // make sure the selected layer is always valid
         return dataContainer.layers.containsKey(dataContainer.selectedLayer) ? dataContainer.selectedLayer : -1;
     }
@@ -2328,7 +2328,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private boolean layerBufferValid = false;
     private Integer[] layerBuffer = new Integer[]{};
     @Override
-    public final Integer[] getLayers() {
+    public synchronized final Integer[] getLayers() {
         if (!layerBufferValid) {
             if (layerBuffer.length != dataContainer.layers.size()) {
                 layerBuffer = new Integer[dataContainer.layers.size()];
@@ -2340,7 +2340,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean setVisible(int layerId, boolean b) {
+    public synchronized final boolean setVisible(int layerId, boolean b) {
         boolean result = false;
         if (dataContainer.layers.containsKey(layerId) && dataContainer.layers.get(layerId).isVisible() != b) {
             historyManagerV.applyIntent(new LayerVisibilityIntent(layerId, b, false));
@@ -2350,7 +2350,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean getLayerVisible(int layerId) {
+    public synchronized final boolean getLayerVisible(int layerId) {
         boolean result = false;
         if (dataContainer.layers.containsKey(layerId)) {
             result = dataContainer.layers.get(layerId).isVisible();
@@ -2359,7 +2359,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean moveLayerUp(int layerId) {
+    public synchronized final boolean moveLayerUp(int layerId) {
         boolean result = false;
         if (canMoveLayerUp(layerId)) {
             historyManagerV.applyIntent(new MoveLayerIntent(layerId, true, false));
@@ -2369,7 +2369,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean moveLayerDown(int layerId) {
+    public synchronized final boolean moveLayerDown(int layerId) {
         boolean result = false;
         if (canMoveLayerDown(layerId)) {
             historyManagerV.applyIntent(new MoveLayerIntent(layerId, false, false));
@@ -2379,17 +2379,17 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean canMoveLayerUp(int layerId) {
+    public synchronized final boolean canMoveLayerUp(int layerId) {
         return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) > 0;
     }
 
     @Override
-    public final boolean canMoveLayerDown(int layerId) {
+    public synchronized final boolean canMoveLayerDown(int layerId) {
         return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) < dataContainer.layerOrder.size() - 1;
     }
 
     @Override
-    public final boolean mergeVisibleLayers() {
+    public synchronized final boolean mergeVisibleLayers() {
         if (canMergeVisibleLayers()) {
             historyManagerV.applyIntent(new MergeLayersIntent(false));
             return true;
@@ -2398,7 +2398,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean canMergeVisibleLayers() {
+    public synchronized final boolean canMergeVisibleLayers() {
         // if there are more than one visible layer
         int visibleLayers = 0;
         for (int layerId : dataContainer.layerOrder) {
@@ -2415,7 +2415,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     // texture actions
 
     @Override
-    public final void addTexture(BufferedImage image) {
+    public synchronized final void addTexture(BufferedImage image) {
         // make sure that the graphic is a mutiple of 32
 
         int width = ((int)Math.ceil(image.getWidth() / 32f)) * 32;
@@ -2432,7 +2432,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean removeTexture(int textureId) {
+    public synchronized final boolean removeTexture(int textureId) {
         boolean result = false;
         // check that this texture is not used (return false if used)
         for (Voxel voxel : dataContainer.voxels.values()) {
@@ -2448,7 +2448,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean removeAllTexture() {
+    public synchronized final boolean removeAllTexture() {
         boolean result = false;
         if (dataContainer.textures.size() > 0) {
 
@@ -2471,7 +2471,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean replaceTexture(int textureId, ImageIcon texture) {
+    public synchronized final boolean replaceTexture(int textureId, ImageIcon texture) {
         boolean result = false;
         if (dataContainer.textures.containsKey(textureId) &&
                 texture.getIconWidth() == 32 && texture.getIconHeight() == 32) {
@@ -2482,14 +2482,14 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final Integer[] getTextureList() {
+    public synchronized final Integer[] getTextureList() {
         Integer[] result = new Integer[dataContainer.textures.size()];
         dataContainer.textures.keySet().toArray(result);
         return result;
     }
 
     @Override
-    public final ImageIcon getTexture(Integer textureId) {
+    public synchronized final ImageIcon getTexture(Integer textureId) {
         Image internalImg = dataContainer.textures.get(textureId).getImage();
         BufferedImage result = new BufferedImage(
                 internalImg.getWidth(null), internalImg.getHeight(null),
@@ -2499,7 +2499,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final String getTextureHash(Integer textureId) {
+    public synchronized final String getTextureHash(Integer textureId) {
         if (dataContainer.textures.containsKey(textureId)) {
             if (dataContainer.textures.get(textureId).getDescription() == null) {
                 // todo: move this to util class
@@ -2530,7 +2530,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final void selectTexture(int textureId) {
+    public synchronized final void selectTexture(int textureId) {
         if (textureId != -1 && dataContainer.textures.containsKey(textureId)) {
             if (textureId != dataContainer.selectedTexture) {
                 historyManagerV.applyIntent(new SelectTextureIntent(textureId, false));
@@ -2543,7 +2543,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final void selectTextureSoft(int textureId) {
+    public synchronized final void selectTextureSoft(int textureId) {
         if (dataContainer.selectedTexture != textureId &&
                 (textureId == -1 || dataContainer.textures.containsKey(textureId))) {
             dataContainer.selectedTexture = textureId;
@@ -2552,7 +2552,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final int getSelectedTexture() {
+    public synchronized final int getSelectedTexture() {
         if (!dataContainer.textures.containsKey(dataContainer.selectedTexture)) {
             selectTextureSoft(-1);
         }
@@ -2560,7 +2560,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean setTexture(int voxelId, int voxelSide, int textureId) {
+    public synchronized final boolean setTexture(int voxelId, int voxelSide, int textureId) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId) &&
                 (dataContainer.voxels.get(voxelId).getTexture() == null ||
@@ -2572,7 +2572,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
-    public final boolean massSetTexture(Integer[] voxelIds, int textureId) {
+    public synchronized final boolean massSetTexture(Integer[] voxelIds, int textureId) {
         ArrayList<Integer> validVoxel = new ArrayList<Integer>();
         for (int voxelId : voxelIds) {
             if (dataContainer.voxels.containsKey(voxelId)) {
@@ -2591,7 +2591,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // get texture id of a voxel
     @Override
-    public final int[] getVoxelTextureIds(int voxelId) {
+    public synchronized final int[] getVoxelTextureIds(int voxelId) {
         if (dataContainer.voxels.containsKey(voxelId)) {
             return dataContainer.voxels.get(voxelId).getTexture();
         }
@@ -2600,7 +2600,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // flip the texture of a voxel
     @Override
-    public final boolean flipVoxelTexture(int voxelId, int voxelSide) {
+    public synchronized final boolean flipVoxelTexture(int voxelId, int voxelSide) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId) &&
                 dataContainer.voxels.get(voxelId).getTexture() != null) {
@@ -2612,7 +2612,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // rotate the texture of a voxel
     @Override
-    public final boolean rotateVoxelTexture(int voxelId, int voxelSide) {
+    public synchronized final boolean rotateVoxelTexture(int voxelId, int voxelSide) {
         boolean result = false;
         if (dataContainer.voxels.containsKey(voxelId) &&
                 dataContainer.voxels.get(voxelId).getTexture() != null) {

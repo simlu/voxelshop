@@ -67,8 +67,5 @@ public class Main {
                 pref.save();
             }
         });
-
-        // for testing
-        // throw new Exception("msg");
     }
 }

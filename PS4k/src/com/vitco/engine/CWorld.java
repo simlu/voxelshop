@@ -1,13 +1,18 @@
 package com.vitco.engine;
 
 import com.threed.jpct.*;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.WorldUtil;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * This is a world wrapper that provides easy voxel interaction.
@@ -64,7 +69,7 @@ public class CWorld extends World {
         // the voxel might be the same that is already stored
         public void refresh(Voxel voxel) {
             // note: this might be the same voxel,
-            // e.g. this.voxel == voxel can happen
+            // e.g. this.voxel == voxel can happen (in that case we still need to update!)
             this.voxel = voxel;
             toUpdate.add(this);
         }
@@ -237,9 +242,18 @@ public class CWorld extends World {
         return result;
     }
 
+    private AsyncActionManager asyncActionManager = null;
+    private AbstractAction repaintEvent = null;
+    public void setAsyncActionManager(AsyncActionManager asyncActionManager, AbstractAction repaintEvent) {
+        this.asyncActionManager = asyncActionManager;
+        this.repaintEvent = repaintEvent;
+    }
+
     // refresh world
     public final void refreshWorld() {
-        for (VoxelW voxel : toUpdate) {
+        int count = 200;
+        for (Iterator<VoxelW> it = toUpdate.iterator(); it.hasNext() && count-- > 0;) {
+            VoxelW voxel = it.next();
             Integer worldId = voxel.getWorldId();
             if (worldId != null) {
                 // remove current representation in world
@@ -263,8 +277,26 @@ public class CWorld extends World {
                 // remember the mapping
                 worldIdToVoxelId.put(newWorldId, voxel.getVoxelId());
             }
+            it.remove();
         }
-        toUpdate.clear();
+        if (!toUpdate.isEmpty()) {
+            if (asyncActionManager == null) {
+                refreshWorld();
+            } else {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        refreshWorld();
+                    }
+                });
+                if (repaintEvent != null) {
+                    repaintEvent.actionPerformed(new ActionEvent(this, 0, ""));
+                }
+            }
+        } else {
+            // makes sure this gets repainted once the world is refreshed
+            repaintEvent.actionPerformed(new ActionEvent(this, 0, ""));
+        }
     }
 
     // maps world ids to voxel ids

@@ -54,7 +54,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
                     // delete, escape, space, enter
-                    127, 27, 32, 10
+                    127, 27, 32, 10,
+                    // up, down, left, right, pgup, pgdown
+                    KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
+                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
@@ -66,7 +69,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
                     // delete, escape, space, enter
-                    127, 27, 32, 10
+                    127, 27, 32, 10,
+                    // up, down, left, right, pgup, pgdown
+                    KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
+                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP
             }));
 
     // global setting for all activatable actions
@@ -577,6 +583,18 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 result = 32;
             } else if (str.equals("ENTER")) {
                 result = 10;
+            } else if (str.equals("UP")) {
+                result = KeyEvent.VK_UP;
+            } else if (str.equals("DOWN")) {
+                result = KeyEvent.VK_DOWN;
+            } else if (str.equals("LEFT")) {
+                result = KeyEvent.VK_LEFT;
+            } else if (str.equals("RIGHT")) {
+                result = KeyEvent.VK_RIGHT;
+            } else if (str.equals("PAGE_DOWN")) {
+                result = KeyEvent.VK_PAGE_DOWN;
+            } else if (str.equals("PAGE_UP")) {
+                result = KeyEvent.VK_PAGE_UP;
             } else
             if (str.startsWith("F")) {
                 str = str.substring(1);

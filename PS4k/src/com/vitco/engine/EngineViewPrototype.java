@@ -19,10 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
@@ -56,7 +53,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // the world-required objects
     protected final CWorld world;
     protected final CWorld selectedVoxelsWorld;
-    protected FrameBuffer buffer;
+    protected FrameBuffer buffer = new FrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
     protected final CCamera camera;
 
     // conversion
@@ -690,6 +687,15 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     public final void startup() {
         // initialize the container
         container.init();
+        AbstractAction repaintEvent = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                forceRepaint();
+            }
+        };
+        // load the async action manager to the worlds
+        world.setAsyncActionManager(asyncActionManager, repaintEvent);
+        selectedVoxelsWorld.setAsyncActionManager(asyncActionManager, repaintEvent);
     }
 
     @PreDestroy
@@ -755,8 +761,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         camera = new CCamera();
         world.setCameraTo(camera);
         selectedVoxelsWorld.setCameraTo(camera);
-        buffer = new FrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
-        container.setCanvasSize(100, 100);
         // lighting (1,1,1) = true color
         world.setAmbientLight(1, 1, 1);
 
@@ -768,12 +772,17 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             @Override
             public void componentResized(ComponentEvent e) {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
-                    cleanup();
-                    buffer = null; // so the gc can collect before creation if necessary
-                    buffer = new FrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
-                    container.setCanvasSize(container.getWidth(), container.getHeight());
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
+                    asyncActionManager.addAsyncAction(new AsyncAction() {
+                        @Override
+                        public void performAction() {
+                            cleanup();
+                            buffer = null; // so the gc can collect before creation if necessary
+                            buffer = new FrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
+                            container.setCanvasSize(container.getWidth(), container.getHeight());
+                            container.doNotSkipNextWorldRender();
+                            forceRepaint();
+                        }
+                    });
                 }
             }
         });
