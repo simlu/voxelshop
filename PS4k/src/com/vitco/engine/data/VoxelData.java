@@ -2060,11 +2060,21 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
-    // true iff any voxels visible
+    // true iff any voxel are visible
     @Override
     public synchronized final boolean anyLayerVoxelVisible() {
         updateVisVoxTreeInternal();
         return anyVoxelsVisibleBuffer;
+    }
+
+    // true iff any voxel are selected
+    @Override
+    public synchronized final boolean anyVoxelSelected() {
+        if (!selectedVoxelBufferValid) {
+            return getSelectedVoxels().length > 0;
+        } else {
+            return selectedVoxelBuffer.length > 0;
+        }
     }
 
     // to invalidate the side view buffer

@@ -854,16 +854,20 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             actionManager.registerAction("shift_selected_voxels_up", new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int[] shift = data.getVoxelSelectionShift();
-                    data.setVoxelSelectionShift(shift[0], shift[1]+1, shift[2]);
+                    if (data.anyVoxelSelected()) {
+                        int[] shift = data.getVoxelSelectionShift();
+                        data.setVoxelSelectionShift(shift[0], shift[1]+1, shift[2]);
+                    }
                 }
             });
             // register shortcuts for shifting the selection
             actionManager.registerAction("shift_selected_voxels_down", new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int[] shift = data.getVoxelSelectionShift();
-                    data.setVoxelSelectionShift(shift[0], shift[1]-1, shift[2]);
+                    if (data.anyVoxelSelected()) {
+                        int[] shift = data.getVoxelSelectionShift();
+                        data.setVoxelSelectionShift(shift[0], shift[1] - 1, shift[2]);
+                    }
                 }
             });
 
@@ -871,16 +875,20 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             actionManager.registerAction("shift_selected_voxels_left", new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int[] shift = data.getVoxelSelectionShift();
-                    data.setVoxelSelectionShift(shift[0], shift[1], shift[2]-1);
+                    if (data.anyVoxelSelected()) {
+                        int[] shift = data.getVoxelSelectionShift();
+                        data.setVoxelSelectionShift(shift[0], shift[1], shift[2] - 1);
+                    }
                 }
             });
             // register shortcuts for shifting the selection
             actionManager.registerAction("shift_selected_voxels_right", new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int[] shift = data.getVoxelSelectionShift();
-                    data.setVoxelSelectionShift(shift[0], shift[1], shift[2]+1);
+                    if (data.anyVoxelSelected()) {
+                        int[] shift = data.getVoxelSelectionShift();
+                        data.setVoxelSelectionShift(shift[0], shift[1], shift[2] + 1);
+                    }
                 }
             });
 
@@ -888,16 +896,20 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             actionManager.registerAction("shift_selected_voxels_out", new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int[] shift = data.getVoxelSelectionShift();
-                    data.setVoxelSelectionShift(shift[0]-1, shift[1], shift[2]);
+                    if (data.anyVoxelSelected()) {
+                        int[] shift = data.getVoxelSelectionShift();
+                        data.setVoxelSelectionShift(shift[0] + 1, shift[1], shift[2]);
+                    }
                 }
             });
             // register shortcuts for shifting the selection
             actionManager.registerAction("shift_selected_voxels_in", new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int[] shift = data.getVoxelSelectionShift();
-                    data.setVoxelSelectionShift(shift[0]+1, shift[1], shift[2]);
+                    if (data.anyVoxelSelected()) {
+                        int[] shift = data.getVoxelSelectionShift();
+                        data.setVoxelSelectionShift(shift[0] - 1, shift[1], shift[2]);
+                    }
                 }
             });
         }

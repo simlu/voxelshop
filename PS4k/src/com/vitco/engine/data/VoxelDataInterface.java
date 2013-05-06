@@ -47,6 +47,8 @@ public interface VoxelDataInterface {
     Voxel[] getVisibleLayerVoxel();
     // true iff any voxels are visible
     boolean anyLayerVoxelVisible();
+    // true iff any voxels are visible
+    boolean anyVoxelSelected();
     // to invalidate the side view buffer
     void invalidateSideViewBuffer(String requestId, Integer side, Integer plane);
     // get changed side view voxels since last call

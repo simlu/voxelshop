@@ -20,7 +20,7 @@ public class Preferences implements PreferencesInterface {
     private final HashMap<String, ArrayList<PrefChangeListener>> listeners = new HashMap<String, ArrayList<PrefChangeListener>>();
 
     @Override
-    public void notifyListeners(String key, Object value) {
+    public synchronized void notifyListeners(String key, Object value) {
         if (listeners.containsKey(key)) {
             for (PrefChangeListener pcl : listeners.get(key)) {
                 pcl.onPrefChange(value);
@@ -29,7 +29,7 @@ public class Preferences implements PreferencesInterface {
     }
 
     @Override
-    public void addPrefChangeListener(String key, PrefChangeListener pcl) {
+    public synchronized void addPrefChangeListener(String key, PrefChangeListener pcl) {
         if (!listeners.containsKey(key)) { // make sure this is init
             listeners.put(key, new ArrayList<PrefChangeListener>());
         }
@@ -42,19 +42,19 @@ public class Preferences implements PreferencesInterface {
     }
 
     @Override
-    public boolean contains(String key) {
+    public synchronized boolean contains(String key) {
         return map.containsKey(key);
     }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
-    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
+    public synchronized final void setErrorHandler(ErrorHandlerInterface errorHandler) {
         this.errorHandler = errorHandler;
     }
 
     @Override
-    public final void storeObject(String key, Object value) {
+    public synchronized final void storeObject(String key, Object value) {
         if (!map.containsKey(key) || !map.get(key).equals(value)) {
             map.put(key, value);
             notifyListeners(key, value);
@@ -62,50 +62,50 @@ public class Preferences implements PreferencesInterface {
     }
 
     @Override
-    public Object loadObject(String key) {
+    public synchronized Object loadObject(String key) {
         return map.containsKey(key) ? map.get(key) : null;
     }
 
     @Override
-    public void storeBoolean(String key, boolean value) {
+    public synchronized void storeBoolean(String key, boolean value) {
         storeObject(key, value);
     }
 
     @Override
-    public void storeInteger(String key, int value) {
+    public synchronized void storeInteger(String key, int value) {
         storeObject(key, value);
     }
 
     @Override
-    public void storeString(String key, String value) {
+    public synchronized void storeString(String key, String value) {
         storeObject(key, value);
     }
 
     @Override
-    public boolean loadBoolean(String key) {
+    public synchronized boolean loadBoolean(String key) {
         return map.containsKey(key) ? (Boolean)map.get(key) : false;
     }
 
     @Override
-    public int loadInteger(String key) {
+    public synchronized int loadInteger(String key) {
         return map.containsKey(key) ? (Integer)map.get(key) : 0;
     }
 
     @Override
-    public final String loadString(String key) {
+    public synchronized final String loadString(String key) {
         return map.containsKey(key) ? (String)map.get(key) : "";
     }
 
     // var % setter
     private String storageFileName;
     @Override
-    public final void setStorageFile(String filename) {
+    public synchronized final void setStorageFile(String filename) {
         storageFileName = filename;
     }
 
     // "manually" executed after all PreDestroys are called
     @Override
-    public void save() {
+    public synchronized void save() {
         // store the map in file
         File dataFile = new File(storageFileName);
         if (dataFile.getParentFile().exists() || dataFile.getParentFile().mkdirs()) {
@@ -123,7 +123,7 @@ public class Preferences implements PreferencesInterface {
 
     // executed when initiated (spring "init-method")
     @Override
-    public void load() {
+    public synchronized void load() {
         File dataFile = new File(storageFileName);
         if (dataFile.exists()) {
             try {

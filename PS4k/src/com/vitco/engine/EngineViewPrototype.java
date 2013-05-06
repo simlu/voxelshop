@@ -111,6 +111,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected abstract Voxel[][] getChangedSelectedVoxels();
 
     // helper - make sure the voxel objects in the world are up to date
+    // and also trigger refresh for redraws
     private void updateWorldWithVoxels() {
         // only retrieve the changed voxels
         Voxel[][] changed = getChangedVoxels();
@@ -125,7 +126,19 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         for (Voxel added : changed[1]) {
             world.updateVoxel(added);
         }
-        world.refreshWorld();
+        asyncActionManager.addAsyncAction(new AsyncAction("asyncWorld" + side) {
+            @Override
+            public void performAction() {
+                if (!world.refreshWorld()) {
+                    container.doNotSkipNextWorldRender();
+                    forceRepaint();
+                    asyncActionManager.addAsyncAction(this);
+                } else {
+                    container.doNotSkipNextWorldRender();
+                    forceRepaint();
+                }
+            }
+        });
 
         // only retrieve the changed voxels
         changed = getChangedSelectedVoxels();
@@ -140,7 +153,19 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         for (Voxel added : changed[1]) {
             selectedVoxelsWorld.updateVoxel(added);
         }
-        selectedVoxelsWorld.refreshWorld();
+        asyncActionManager.addAsyncAction(new AsyncAction("asyncSelWorld" + side) {
+            @Override
+            public void performAction() {
+                if (!selectedVoxelsWorld.refreshWorld()) {
+                    container.doNotSkipNextWorldRender();
+                    forceRepaint();
+                    asyncActionManager.addAsyncAction(this);
+                } else {
+                    container.doNotSkipNextWorldRender();
+                    forceRepaint();
+                }
+            }
+        });
     }
 
     // true iff the world does not need to be updated with voxels
@@ -687,15 +712,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     public final void startup() {
         // initialize the container
         container.init();
-        AbstractAction repaintEvent = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                forceRepaint();
-            }
-        };
-        // load the async action manager to the worlds
-        world.setAsyncActionManager(asyncActionManager, repaintEvent);
-        selectedVoxelsWorld.setAsyncActionManager(asyncActionManager, repaintEvent);
     }
 
     @PreDestroy

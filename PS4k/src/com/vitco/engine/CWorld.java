@@ -242,15 +242,8 @@ public class CWorld extends World {
         return result;
     }
 
-    private AsyncActionManager asyncActionManager = null;
-    private AbstractAction repaintEvent = null;
-    public void setAsyncActionManager(AsyncActionManager asyncActionManager, AbstractAction repaintEvent) {
-        this.asyncActionManager = asyncActionManager;
-        this.repaintEvent = repaintEvent;
-    }
-
-    // refresh world
-    public final void refreshWorld() {
+    // refresh world partially - returns true if fully refreshed
+    public final boolean refreshWorld() {
         int count = 200;
         for (Iterator<VoxelW> it = toUpdate.iterator(); it.hasNext() && count-- > 0;) {
             VoxelW voxel = it.next();
@@ -279,24 +272,7 @@ public class CWorld extends World {
             }
             it.remove();
         }
-        if (!toUpdate.isEmpty()) {
-            if (asyncActionManager == null) {
-                refreshWorld();
-            } else {
-                asyncActionManager.addAsyncAction(new AsyncAction() {
-                    @Override
-                    public void performAction() {
-                        refreshWorld();
-                    }
-                });
-                if (repaintEvent != null) {
-                    repaintEvent.actionPerformed(new ActionEvent(this, 0, ""));
-                }
-            }
-        } else {
-            // makes sure this gets repainted once the world is refreshed
-            repaintEvent.actionPerformed(new ActionEvent(this, 0, ""));
-        }
+        return toUpdate.isEmpty();
     }
 
     // maps world ids to voxel ids

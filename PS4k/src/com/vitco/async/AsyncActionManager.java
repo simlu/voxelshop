@@ -1,6 +1,5 @@
 package com.vitco.async;
 
-import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Manages Async Actions
  */
 public class AsyncActionManager {
-
-    // var & setter
-    private ErrorHandlerInterface errorHandler;
-    @Autowired
-    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
-        this.errorHandler = errorHandler;
-    }
 
     private ThreadManagerInterface threadManager;
     // set the action handler
@@ -38,6 +30,15 @@ public class AsyncActionManager {
     // list of current action names
     private final ConcurrentHashMap<String, AsyncAction> actionNames = new ConcurrentHashMap<String, AsyncAction>();
 
+    public final void removeAsyncAction(String actionName) {
+        if (null != actionNames.remove(actionName)) {
+            stack.remove(actionName);
+            idleStack.remove(actionName);
+        }
+    }
+
+    // Note: re-adding an action does not ensure that the action
+    // is at the end of the queue!
     public final void addAsyncAction(AsyncAction action) {
         String actionName = action.getName();
         if (null == actionNames.put(actionName, action)) {
@@ -56,14 +57,16 @@ public class AsyncActionManager {
                     String actionName = stack.remove(0);
                     AsyncAction action = actionNames.get(actionName);
                     if (action.ready()) {
-                        action.performAction();
+                        // remove first in case the action adds
+                        // itself to the cue again (e.g. for refreshWorld())
                         actionNames.remove(actionName);
+                        action.performAction();
                     } else {
                         idleStack.add(actionName);
                     }
                 } else {
                     // add back to main stack
-                    if (idleStack.size() > 0) {
+                    while (idleStack.size() > 0) {
                         stack.add(idleStack.remove(0));
                     }
                     sleep(50);
