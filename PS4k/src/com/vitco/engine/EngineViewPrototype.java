@@ -13,7 +13,6 @@ import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.pref.PrefChangeListener;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -215,6 +214,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // true iff camera has changed since last draw call
         private boolean cameraChanged = true;
+        // true iff container has resized since last draw call
+        private boolean hasResized = true;
 
         // initialize
         public void init() {
@@ -318,7 +319,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
 
             // draw the preview voxel
-            final int[] voxel = data.getHighlightedVoxel();
+            int[] voxel = data.getHighlightedVoxel();
             // draw selected voxel (ghost / preview voxel)
             if (voxel != null) {
                 Color previewColor = VitcoSettings.VOXEL_PREVIEW_LINE_COLOR;
@@ -600,11 +601,28 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         private BufferedImage toDraw = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        public void setCanvasSize(int width, int height) {
+        private BufferedImage overlayBuffer = new BufferedImage(100,100,BufferedImage.TYPE_INT_ARGB);
+        private Graphics2D overlayBufferGraphics = (Graphics2D) overlayBuffer.getGraphics();
+        public void notifyAboutResize(int width, int height) {
             toDraw = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics gr = toDraw.getGraphics();
             gr.setColor(bgColor);
             gr.drawRect(0, 0, width, height);
+            // the overlay
+            overlayBuffer = new BufferedImage(buffer.getOutputWidth(), buffer.getOutputHeight(), BufferedImage.TYPE_INT_ARGB);
+            // draw the lines
+            overlayBufferGraphics = (Graphics2D)overlayBuffer.getGraphics();
+            // Anti-alias
+            overlayBufferGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            // bg color to clear
+            overlayBufferGraphics.setBackground(new Color(0,0,0,0));
+            // set color
+            overlayBufferGraphics.setColor(VitcoSettings.GHOST_VOXEL_OVERLAY_LINE_COLOR);
+            overlayBufferGraphics.setStroke(
+                    new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL,
+                            0, new float[]{4,5}, 2));
+            hasResized = true;
         }
 
         protected final void render() {
@@ -639,7 +657,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             // draw the under/overlay (voxels in parallel planes)
             Graphics2D gr = (Graphics2D) toDraw.getGraphics();
             if (drawGhostOverlay) {
-                drawGhostOverlay(gr, cameraChanged);
+                drawGhostOverlay(gr, cameraChanged, hasResized);
             }
             if (drawOverlay && drawAnimationOverlay) { // overlay part 2
                 drawAnimationOverlay(gr); // refreshes with animation data
@@ -648,6 +666,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 drawVoxelOverlay(gr);
             }
             cameraChanged = false; // camera is current for this redraw
+            hasResized = false; // no resize pending
         }
 
         // handle the redrawing of this component
@@ -663,31 +682,16 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         // draw some ghosting lines (the voxel outline)
-        private BufferedImage overlayBuffer = new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
-        private void drawGhostOverlay(Graphics2D g1, boolean cameraChanged) {
-            boolean resized =
-                    buffer.getOutputWidth() != overlayBuffer.getWidth() ||
-                            buffer.getOutputHeight() != overlayBuffer.getHeight();
-            if (resized) {
-                overlayBuffer = new BufferedImage(buffer.getOutputWidth(), buffer.getOutputHeight(), BufferedImage.TYPE_INT_ARGB);
-            }
+        private void drawGhostOverlay(Graphics2D g1, boolean cameraChanged, boolean hasResized) {
             boolean updated = updateGhostOverlay();
-            if (updated || cameraChanged || resized) {
-                // draw the lines
-                Graphics2D g = (Graphics2D)overlayBuffer.getGraphics();
-                // Anti-alias
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
+            if (updated || cameraChanged || hasResized) {
                 // clear the previous drawings
-                g.setBackground(new Color(0,0,0,0));
-                g.clearRect(0,0,buffer.getOutputWidth(),buffer.getOutputHeight());
-                // set color
-                g.setColor(VitcoSettings.GHOST_VOXEL_OVERLAY_LINE_COLOR);
+                overlayBufferGraphics.clearRect(0,0,overlayBuffer.getWidth(),overlayBuffer.getHeight());
                 // draw
                 for (SimpleVector[] line : getGhostOverlay()) {
                     SimpleVector p1 = convert3D2D(line[0]);
                     SimpleVector p2 = convert3D2D(line[1]);
-                    g.drawLine(Math.round(p1.x), Math.round(p1.y), Math.round(p2.x), Math.round(p2.y));
+                    overlayBufferGraphics.drawLine(Math.round(p1.x), Math.round(p1.y), Math.round(p2.x), Math.round(p2.y));
                 }
             }
             g1.drawImage(overlayBuffer, 0, 0, null);
@@ -732,11 +736,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         Config.fadeoutLight = false;
         Config.maxPolysVisible = 5000;
 
-        Config.useMultipleThreads = true;
-        Config.maxNumberOfCores = Runtime.getRuntime().availableProcessors();
-        Config.loadBalancingStrategy = 1; // default 0
+//        Config.useMultipleThreads = true;
+//        Config.maxNumberOfCores = Runtime.getRuntime().availableProcessors();
+//        Config.loadBalancingStrategy = 1; // default 0
         // usually not worth it (http://www.jpct.net/doc/com/threed/jpct/Config.html#useMultiThreadedBlitting)
-        Config.useMultiThreadedBlitting = false;
+        //Config.useMultiThreadedBlitting = false;   //default false
 
         Config.mipmap = true;
 
@@ -803,7 +807,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                             cleanup();
                             buffer = null; // so the gc can collect before creation if necessary
                             buffer = new FrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
-                            container.setCanvasSize(container.getWidth(), container.getHeight());
+                            container.notifyAboutResize(container.getWidth(), container.getHeight());
                             container.doNotSkipNextWorldRender();
                             forceRepaint();
                         }

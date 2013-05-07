@@ -89,7 +89,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
 
     // handle exceptions
     @Override
-    public void handle(Throwable e) {
+    public synchronized void handle(Throwable e) {
         if (debug) {
             // print the trace (debug)
             e.printStackTrace();

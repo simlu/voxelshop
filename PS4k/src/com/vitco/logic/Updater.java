@@ -84,14 +84,16 @@ public class Updater {
                         stopThread();
                     } else {
                         String updaterInfo = UrlUtil.readUrl(VitcoSettings.PROGRAM_UPDATER_URL, errorHandler);
-                        //console.addLine("===" + updaterInfo + "===");
-                        String newDigest = FileTools.md5Hash(updaterInfo, errorHandler);
-                        if (digest != null) {
-                            if (!digest.equals(newDigest) && !newDigest.equals("")) {
-                                notify = true;
+                        if (updaterInfo != null && !updaterInfo.equals("")) {
+                            //console.addLine("===" + updaterInfo + "===");
+                            String newDigest = FileTools.md5Hash(updaterInfo, errorHandler);
+                            if (digest != null) {
+                                if (!digest.equals(newDigest) && !newDigest.equals("")) {
+                                    notify = true;
+                                }
                             }
+                            digest = newDigest;
                         }
-                        digest = newDigest;
                     }
 
                     i = 0;

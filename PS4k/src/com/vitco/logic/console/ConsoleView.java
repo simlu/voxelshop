@@ -115,7 +115,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         // needs to be all lower case
         consoleAction.put("/clear", "console_action_clear");
         consoleAction.put("/debug exception", "create_error_for_debug");
-        consoleAction.put("/info render", "show_thread_information");
+        consoleAction.put("/debug deadlock", "initialize_deadlock_debug");
 
         // register all console actions (so debug know that they are used)
         for (String action : consoleAction.values()) {

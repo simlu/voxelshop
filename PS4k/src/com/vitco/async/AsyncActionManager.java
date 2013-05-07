@@ -1,7 +1,9 @@
 package com.vitco.async;
 
-import com.vitco.logic.console.ConsoleInterface;
+import com.vitco.util.DateTools;
+import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.action.ActionManager;
+import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,17 +27,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AsyncActionManager {
 
     // var & setter
+    protected ErrorHandlerInterface errorHandler;
+    @Autowired(required=true)
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
     protected ActionManager actionManager;
     @Autowired(required=true)
     public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
-    }
-
-    // var & setter
-    protected ConsoleInterface console;
-    @Autowired(required=true)
-    public final void setConsole(ConsoleInterface console) {
-        this.console = console;
     }
 
     private ThreadManagerInterface threadManager;
@@ -64,17 +70,70 @@ public class AsyncActionManager {
         }
     }
 
-    private long rendertime = 0;
-    private long namedTime = 0;
-
     @PostConstruct
     public void init() {
-        actionManager.registerAction("show_thread_information", new AbstractAction() {
+
+        // register debug mode (console)
+        actionManager.registerAction("initialize_deadlock_debug", new AbstractAction() {
+            private boolean isRunning = false;
             @Override
             public void actionPerformed(ActionEvent e) {
-                console.addLine("Render Time: " + Math.round((namedTime / (double)rendertime)*1000)/10 + " %");
+                if (!isRunning) {
+                    // create watchdog thread that checks for deadlocks
+                    threadManager.manage(new LifeTimeThread() {
+                        @Override
+                        public void loop() throws InterruptedException {
+                            ThreadMXBean tmx = ManagementFactory.getThreadMXBean();
+                            long[] ids = tmx.findDeadlockedThreads();
+                            if (ids != null) {
+                                // obtain thread info
+                                ThreadInfo[] infos = tmx.getThreadInfo(ids, true, true);
+                                StringBuilder errorMsg = new StringBuilder();
+                                errorMsg.append("The following threads are deadlocked:\n");
+                                for (ThreadInfo ti : infos) {
+                                    errorMsg.append(ti);
+                                }
+                                String error = errorMsg.toString();
+
+                                // print info to file
+                                String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+                                try {
+                                    String appJarLocation = URLDecoder.decode(path, "UTF-8");
+                                    File appJar = new File(appJarLocation);
+                                    String absolutePath = appJar.getAbsolutePath();
+                                    String filePath = absolutePath.
+                                            substring(0, absolutePath.lastIndexOf(File.separator) + 1);
+                                    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filePath + "errorlog.txt", true)));
+                                    out.println("===================");
+                                    out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
+                                    out.println("-------------------");
+                                    out.println(error);
+                                    out.println();
+                                    out.close();
+                                } catch (UnsupportedEncodingException ex) {
+                                    errorHandler.handle(ex);
+                                } catch (IOException ex) {
+                                    errorHandler.handle(ex);
+                                }
+                                // print info the error handler
+                                errorHandler.handle(new Exception(error));
+                                interrupt();
+                            }
+                            SwingAsyncHelper.handle(new Runnable() {
+                                @Override
+                                public void run() {
+                                    System.out.println("xxx");
+                                }
+                            }, errorHandler);
+
+                            Thread.sleep(5000);
+                        }
+                    });
+                    isRunning = true;
+                }
             }
         });
+
         // create new thread that deals with things
         threadManager.manage(new LifeTimeThread() {
             @Override
@@ -87,13 +146,7 @@ public class AsyncActionManager {
                         // remove first in case the action adds
                         // itself to the cue again (e.g. for refreshWorld())
                         actionNames.remove(actionName);
-                        long start = System.currentTimeMillis();
                         action.performAction();
-                        long time = System.currentTimeMillis() - start;
-                        rendertime += time;
-                        if (actionName.startsWith("repaint")) {
-                            namedTime += time;
-                        }
                     } else {
                         idleStack.add(actionName);
                     }

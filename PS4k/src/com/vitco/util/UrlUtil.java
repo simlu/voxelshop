@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 
 public class UrlUtil {
 
+    // returns "" on error
     public static String readUrl(String url, ErrorHandlerInterface errorHandler) {
         URL url2;
         StringBuilder result = new StringBuilder();
