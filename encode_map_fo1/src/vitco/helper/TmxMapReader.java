@@ -217,7 +217,9 @@ public class TmxMapReader {
                     Graphics2D gc = (Graphics2D)tile.getGraphics();
                     gc.setComposite(AlphaComposite.SrcOver);
                     for (String tileId : tileIds) {
-                        gc.drawImage(mtiles.get(Integer.valueOf(tileId)), 0, 0, null);
+                        if (!tileId.equals("")) {
+                            gc.drawImage(mtiles.get(Integer.valueOf(tileId)), 0, 0, null);
+                        }
                     }
                     // add to tile set
                     tiles.put(uId, tile);

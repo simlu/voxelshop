@@ -12,7 +12,16 @@ public class SwingAsyncHelper {
         if (SwingUtilities.isEventDispatchThread()) {
             runnable.run();
         } else {
+            // this *should* be ok as long as this event doesn't read/write
+            // to synchronized data
             SwingUtilities.invokeLater(runnable);
+//            try {
+//                SwingUtilities.invokeAndWait(runnable);
+//            } catch (InterruptedException e) {
+//                errorHandler.handle(e);
+//            } catch (InvocationTargetException e) {
+//                errorHandler.handle(e);
+//            }
         }
     }
 }

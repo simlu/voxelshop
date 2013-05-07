@@ -119,7 +119,7 @@
     <!-- updater -->
     <bean id="Updater" class="com.vitco.logic.Updater"/>
 
-    <!-- updater -->
+    <!-- worker thread -->
     <bean id="AsyncActionManager" class="com.vitco.async.AsyncActionManager"/>
 
     <!-- creates the main window -->

@@ -2,6 +2,8 @@ package vitco.main;
 
 import vitco.helper.LogFile;
 
+import java.util.HashSet;
+
 /**
  * Configuration file. Defines global variables and file-path.
  */
@@ -23,13 +25,36 @@ public class Config {
 
     public final static String logFileName = outputDir + "log.txt";
 
-    public final static boolean recompileOverview = true;
-    public final static boolean compileMinimaps = false;
-
-    // map difference buffer
-    public final static String tile_difference_buffer = "tile_color_difference_buffer.ser";
-
     // log file
     public final static LogFile logFile = new LogFile(logFileName);
+
+    //=======================================================
+    // output settings below
+    //=======================================================
+
+    public final static boolean recompileOverview = true;
+    public final static boolean compileMinimaps = true;
+    public final static HashSet<String> minimapsToCompile = new HashSet<String>();
+    static {
+        minimapsToCompile.add("Forgotten Under Underground");
+        minimapsToCompile.add("Forgotten Underground");
+    }
+
+    // "manual" can result in non 32 bit compression
+    public final static boolean manualCompress = false;
+
+    // write as 32 bit
+    public final static boolean writeAs32Bit = false;
+
+    // ===============
+    // note: the following are exclusive (one of them equal true or none)
+    // write only one huge image chunk (png)
+    public final static boolean writeAsOneFile = false;
+    // write as 1024 x 1024 tiles
+    public final static boolean writeAs1204Texture = false;
+    // ===============
+
+    // include the image in the map file
+    public final static boolean includeImageInMapFile = true;
 
 }

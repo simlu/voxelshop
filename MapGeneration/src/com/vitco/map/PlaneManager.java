@@ -120,18 +120,49 @@ public class PlaneManager extends ColladaFile {
     // generate all sides
     public void generateSides() {
         // extract all points
-        RTree<PointInfo> searchTree = new RTree<PointInfo>(50, 2, 2);
+        HashMap<Integer, ArrayList<PointInfo>> xyPointMap = new HashMap<Integer, ArrayList<PointInfo>>();
+        HashMap<Integer, ArrayList<PointInfo>> yxPointMap = new HashMap<Integer, ArrayList<PointInfo>>();
         HashSet<PointInfo> points = new HashSet<PointInfo>();
         for (LineInfo lineInfo : lines.keySet()) {
             PointInfo pointInfo1 = new PointInfo( (float)lineInfo.x1, (float)lineInfo.y1);
             PointInfo pointInfo2 = new PointInfo( (float)lineInfo.x2, (float)lineInfo.y2);
             if (!points.contains(pointInfo1)) {
                 points.add(pointInfo1);
-                searchTree.insert(new float[] {Math.round(pointInfo1.x), Math.round(pointInfo1.y)}, pointInfo1);
+
+                int x = Math.round(pointInfo1.x);
+                ArrayList<PointInfo> xyList = xyPointMap.get(x);
+                if (xyList == null) {
+                    xyList = new ArrayList<PointInfo>();
+                    xyPointMap.put(x, xyList);
+                }
+                xyList.add(pointInfo1);
+
+                int y = Math.round(pointInfo1.y);
+                ArrayList<PointInfo> yxList = yxPointMap.get(y);
+                if (yxList == null) {
+                    yxList = new ArrayList<PointInfo>();
+                    yxPointMap.put(y, yxList);
+                }
+                yxList.add(pointInfo1);
             }
             if (!points.contains(pointInfo2)) {
                 points.add(pointInfo2);
-                searchTree.insert(new float[] {Math.round(pointInfo2.x), Math.round(pointInfo2.y)}, pointInfo2);
+
+                int x = Math.round(pointInfo2.x);
+                ArrayList<PointInfo> xyList = xyPointMap.get(x);
+                if (xyList == null) {
+                    xyList = new ArrayList<PointInfo>();
+                    xyPointMap.put(x, xyList);
+                }
+                xyList.add(pointInfo2);
+
+                int y = Math.round(pointInfo2.y);
+                ArrayList<PointInfo> yxList = yxPointMap.get(y);
+                if (yxList == null) {
+                    yxList = new ArrayList<PointInfo>();
+                    yxPointMap.put(y, yxList);
+                }
+                yxList.add(pointInfo2);
             }
         }
 
@@ -142,9 +173,22 @@ public class PlaneManager extends ColladaFile {
             float maxx = Math.max(Math.round(lineInfo.x1), Math.round(lineInfo.x2));
             float miny = Math.min(Math.round(lineInfo.y1), Math.round(lineInfo.y2));
             float maxy = Math.max(Math.round(lineInfo.y1), Math.round(lineInfo.y2));
-            List<PointInfo> result = searchTree.search(
-                    new float[] {minx, miny},
-                    new float[] {maxx - minx, maxy - miny});
+            List<PointInfo> result = new ArrayList<PointInfo>();
+            if (minx == maxx) {
+                ArrayList<PointInfo> xlinePoints = xyPointMap.get((int)minx);
+                for (PointInfo pi : xlinePoints) {
+                    if (Math.round(pi.y) < maxy && Math.round(pi.y) > miny) {
+                        result.add(pi);
+                    }
+                }
+            } else {
+                ArrayList<PointInfo> ylinePoints = yxPointMap.get((int)miny);
+                for (PointInfo pi : ylinePoints) {
+                    if (Math.round(pi.x) < maxx && Math.round(pi.x) > minx) {
+                        result.add(pi);
+                    }
+                }
+            }
             float zValue = (float) lineInfo.z1;
 
             // add all the points: start, stop of line and any points

@@ -321,8 +321,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         int[] voxelPos = null;
         // check if we hit something
         SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
-                (int)Math.round(point.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
-                (int)Math.round(point.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
+                point.x * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                point.y * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
         Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
         if (res[1] != null) { // something hit
             Object3D obj3D = ((Object3D)res[1]);

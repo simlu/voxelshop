@@ -11,17 +11,23 @@ import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
 import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.pref.PrefChangeListener;
-import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Rendering functionality of this World (data + overlay)
@@ -645,6 +651,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         // handle the redrawing of this component
+        // note: this MUSTN'T have any call to synchronized
         @Override
         protected final void paintComponent(Graphics g1) {
             if (toDraw != null) {
@@ -725,9 +732,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         Config.fadeoutLight = false;
         Config.maxPolysVisible = 5000;
 
-//        Config.useMultipleThreads = true;
-//        Config.maxNumberOfCores = Math.min(4, Runtime.getRuntime().availableProcessors());
-//        Config.loadBalancingStrategy = 1; // default 0
+        Config.useMultipleThreads = true;
+        Config.maxNumberOfCores = Runtime.getRuntime().availableProcessors();
+        Config.loadBalancingStrategy = 1; // default 0
+        // usually not worth it (http://www.jpct.net/doc/com/threed/jpct/Config.html#useMultiThreadedBlitting)
+        Config.useMultiThreadedBlitting = false;
 
         Config.mipmap = true;
 

@@ -2,48 +2,74 @@ package vitco.cluster;
 
 import com.google.common.collect.Sets;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Represents a cluster
  */
 public class TileCluster {
 
-    private final static Random rand = new Random();
-
-    // holds all the colors of this cluster (with count)
-    private final HashMap<Integer, Integer> colors = new HashMap<Integer, Integer>();
+    // holds all the colors of this cluster
+    // mapped to the percentage SUM of all tiles
+    private final HashMap<Integer, Double> colors = new HashMap<Integer, Double>();
 
     // holds all the tiles of this cluster
-    private final HashSet<Tile> tiles = new HashSet<Tile>();
+    private final ArrayList<Tile> tiles = new ArrayList<Tile>();
 
+    // add a tile to this cluster
     public final void addTile(Tile tile) {
-        for (int color : tile.getColorSet()) {
-            if (colors.containsKey(color)) {
-                colors.put(color, colors.get(color) + 1);
+        // update the color information
+        for (Map.Entry<Integer, Double> color : tile.getColors().entrySet()) {
+            Integer colorId = color.getKey();
+            if (colors.containsKey(colorId)) {
+                colors.put(colorId, colors.get(colorId) + color.getValue());
             } else {
-                colors.put(color, 1);
+                colors.put(colorId, color.getValue());
             }
         }
+        // increase counter
+        added++;
+        // add the tile
         tiles.add(tile);
+    }
+
+    // internal - retrieve the overlap in colors of a specific tile
+    // with this cluster
+    private double overlap(Tile tile) {
+        double result = 0;
+        // loop over all the colors in the tile
+        for (Map.Entry<Integer, Double> color : tile.getColors().entrySet()) {
+            int colorId = color.getKey();
+            if (colors.containsKey(colorId)) {
+                // how much percent of the cluster is this color
+                double percentCluster = colors.get(color.getKey()) / colors.size();
+                result += percentCluster * color.getValue();
+            }
+        }
+        // normalize by colors in tile
+        return result / tile.count;
     }
 
     // returns null if adding this tile would result
     // in cluster above threshold
-    public final Integer getMergeInfo(Tile tile) {
-        int wouldBeColorCount = Sets.union(colors.keySet(), tile.getColorSet()).size();
+    public final Double getMergeInfo(Tile tile) {
+        int wouldBeColorCount = Sets.union(colors.keySet(), tile.getColors().keySet()).size();
         if (wouldBeColorCount > threshold) {
             return null;
         } else {
-            return (wouldBeColorCount - colors.size());
-               // + (int)Math.ceil(MathTools.binlog(wouldBeColorCount)) * 2;
+            // calculate how well the tile would fit into this cluster
+            // (we use the percentage of colors contained in the tile)
+            return overlap(tile);
         }
     }
 
-    public final HashSet<Tile> getTiles() {
+    // returns how many tiles were already added to this cluster
+    private int added = 0;
+    public final int getAddedCount() {
+        return added;
+    }
+
+    public final ArrayList<Tile> getTiles() {
         return tiles;
     }
 
@@ -55,72 +81,47 @@ public class TileCluster {
         return colors.size();
     }
 
-    public final Tile deleteTileRand() {
-        int randTile = rand.nextInt(tiles.size());
-        Tile toRemove = null;
-        for (Tile tile : tiles) {
-            if (randTile == 0) {
-                toRemove = tile;
-                break;
+    // sort this cluster
+    public final void sort() {
+        Collections.sort(tiles, new Comparator<Tile>() {
+            @Override
+            public int compare(Tile o1, Tile o2) {
+                return o1.color == o2.color
+                        ? (int)Math.signum(o2.colorPerc - o1.colorPerc)
+                        : o2.color - o1.color;
             }
-            randTile--;
-        }
-        tiles.remove(toRemove);
-        // clear the colors
-        assert toRemove != null;
-        for (int color : toRemove.getColorSet()) {
-            int newCount = colors.get(color)-1;
-            if (newCount > 0) {
-                colors.put(color, newCount);
-            } else {
-                colors.remove(color);
-            }
-        }
-        return toRemove;
+        });
     }
 
-    public final Tile deleteTile() {
-        // find the color with the lowest count
-        Integer toRemoveColor = null;
-        int count = 0;
-        for (Map.Entry<Integer, Integer> color : colors.entrySet()) {
-            if (toRemoveColor == null || count > color.getValue()) {
-                toRemoveColor = color.getKey();
-                count = color.getValue();
-            }
-        }
-        // find all the images that have this value
-        // and identify the one with the smallest count
-        // in other colors
+    public final Tile deleteTile(boolean blockCluster) {
+        // find the tile with the smallest overlap
         Tile toRemove = null;
-        int size = 0;
+        double overlap = 0;
         for (Tile tile : tiles) {
-            int thisSize = 0;
-            for (Integer color : tile.getColorSet()) {
-                thisSize += colors.get(color);
-            }
-            //int thisSize = tile.getColorSet().size();
-            if (tile.getColorSet().contains(toRemoveColor)) {
-                if (toRemove == null || size > thisSize) {
-                    toRemove = tile;
-                    size = thisSize;
-                }
+            double cOverlap = overlap(tile);
+            if (toRemove == null || cOverlap < overlap) {
+                toRemove = tile;
+                overlap = cOverlap;
             }
         }
         assert toRemove != null;
-        // mark this cluster as blocked for the tile
-        toRemove.blockCluster(this);
+        // block the tile
+        if (blockCluster) {
+            toRemove.blockCluster(this);
+        }
         // remove the tile
         tiles.remove(toRemove);
-        // clear the colors
-        for (int color : toRemove.getColorSet()) {
-            int newCount = colors.get(color)-1;
-            if (newCount > 0) {
-                colors.put(color, newCount);
+        // remove the colors
+        for (Map.Entry<Integer, Double> color : toRemove.getColors().entrySet()) {
+            Integer colorId = color.getKey();
+            double newVal = colors.get(colorId) - color.getValue();
+            if (newVal == 0) {
+               colors.remove(colorId);
             } else {
-                colors.remove(color);
+                colors.put(colorId, newVal);
             }
         }
+        // return the tile that was deleted
         return toRemove;
     }
 

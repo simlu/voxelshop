@@ -29,10 +29,10 @@ public class TextureClusterer {
         this.clusterCount = clusterCount;
     }
 
-    public TiledImage[] supervisedClustering() {
+    public TiledImage[] cluster() {
         // extract the colors from the image
         KMeansPlusPlusClusterer<MapColor> transformer =
-                new KMeansPlusPlusClusterer<MapColor>(clusterCount, 1000, new DistanceMeasure() {
+                new KMeansPlusPlusClusterer<MapColor>(clusterCount, 100, new DistanceMeasure() {
                     @Override
                     public double compute(double[] rgb1, double[] rgb2) {
                         return ColorTools.colorDistanceNatural(rgb1, rgb2);

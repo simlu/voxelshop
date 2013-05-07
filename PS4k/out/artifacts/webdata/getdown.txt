@@ -28,4 +28,5 @@ code = lib/jpct.jar
 class = com.vitco.Main
 
 # Heap size
-jvmarg = -Xmx512M
+jvmarg = -Xmx512m
+jvmarg = -Xms512m

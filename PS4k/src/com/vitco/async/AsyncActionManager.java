@@ -1,10 +1,14 @@
 package com.vitco.async;
 
+import com.vitco.logic.console.ConsoleInterface;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +18,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * Manages Async Actions
  */
 public class AsyncActionManager {
+
+    // var & setter
+    protected ActionManager actionManager;
+    @Autowired(required=true)
+    public final void setActionManager(ActionManager actionManager) {
+        this.actionManager = actionManager;
+    }
+
+    // var & setter
+    protected ConsoleInterface console;
+    @Autowired(required=true)
+    public final void setConsole(ConsoleInterface console) {
+        this.console = console;
+    }
 
     private ThreadManagerInterface threadManager;
     // set the action handler
@@ -46,8 +64,17 @@ public class AsyncActionManager {
         }
     }
 
+    private long rendertime = 0;
+    private long namedTime = 0;
+
     @PostConstruct
     public void init() {
+        actionManager.registerAction("show_thread_information", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                console.addLine("Render Time: " + Math.round((namedTime / (double)rendertime)*1000)/10 + " %");
+            }
+        });
         // create new thread that deals with things
         threadManager.manage(new LifeTimeThread() {
             @Override
@@ -60,7 +87,13 @@ public class AsyncActionManager {
                         // remove first in case the action adds
                         // itself to the cue again (e.g. for refreshWorld())
                         actionNames.remove(actionName);
+                        long start = System.currentTimeMillis();
                         action.performAction();
+                        long time = System.currentTimeMillis() - start;
+                        rendertime += time;
+                        if (actionName.startsWith("repaint")) {
+                            namedTime += time;
+                        }
                     } else {
                         idleStack.add(actionName);
                     }

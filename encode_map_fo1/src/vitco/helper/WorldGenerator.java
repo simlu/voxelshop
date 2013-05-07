@@ -136,7 +136,7 @@ public class WorldGenerator {
                 String name = names.get(pos);
 
                 // generate the minimaps
-                if (name != null && Config.compileMinimaps) {
+                if (name != null && Config.compileMinimaps && Config.minimapsToCompile.contains(name)) {
                     //String minimapDir = folder + "minimaps\\" + name + "\\";
                     BufferedImage resized = img;
                     for (int z = 0; z <= 3; z++) {
@@ -348,16 +348,19 @@ public class WorldGenerator {
         int idcount = 0;
 
         for (int i = 0; i < clusters.size(); i++) {
-            int dist = -1;
-            int sizex = 12;
+            // use sqrt distance as default
+            int sqrtCeil = (int)Math.ceil(Math.sqrt(clusters.get(i).getTileCount()));
+            int sizex = sqrtCeil;
+            int dist = sizex - (clusters.get(i).getTiles().size() - 1) % sizex;
             // calculate the best width
-            for (int j = 12; j > 4; j--) {
+            for (int j = sqrtCeil + 3; j > sqrtCeil; j--) {
                 int tmp2 = j - (clusters.get(i).getTiles().size() - 1) % j;
-                if (dist == -1 || tmp2 < dist) {
+                if (tmp2 < dist) {
                     dist = tmp2;
-                    sizex = j;
+                    sizex = Math.min(j, clusters.get(i).getTileCount());
                 }
             }
+
             // create the tile sheet
             BufferedImage newTileImage = new BufferedImage(
                     tileSize * sizex,
@@ -367,11 +370,9 @@ public class WorldGenerator {
             // write the icons to the tile sheets and update the position information
             int j = 0;
             for (vitco.cluster.Tile tile : clusters.get(i).getTiles()) {
-                // hold the id
-                int id = tile.getId();
                 // get the image
                 newTileImage.getGraphics().drawImage(
-                        tiles.get(id),
+                        tiles.get(tile.id),
                         (j % sizex) * tileSize,
                         (int) Math.floor(j / (double)sizex) * tileSize,
                         (j % sizex) * tileSize + tileSize,
@@ -379,7 +380,7 @@ public class WorldGenerator {
                         0, 0, tileSize, tileSize, null);
                 // update the map tile id data
                 for (int k = 0; k < tileIds.length; k++) {
-                    if (tileIds[k] == id) {
+                    if (tileIds[k] == tile.id) {
                         newMapTileIdData[k] = (short) (idcount);
                     }
                 }
@@ -389,22 +390,67 @@ public class WorldGenerator {
                 j++;
             }
 
-            try {
-                String filename = sheetDir + "tile" + i + ".png";
-                File outputfile = new File(filename);
-                ImageIO.write(newTileImage, "png", outputfile);
-                Process process = new ProcessBuilder("pngout\\pngout.exe","/y","/q",
-                        outputfile.getAbsolutePath()
-                ).start();
-                process.waitFor();
-                tileSheetPng.add(filename);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            String filename = sheetDir + "tile" + i + ".png";
+            writeChunk(filename, newTileImage);
+            tileSheetPng.add(filename);
+
+            // print the compression ratio
+            // ...
+        }
+
+    }
+
+    public void oneFileWrite(String sheetDir) {
+        // holds the new map tile id data
+        newMapTileIdData = new short[walkable.length];
+
+        // use sqrt distance as default
+        int sqrtCeil = (int)Math.ceil(Math.sqrt(tiles.size()));
+        int sizex = sqrtCeil;
+        int dist = sizex - (tiles.size() - 1) % sizex;
+        // calculate the best width
+        for (int j = sqrtCeil + 3; j > sqrtCeil; j--) {
+            int tmp2 = j - (tiles.size() - 1) % j;
+            if (tmp2 < dist) {
+                dist = tmp2;
+                sizex = Math.min(j, tiles.size());
             }
         }
 
+        // create the tile sheet
+        BufferedImage newTileImage = new BufferedImage(
+                tileSize * sizex,
+                tileSize * (int) Math.ceil(tiles.size() / (double) sizex),
+                BufferedImage.TYPE_INT_RGB
+        );
+        // write the icons to the tile sheets and update the position information
+        int j = 0;
+        for (Map.Entry<Integer, BufferedImage> tile : tiles.entrySet()) {
+            // get the image
+            newTileImage.getGraphics().drawImage(
+                    tiles.get(tile.getKey()),
+                    (j % sizex) * tileSize,
+                    (int) Math.floor(j / (double)sizex) * tileSize,
+                    (j % sizex) * tileSize + tileSize,
+                    (int) Math.floor(j / (double)sizex) * tileSize + tileSize,
+                    0, 0, tileSize, tileSize, null);
+            // update the map tile id data
+            for (int k = 0; k < tileIds.length; k++) {
+                if (tileIds[k] == tile.getKey()) {
+                    newMapTileIdData[k] = (short)tile.getKey().intValue();
+                }
+            }
+            // update the tile information
+            tilesLogic.add(new Tile(tile.getKey(), (j % sizex) * tileSize, (int) Math.floor(j / (double)sizex) * tileSize, tile.getKey()));
+            j++;
+        }
+
+        String filename = sheetDir + "tile.png";
+        writeChunk(filename, newTileImage);
+        tileSheetPng.add(filename);
+
+        // print the compression ratio
+        // ...
     }
 
     // cluster tiles and write images
@@ -476,6 +522,13 @@ public class WorldGenerator {
                     tileSize * (int) Math.ceil(groupList.get(i).getTiles().size() / (double) sizex),
                     BufferedImage.TYPE_INT_RGB
             );
+//            // form a cluster for these tiles
+//            TileCluster cluster = new TileCluster(2048);
+//            for (TileRep rep : groupList.get(i).getTiles()) {
+//                cluster.addTile(new vitco.cluster.Tile(rep.id, tiles.get(rep.id)));
+//            }
+//            cluster.sort();
+
             // write the icons to the tile sheets and update the position information
             for (int j = 0; j < groupList.get(i).getTiles().size(); j++) {
                 // hold the id
@@ -499,20 +552,9 @@ public class WorldGenerator {
                 idcount++;
             }
 
-            try {
-                String filename = sheetDir + "tile" + i + ".png";
-                File outputfile = new File(filename);
-                ImageIO.write(newTileImage, "png", outputfile);
-                Process process = new ProcessBuilder("pngout\\pngout.exe","/y","/q",
-                        outputfile.getAbsolutePath()
-                ).start();
-                process.waitFor();
-                tileSheetPng.add(filename);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            String filename = sheetDir + "tile" + i + ".png";
+            writeChunk(filename, newTileImage);
+            tileSheetPng.add(filename);
         }
     }
 
@@ -540,16 +582,20 @@ public class WorldGenerator {
                 out.writeByte(aWalkable);
             }
 
-            // stop, so we can compress the png files
-            System.out.println("Please compress pngs and press return...");
-            //noinspection ResultOfMethodCallIgnored
-            System.in.read();
+            if (Config.manualCompress && !Config.writeAs32Bit) {
+                // stop, so we can compress the png files
+                System.out.println("Please compress pngs and press return...");
+                //noinspection ResultOfMethodCallIgnored
+                System.in.read();
+            }
 
-            // write the amount of tile sheets
-            out.writeIntRev(tileSheetPng.size());
-            // write all tile sheets
-            for (String tileSheetFileName : tileSheetPng) {
-                out.writeImage(new File(tileSheetFileName));
+            if (Config.includeImageInMapFile) {
+                // write the amount of tile sheets
+                out.writeIntRev(tileSheetPng.size());
+                // write all tile sheets
+                for (String tileSheetFileName : tileSheetPng) {
+                    out.writeImage(new File(tileSheetFileName));
+                }
             }
 
             // write the mappings "tile id" -> "position in tile image"
@@ -714,7 +760,7 @@ public class WorldGenerator {
 
             boolean isVariation = false;
 
-            // check that non of the variations is already containsed
+            // check that non of the variations is already contained
             for (Map.Entry<String, Integer[]> variation : variations.entrySet()) {
                 if (tileMD5.containsKey(variation.getKey())) {
                     isVariation = true;
@@ -744,4 +790,96 @@ public class WorldGenerator {
         System.out.println(count);
     }
 
+    // helper to write tile sheets
+    private void writeChunk(String filename, BufferedImage chunk) {
+        try {
+            File outputfile = new File(filename);
+            ImageIO.write(chunk, "png", outputfile);
+            Process process;
+            if (Config.writeAs32Bit) {
+                process = new ProcessBuilder("pngout\\pngout.exe","/y","/q", "/c6", "/force",
+                        outputfile.getAbsolutePath()
+                ).start();
+            } else {
+                process = new ProcessBuilder("pngout\\pngout.exe","/y","/q",
+                        outputfile.getAbsolutePath()
+                ).start();
+            }
+            process.waitFor();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void as1024TextureWrite(String sheetDir) {
+        // holds the new map tile id data
+        newMapTileIdData = new short[walkable.length];
+
+        // size of the chunk
+        int sizex = 32;
+        int sizey = 32;
+
+        // current chunk pos
+        int posx = 0;
+        int posy = 0;
+
+        // chunk information
+        BufferedImage chunk = null;
+        int chunkId = 0;
+        Graphics chunkGraphic = null;
+        int tileSeqId = 0;
+
+        // loop over all tiles and put them into groups
+        for (Map.Entry<Integer, BufferedImage> entry : tiles.entrySet()) {
+            int tileID = entry.getKey();
+
+            // holds the current tile image
+            if (chunk == null) {
+                chunk = new BufferedImage(
+                        tileSize * sizex,
+                        tileSize * sizey,
+                        BufferedImage.TYPE_INT_RGB
+                );
+                chunkGraphic = chunk.getGraphics();
+            }
+
+            // draw graphic
+            chunkGraphic.drawImage(entry.getValue(), posx * sizex, posy * sizey, null);
+            // update the map tile id data
+            for (int k = 0; k < tileIds.length; k++) {
+                if (tileIds[k] == tileID) {
+                    newMapTileIdData[k] = (short) (tileSeqId);
+                }
+            }
+            // update the tile information
+            tilesLogic.add(new Tile(chunkId, posx * tileSize, posy * tileSize, tileSeqId));
+
+            // update position
+            posx++;
+            tileSeqId++;
+            if (posx >= sizex) { // row is full
+                posy++;
+                posx = 0;
+            }
+            if (posy >= sizey) { // chunk is full
+                // store the chunk
+                String filename = sheetDir + "tile" + chunkId + ".png";
+                writeChunk(filename, chunk);
+                tileSheetPng.add(filename);
+
+                posx = 0;
+                posy = 0;
+                chunk = null;
+                chunkId++;
+            }
+        }
+        // write the last (maybe incomplete chunk)
+        if (chunk != null) {
+            String filename = sheetDir + "tile" + chunkId + ".png";
+            writeChunk(filename, chunk);
+            tileSheetPng.add(filename);
+        }
+    }
 }

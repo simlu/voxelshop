@@ -15,6 +15,7 @@ import com.vitco.util.WrapLayout;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

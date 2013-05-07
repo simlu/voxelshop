@@ -16,7 +16,7 @@ public final class VitcoSettings {
 
     // Alternative (slower but better quality):
     public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
-    public static final float SAMPLING_MODE_MULTIPLICAND = 2f;
+    public static final int SAMPLING_MODE_MULTIPLICAND = 2;
     public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
 
 //    // sampling mode (faster but crappy quality)
