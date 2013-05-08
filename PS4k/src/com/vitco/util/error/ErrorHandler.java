@@ -1,6 +1,7 @@
 package com.vitco.util.error;
 
 import com.vitco.logic.console.ConsoleInterface;
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.DateTools;
 import com.vitco.util.lang.LangSelectorInterface;
 import org.apache.http.HttpEntity;
@@ -89,82 +90,83 @@ public class ErrorHandler implements ErrorHandlerInterface {
 
     // handle exceptions
     @Override
-    public synchronized void handle(Throwable e) {
-        if (debug) {
-            // print the trace (debug)
-            e.printStackTrace();
-        } else {
-            if (lastErrorReport + error_spam_timeout < System.currentTimeMillis()) {
-                lastErrorReport = System.currentTimeMillis();
-                Toolkit.getDefaultToolkit().beep(); // play beep
-                boolean result = false;
-                // show dialog
-                if (JOptionPane.showOptionDialog(null, langSelector.getString("error_dialog_text"),
-                        langSelector.getString("error_dialog_caption"),
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.ERROR_MESSAGE,
-                        null,
-                        new String[]{langSelector.getString("error_dialog_clc_yes"),
-                                langSelector.getString("error_dialog_clc_no")},
-                        0) == JOptionPane.YES_OPTION
-                        ) {
-                    try {
-                        // write temporary file with stack-trace
-                        File temp = File.createTempFile("PS4k_" + DateTools.now("yyyy-MM-dd_HH-mm-ss_"), ".error");
-                        temp.deleteOnExit();
-                        PrintStream ps = new PrintStream(temp);
-                        e.printStackTrace(ps);
+    public void handle(Throwable e) {
+        synchronized (VitcoSettings.SYNC) {
+            if (debug) {
+                // print the trace (debug)
+                e.printStackTrace();
+            } else {
+                if (lastErrorReport + error_spam_timeout < System.currentTimeMillis()) {
+                    lastErrorReport = System.currentTimeMillis();
+                    Toolkit.getDefaultToolkit().beep(); // play beep
+                    boolean result = false;
+                    // show dialog
+                    if (JOptionPane.showOptionDialog(null, langSelector.getString("error_dialog_text"),
+                            langSelector.getString("error_dialog_caption"),
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.ERROR_MESSAGE,
+                            null,
+                            new String[]{langSelector.getString("error_dialog_clc_yes"),
+                                    langSelector.getString("error_dialog_clc_no")},
+                            0) == JOptionPane.YES_OPTION
+                            ) {
+                        try {
+                            // write temporary file with stack-trace
+                            File temp = File.createTempFile("PS4k_" + DateTools.now("yyyy-MM-dd_HH-mm-ss_"), ".error");
+                            temp.deleteOnExit();
+                            PrintStream ps = new PrintStream(temp);
+                            e.printStackTrace(ps);
 
-                        // upload to server
-                        if (uploadFile(temp, e.getMessage())) {
-                            result = true;
-                        }
+                            // upload to server
+                            if (uploadFile(temp, e.getMessage())) {
+                                result = true;
+                            }
 
-                    } catch (FileNotFoundException e1) {
-                        if (debug) {
-                            e1.printStackTrace();
-                        }
-                    } catch (IOException e1) {
-                        if (debug) {
-                            e1.printStackTrace();
+                        } catch (FileNotFoundException e1) {
+                            if (debug) {
+                                e1.printStackTrace();
+                            }
+                        } catch (IOException e1) {
+                            if (debug) {
+                                e1.printStackTrace();
+                            }
                         }
                     }
-                }
-                if (!result) {
-                    console.addLine(langSelector.getString("error_dialog_upload_failed"));
-                    // print this error to file
-                    String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-                    try {
-                        String appJarLocation = URLDecoder.decode(path, "UTF-8");
-                        File appJar = new File(appJarLocation);
-                        String absolutePath = appJar.getAbsolutePath();
-                        String filePath = absolutePath.
-                                substring(0, absolutePath.lastIndexOf(File.separator) + 1);
-                        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filePath + "errorlog.txt", true)));
-                        out.println("===================");
-                        out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
-                        out.println("-------------------");
-                        e.printStackTrace(out);
-                        out.println();
-                        out.close();
-                        console.addLine(langSelector.getString("error_dialog_request_upload_manually"));
-                    } catch (UnsupportedEncodingException ex) {
-                        // If this fails, the program is not reporting.
-                        if (debug) {
-                            ex.printStackTrace();
+                    if (!result) {
+                        console.addLine(langSelector.getString("error_dialog_upload_failed"));
+                        // print this error to file
+                        String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+                        try {
+                            String appJarLocation = URLDecoder.decode(path, "UTF-8");
+                            File appJar = new File(appJarLocation);
+                            String absolutePath = appJar.getAbsolutePath();
+                            String filePath = absolutePath.
+                                    substring(0, absolutePath.lastIndexOf(File.separator) + 1);
+                            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filePath + "errorlog.txt", true)));
+                            out.println("===================");
+                            out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
+                            out.println("-------------------");
+                            e.printStackTrace(out);
+                            out.println();
+                            out.close();
+                            console.addLine(langSelector.getString("error_dialog_request_upload_manually"));
+                        } catch (UnsupportedEncodingException ex) {
+                            // If this fails, the program is not reporting.
+                            if (debug) {
+                                ex.printStackTrace();
+                            }
+                        } catch (IOException ex) {
+                            // If this fails, the program is not reporting.
+                            if (debug) {
+                                ex.printStackTrace();
+                            }
                         }
-                    } catch (IOException ex) {
-                        // If this fails, the program is not reporting.
-                        if (debug) {
-                            ex.printStackTrace();
-                        }
+                    } else {
+                        console.addLine(langSelector.getString("error_dialog_upload_ok"));
                     }
-                } else {
-                    console.addLine(langSelector.getString("error_dialog_upload_ok"));
                 }
             }
         }
-
     }
 
     // upload file to server

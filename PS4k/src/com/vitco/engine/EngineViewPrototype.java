@@ -134,13 +134,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         asyncActionManager.addAsyncAction(new AsyncAction("asyncWorld" + side) {
             @Override
             public void performAction() {
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
                 if (!world.refreshWorld()) {
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
                     asyncActionManager.addAsyncAction(this);
-                } else {
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
                 }
             }
         });
@@ -161,13 +158,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         asyncActionManager.addAsyncAction(new AsyncAction("asyncSelWorld" + side) {
             @Override
             public void performAction() {
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
                 if (!selectedVoxelsWorld.refreshWorld()) {
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
                     asyncActionManager.addAsyncAction(this);
-                } else {
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
                 }
             }
         });
@@ -653,9 +647,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
                 }
             }
-            buffer.display(toDraw.getGraphics());
-            // draw the under/overlay (voxels in parallel planes)
             Graphics2D gr = (Graphics2D) toDraw.getGraphics();
+
+            buffer.display(gr);
+
+            // draw the under/overlay (voxels in parallel planes)
             if (drawGhostOverlay) {
                 drawGhostOverlay(gr, cameraChanged, hasResized);
             }
@@ -669,15 +665,22 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             hasResized = false; // no resize pending
         }
 
+
         // handle the redrawing of this component
         // note: this MUSTN'T have any call to synchronized
         @Override
         protected final void paintComponent(Graphics g1) {
+            super.paintComponent(g1);
             if (toDraw != null) {
                 g1.drawImage(toDraw, 0, 0, null);
             } else {
                 g1.setColor(bgColor);
                 g1.fillRect(0, 0, this.getWidth(), this.getHeight());
+            }
+            repainting = false;
+            if (needRepainting) {
+                needRepainting = false;
+                forceRepaint();
             }
         }
 
@@ -699,24 +702,30 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     }
 
-    protected final void forceRepaint() {
-        asyncActionManager.addAsyncAction(new AsyncAction("repaint" + side) {
-            @Override
-            public void performAction() {
-                container.render();
-                SwingAsyncHelper.handle(new Runnable() {
-                    @Override
-                    public void run() {
-                        container.repaint();
-                    }
-                }, errorHandler);
-            }
+    // makes sure the repaint doesn't get called too often
+    // (only one in queue at a time)
+    private boolean repainting = false;
+    private boolean needRepainting = false;
 
-            @Override
-            public boolean ready() {
-                return !globalMouseDown || localMouseDown;
-            }
-        });
+    protected final void forceRepaint() {
+        if (!repainting) {
+            repainting = true;
+            asyncActionManager.addAsyncAction(new AsyncAction("repaint" + side) {
+                @Override
+                public void performAction() {
+                    container.render();
+                    // this is thread save!
+                    container.repaint();
+                }
+
+                @Override
+                public boolean ready() {
+                    return !globalMouseDown || localMouseDown;
+                }
+            });
+        } else {
+            needRepainting = true;
+        }
     }
 
     @PostConstruct
@@ -736,9 +745,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         Config.fadeoutLight = false;
         Config.maxPolysVisible = 5000;
 
-//        Config.useMultipleThreads = true;
-//        Config.maxNumberOfCores = Runtime.getRuntime().availableProcessors();
-//        Config.loadBalancingStrategy = 1; // default 0
+        Config.useMultipleThreads = true;
+        Config.maxNumberOfCores = Runtime.getRuntime().availableProcessors();
+        Config.loadBalancingStrategy = 1; // default 0
         // usually not worth it (http://www.jpct.net/doc/com/threed/jpct/Config.html#useMultiThreadedBlitting)
         //Config.useMultiThreadedBlitting = false;   //default false
 

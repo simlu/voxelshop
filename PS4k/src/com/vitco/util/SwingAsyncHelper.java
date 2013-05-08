@@ -15,6 +15,8 @@ public class SwingAsyncHelper {
             // this *should* be ok as long as this event doesn't read/write
             // to synchronized data
             SwingUtilities.invokeLater(runnable);
+            // this will cause a deadlock as sync is not passed to the new runnable
+            // (if this is called from sync context already)
 //            try {
 //                SwingUtilities.invokeAndWait(runnable);
 //            } catch (InterruptedException e) {

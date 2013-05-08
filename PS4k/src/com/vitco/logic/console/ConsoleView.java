@@ -116,6 +116,9 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/clear", "console_action_clear");
         consoleAction.put("/debug exception", "create_error_for_debug");
         consoleAction.put("/debug deadlock", "initialize_deadlock_debug");
+        consoleAction.put("/test aam", "aysnc_action_manager_alive_check");
+        consoleAction.put("/analyze aam", "aysnc_action_manager_print_stack_details");
+        consoleAction.put("/restart aam", "aysnc_action_manager_restart_worker");
 
         // register all console actions (so debug know that they are used)
         for (String action : consoleAction.values()) {

@@ -6,7 +6,7 @@ public abstract class LifeTimeThread extends Thread {
     public final void run() {
         try {
             //noinspection InfiniteLoopStatement
-            while (true) {
+            while (!stopped) {
                 loop();
             }
         } catch (InterruptedException ex) {
@@ -14,9 +14,19 @@ public abstract class LifeTimeThread extends Thread {
         }
     }
 
+    private boolean stopped = false;
+
     // to interrupt the thread
     public final void stopThread() {
+        onBeforeStop();
+        stopped = true;
         interrupt();
+    }
+
+    public void onBeforeStop() {}
+
+    public final boolean wasStopped() {
+        return stopped;
     }
 
     // loop to be defines

@@ -1,5 +1,6 @@
 package com.vitco.util.pref;
 
+import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
 import com.vitco.util.error.ErrorHandlerInterface;
 
@@ -20,122 +21,152 @@ public class Preferences implements PreferencesInterface {
     private final HashMap<String, ArrayList<PrefChangeListener>> listeners = new HashMap<String, ArrayList<PrefChangeListener>>();
 
     @Override
-    public synchronized void notifyListeners(String key, Object value) {
-        if (listeners.containsKey(key)) {
-            for (PrefChangeListener pcl : listeners.get(key)) {
-                pcl.onPrefChange(value);
+    public void notifyListeners(String key, Object value) {
+        synchronized (VitcoSettings.SYNC) {
+            if (listeners.containsKey(key)) {
+                for (PrefChangeListener pcl : listeners.get(key)) {
+                    pcl.onPrefChange(value);
+                }
             }
         }
     }
 
     @Override
-    public synchronized void addPrefChangeListener(String key, PrefChangeListener pcl) {
-        if (!listeners.containsKey(key)) { // make sure this is init
-            listeners.put(key, new ArrayList<PrefChangeListener>());
-        }
-        // add the listener
-        listeners.get(key).add(pcl);
-        // call it if value is known
-        if (map.containsKey(key)) {
-            pcl.onPrefChange(map.get(key));
+    public void addPrefChangeListener(String key, PrefChangeListener pcl) {
+        synchronized (VitcoSettings.SYNC) {
+            if (!listeners.containsKey(key)) { // make sure this is init
+                listeners.put(key, new ArrayList<PrefChangeListener>());
+            }
+            // add the listener
+            listeners.get(key).add(pcl);
+            // call it if value is known
+            if (map.containsKey(key)) {
+                pcl.onPrefChange(map.get(key));
+            }
         }
     }
 
     @Override
-    public synchronized boolean contains(String key) {
-        return map.containsKey(key);
+    public boolean contains(String key) {
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key);
+        }
     }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
-    public synchronized final void setErrorHandler(ErrorHandlerInterface errorHandler) {
-        this.errorHandler = errorHandler;
-    }
-
-    @Override
-    public synchronized final void storeObject(String key, Object value) {
-        if (!map.containsKey(key) || !map.get(key).equals(value)) {
-            map.put(key, value);
-            notifyListeners(key, value);
+    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
+        synchronized (VitcoSettings.SYNC) {
+            this.errorHandler = errorHandler;
         }
     }
 
     @Override
-    public synchronized Object loadObject(String key) {
-        return map.containsKey(key) ? map.get(key) : null;
+    public final void storeObject(String key, Object value) {
+        synchronized (VitcoSettings.SYNC) {
+            if (!map.containsKey(key) || !map.get(key).equals(value)) {
+                map.put(key, value);
+                notifyListeners(key, value);
+            }
+        }
     }
 
     @Override
-    public synchronized void storeBoolean(String key, boolean value) {
-        storeObject(key, value);
+    public Object loadObject(String key) {
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? map.get(key) : null;
+        }
     }
 
     @Override
-    public synchronized void storeInteger(String key, int value) {
-        storeObject(key, value);
+    public void storeBoolean(String key, boolean value) {
+        synchronized (VitcoSettings.SYNC) {
+            storeObject(key, value);
+        }
     }
 
     @Override
-    public synchronized void storeString(String key, String value) {
-        storeObject(key, value);
+    public void storeInteger(String key, int value) {
+        synchronized (VitcoSettings.SYNC) {
+            storeObject(key, value);
+        }
     }
 
     @Override
-    public synchronized boolean loadBoolean(String key) {
-        return map.containsKey(key) ? (Boolean)map.get(key) : false;
+    public void storeString(String key, String value) {
+        synchronized (VitcoSettings.SYNC) {
+            storeObject(key, value);
+        }
     }
 
     @Override
-    public synchronized int loadInteger(String key) {
-        return map.containsKey(key) ? (Integer)map.get(key) : 0;
+    public boolean loadBoolean(String key) {
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? (Boolean)map.get(key) : false;
+        }
     }
 
     @Override
-    public synchronized final String loadString(String key) {
-        return map.containsKey(key) ? (String)map.get(key) : "";
+    public int loadInteger(String key) {
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? (Integer)map.get(key) : 0;
+        }
+    }
+
+    @Override
+    public final String loadString(String key) {
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? (String)map.get(key) : "";
+        }
     }
 
     // var % setter
     private String storageFileName;
     @Override
-    public synchronized final void setStorageFile(String filename) {
-        storageFileName = filename;
+    public final void setStorageFile(String filename) {
+        synchronized (VitcoSettings.SYNC) {
+            storageFileName = filename;
+        }
     }
 
     // "manually" executed after all PreDestroys are called
     @Override
-    public synchronized void save() {
-        // store the map in file
-        File dataFile = new File(storageFileName);
-        if (dataFile.getParentFile().exists() || dataFile.getParentFile().mkdirs()) {
-            try {
-                FileOutputStream fileOut = new FileOutputStream(dataFile);
-                ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                out.writeObject(map);
-            } catch (FileNotFoundException e) {
-                errorHandler.handle(e); // should not happen
-            } catch (IOException e) {
-                errorHandler.handle(e); // should not happen
+    public void save() {
+        synchronized (VitcoSettings.SYNC) {
+            // store the map in file
+            File dataFile = new File(storageFileName);
+            if (dataFile.getParentFile().exists() || dataFile.getParentFile().mkdirs()) {
+                try {
+                    FileOutputStream fileOut = new FileOutputStream(dataFile);
+                    ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                    out.writeObject(map);
+                } catch (FileNotFoundException e) {
+                    errorHandler.handle(e); // should not happen
+                } catch (IOException e) {
+                    errorHandler.handle(e); // should not happen
+                }
             }
         }
     }
 
     // executed when initiated (spring "init-method")
     @Override
-    public synchronized void load() {
-        File dataFile = new File(storageFileName);
-        if (dataFile.exists()) {
-            try {
-                FileInputStream fileIn = new FileInputStream(dataFile);
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                map = FileTools.castHash((HashMap) in.readObject(), String.class, Object.class);
-                in.close();
-                fileIn.close();
-            } catch (IOException e) {
-                errorHandler.handle(e); // should not happen
-            } catch (ClassNotFoundException e) {
-                errorHandler.handle(e); // should not happen
+    public void load() {
+        synchronized (VitcoSettings.SYNC) {
+            File dataFile = new File(storageFileName);
+            if (dataFile.exists()) {
+                try {
+                    FileInputStream fileIn = new FileInputStream(dataFile);
+                    ObjectInputStream in = new ObjectInputStream(fileIn);
+                    map = FileTools.castHash((HashMap) in.readObject(), String.class, Object.class);
+                    in.close();
+                    fileIn.close();
+                } catch (IOException e) {
+                    errorHandler.handle(e); // should not happen
+                } catch (ClassNotFoundException e) {
+                    errorHandler.handle(e); // should not happen
+                }
             }
         }
     }

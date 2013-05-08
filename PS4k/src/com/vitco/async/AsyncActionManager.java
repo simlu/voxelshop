@@ -1,5 +1,6 @@
 package com.vitco.async;
 
+import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.util.DateTools;
 import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.action.ActionManager;
@@ -17,9 +18,8 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.concurrent.*;
 
 /**
  * Manages Async Actions
@@ -39,6 +39,13 @@ public class AsyncActionManager {
         this.actionManager = actionManager;
     }
 
+    private ConsoleInterface console;
+    // set the action handler
+    @Autowired
+    public final void setConsole(ConsoleInterface console) {
+        this.console = console;
+    }
+
     private ThreadManagerInterface threadManager;
     // set the action handler
     @Autowired
@@ -46,13 +53,16 @@ public class AsyncActionManager {
         this.threadManager = threadManager;
     }
 
+    // list of new action
+    private final ArrayList<AsyncAction> newActions = new ArrayList<AsyncAction>();
+
     // list of actions
-    private final List<String> stack = Collections.synchronizedList(new ArrayList<String>());
+    private final ArrayList<String> stack = new ArrayList<String>();
     // retry to execute when the main stack is empty
-    private final List<String> idleStack = Collections.synchronizedList(new ArrayList<String>());
+    private final ArrayList<String> idleStack = new ArrayList<String>();
 
     // list of current action names
-    private final ConcurrentHashMap<String, AsyncAction> actionNames = new ConcurrentHashMap<String, AsyncAction>();
+    private final HashMap<String, AsyncAction> actionNames = new HashMap<String, AsyncAction>();
 
     public final void removeAsyncAction(String actionName) {
         if (null != actionNames.remove(actionName)) {
@@ -64,14 +74,130 @@ public class AsyncActionManager {
     // Note: re-adding an action does not ensure that the action
     // is at the end of the queue!
     public final void addAsyncAction(AsyncAction action) {
-        String actionName = action.getName();
-        if (null == actionNames.put(actionName, action)) {
-            stack.add(actionName);
+        synchronized (newActions) {
+            newActions.add(action);
         }
+//        final LifeTimeThread workerThreadRef = workerThread;
+//        synchronized (workerThreadRef) {
+//            workerThreadRef.notifyAll();
+//        }
+    }
+
+    private LifeTimeThread workerThread;
+
+    private void initWorker() {
+        workerThread = new LifeTimeThread() {
+
+            // needs to be one as those tasks can not be executed in parallel!
+            private final ExecutorService executor = Executors.newSingleThreadExecutor();
+//            private ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
+//                    0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+
+            @Override
+            public void onBeforeStop() {
+                executor.shutdown();
+                // Wait until all threads are finish
+                //noinspection StatementWithEmptyBody
+                while (!executor.isTerminated()) {}
+            }
+
+            @Override
+            public void loop() throws InterruptedException {
+                // add new tasks
+                synchronized (newActions) {
+                    if (!newActions.isEmpty()) {
+                        for (AsyncAction action : newActions) {
+                            String actionName = action.getActionName();
+                            if (null == actionNames.put(actionName, action)) {
+                                stack.add(actionName);
+                            }
+                        }
+                        newActions.clear();
+                    }
+                }
+                // handle stack execution
+                if (!stack.isEmpty()) {
+                    // fetch action
+                    String actionName = stack.remove(0);
+                    final AsyncAction action = actionNames.get(actionName);
+                    lastAction = action;
+                    if (action.ready()) {
+                        // remove first in case the action adds
+                        // itself to the cue again (e.g. for refreshWorld())
+                        actionNames.remove(actionName);
+                        //action.performAction();
+                        executor.execute(action);
+                    } else {
+                        idleStack.add(actionName);
+                    }
+                } else {
+                    // add back to main stack
+                    while (!idleStack.isEmpty()) {
+                        stack.add(idleStack.remove(0));
+                    }
+                    sleep(50);
+//                    if (stack.isEmpty()) {
+//                        synchronized (this) {
+//                            wait();
+//                        }
+//                    }
+                }
+            }
+        };
+        // create new thread that deals with things
+        threadManager.manage(workerThread);
     }
 
     @PostConstruct
     public void init() {
+
+        initWorker();
+
+        // restart the worker
+        actionManager.registerAction("aysnc_action_manager_restart_worker", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                initWorker();
+            }
+        });
+
+        // print the current stack
+        actionManager.registerAction("aysnc_action_manager_print_stack_details", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                console.addLine("============");
+                console.addLine("Async Action Manager");
+                console.addLine("Printing Last Task: ");
+                if (lastAction != null) {
+                    console.addLine("------------");
+                    console.addLine(lastAction.getActionName());
+                }
+                console.addLine("============");
+            }
+        });
+
+        // check that the manager is still alive and working
+        actionManager.registerAction("aysnc_action_manager_alive_check", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                console.addLine("============");
+                console.addLine("Testing Async Action Manager");
+                console.addLine("Pending Tasks: " + (stack.size() + idleStack.size()) + " (" + idleStack.size() + ")");
+                addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        final long time = System.currentTimeMillis();
+                        SwingAsyncHelper.handle(new Runnable() {
+                            @Override
+                            public void run() {
+                                console.addLine("Test Task executed in " + (System.currentTimeMillis() - time) + " ms");
+                                console.addLine("============");
+                            }
+                        }, errorHandler);
+                    }
+                });
+            }
+        });
 
         // register debug mode (console)
         actionManager.registerAction("initialize_deadlock_debug", new AbstractAction() {
@@ -119,12 +245,6 @@ public class AsyncActionManager {
                                 errorHandler.handle(new Exception(error));
                                 interrupt();
                             }
-                            SwingAsyncHelper.handle(new Runnable() {
-                                @Override
-                                public void run() {
-                                    System.out.println("xxx");
-                                }
-                            }, errorHandler);
 
                             Thread.sleep(5000);
                         }
@@ -133,31 +253,7 @@ public class AsyncActionManager {
                 }
             }
         });
-
-        // create new thread that deals with things
-        threadManager.manage(new LifeTimeThread() {
-            @Override
-            public void loop() throws InterruptedException {
-                if (stack.size() > 0) {
-                    // fetch action
-                    String actionName = stack.remove(0);
-                    AsyncAction action = actionNames.get(actionName);
-                    if (action.ready()) {
-                        // remove first in case the action adds
-                        // itself to the cue again (e.g. for refreshWorld())
-                        actionNames.remove(actionName);
-                        action.performAction();
-                    } else {
-                        idleStack.add(actionName);
-                    }
-                } else {
-                    // add back to main stack
-                    while (idleStack.size() > 0) {
-                        stack.add(idleStack.remove(0));
-                    }
-                    sleep(50);
-                }
-            }
-        });
     }
+
+    private AsyncAction lastAction = null;
 }

@@ -9,3 +9,23 @@ java.lang.Exception: msg
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:120)
 
+===================
+2013-05-07 18-08-13
+-------------------
+The following threads are deadlocked:
+
+
+===================
+2013-05-07 18-08-31
+-------------------
+The following threads are deadlocked:
+
+
+===================
+2013-05-07 18-08-44
+-------------------
+java.lang.Exception: The following threads are deadlocked:
+
+	at com.vitco.async.AsyncActionManager$1.loop(AsyncActionManager.java:101)
+	at com.vitco.util.thread.LifeTimeThread.run(LifeTimeThread.java:10)
+

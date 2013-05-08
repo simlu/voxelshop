@@ -11,7 +11,6 @@ import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -48,27 +47,32 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         public Component getTableCellRendererComponent(
                 JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column
         ) {
-            synchronized (LayerView.class) {
-                // set the correct background (selected/unselected/visible/invisible)
-                if (selectedLayer == layers[row]) {
-                    setFont(VitcoSettings.TABLE_FONT_BOLD); // set font
-                    if (layerVisibilities[row]) {
-                        setBackground(VitcoSettings.VISIBLE_SELECTED_LAYER_BG);
-                    } else {
-                        setBackground(VitcoSettings.HIDDEN_SELECTED_LAYER_BG);
-                    }
-                } else {
-                    setFont(VitcoSettings.TABLE_FONT); // set font
-                    if (layerVisibilities[row]) {
-                        setBackground(VitcoSettings.VISIBLE_LAYER_BG);
-                    } else {
-                        setBackground(VitcoSettings.HIDDEN_LAYER_BG);
-                    }
-                }
-                setForeground(VitcoSettings.DEFAULT_TEXT_COLOR); // set text color
-                setBorder(VitcoSettings.DEFAULT_CELL_BORDER); // padding
-                setValue(value.toString()); // set the value
+            boolean isSelectedLayer;
+            boolean isVisible;
+            synchronized (VitcoSettings.SYNC) {
+                isSelectedLayer = layers[row] == selectedLayer;
+                isVisible = layerVisibilities[row];
             }
+            // set the correct background (selected/unselected/visible/invisible)
+            if (isSelectedLayer) {
+                setFont(VitcoSettings.TABLE_FONT_BOLD); // set font
+                if (isVisible) {
+                    setBackground(VitcoSettings.VISIBLE_SELECTED_LAYER_BG);
+                } else {
+                    setBackground(VitcoSettings.HIDDEN_SELECTED_LAYER_BG);
+                }
+            } else {
+                setFont(VitcoSettings.TABLE_FONT); // set font
+                if (isVisible) {
+                    setBackground(VitcoSettings.VISIBLE_LAYER_BG);
+                } else {
+                    setBackground(VitcoSettings.HIDDEN_LAYER_BG);
+                }
+            }
+            setForeground(VitcoSettings.DEFAULT_TEXT_COLOR); // set text color
+            setBorder(VitcoSettings.DEFAULT_CELL_BORDER); // padding
+            setValue(value.toString()); // set the value
+
             return this;
         }
     }
@@ -81,7 +85,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         }
 
         public int getRowCount() {
-            synchronized (LayerView.class) {
+            synchronized (VitcoSettings.SYNC) {
                 return layers.length;
             }
         }
@@ -98,7 +102,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
         // display value
         public Object getValueAt(int row, int col) {
-            synchronized (LayerView.class) {
+            synchronized (VitcoSettings.SYNC) {
                 switch (col) {
                     case 0:
                         return layerNames[row] + " (" + layerVoxelCounts[row] + ")";
@@ -123,12 +127,14 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                             case 0:
                                 // this needs to be done asynchronously,
                                 // b/c it could trigger a UI refresh
+                                final int layer;
+                                synchronized (VitcoSettings.SYNC) {
+                                    layer = layers[row];
+                                }
                                 asyncActionManager.addAsyncAction(new AsyncAction() {
                                     @Override
                                     public void performAction() {
-                                        synchronized (LayerView.class) {
-                                            data.renameLayer(layers[row], (String) value);
-                                        }
+                                        data.renameLayer(layer, (String) value);
                                     }
                                 });
                                 break;
@@ -156,34 +162,34 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         // start editing
         public Component getTableCellEditorComponent(final JTable table, Object value,
                                                      boolean isSelected, final int rowIndex, final int vColIndex) {
-            synchronized (LayerView.class) {
+            synchronized (VitcoSettings.SYNC) {
                 component = new SaveTextArea(layerNames[rowIndex]);
-                component.setBorder(VitcoSettings.DEFAULT_CELL_BORDER_EDIT); // border
-                component.setFont(VitcoSettings.TABLE_FONT_BOLD); // font
-                component.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyPressed(final KeyEvent e) {
-                        if (e.getKeyCode() == 10) { // apply changes (return key)
-                            // needs to be done asynchronously
-                            asyncActionManager.addAsyncAction(new AsyncAction() {
-                                @Override
-                                public void performAction() {
-                                    finishCellEditing(table);
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void keyReleased(final KeyEvent e) {
-                        e.consume(); // prevent further use of this keystroke
-                    }
-
-                });
-                component.setBackground(VitcoSettings.EDIT_BG_COLOR); // bg color when edit
-                component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
-                return component;
             }
+            component.setBorder(VitcoSettings.DEFAULT_CELL_BORDER_EDIT); // border
+            component.setFont(VitcoSettings.TABLE_FONT_BOLD); // font
+            component.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(final KeyEvent e) {
+                    if (e.getKeyCode() == 10) { // apply changes (return key)
+                        // needs to be done asynchronously
+                        asyncActionManager.addAsyncAction(new AsyncAction() {
+                            @Override
+                            public void performAction() {
+                                finishCellEditing(table);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void keyReleased(final KeyEvent e) {
+                    e.consume(); // prevent further use of this keystroke
+                }
+
+            });
+            component.setBackground(VitcoSettings.EDIT_BG_COLOR); // bg color when edit
+            component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
+            return component;
         }
 
         // edit complete
@@ -206,12 +212,14 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
             final Component editField = table.getEditorComponent();
             if (editField != null) {
                 // needs to be done async, b/c it could trigger a ui refresh
+                final int layer;
+                synchronized (VitcoSettings.SYNC) {
+                    layer = layers[table.getEditingRow()];
+                }
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        synchronized (LayerView.class) {
-                            data.renameLayer(layers[table.getEditingRow()], ((JTextArea)editField).getText());
-                        }
+                        data.renameLayer(layer, ((JTextArea)editField).getText());
                     }
                 });
             }
@@ -244,7 +252,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         table.getColumnModel().getColumn(1).setCellRenderer(new TableRenderer());
 
         // update now
-        synchronized (LayerView.class) {
+        synchronized (VitcoSettings.SYNC) {
             selectedLayer = data.getSelectedLayer();
             layers = data.getLayers();
             layerNames = data.getLayerNames();
@@ -260,7 +268,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         data.addDataChangeListener(new DataChangeAdapter() {
             @Override
             public void onVoxelDataChanged() {
-                synchronized (LayerView.class) {
+                synchronized (VitcoSettings.SYNC) {
                     selectedLayer = data.getSelectedLayer();
                     layers = data.getLayers();
                     layerNames = data.getLayerNames();
@@ -287,16 +295,20 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(final MouseEvent e) {
+                JTable aTable = (JTable)e.getSource();
+                final int row = aTable.rowAtPoint(e.getPoint());
+                final int col = aTable.columnAtPoint(e.getPoint());
+                final int layer;
+                synchronized (VitcoSettings.SYNC) {
+                    layer = layers[row];
+                }
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        JTable aTable = (JTable)e.getSource();
-                        int row = aTable.rowAtPoint(e.getPoint());
-                        int col = aTable.columnAtPoint(e.getPoint());
                         if (e.getClickCount() == 1) { // select layer
-                            data.selectLayerSoft(layers[row]);
+                            data.selectLayerSoft(layer);
                         } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
-                            data.setVisible(layers[row], !data.getLayerVisible(layers[row]));
+                            data.setVisible(layer, !data.getLayerVisible(layer));
                         }
                         // cancel editing if we are editing
                         if (e.getClickCount() == 1 && table.isEditing()) {

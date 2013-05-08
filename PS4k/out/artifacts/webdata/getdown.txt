@@ -30,3 +30,4 @@ class = com.vitco.Main
 # Heap size
 jvmarg = -Xmx512m
 jvmarg = -Xms512m
+jvmarg = -XX:+UseParNewGC

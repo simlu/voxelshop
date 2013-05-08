@@ -14,6 +14,9 @@ import java.awt.image.BufferedImage;
  */
 public final class VitcoSettings {
 
+    // object that all data access is synced to
+    public static final Object SYNC = new Object();
+
     // Alternative (slower but better quality):
     public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
     public static final int SAMPLING_MODE_MULTIPLICAND = 2;
@@ -31,7 +34,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.2.7)";
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.2.8)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
