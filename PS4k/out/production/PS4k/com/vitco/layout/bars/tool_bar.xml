@@ -15,6 +15,10 @@
                tool-tip="toggle_grid_menubar_tooltip"
                checkable="true"
                action="toggle_grid_mode"/>
+    <icon-item src="resource/img/bars/tool_bar/boundingBox.png"
+               tool-tip="toggle_bounding_box_tooltip"
+               checkable="true"
+               action="toggle_bounding_box"/>
     <separator/>
 
     <icon-item src="resource/img/bars/tool_bar/undo.png"

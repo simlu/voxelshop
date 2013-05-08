@@ -100,6 +100,34 @@ public class ErrorHandler implements ErrorHandlerInterface {
                     lastErrorReport = System.currentTimeMillis();
                     Toolkit.getDefaultToolkit().beep(); // play beep
                     boolean result = false;
+
+                    // print this error to file
+                    String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+                    try {
+                        String appJarLocation = URLDecoder.decode(path, "UTF-8");
+                        File appJar = new File(appJarLocation);
+                        String absolutePath = appJar.getAbsolutePath();
+                        String filePath = absolutePath.
+                                substring(0, absolutePath.lastIndexOf(File.separator) + 1);
+                        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filePath + "errorlog.txt", true)));
+                        out.println("===================");
+                        out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
+                        out.println("-------------------");
+                        e.printStackTrace(out);
+                        out.println();
+                        out.close();
+                    } catch (UnsupportedEncodingException ex) {
+                        // If this fails, the program is not reporting.
+                        if (debug) {
+                            ex.printStackTrace();
+                        }
+                    } catch (IOException ex) {
+                        // If this fails, the program is not reporting.
+                        if (debug) {
+                            ex.printStackTrace();
+                        }
+                    }
+
                     // show dialog
                     if (JOptionPane.showOptionDialog(null, langSelector.getString("error_dialog_text"),
                             langSelector.getString("error_dialog_caption"),
@@ -134,33 +162,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
                     }
                     if (!result) {
                         console.addLine(langSelector.getString("error_dialog_upload_failed"));
-                        // print this error to file
-                        String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-                        try {
-                            String appJarLocation = URLDecoder.decode(path, "UTF-8");
-                            File appJar = new File(appJarLocation);
-                            String absolutePath = appJar.getAbsolutePath();
-                            String filePath = absolutePath.
-                                    substring(0, absolutePath.lastIndexOf(File.separator) + 1);
-                            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filePath + "errorlog.txt", true)));
-                            out.println("===================");
-                            out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
-                            out.println("-------------------");
-                            e.printStackTrace(out);
-                            out.println();
-                            out.close();
-                            console.addLine(langSelector.getString("error_dialog_request_upload_manually"));
-                        } catch (UnsupportedEncodingException ex) {
-                            // If this fails, the program is not reporting.
-                            if (debug) {
-                                ex.printStackTrace();
-                            }
-                        } catch (IOException ex) {
-                            // If this fails, the program is not reporting.
-                            if (debug) {
-                                ex.printStackTrace();
-                            }
-                        }
+                        console.addLine(langSelector.getString("error_dialog_request_upload_manually"));
                     } else {
                         console.addLine(langSelector.getString("error_dialog_upload_ok"));
                     }

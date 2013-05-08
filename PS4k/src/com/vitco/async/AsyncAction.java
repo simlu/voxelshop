@@ -17,7 +17,7 @@ public abstract class AsyncAction implements Runnable {
     }
 
     // name of this AsyncAction
-    private final String name;
+    public final String name;
 
     public boolean ready() {
         return true;
@@ -39,7 +39,4 @@ public abstract class AsyncAction implements Runnable {
 //        this.ident = sw.toString(); // stack trace as a string
     }
 
-    public final String getActionName() {
-        return name;
-    }
 }

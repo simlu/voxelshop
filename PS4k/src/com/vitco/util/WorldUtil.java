@@ -233,10 +233,10 @@ public class WorldUtil {
     // load a texture to the world (from image)
     public static void loadTexture(String name, Image image, boolean useAlpha) {
         Texture texture = new Texture(image, useAlpha);
-        loadTexture(name, texture, useAlpha);
+        loadTexture(name, texture);
     }
 
-    public static void loadTexture(String name, Texture texture, boolean useAlpha) {
+    public static void loadTexture(String name, Texture texture) {
         if (textureManager.containsTexture(name)) {
             textureManager.replaceTexture(name, texture);
         } else {
@@ -351,5 +351,46 @@ public class WorldUtil {
         plane.rotateZ(rotation.z);
         world.addObject(plane);
         return plane.getID();
+    }
+
+    // add a grid plane
+    public static int addGridPlane(World world) {
+
+        WorldUtil.loadTexture("__grid__", Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource("resource/tex/bounding_box_256.png")
+        ), false);
+
+        // get object
+        Object3D box = boxTypes.get("000000").cloneObject();
+        box.setTransparency(0);
+
+        // set texture
+        box.setAdditionalColor(Color.WHITE);
+        PolygonManager polygonManager = box.getPolygonManager();
+        int id = textureManager.getTextureID("__grid__");
+        int polyCount = 0;
+        for (int i : new int[]{0,1,2,3,4,5}) {
+            float[] uvMapping = uvRotation.get(i + "_0_0");
+            // also include the "edges"
+            for (int k = 0; k < uvMapping.length; k++) {
+                uvMapping[k] = Math.round(uvMapping[k]);
+            }
+            polygonManager.setPolygonTexture(polyCount, new TextureInfo(id,
+                    uvMapping[0],uvMapping[1],uvMapping[2],
+                    uvMapping[3],uvMapping[4],uvMapping[5]
+            ));
+            polygonManager.setPolygonTexture(polyCount+1, new TextureInfo(id,
+                    uvMapping[6],uvMapping[7],uvMapping[8],
+                    uvMapping[9],uvMapping[10],uvMapping[11]
+            ));
+            polyCount+=2;
+        }
+
+        // set location and culling
+        box.setOrigin(new SimpleVector(0,-VitcoSettings.VOXEL_GROUND_PLANE_SIZE/2 + VitcoSettings.VOXEL_GROUND_DISTANCE, 0));
+        box.scale(VitcoSettings.VOXEL_GROUND_PLANE_SIZE/VitcoSettings.VOXEL_SIZE);
+        box.invertCulling(true);
+        world.addObject(box);
+        return box.getID();
     }
 }

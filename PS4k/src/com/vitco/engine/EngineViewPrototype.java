@@ -651,6 +651,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
             buffer.display(gr);
 
+            if (drawBoundingBox) {
+                drawBoundingBox(gr);
+            }
             // draw the under/overlay (voxels in parallel planes)
             if (drawGhostOverlay) {
                 drawGhostOverlay(gr, cameraChanged, hasResized);
@@ -665,12 +668,66 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             hasResized = false; // no resize pending
         }
 
+        public final void setDrawBoundingBox(boolean value) {
+            drawBoundingBox = value;
+        }
+
+        private boolean drawBoundingBox = false;
+        private final float size = VitcoSettings.VOXEL_GROUND_PLANE_SIZE / VitcoSettings.VOXEL_SIZE;
+        private final SimpleVector[] vectors = new SimpleVector[] {
+                new SimpleVector( + 0.5, -0.5 + 0.5/size + 0.5,  + 0.5),
+                new SimpleVector( + 0.5, -0.5 + 0.5/size + 0.5,  - 0.5),
+                new SimpleVector( + 0.5, -0.5 + 0.5/size - 0.5,  - 0.5),
+                new SimpleVector( + 0.5, -0.5 + 0.5/size - 0.5,  + 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size + 0.5,  + 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size + 0.5,  - 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size - 0.5,  - 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size - 0.5,  + 0.5)
+        };
+        private void drawBoundingBox(Graphics2D gr) {
+
+            // Anti-alias
+            gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // get an instance that we can modify
+            SimpleVector[] vectors = new SimpleVector[this.vectors.length];
+
+            boolean valid = true;
+            for (int i = 0; i < vectors.length; i++) {
+                // scale and convert the points
+                vectors[i] = new SimpleVector(this.vectors[i]);
+                vectors[i].scalarMul(VitcoSettings.VOXEL_GROUND_PLANE_SIZE);
+                vectors[i] = convert3D2D(vectors[i]);
+                // check that valid
+                if (vectors[i] == null) {
+                    valid = false;
+                }
+            }
+
+            if (valid) {
+                // calculate the z range
+                float[] zRange = new float[] {vectors[0].z, vectors[0].z}; // min and max z value
+                for (int i = 1; i < 8; i ++) {
+                    zRange[0] = Math.min(vectors[i].z, zRange[0]);
+                    zRange[1] = Math.max(vectors[i].z, zRange[1]);
+                }
+                float distance = zRange[1] - zRange[0];
+
+                // draw the cube
+                gr.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                for (int i = 0; i < 4; i++) {
+                    drawCubeLine(gr, vectors, i, (i + 1) % 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                    drawCubeLine(gr, vectors, i + 4, (i + 1) % 4 + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                    drawCubeLine(gr, vectors, i, i + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                }
+            }
+        }
 
         // handle the redrawing of this component
         // note: this MUSTN'T have any call to synchronized
         @Override
         protected final void paintComponent(Graphics g1) {
-            super.paintComponent(g1);
             if (toDraw != null) {
                 g1.drawImage(toDraw, 0, 0, null);
             } else {

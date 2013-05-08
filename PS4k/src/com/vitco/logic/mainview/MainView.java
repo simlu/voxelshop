@@ -69,6 +69,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         light.setPosition(direction);
     }
 
+    // true if using "bounding box"
+    private boolean useBoundingBox = true;
+
     @Override
     public final JPanel build() {
 
@@ -190,6 +193,42 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 VitcoSettings.VOXEL_GROUND_PLANE_COLOR,
                 0
         );
+
+        // =============== BOUNDING BOX
+        // add the bounding box (texture)
+        final int boundingBox = WorldUtil.addGridPlane(world);
+
+        preferences.addPrefChangeListener("use_bounding_box", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                useBoundingBox = (Boolean)o;
+                container.setDrawBoundingBox(useBoundingBox); // overlay part
+                world.getObject(boundingBox).setVisibility(useBoundingBox); // texture part
+                // default ground plane
+                world.getObject(worldPlane).setVisibility(!useBoundingBox);
+                // redraw container
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
+            }
+        });
+
+        // make sure the preference is set
+        if (!preferences.contains("use_bounding_box")) {
+            preferences.storeBoolean("use_bounding_box", useBoundingBox);
+        }
+
+        actionManager.registerAction("toggle_bounding_box", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                preferences.storeBoolean("use_bounding_box", !useBoundingBox);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return useBoundingBox;
+            }
+        });
+        // ===============
 
         // user mouse input - change camera position
         MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -321,14 +360,12 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         });
 
         // register button action for wireframe toggle
-
         actionManager.registerAction("main_window_toggle_wireframe", new StateActionPrototype() {
             private boolean useWireFrame = false; // always false on startup
             @Override
             public void action(ActionEvent actionEvent) {
                 useWireFrame = !useWireFrame;
                 useWireFrame(useWireFrame);
-                //world.getObject(worldPlane).setVisibility(!useWireFrame);
                 forceRepaint();
             }
 

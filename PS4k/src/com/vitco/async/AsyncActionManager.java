@@ -77,89 +77,64 @@ public class AsyncActionManager {
         synchronized (newActions) {
             newActions.add(action);
         }
-//        final LifeTimeThread workerThreadRef = workerThread;
-//        synchronized (workerThreadRef) {
-//            workerThreadRef.notifyAll();
-//        }
     }
 
-    private LifeTimeThread workerThread;
+    private final LifeTimeThread workerThread = new LifeTimeThread() {
 
-    private void initWorker() {
-        workerThread = new LifeTimeThread() {
+        // needs to be one as those tasks can not be executed in parallel!
+        private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-            // needs to be one as those tasks can not be executed in parallel!
-            private final ExecutorService executor = Executors.newSingleThreadExecutor();
-//            private ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
-//                    0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        @Override
+        public void onBeforeStop() {
+            executor.shutdown();
+            // Wait until all threads are finish
+            //noinspection StatementWithEmptyBody
+            while (!executor.isTerminated()) {}
+        }
 
-            @Override
-            public void onBeforeStop() {
-                executor.shutdown();
-                // Wait until all threads are finish
-                //noinspection StatementWithEmptyBody
-                while (!executor.isTerminated()) {}
-            }
-
-            @Override
-            public void loop() throws InterruptedException {
-                // add new tasks
-                synchronized (newActions) {
-                    if (!newActions.isEmpty()) {
-                        for (AsyncAction action : newActions) {
-                            String actionName = action.getActionName();
-                            if (null == actionNames.put(actionName, action)) {
-                                stack.add(actionName);
-                            }
+        @Override
+        public void loop() throws InterruptedException {
+            // add new tasks
+            synchronized (newActions) {
+                if (!newActions.isEmpty()) {
+                    for (AsyncAction action : newActions) {
+                        String actionName = action.name;
+                        if (null == actionNames.put(actionName, action)) {
+                            stack.add(actionName);
                         }
-                        newActions.clear();
                     }
-                }
-                // handle stack execution
-                if (!stack.isEmpty()) {
-                    // fetch action
-                    String actionName = stack.remove(0);
-                    final AsyncAction action = actionNames.get(actionName);
-                    lastAction = action;
-                    if (action.ready()) {
-                        // remove first in case the action adds
-                        // itself to the cue again (e.g. for refreshWorld())
-                        actionNames.remove(actionName);
-                        //action.performAction();
-                        executor.execute(action);
-                    } else {
-                        idleStack.add(actionName);
-                    }
-                } else {
-                    // add back to main stack
-                    while (!idleStack.isEmpty()) {
-                        stack.add(idleStack.remove(0));
-                    }
-                    sleep(50);
-//                    if (stack.isEmpty()) {
-//                        synchronized (this) {
-//                            wait();
-//                        }
-//                    }
+                    newActions.clear();
                 }
             }
-        };
-        // create new thread that deals with things
-        threadManager.manage(workerThread);
-    }
+            // handle stack execution
+            if (!stack.isEmpty()) {
+                // fetch action
+                String actionName = stack.remove(0);
+                final AsyncAction action = actionNames.get(actionName);
+                if (action.ready()) {
+                    lastAction = action;
+                    // remove first in case the action adds
+                    // itself to the cue again (e.g. for refreshWorld())
+                    actionNames.remove(actionName);
+                    //action.performAction();
+                    executor.execute(action);
+                } else {
+                    idleStack.add(actionName);
+                }
+            } else {
+                // add back to main stack
+                while (!idleStack.isEmpty()) {
+                    stack.add(idleStack.remove(0));
+                }
+                sleep(50);
+            }
+        }
+    };
 
     @PostConstruct
     public void init() {
 
-        initWorker();
-
-        // restart the worker
-        actionManager.registerAction("aysnc_action_manager_restart_worker", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                initWorker();
-            }
-        });
+        threadManager.manage(workerThread);
 
         // print the current stack
         actionManager.registerAction("aysnc_action_manager_print_stack_details", new AbstractAction() {
@@ -170,7 +145,7 @@ public class AsyncActionManager {
                 console.addLine("Printing Last Task: ");
                 if (lastAction != null) {
                     console.addLine("------------");
-                    console.addLine(lastAction.getActionName());
+                    console.addLine(lastAction.name);
                 }
                 console.addLine("============");
             }

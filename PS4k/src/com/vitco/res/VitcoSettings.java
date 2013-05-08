@@ -22,10 +22,8 @@ public final class VitcoSettings {
     public static final int SAMPLING_MODE_MULTIPLICAND = 2;
     public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
 
-//    // sampling mode (faster but crappy quality)
-//    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS_FAST;
-//    public static final float SAMPLING_MODE_MULTIPLICAND = 1.5f;
-//    public static final float SAMPLING_MODE_DIVIDEND = 2/3f;
+    // color for the "big bounding box"
+    public static final Color BOUNDING_BOX_COLOR = new Color(255, 255, 255, 100);
 
     // texture window settings
     public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
@@ -34,7 +32,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.2.8)";
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.2.9)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -136,7 +134,7 @@ public final class VitcoSettings {
     // general config
     public static final Float VOXEL_SIZE = 10f;
     public static final Float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
-    public static final Float VOXEL_GROUND_PLANE_SIZE = 35 * VOXEL_SIZE; // when changing this make sure the edges are ok
+    public static final Float VOXEL_GROUND_PLANE_SIZE = 21 * VOXEL_SIZE; // when changing this make sure the edges are ok
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
