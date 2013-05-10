@@ -2,49 +2,33 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="18c5107b-ae75-4de3-ae59-787df7d65303" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/hamcrest-core-1.1.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/jsi-1.0.0.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/junit-4.10.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/slf4j-api-1.6.3.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/slf4j-simple-1.7.5.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/trove4j-2.0.2.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/.name" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/BiMap.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/objects/Entity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/objects/Player.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/PlayerMoveRTree.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/sample/Server.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/objects/World.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/findbugs-idea.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/junit_junit_4_10.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MapGeneration/data/voxel_ground_TXT05_with_textures_hm_alex.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/out/production/MapGeneration/com/vitco/Main.class" afterPath="$PROJECT_DIR$/../MapGeneration/out/production/MapGeneration/com/vitco/Main.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/result/ result.dae" afterPath="$PROJECT_DIR$/../MapGeneration/result/ result.dae" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/src/com/vitco/Main.java" afterPath="$PROJECT_DIR$/../MapGeneration/src/com/vitco/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" afterPath="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/RTree.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/sample/Server.java" afterPath="$PROJECT_DIR$/src/com/vitco/sample/Server.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/objects/World.java" afterPath="$PROJECT_DIR$/src/com/vitco/objects/World.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../MapGeneration/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PlayerMoveRTree.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Main.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368084641516" ignored="false" />
-    <file path="/Dummy.txt" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368110654468" ignored="false" />
+    <file path="/Dummy.txt" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368171980097" ignored="false" />
     <file path="/a.dummy" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368104776776" ignored="false" />
     <file path="/Player.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368108262246" ignored="false" />
-    <file path="/Server.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368110476639" ignored="false" />
+    <file path="/Server.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368177579770" ignored="false" />
     <file path="/Entitiy.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368090339578" ignored="false" />
     <file path="/MovingEntity.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368092683535" ignored="false" />
     <file path="/fragment.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368090610997" ignored="false" />
     <file path="$PROJECT_DIR$/src/com/vitco/PlayerTest.groovy" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368090516192" ignored="false" />
-    <file path="/PlayerTest.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368109444943" ignored="false" />
-    <file path="/Entity.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368110157048" ignored="false" />
-    <file path="/RTree.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368106833082" ignored="false" />
-    <file path="/World.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368109802768" ignored="false" />
+    <file path="/PlayerTest.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368147777390" ignored="false" />
+    <file path="/Entity.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368177237980" ignored="false" />
+    <file path="/RTree.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368178518598" ignored="false" />
+    <file path="/World.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368172023283" ignored="false" />
     <file path="/BiMap.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368109589870" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -128,17 +112,17 @@
         <option value="$PROJECT_DIR$/src/com/asd.java" />
         <option value="$PROJECT_DIR$/src/net/sourceforge/jsi/examples/Contains.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/RTree.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/PlayerTest.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/Server.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/Entity.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/objects/Player.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/objects/Server.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/BiMap.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/objects/World.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/objects/Entity.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/sample/Server.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/objects/Entity.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
       </list>
     </option>
   </component>
@@ -174,7 +158,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -198,8 +181,75 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PlayerMoveRTree" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PlayerMoveRTree" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vitco" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PlayerMoveRTree" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PlayerMoveRTree" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vitco" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sample" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PlayerMoveRTree" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PlayerMoveRTree" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vitco" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="objects" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -215,11 +265,12 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.includeInheritedMembers" value="true" />
-    <property name="Repository.Attach.Sources" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
     <property name="Downloaded.Files.Path" value="C:\Users\VM Win 7\Dropbox\Git\fo2\PlayerMoveRTree\lib" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
@@ -238,66 +289,6 @@
     </key>
   </component>
   <component name="RunManager" selected="JUnit.PlayerTest">
-    <configuration default="false" name="PlayerTest.testPlayerMoving" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="PlayerMoveRTree" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.vitco.objects" />
-      <option name="MAIN_CLASS_NAME" value="com.vitco.objects.PlayerTest" />
-      <option name="METHOD_NAME" value="testPlayerMoving" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="Contains" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="net.sourceforge.jsi.examples.Contains" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="PlayerMoveRTree" />
-      <envs />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="PlayerTest.testPlayerEvents" type="JUnit" factoryName="JUnit" temporary="true">
-      <module name="PlayerMoveRTree" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.vitco.objects" />
-      <option name="MAIN_CLASS_NAME" value="com.vitco.objects.PlayerTest" />
-      <option name="METHOD_NAME" value="testPlayerEvents" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <patterns />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
     <configuration default="false" name="PlayerTest.testPlayerLists" type="JUnit" factoryName="JUnit" temporary="true">
       <module name="PlayerMoveRTree" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -316,7 +307,13 @@
       </option>
       <envs />
       <patterns />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -328,6 +325,72 @@
       <option name="MAIN_CLASS_NAME" value="com.vitco.objects.PlayerTest" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="PlayerTest.testPlayerListsSimple" type="JUnit" factoryName="JUnit" temporary="true">
+      <module name="PlayerMoveRTree" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.vitco.objects" />
+      <option name="MAIN_CLASS_NAME" value="com.vitco.objects.PlayerTest" />
+      <option name="METHOD_NAME" value="testPlayerListsSimple" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="PlayerTest.testPlayerListsHard" type="JUnit" factoryName="JUnit" temporary="true">
+      <module name="PlayerMoveRTree" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.vitco.objects" />
+      <option name="MAIN_CLASS_NAME" value="com.vitco.objects.PlayerTest" />
+      <option name="METHOD_NAME" value="testPlayerListsHard" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="PlayerTest.testPlayerListsMedium" type="JUnit" factoryName="JUnit" temporary="true">
+      <module name="PlayerMoveRTree" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.vitco.objects" />
+      <option name="MAIN_CLASS_NAME" value="com.vitco.objects.PlayerTest" />
+      <option name="METHOD_NAME" value="testPlayerListsMedium" />
+      <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -356,6 +419,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -381,19 +457,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -431,19 +494,19 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerMoving" />
-      <item index="1" class="java.lang.String" itemvalue="Application.Contains" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerEvents" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerLists" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.PlayerTest" />
+      <item index="0" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerLists" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.PlayerTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerListsSimple" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerListsHard" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerListsMedium" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="JUnit.PlayerTest" />
         <item index="1" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerLists" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerEvents" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerMoving" />
-        <item index="4" class="java.lang.String" itemvalue="Application.Contains" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerListsHard" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerListsMedium" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerListsSimple" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
@@ -481,26 +544,26 @@
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39865997" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32888147" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.67001677" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39865997" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32998326" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
   </component>
@@ -569,102 +632,76 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/Set.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="314" column="12" selection-start="14581" selection-end="14581" vertical-scroll-proportion="0.33333334">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/List.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="324" column="12" selection-start="15340" selection-end="15340" vertical-scroll-proportion="0.33333334">
-          <folding />
-        </state>
+        <state line="324" column="12" selection-start="15340" selection-end="15340" vertical-scroll-proportion="0.33333334" />
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/HashSet.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="214" column="19" selection-start="8606" selection-end="8606" vertical-scroll-proportion="0.6042781">
-          <folding />
-        </state>
+        <state line="214" column="19" selection-start="8606" selection-end="8606" vertical-scroll-proportion="0.6042781" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../PS4k/out/production/PS4k/com/newbrightidea/util/RTree.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="11" selection-start="980" selection-end="980" vertical-scroll-proportion="0.3326157">
-          <folding />
-        </state>
+        <state line="24" column="11" selection-start="980" selection-end="980" vertical-scroll-proportion="0.3326157" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/jsi-1.0.0.jar!/com/infomatiq/jsi/rtree/RTree.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="16" selection-start="1374" selection-end="1374" vertical-scroll-proportion="0.34181416">
+        <state line="34" column="16" selection-start="1374" selection-end="1374" vertical-scroll-proportion="0.34181416" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/BiMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="23" selection-start="346" selection-end="346" vertical-scroll-proportion="0.2670157">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/Collections.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3517" column="30" selection-start="133106" selection-end="133106" vertical-scroll-proportion="0.33333334">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/Random.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="249" column="0" selection-start="10287" selection-end="10287" vertical-scroll-proportion="0.21716288">
+        <state line="349" column="17" selection-start="14435" selection-end="14435" vertical-scroll-proportion="0.9830149" />
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/AbstractCollection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="274" column="19" selection-start="9139" selection-end="9139" vertical-scroll-proportion="0.4957537">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/trove4j-2.0.2.jar!/gnu/trove/TIntProcedure.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="17" selection-start="156" selection-end="156" vertical-scroll-proportion="0.15567766">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_33/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="4" selection-start="4108" selection-end="4174" vertical-scroll-proportion="0.42206654">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/Player.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="31" selection-start="103" selection-end="103" vertical-scroll-proportion="0.3181818">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/RTree.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="60" selection-start="1426" selection-end="1426" vertical-scroll-proportion="2.4545455">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#535#547#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/BiMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="23" selection-start="346" selection-end="346" vertical-scroll-proportion="0.4090909">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="97" selection-start="132" selection-end="132" vertical-scroll-proportion="0.10979548">
-          <folding>
-            <element signature="e#1257#1265#0" expanded="true" />
-            <element signature="e#3839#3847#0" expanded="true" />
-            <element signature="e#4677#4685#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/World.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="29" selection-start="296" selection-end="296" vertical-scroll-proportion="0.54545456">
-          <folding>
-            <element signature="e#214#222#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/sample/Server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="22" selection-start="727" selection-end="727" vertical-scroll-proportion="0.68476355">
+        <state line="10" column="11" selection-start="168" selection-end="168" vertical-scroll-proportion="0.2977233">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/Entity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="16" selection-start="2435" selection-end="2435" vertical-scroll-proportion="0.02977233">
+        <state line="74" column="24" selection-start="3102" selection-end="3102" vertical-scroll-proportion="1.3541442">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1290#1298#0" expanded="true" />
@@ -672,6 +709,53 @@
             <element signature="e#1640#1648#0" expanded="true" />
             <element signature="e#3127#3135#0" expanded="true" />
             <element signature="e#3453#3461#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/World.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="22" selection-start="342" selection-end="342" vertical-scroll-proportion="0.59090906">
+          <folding>
+            <element signature="e#220#228#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="106" column="0" selection-start="4255" selection-end="4255" vertical-scroll-proportion="-1.5775402">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1169#1177#0" expanded="true" />
+            <element signature="e#3751#3759#0" expanded="true" />
+            <element signature="e#5787#5795#0" expanded="true" />
+            <element signature="e#6347#6355#0" expanded="true" />
+            <element signature="e#6594#6619#0" expanded="true" />
+            <element signature="e#6720#6728#0" expanded="true" />
+            <element signature="e#7451#7459#0" expanded="true" />
+            <element signature="e#7589#7597#0" expanded="true" />
+            <element signature="e#7735#7743#0" expanded="true" />
+            <element signature="e#7915#7923#0" expanded="true" />
+            <element signature="e#8156#8164#0" expanded="true" />
+            <element signature="e#8598#8606#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/sample/Server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="52" selection-start="181" selection-end="181" vertical-scroll-proportion="0.36363637">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/util/RTree.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="48" selection-start="805" selection-end="805" vertical-scroll-proportion="1.5">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#428#440#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Test class for player
@@ -107,34 +104,44 @@ public class PlayerTest {
         }
     }
 
+    // helper to shuffle/create/delete players with
+    // different probabilities
+    private void simulatePlayers(ArrayList<Player> players, World world, int count,
+                                 float add, float remove, float move) {
+        float sum = add + remove + move;
+        if (sum > 0) {
+            add = add/sum;
+            remove = remove/sum;
+            move = move/sum;
+        }
+        for (int i = 0; i < count; i++) {
+            float val = rand.nextFloat();
+            if (val < add) {
+                players.add(new Player(rand.nextInt(501) - 250, rand.nextInt(501) - 250, world));
+            } else if (val < add + remove) {
+                if (!players.isEmpty()) {
+                    Player removed = players.remove(rand.nextInt(players.size()));
+                    removed.destroyEntity();
+                }
+            } else if (val < add + remove + move) {
+                if (!players.isEmpty()) {
+                    Player player = players.get(rand.nextInt(players.size()));
+                    Point pos = player.getPosition();
+                    player.setPosition(pos.x + rand.nextInt(501) - 250, pos.y + rand.nextInt(501) - 250);
+                }
+            }
+        }
+    }
+
     // test random moving, adding and removing
     @org.junit.Test
     public void testPlayerEvents() throws Exception {
         for (int j = 0; j < 100; j++) {
             // make sure the entity world is clean
             World world = new World();
-            // create players
             ArrayList<Player> players = new ArrayList<Player>();
-            for (int i = 0; i < 3000; i++) {
-                switch(rand.nextInt(3)) {
-                    case 0: // add
-                        players.add(new Player(0, 0, world));
-                        break;
-                    case 1: // remove
-                        if (!players.isEmpty()) {
-                            Player removed = players.remove(rand.nextInt(players.size()));
-                            removed.destroyEntity();
-                        }
-                        break;
-                    case 2: case 3: // move
-                        if (!players.isEmpty()) {
-                            Player player = players.get(rand.nextInt(players.size()));
-                            Point pos = player.getPosition();
-                            player.setPosition(pos.x + rand.nextInt(501) - 250, pos.y + rand.nextInt(501) - 250);
-                        }
-                        break;
-                }
-            }
+            // shuffle/create/delete players
+            simulatePlayers(players, world, 1500, rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
             // check
             checkPlayerVisibilityList(convert(players));
         }
@@ -143,6 +150,66 @@ public class PlayerTest {
     // test player invisible and visible lists
     @org.junit.Test
     public void testPlayerLists() throws Exception {
+        for (int j = 0; j < 100; j++) {
+            // make sure the entity world is clean
+            World world = new World();
+            ArrayList<Player> players = new ArrayList<Player>();
+            // create players
+            simulatePlayers(players, world, 300, rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+            // store player lists
+            HashMap<Player, HashSet<Entity>> visLists = new HashMap<Player, HashSet<Entity>>();
+            for (Player player : players) {
+                HashSet<Entity> visList = new HashSet<Entity>();
+                Collections.addAll(visList, player.getVisibleList());
+                visLists.put(player, visList);
+                player.clearNewInvisibleList();
+                player.clearNewVisibleList();
+            }
+            // check the lists
+            for (Player player : players) {
+                // move this player
+                for (int k = 0; k < 10; k++) {
+                    Point pos = player.getPosition();
+                    player.setPosition(pos.x + rand.nextInt(501) - 250, pos.y + rand.nextInt(501) - 250);
+                }
+
+                // analyze the lists
+                HashSet<Entity> oldVisList = visLists.get(player);
+                HashSet<Entity> visList = new HashSet<Entity>();
+                Collections.addAll(visList, player.getVisibleList());
+                HashSet<Entity> newVisList = new HashSet<Entity>();
+                Collections.addAll(newVisList, player.getNewVisibleList());
+                HashSet<Entity> newInvisList = new HashSet<Entity>();
+                Collections.addAll(newInvisList, player.getNewInvisibleList());
+
+                // became invisible
+                HashSet<Entity> test1 = new HashSet<Entity>(oldVisList);
+                test1.removeAll(visList);
+                // Note: see below
+                assert newInvisList.containsAll(test1);
+
+                // became visible
+                HashSet<Entity> test2 = new HashSet<Entity>(visList);
+                test2.removeAll(oldVisList);
+                // Note: this is a one way contains as already existing items in the
+                // visible list can become invisible and visible again and would hence
+                // be in the newVisibleList
+                assert newVisList.containsAll(test2);
+
+                for (Player player1 : players) {
+                    HashSet<Entity> visList1 = new HashSet<Entity>();
+                    Collections.addAll(visList1, player1.getVisibleList());
+                    visLists.put(player1, visList1);
+                    player1.clearNewInvisibleList();
+                    player1.clearNewVisibleList();
+                }
+            }
+        }
+    }
+
+    // test player invisible and visible lists
+    @org.junit.Test
+    public void testPlayerListsSimple() throws Exception {
         // make sure whe have a clean world
         World world = new World();
         // create player

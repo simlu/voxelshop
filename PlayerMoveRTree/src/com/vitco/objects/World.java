@@ -7,7 +7,7 @@ import com.vitco.util.RTree;
  */
 public class World {
     // the RTree that manages all entities
-    protected RTree<Entity> entityList = new RTree<Entity>();
+    protected final RTree<Entity> entityList = new RTree<Entity>();
 
     // removes an entity from the world
     public void destroyEntity(Player player) {
