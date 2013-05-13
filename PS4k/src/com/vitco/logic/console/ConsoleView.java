@@ -1,10 +1,15 @@
 package com.vitco.logic.console;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
+import com.vitco.engine.data.Data;
+import com.vitco.export.ExportWorld;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.types.StateActionPrototype;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -18,6 +23,20 @@ import java.util.HashMap;
  * Displays console content and buttons to user.
  */
 public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
+
+    // var & setter
+    protected Data data;
+    @Autowired(required=true)
+    public final void setData(Data data) {
+        this.data = data;
+    }
+
+    // var & setter
+    protected AsyncActionManager asyncActionManager;
+    @Autowired(required=true)
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
+    }
 
     @Override
     public JComponent buildConsole(final FrameLinkagePrototype frame) {
@@ -110,6 +129,21 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             }
         });
 
+        // study the complexity of the currently visible polygon
+        actionManager.registerAction("study_object_complexity", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        console.addLine("Computing \"Reduced Triangle Count\"...");
+                        ExportWorld exportWorld = new ExportWorld(data.getVisibleLayerVoxel());
+                        console.addLine("Reduced Triangle Count: " + exportWorld.buildSides());
+                    }
+                });
+            }
+        });
+
         // holds all console actions
         final HashMap<String, String> consoleAction = new HashMap<String, String>();
         // needs to be all lower case
@@ -118,6 +152,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/debug deadlock", "initialize_deadlock_debug");
         consoleAction.put("/test aam", "aysnc_action_manager_alive_check");
         consoleAction.put("/analyze aam", "aysnc_action_manager_print_stack_details");
+        consoleAction.put("/study", "study_object_complexity");
 
         // register all console actions (so debug know that they are used)
         for (String action : consoleAction.values()) {

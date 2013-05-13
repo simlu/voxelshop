@@ -20,6 +20,7 @@
     </orderEntry>
     <orderEntry type="library" name="render" level="project" />
     <orderEntry type="library" name="jide" level="project" />
+    <orderEntry type="library" name="converter" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
