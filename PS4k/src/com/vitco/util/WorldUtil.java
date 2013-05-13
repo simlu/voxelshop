@@ -326,11 +326,14 @@ public class WorldUtil {
 
         box.setOrigin(pos);
         box.setShadingMode(Object3D.SHADING_FAKED_FLAT);
-        box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
         box.setCulling(culling);
+        box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+        box.setCollisionOptimization(Object3D.COLLISION_DETECTION_OPTIMIZED);
 
-        if (boxType.equals("111111")) { // no need to show this object
+        if (boxType.equals("111111")) {
+            // no need to show this object or to check for collision
             box.setVisibility(false);
+            box.setCollisionMode(Object3D.COLLISION_CHECK_NONE);
         }
         box.build();
         world.addObject(box);

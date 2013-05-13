@@ -1,5 +1,7 @@
 package com.vitco.objects;
 
+import com.infomatiq.jsi.Rectangle;
+import com.vitco.util.RTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,8 @@ public class PlayerTest {
         }
     }
 
+
+
     // checks that the player visibility list is correct by
     // testing if it's equal to a brute force list
     private void checkPlayerVisibilityList(Player[] players) {
@@ -37,8 +41,8 @@ public class PlayerTest {
             HashSet<Entity> visibleList = new HashSet<Entity>();
             for (int j = 0; j < players.length; j++) {
                 if (i != j) {
-                    if (Math.abs(pos[i][0] - pos[j][0]) <= Entity.screenWidth * Entity.bufferParameter &&
-                            Math.abs(pos[i][1] - pos[j][1]) <= Entity.screenHeight * Entity.bufferParameter) {
+                    if (Math.abs(pos[i][0] - pos[j][0]) <= Entity.screenWidth * Entity.bufferParameter * 1.5 &&
+                            Math.abs(pos[i][1] - pos[j][1]) <= Entity.screenHeight * Entity.bufferParameter * 1.5) {
                         visibleList.add(players[j]);
                     }
                 }
@@ -121,7 +125,7 @@ public class PlayerTest {
             } else if (val < add + remove) {
                 if (!players.isEmpty()) {
                     Player removed = players.remove(rand.nextInt(players.size()));
-                    removed.destroyEntity();
+                    world.destroyEntity(removed);
                 }
             } else if (val < add + remove + move) {
                 if (!players.isEmpty()) {
@@ -215,8 +219,8 @@ public class PlayerTest {
         // create player
         Player playerA = new Player(0, 0, world);
         Player playerB = new Player(
-                (int)(Entity.screenWidth * Entity.bufferParameter) + 10,
-                (int)(Entity.screenHeight * Entity.bufferParameter) + 10, world);
+                (int)(Entity.screenWidth * Entity.bufferParameter * 1.5) + 10,
+                (int)(Entity.screenHeight * Entity.bufferParameter * 1.5) + 10, world);
         assert playerA.getVisibleList().length == 0;
         assert playerB.getVisibleList().length == 0;
         assert playerA.getNewVisibleList().length == 0;
@@ -232,8 +236,8 @@ public class PlayerTest {
         assert playerA.getNewInvisibleList().length == 0;
         assert playerB.getNewInvisibleList().length == 0;
         // move player away again
-        playerB.setPosition((int)(Entity.screenWidth * Entity.bufferParameter) + 10,
-                (int)(Entity.screenHeight * Entity.bufferParameter) + 10);
+        playerB.setPosition((int)(Entity.screenWidth * Entity.bufferParameter * 1.5) + 10,
+                (int)(Entity.screenHeight * Entity.bufferParameter * 1.5) + 10);
         assert playerA.getVisibleList().length == 0;
         assert playerB.getVisibleList().length == 0;
         assert playerA.getNewVisibleList().length == 0;
@@ -248,6 +252,40 @@ public class PlayerTest {
         playerB.clearNewVisibleList();
         assert playerB.getNewVisibleList().length == 0;
     }
+
+
+    // testing delete bug
+    @org.junit.Test
+    public void testPlayerDelete() throws Exception {
+        World world = new World();
+        final int size = 1000;
+        ArrayList<Player> players = new ArrayList<Player>();
+        for (int i = 0; i < size; i++) {
+            players.add(new Player(rand.nextInt(2),rand.nextInt(2),world));
+        }
+        for (int i = 0; i < 10000; i++) {
+            players.get(rand.nextInt(size)).setPosition(rand.nextInt(2),rand.nextInt(2));
+        }
+        for (int i = 0; i < size/2; i++) {
+            world.destroyEntity(players.remove(rand.nextInt(players.size())));
+        }
+        checkPlayerVisibilityList(convert(players));
+    }
+
+
+    // test RTree implementation
+    @org.junit.Test
+    public void testRTree() throws Exception {
+        RTree rTree = new RTree();
+        rTree.add(new Rectangle(0,0,0,0), 1);
+        rTree.add(new Rectangle(0,0,0,0), 2);
+        rTree.add(new Rectangle(0,0,0,0), 3);
+
+        rTree.delete(new Rectangle(0,0,0,0), 2);
+
+        assert rTree.size() == 2;
+    }
+
 }
 
 

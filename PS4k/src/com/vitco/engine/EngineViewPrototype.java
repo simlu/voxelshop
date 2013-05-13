@@ -737,6 +737,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             repainting = false;
             if (needRepainting) {
                 needRepainting = false;
+                if (lastSkipNextWorldRender) {
+                    container.skipNextWorldRender();
+                }
+                if (lastDoNotSkipNextWorldRender) {
+                    container.doNotSkipNextWorldRender();
+                }
                 forceRepaint();
             }
         }
@@ -761,15 +767,30 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     // makes sure the repaint doesn't get called too often
     // (only one in queue at a time)
+    // Note: we still need this even though repaint() is thread safe,
+    // as it still pushes another event on the Swing queue
     private boolean repainting = false;
     private boolean needRepainting = false;
+
+    private boolean lastSkipNextWorldRender;
+    private boolean lastDoNotSkipNextWorldRender;
 
     protected final void forceRepaint() {
         if (!repainting) {
             repainting = true;
+            final boolean skipNextWorldRender = container.skipNextWorldRender;
+            final boolean doNotSkipNextWorldRender = container.doNotSkipNextWorldRender;
             asyncActionManager.addAsyncAction(new AsyncAction("repaint" + side) {
                 @Override
                 public void performAction() {
+                    if (skipNextWorldRender) {
+                        container.skipNextWorldRender();
+                    }
+                    if (doNotSkipNextWorldRender) {
+                        container.doNotSkipNextWorldRender();
+                    }
+                    lastSkipNextWorldRender = container.skipNextWorldRender;
+                    lastDoNotSkipNextWorldRender = container.doNotSkipNextWorldRender;
                     container.render();
                     // this is thread save!
                     container.repaint();

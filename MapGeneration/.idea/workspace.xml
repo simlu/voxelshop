@@ -2,52 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31aea091-489d-446f-9a80-da92b438e48a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/lib/gson-2.2.3.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/lib/javapng-2.0.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/lib/mysql-connector-java-5.1.22-bin.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/voxel_ground_TXT05.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/voxel_ground_TXT05_BW.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/tools/FileTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/tools/HexTools.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/META-INF/MANIFEST.MF" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/META-INF/MANIFEST.MF" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/Main.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/tools/MySQLConnection.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/tools/Out.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/logic/SpriteManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/logic/container/SpriteObject.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/.idea/artifacts/SpriteToTex.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/logic/container/TexSheetPos.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../SpriteToTex/src/com/vitco/tools/Zip.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Config.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Config.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Main.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/main/Main.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/PS4k.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/PS4k.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/PS4k.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/PS4k.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/Tile.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/Tile.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileCluster.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileCluster.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager$1.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/cluster/TileClusterManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/helper/TmxMapReader.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/helper/TmxMapReader.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/helper/WorldGenerator.class" afterPath="$PROJECT_DIR$/../encode_map_fo1/out/production/encode_map/vitco/helper/WorldGenerator.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/pngout/pngout.exe" afterPath="$PROJECT_DIR$/../encode_map_fo1/pngout/pngout.exe" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result/result.png" afterPath="$PROJECT_DIR$/result/result.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/data/voxel_ground_TXT05_with_textures_hm_alex.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result/ result.dae" afterPath="$PROJECT_DIR$/result/ result.dae" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Config.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Config.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/Main.java" afterPath="$PROJECT_DIR$/src/com/vitco/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Main.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/main/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/map/PlaneManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/map/TextureClusterer.java" afterPath="$PROJECT_DIR$/src/com/vitco/map/TextureClusterer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java" afterPath="$PROJECT_DIR$/src/com/vitco/map/TextureColorCluster.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/Tile.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/Tile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileCluster.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileCluster.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileClusterManager.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/cluster/TileClusterManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/helper/TmxMapReader.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/helper/TmxMapReader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/helper/WorldGenerator.java" afterPath="$PROJECT_DIR$/../encode_map_fo1/src/vitco/helper/WorldGenerator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/.idea/ant.xml" afterPath="$PROJECT_DIR$/../encode_map_fo1/.idea/ant.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/digest.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../encode_map_fo1/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../encode_map_fo1/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PlayerMoveRTree/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PlayerMoveRTree/.idea/workspace.xml" />
     </list>
     <ignored path="MapGeneration.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -88,7 +48,7 @@
     <file path="/EdgeDedection.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366494891120" ignored="false" />
     <file path="/ColorDist.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366494957865" ignored="false" />
     <file path="/VectorRepresentation.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366549899542" ignored="false" />
-    <file path="/Dummy.txt" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1367912080434" ignored="false" />
+    <file path="/Dummy.txt" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1368121403232" ignored="false" />
     <file path="/fragment.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1367862703768" ignored="false" />
     <file path="/XmlFile.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366502678977" ignored="false" />
     <file path="/ColladaFile.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366558992782" ignored="false" />
@@ -101,7 +61,7 @@
     <file path="/LineInfo.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366550080834" ignored="false" />
     <file path="/a.dummy" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1366559003610" ignored="false" />
     <file path="$PROJECT_DIR$/../../../IntelliJ/voxelateTexture/.idea/workspace.xml" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1367004701255" ignored="false" />
-    <file path="$PROJECT_DIR$/../../../IntelliJ/voxelateTexture/src/Main.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1367004483496" ignored="false" />
+    <file path="$PROJECT_DIR$/../../../IntelliJ/voxelateTexture/src/Main.java" changelist="31aea091-489d-446f-9a80-da92b438e48a" time="1368113019453" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +125,7 @@
       <file leaf-file-name="Main.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="25" selection-start="326" selection-end="326" vertical-scroll-proportion="0.38568935">
+            <state line="11" column="40" selection-start="313" selection-end="313" vertical-scroll-proportion="0.32635254">
               <folding />
             </state>
           </provider>
@@ -281,8 +241,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -320,6 +280,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="result" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MapGeneration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MapGeneration" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="data" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -699,7 +673,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="25" selection-start="326" selection-end="326" vertical-scroll-proportion="0.38568935">
+        <state line="11" column="40" selection-start="313" selection-end="313" vertical-scroll-proportion="0.32635254">
           <folding />
         </state>
       </provider>

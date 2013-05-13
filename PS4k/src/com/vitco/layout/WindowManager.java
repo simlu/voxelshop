@@ -7,6 +7,7 @@ import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.jidesoft.docking.DockingManager;
+import com.jidesoft.plaf.LookAndFeelFactory;
 import com.jidesoft.plaf.UIDefaultsLookup;
 import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
@@ -186,9 +187,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         ));
 
         try {
-            // set the panel background color
-            UIManager.getDefaults().put("DockableFrame.background", UIDefaultsLookup.getColor("JideTabbedPane.background"));
-
             // init loading
             ////////////////
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

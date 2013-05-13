@@ -235,13 +235,13 @@
                 horiDocked="true" initIndex="0" initMode="2"
                 initSide="1" initSubindex="-1" key="mainMenu"
                 menuBar="true" paintBackground="false"
-                rearrangable="true" stretch="true" title="Main Menu"
+                rearrangable="true" stretch="false" title="Main Menu"
                 undockedBounds="253; 85; 294; 47" vertDocked="false"/>
             <DockableBar allowedDockSides="15"
                 chevronAlwaysVisible="false" floatable="true"
                 floating="false" hidable="false" hidden="false"
                 horiDocked="false" initIndex="0" initMode="3"
-                initSide="8" initSubindex="0" key="toolBar"
+                initSide="8" initSubindex="1" key="toolBar"
                 menuBar="false" paintBackground="true"
                 rearrangable="true" stretch="false" title="Tool Bar"
                 undockedBounds="251; 146; 280; 47" vertDocked="true"/>
@@ -254,6 +254,14 @@
                 rearrangable="true" stretch="false"
                 title="Selection Bar"
                 undockedBounds="1062; 144; 290; 47" vertDocked="true"/>
+            <DockableBar allowedDockSides="15"
+                chevronAlwaysVisible="false" floatable="true"
+                floating="false" hidable="false" hidden="false"
+                horiDocked="false" initIndex="0" initMode="3"
+                initSide="8" initSubindex="0" key="optionBar"
+                menuBar="false" paintBackground="true"
+                rearrangable="true" stretch="false" title="Option Bar"
+                undockedBounds="99; -901; 292; 47" vertDocked="true"/>
         </DockableBars>
     </DockableBarManager>
 </Managers>

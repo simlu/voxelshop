@@ -266,30 +266,6 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
             }
         });
 
-        // create the complex action to select the color of the background plane
-        PresetColorChooser bgPlaneColorChooser = new PresetColorChooser();
-        bgPlaneColorChooser.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(float[] hsb) {
-                preferences.storeObject("main_view_ground_plane_color", ColorTools.hsbToColor(hsb));
-
-            }
-        });
-        complexActionManager.registerAction("pick_color_voxel_ground_plane", bgPlaneColorChooser);
-
-        // create the complex action to select the color of the background
-        PresetColorChooser bgColorChooser = new PresetColorChooser();
-        if (!preferences.contains("engine_view_bg_color")) {
-            preferences.storeObject("engine_view_bg_color", VitcoSettings.ANIMATION_BG_COLOR);
-        }
-        bgColorChooser.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(float[] hsb) {
-                preferences.storeObject("engine_view_bg_color", ColorTools.hsbToColor(hsb));
-            }
-        });
-        complexActionManager.registerAction("pick_color_voxel_bg", bgColorChooser);
-
     }
 
 }

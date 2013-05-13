@@ -8,6 +8,7 @@ import com.vitco.map.TextureColorCluster;
 public class Main {
     public static void main(String[] arg) {
         TextureColorCluster cluster = new TextureColorCluster();
-        cluster.findRegions("data/voxel_ground_TXT05.png", "data/voxel_ground_TXT05_BW.png", "result");
+        cluster.findRegions("data/voxel_ground_TXT05.png",
+                "data/voxel_ground_TXT05_with_textures_hm_alex.png", "result");
     }
 }

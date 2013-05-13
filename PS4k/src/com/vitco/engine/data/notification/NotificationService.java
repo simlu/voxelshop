@@ -1,13 +1,13 @@
 package com.vitco.engine.data.notification;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Notification Service, deals with and notifies listeners.
  */
 public final class NotificationService implements NotificationServiceInterface {
 
-    private final ArrayList<DataChangeListener> listeners = new ArrayList<DataChangeListener>();
+    private final HashSet<DataChangeListener> listeners = new HashSet<DataChangeListener>();
 
     // add a listener
     @Override

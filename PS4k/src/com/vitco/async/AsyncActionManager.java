@@ -77,12 +77,15 @@ public class AsyncActionManager {
         synchronized (newActions) {
             newActions.add(action);
         }
+        synchronized (workerThread) {
+            workerThread.notify();
+        }
     }
 
-    private final LifeTimeThread workerThread = new LifeTimeThread() {
+    // needs to be one as those tasks can not be executed in parallel!
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        // needs to be one as those tasks can not be executed in parallel!
-        private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final LifeTimeThread workerThread = new LifeTimeThread() {
 
         @Override
         public void onBeforeStop() {
@@ -126,7 +129,10 @@ public class AsyncActionManager {
                 while (!idleStack.isEmpty()) {
                     stack.add(idleStack.remove(0));
                 }
-                sleep(50);
+                synchronized (workerThread) {
+                    // sometimes notify "fails"(?), so we need a timeout here
+                    wait(500);
+                }
             }
         }
     };

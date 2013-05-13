@@ -29,10 +29,14 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
     // layer buffer
     private Integer[] layers = new Integer[]{};
     private String[] layerNames = new String[]{};
+    private int layerCount = 0;
     private Integer[] layerVoxelCounts = new Integer[]{};
     private Boolean[] layerVisibilities = new Boolean[]{};
     // true if editing was canceled
     private boolean cancelEdit = false;
+
+    // this instance
+    private final LayerView thisInstance = this;
 
     protected AsyncActionManager asyncActionManager;
     // set the action handler
@@ -49,7 +53,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         ) {
             boolean isSelectedLayer;
             boolean isVisible;
-            synchronized (VitcoSettings.SYNC) {
+            synchronized (thisInstance) {
                 isSelectedLayer = layers[row] == selectedLayer;
                 isVisible = layerVisibilities[row];
             }
@@ -85,8 +89,8 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         }
 
         public int getRowCount() {
-            synchronized (VitcoSettings.SYNC) {
-                return layers.length;
+            synchronized (thisInstance) {
+                return layerCount;
             }
         }
 
@@ -102,7 +106,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
         // display value
         public Object getValueAt(int row, int col) {
-            synchronized (VitcoSettings.SYNC) {
+            synchronized (thisInstance) {
                 switch (col) {
                     case 0:
                         return layerNames[row] + " (" + layerVoxelCounts[row] + ")";
@@ -128,7 +132,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                                 // this needs to be done asynchronously,
                                 // b/c it could trigger a UI refresh
                                 final int layer;
-                                synchronized (VitcoSettings.SYNC) {
+                                synchronized (thisInstance) {
                                     layer = layers[row];
                                 }
                                 asyncActionManager.addAsyncAction(new AsyncAction() {
@@ -213,7 +217,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
             if (editField != null) {
                 // needs to be done async, b/c it could trigger a ui refresh
                 final int layer;
-                synchronized (VitcoSettings.SYNC) {
+                synchronized (thisInstance) {
                     layer = layers[table.getEditingRow()];
                 }
                 asyncActionManager.addAsyncAction(new AsyncAction() {
@@ -252,31 +256,36 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         table.getColumnModel().getColumn(1).setCellRenderer(new TableRenderer());
 
         // update now
-        synchronized (VitcoSettings.SYNC) {
-            selectedLayer = data.getSelectedLayer();
-            layers = data.getLayers();
-            layerNames = data.getLayerNames();
-            layerVoxelCounts = new Integer[layerNames.length];
-            layerVisibilities = new Boolean[layerNames.length];
-            for (int i = 0; i < layers.length; i++) {
-                layerVoxelCounts[i] =  data.getVoxelCount(layers[i]);
-                layerVisibilities[i] =  data.getLayerVisible(layers[i]);
+        synchronized (thisInstance) {
+            synchronized (VitcoSettings.SYNC) {
+                selectedLayer = data.getSelectedLayer();
+                layers = data.getLayers();
+                layerCount = layers.length;
+                layerNames = data.getLayerNames();
+                layerVoxelCounts = new Integer[layerNames.length];
+                layerVisibilities = new Boolean[layerNames.length];
+                for (int i = 0; i < layers.length; i++) {
+                    layerVoxelCounts[i] =  data.getVoxelCount(layers[i]);
+                    layerVisibilities[i] =  data.getLayerVisible(layers[i]);
+                }
             }
         }
-
         // update table when data changes
         data.addDataChangeListener(new DataChangeAdapter() {
             @Override
             public void onVoxelDataChanged() {
-                synchronized (VitcoSettings.SYNC) {
-                    selectedLayer = data.getSelectedLayer();
-                    layers = data.getLayers();
-                    layerNames = data.getLayerNames();
-                    layerVoxelCounts = new Integer[layerNames.length];
-                    layerVisibilities = new Boolean[layerNames.length];
-                    for (int i = 0; i < layers.length; i++) {
-                        layerVoxelCounts[i] =  data.getVoxelCount(layers[i]);
-                        layerVisibilities[i] =  data.getLayerVisible(layers[i]);
+                synchronized (thisInstance) {
+                    synchronized (VitcoSettings.SYNC) {
+                        selectedLayer = data.getSelectedLayer();
+                        layers = data.getLayers();
+                        layerCount = layers.length;
+                        layerNames = data.getLayerNames();
+                        layerVoxelCounts = new Integer[layerNames.length];
+                        layerVisibilities = new Boolean[layerNames.length];
+                        for (int i = 0; i < layers.length; i++) {
+                            layerVoxelCounts[i] =  data.getVoxelCount(layers[i]);
+                            layerVisibilities[i] =  data.getLayerVisible(layers[i]);
+                        }
                     }
                 }
                 // refresh this group
@@ -299,7 +308,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 final int row = aTable.rowAtPoint(e.getPoint());
                 final int col = aTable.columnAtPoint(e.getPoint());
                 final int layer;
-                synchronized (VitcoSettings.SYNC) {
+                synchronized (thisInstance) {
                     layer = layers[row];
                 }
                 asyncActionManager.addAsyncAction(new AsyncAction() {

@@ -6,12 +6,12 @@ import java.util.*;
 /**
  * Implementation of an arbitrary-dimension RTree. Based on R-Trees: A Dynamic
  * Index Structure for Spatial Searching (Antonn Guttmann, 1984)
- * 
+ *
  * This class is not thread-safe.
- * 
+ *
  * Copyright 2010 Russ Weeks rweeks@newbrightidea.com Licensed under the GNU
  * LGPL License details here: http://www.gnu.org/licenses/lgpl-3.0.txt
- * 
+ *
  * @param <T>
  *          the type of entry to store in this RTree.
  */
@@ -36,7 +36,7 @@ public class RTree<T> implements Serializable
 
   /**
    * Creates a new RTree.
-   * 
+   *
    * @param maxEntries
    *          maximum number of entries per node
    * @param minEntries
@@ -116,7 +116,7 @@ public class RTree<T> implements Serializable
 
   /**
    * Searches the RTree for objects overlapping with the given rectangle.
-   * 
+   *
    * @param coords
    *          the corner of the rectangle that is the lower bound of every
    *          dimension (eg. the top-left corner)
@@ -161,7 +161,7 @@ public class RTree<T> implements Serializable
 
   /**
    * Deletes the entry associated with the given rectangle from the RTree
-   * 
+   *
    * @param coords
    *          the corner of the rectangle that is the lower bound in every
    *          dimension
@@ -310,7 +310,7 @@ public class RTree<T> implements Serializable
   /**
    * Inserts the given entry into the RTree, associated with the given
    * rectangle.
-   * 
+   *
    * @param coords
    *          the corner of the rectangle that is the lower bound in every
    *          dimension
@@ -529,6 +529,7 @@ public class RTree<T> implements Serializable
   {
     @SuppressWarnings("unchecked")
     Node[] bestPair = new Node[2];
+    boolean foundBestPair = false;
     float bestSep = 0.0f;
     for (int i = 0; i < numDims; i++)
     {
@@ -563,12 +564,13 @@ public class RTree<T> implements Serializable
         bestPair[0] = nMaxLb;
         bestPair[1] = nMinUb;
         bestSep = sep;
+        foundBestPair = true;
       }
     }
     // In the degenerate case where all points are the same, the above
     // algorithm does not find a best pair.  Just pick the first 2
     // children.
-    if ( bestPair == null )
+    if ( !foundBestPair )
     {
       bestPair = new Node[] { nn.get(0), nn.get(1) };
     }
@@ -727,7 +729,7 @@ public class RTree<T> implements Serializable
     }
     return true;
   }
- 
+
   private static class Node implements Serializable
   {
     private static final long serialVersionUID = 1L;
@@ -768,14 +770,14 @@ public class RTree<T> implements Serializable
     {
       return "Entry: " + entry;
     }
-  } 
+  }
 
   // The methods below this point can be used to create an HTML rendering
   // of the RTree.  Maybe useful for debugging?
-  
+
   private static final int elemWidth = 150;
   private static final int elemHeight = 120;
-  
+
   String visualize()
   {
     int ubDepth = (int)Math.ceil(Math.log(size)/Math.log(minEntries)) * elemHeight;
@@ -788,7 +790,7 @@ public class RTree<T> implements Serializable
     pw.flush();
     return sw.toString();
   }
-  
+
   private void visualize(Node n, java.io.PrintWriter pw, int x0, int y0, int w, int h)
   {
     pw.printf( "<div style=\"position:absolute; left: %d; top: %d; width: %d; height: %d; border: 1px dashed\">\n",

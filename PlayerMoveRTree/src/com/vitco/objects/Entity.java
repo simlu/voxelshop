@@ -67,8 +67,8 @@ public abstract class Entity {
 
         // -- update the visible list
         List<Entity> nearbyEntities =
-                world.entityList.search(new Rectangle(x - noRefreshWidth * 2, y - noRefreshHeight * 2,
-                        x + noRefreshWidth * 2, y + noRefreshHeight * 2));
+                world.entityList.search(new Rectangle(x - noRefreshWidth * 3, y - noRefreshHeight * 3,
+                        x + noRefreshWidth * 3, y + noRefreshHeight * 3));
         nearbyEntities.remove(this); // exclude the entity itself
 
         // find the entities that are no longer visible and remove them
