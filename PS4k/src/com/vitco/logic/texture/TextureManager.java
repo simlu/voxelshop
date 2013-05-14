@@ -15,7 +15,6 @@ import com.vitco.util.WrapLayout;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -67,9 +66,9 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
         // we need the hash to determine when to change the picture
         private String hash = "";
 
-        private Color inactiveColor = VitcoSettings.TEXTURE_BORDER;
-        private Color activeColor = VitcoSettings.TEXTURE_BORDER_ACTIVE;
-        private Color selectedColor = VitcoSettings.TEXTURE_BORDER_SELECTED;
+        private final Color inactiveColor = VitcoSettings.TEXTURE_BORDER;
+        private final Color activeColor = VitcoSettings.TEXTURE_BORDER_ACTIVE;
+        private final Color selectedColor = VitcoSettings.TEXTURE_BORDER_SELECTED;
 
         private boolean selected = false;
 

@@ -1,6 +1,7 @@
 package com.vitco.util.pref;
 
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.AutoFileCloser;
 import com.vitco.util.FileTools;
 import com.vitco.util.error.ErrorHandlerInterface;
 
@@ -135,16 +136,19 @@ public class Preferences implements PreferencesInterface {
     public void save() {
         synchronized (VitcoSettings.SYNC) {
             // store the map in file
-            File dataFile = new File(storageFileName);
+            final File dataFile = new File(storageFileName);
             if (dataFile.getParentFile().exists() || dataFile.getParentFile().mkdirs()) {
                 try {
-                    FileOutputStream fileOut = new FileOutputStream(dataFile);
-                    ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                    out.writeObject(map);
-                } catch (FileNotFoundException e) {
-                    errorHandler.handle(e); // should not happen
-                } catch (IOException e) {
-                    errorHandler.handle(e); // should not happen
+                    new AutoFileCloser() {
+                        @Override protected void doWork() throws Throwable {
+                            FileOutputStream fileOut = autoClose(new FileOutputStream(dataFile));
+                            ObjectOutputStream out = autoClose(new ObjectOutputStream(fileOut));
+
+                            out.writeObject(map);
+                        }
+                    };
+                } catch (RuntimeException e) {
+                    errorHandler.handle(e);
                 }
             }
         }
@@ -154,18 +158,19 @@ public class Preferences implements PreferencesInterface {
     @Override
     public void load() {
         synchronized (VitcoSettings.SYNC) {
-            File dataFile = new File(storageFileName);
+            final File dataFile = new File(storageFileName);
             if (dataFile.exists()) {
                 try {
-                    FileInputStream fileIn = new FileInputStream(dataFile);
-                    ObjectInputStream in = new ObjectInputStream(fileIn);
-                    map = FileTools.castHash((HashMap) in.readObject(), String.class, Object.class);
-                    in.close();
-                    fileIn.close();
-                } catch (IOException e) {
-                    errorHandler.handle(e); // should not happen
-                } catch (ClassNotFoundException e) {
-                    errorHandler.handle(e); // should not happen
+                    new AutoFileCloser() {
+                        @Override protected void doWork() throws Throwable {
+                            FileInputStream fileIn = autoClose(new FileInputStream(dataFile));
+                            ObjectInputStream in = autoClose(new ObjectInputStream(fileIn));
+
+                            map = FileTools.castHash((HashMap) in.readObject(), String.class, Object.class);
+                        }
+                    };
+                } catch (RuntimeException e) {
+                    errorHandler.handle(e);
                 }
             }
         }

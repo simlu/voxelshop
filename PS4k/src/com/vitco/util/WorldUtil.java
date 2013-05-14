@@ -204,6 +204,7 @@ public class WorldUtil {
             case 1: return new int[] {0,0};
             case 2: return new int[] {1,1};
             case 3: return new int[] {0,1};
+            default: break;
         }
         return null;
     }
@@ -215,6 +216,7 @@ public class WorldUtil {
             case 1: return new int[] {1,1};
             case 2: return new int[] {0,0};
             case 3: return new int[] {0,1};
+            default: break;
         }
         return null;
     }

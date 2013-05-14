@@ -85,6 +85,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 switch (side) {
                     case 0: missingSide = 2; break;
                     case 2: missingSide = 0; break;
+                    default: break;
                 }
                 for (String requestId : changedVisibleVoxelPlane.get(side).keySet()) {
                     for (int[] invalid : effected) {
@@ -1443,6 +1444,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                         rot1 = 1;
                         rot2 = 2;
                         break;
+                    default: break;
                 }
 
                 // remove all voxels
@@ -2185,6 +2187,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     case 2:
                         result = new Voxel[][] {null, getVoxelsYZ(plane)};
                         break;
+                    default: break;
                 }
                 // reset
                 changedVisibleVoxelPlane.get(side).get(requestId).put(plane, new HashMap<String, int[]>());

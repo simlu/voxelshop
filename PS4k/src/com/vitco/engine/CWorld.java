@@ -1,15 +1,12 @@
 package com.vitco.engine;
 
 import com.threed.jpct.*;
-import com.vitco.async.AsyncAction;
-import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.WorldUtil;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,13 +36,21 @@ public class CWorld extends World {
     private final HashSet<VoxelW> toUpdate = new HashSet<VoxelW>();
 
     // Wrapper object that holds voxel information used by CWorld
-    private final class VoxelW {
+    private static final class VoxelW implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         // holds the current wrapped voxel object
         private Voxel voxel;
         // holds the neighbor information (different sides)
         private final VoxelW[] neighbours = new VoxelW[6];
 
-        public VoxelW(Voxel voxel) {
+        // holds the voxel wrapper positions
+        private final HashMap<String, VoxelW> voxelPos;
+
+        // voxel that need to be redrawn
+        private final HashSet<VoxelW> toUpdate;
+
+        public VoxelW(Voxel voxel, HashMap<String, VoxelW> voxelPos, HashSet<VoxelW> toUpdate) {
             this.voxel = voxel;
             // find neighbours and update side information (of them and this)
             // calculate the required sides
@@ -61,6 +66,8 @@ public class CWorld extends World {
                     neighbours[i].addNeighbour(this, i%2 == 0?i+1:i-1);
                 }
             }
+            this.voxelPos = voxelPos;
+            this.toUpdate = toUpdate;
             // add this voxel to the position info
             voxelPos.put(getPos(), this);
             toUpdate.add(this);
@@ -91,8 +98,8 @@ public class CWorld extends World {
 
         // returns true iff this wrapper was removed
         private boolean removed = false;
-        public boolean wasRemoved() {
-            return removed;
+        public boolean notRemoved() {
+            return !removed;
         }
 
         // remove this voxel
@@ -202,8 +209,8 @@ public class CWorld extends World {
         Camera camera = getCamera();
         camera.moveCamera(offset, length);
         SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
-                (int) Math.round(point.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
-                (int) Math.round(point.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
+                point.x * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                point.y * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
         Object[] res = calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
         if (res[1] != null) { // something hit
             // find collision point
@@ -221,7 +228,7 @@ public class CWorld extends World {
         if (voxelPos.containsKey(pos)) {
             voxelPos.get(pos).refresh(voxel); // update voxel
         } else {
-            new VoxelW(voxel); // add new voxel
+            new VoxelW(voxel, voxelPos, toUpdate); // add new voxel
         }
     }
 
@@ -253,7 +260,7 @@ public class CWorld extends World {
                removeObject(worldId);
                worldIdToVoxelId.remove(worldId);
             }
-            if (!voxel.wasRemoved()) {
+            if (voxel.notRemoved()) {
                 // add this (updated) voxel to the world
                 int newWorldId = WorldUtil.addBoxSides(this,
                         voxel.getVectorPos(),

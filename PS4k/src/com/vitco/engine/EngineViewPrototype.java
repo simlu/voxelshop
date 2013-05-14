@@ -48,13 +48,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         this.data = data;
     }
 
-    protected ThreadManagerInterface threadManager;
-    // set the action handler
-    @Autowired
-    public final void setThreadManager(ThreadManagerInterface threadManager) {
-        this.threadManager = threadManager;
-    }
-
     // the world-required objects
     protected final CWorld world;
     protected final CWorld selectedVoxelsWorld;
@@ -64,8 +57,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // conversion
     protected final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
         SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer,
-                (int)Math.round(x*VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
-                (int)Math.round(y*VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
+                x*VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                y*VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
         result.scalarMul(camera.getPosition().distance(referencePoint));
         result.add(camera.getPosition());
         return result;

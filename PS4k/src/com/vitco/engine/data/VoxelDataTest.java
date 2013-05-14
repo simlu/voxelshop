@@ -885,6 +885,7 @@ public class VoxelDataTest {
                             util.selectVoxel();
                         }
                         break;
+                    default: break;
                 }
 //                if (data.getVoxel(20390) != null) {
 //                    data.historyManagerV.debug();

@@ -149,9 +149,6 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         // needs to be all lower case
         consoleAction.put("/clear", "console_action_clear");
         consoleAction.put("/debug exception", "create_error_for_debug");
-        consoleAction.put("/debug deadlock", "initialize_deadlock_debug");
-        consoleAction.put("/test aam", "aysnc_action_manager_alive_check");
-        consoleAction.put("/analyze aam", "aysnc_action_manager_print_stack_details");
         consoleAction.put("/study", "study_object_complexity");
 
         // register all console actions (so debug know that they are used)
@@ -162,7 +159,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         inputField.addKeyListener(new KeyAdapter() {
             // holds previous console commands
             String tmpCommand = null;
-            ArrayList<String> commands = new ArrayList<String>();
+            final ArrayList<String> commands = new ArrayList<String>();
             int pos = 0;
 
             @Override
@@ -206,6 +203,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
                             pos++;
                         }
                         break;
+                    default: break;
                 }
             }
         });

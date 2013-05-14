@@ -53,7 +53,7 @@ public class XmlFile {
     }
 
     // pattern
-    Pattern datePatt = Pattern.compile("(.+?)(\\[)((\\-)?[0-9]+?)(\\])");
+    final Pattern datePatt = Pattern.compile("(.+?)(\\[)((\\-)?[0-9]+?)(\\])");
 
     // current top node
     private Element curTop;

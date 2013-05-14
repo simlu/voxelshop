@@ -24,7 +24,7 @@ import java.util.*;
 public class ColladaFile {
 
     // the xml Collada file
-    private XmlFile xmlFile = new XmlFile("COLLADA");
+    private final XmlFile xmlFile = new XmlFile("COLLADA");
 
     // holds all the used texture Ids and maps them to their texture images
     private final HashMap<Integer, ImageIcon> textureIds = new HashMap<Integer, ImageIcon>();
@@ -45,8 +45,8 @@ public class ColladaFile {
     private BufferedImage textureMap = null;
 
     // the id of the last assigned vertex (needed for plane adding)
-    private int[] nextColorPlaneId = new int[]{0};
-    private int[] nextTexPlaneId = new int[]{0};
+    private final int[] nextColorPlaneId = new int[]{0};
+    private final int[] nextTexPlaneId = new int[]{0};
 
     // internal - holds all the planes
     private void addPlane(float x, float y, float z, int type, PlaneMaterial material) {
@@ -94,6 +94,7 @@ public class ColladaFile {
                 planeVertices[2] = new Vertex(x - 0.5f, y - 0.5f, z);
                 planeVertices[3] = new Vertex(x - 0.5f, y + 0.5f, z);
                 break;
+            default: break;
         }
         // ===================
         // store this plane (with the material) either
@@ -158,6 +159,7 @@ public class ColladaFile {
             case 2:
                 addPlane(-pos[0], -pos[2], -pos[1] - 0.5f, type, material);
                 break;
+            default: break;
         }
     }
 

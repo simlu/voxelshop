@@ -16,7 +16,7 @@ public class SaveTextArea extends JTextArea {
 
     // filter to allow only certain chars in textarea and notify on change
     // also remembers the current string
-    private class AxisJTextFilter extends DocumentFilter {
+    private static class AxisJTextFilter extends DocumentFilter {
         @Override
         public void insertString(DocumentFilter.FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException
         {

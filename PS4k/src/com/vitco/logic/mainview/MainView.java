@@ -261,6 +261,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                         switch (e.getModifiers()) {
                             case MouseEvent.BUTTON1_MASK: leftMouseDown = e.getPoint(); break;
                             case MouseEvent.BUTTON3_MASK: rightMouseDown = e.getPoint(); break;
+                            default: break;
                         }
                     }
                 });
@@ -274,6 +275,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                         switch (e.getModifiers()) {
                             case MouseEvent.BUTTON1_MASK: leftMouseDown = null; break;
                             case MouseEvent.BUTTON3_MASK: rightMouseDown = null; break;
+                            default: break;
                         }
                     }
                 });

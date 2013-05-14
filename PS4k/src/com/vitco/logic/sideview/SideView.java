@@ -48,6 +48,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             case 2:
                 camera.setView(VitcoSettings.SIDE_VIEW3_CAMERA_POSITION);
                 break;
+            default: break;
         }
         camera.setFOVLimits(VitcoSettings.SIDE_VIEW_ZOOM_FOV, VitcoSettings.SIDE_VIEW_ZOOM_FOV);
         camera.setFOV(VitcoSettings.SIDE_VIEW_ZOOM_FOV);
@@ -149,6 +150,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             case 2:
                 voxels = data.getVoxelsYZ(currentplane);
                 break;
+            default: break;
         }
         return voxels;
     }

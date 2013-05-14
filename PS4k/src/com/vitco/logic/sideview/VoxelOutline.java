@@ -68,6 +68,7 @@ public class VoxelOutline {
                         new int[] {0, 0, -1}
                 };
                 break;
+            default: break;
         }
     }
 

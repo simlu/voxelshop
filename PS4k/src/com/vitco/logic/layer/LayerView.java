@@ -142,6 +142,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                                     }
                                 });
                                 break;
+                            default: break;
                         }
                         fireTableCellUpdated(row, col);
                     } else {

@@ -35,33 +35,41 @@ public class ErrorHandler implements ErrorHandlerInterface {
     private void initOutMapping() {
         if (!debug) {
             // write error to console
-            System.setErr(new PrintStream(new OutputStream() {
-                private String buffer = "";
-                @Override
-                public void write(int arg0) throws IOException {
-                    if (((char)arg0) == '\n') {
-                        console.addLine(buffer);
-                        buffer = "";
-                    } else {
-                        buffer += (char)arg0;
-                    }
+            try {
+                System.setErr(new PrintStream(new OutputStream() {
+                    private String buffer = "";
+                    @Override
+                    public void write(int arg0) throws IOException {
+                        if (((char)arg0) == '\n') {
+                            console.addLine(buffer);
+                            buffer = "";
+                        } else {
+                            buffer += (char)arg0;
+                        }
 
-                }
-            }));
+                    }
+                }, true, "utf-8"));
+            } catch (UnsupportedEncodingException e) {
+                this.handle(e);
+            }
             // write out to console
-            System.setOut(new PrintStream(new OutputStream() {
-                private String buffer = "";
-                @Override
-                public void write(int arg0) throws IOException {
-                    if (((char)arg0) == '\n') {
-                        console.addLine(buffer);
-                        buffer = "";
-                    } else {
-                        buffer += (char)arg0;
-                    }
+            try {
+                System.setOut(new PrintStream(new OutputStream() {
+                    private String buffer = "";
+                    @Override
+                    public void write(int arg0) throws IOException {
+                        if (((char)arg0) == '\n') {
+                            console.addLine(buffer);
+                            buffer = "";
+                        } else {
+                            buffer += (char)arg0;
+                        }
 
-                }
-            }));
+                    }
+                }, true, "utf-8"));
+            } catch (UnsupportedEncodingException e) {
+                this.handle(e);
+            }
         }
     }
 
@@ -109,7 +117,8 @@ public class ErrorHandler implements ErrorHandlerInterface {
                         String absolutePath = appJar.getAbsolutePath();
                         String filePath = absolutePath.
                                 substring(0, absolutePath.lastIndexOf(File.separator) + 1);
-                        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filePath + "errorlog.txt", true)));
+                        PrintWriter out = new PrintWriter(new BufferedWriter(
+                                new OutputStreamWriter(new FileOutputStream(filePath + "errorlog.txt", true),"UTF-8")));
                         out.println("===================");
                         out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
                         out.println("-------------------");
@@ -142,7 +151,7 @@ public class ErrorHandler implements ErrorHandlerInterface {
                             // write temporary file with stack-trace
                             File temp = File.createTempFile("PS4k_" + DateTools.now("yyyy-MM-dd_HH-mm-ss_"), ".error");
                             temp.deleteOnExit();
-                            PrintStream ps = new PrintStream(temp);
+                            PrintStream ps = new PrintStream(temp, "utf-8");
                             e.printStackTrace(ps);
 
                             // upload to server

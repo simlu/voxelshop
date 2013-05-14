@@ -81,8 +81,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             SimpleVector result;
             if (voxelSnap) {
                 SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
-                        (int)Math.round(e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
-                        (int)Math.round(e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
+                        e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                        e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
                 Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 1000000);
                 if (res[1] != null) {
                     Object3D obj3D = ((Object3D)res[1]);
@@ -290,6 +290,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 data.selectPoint(added); // and select
                             }
                             break;
+                        default: break;
                     }
                 }
             });
@@ -352,6 +353,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         case 3: voxelPos[1] -= 1; break;
                         case 4: voxelPos[2] += 1; break;
                         case 5: voxelPos[2] -= 1; break;
+                        default: break;
                     }
                 }
             }
@@ -469,9 +471,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         if (lastAddedVoxel != null) {
                                             // try to add voxels in between
                                             int[] mid = new int[] {
-                                                    (lastAddedVoxel[0] + highlighted[0]) / 2,
-                                                    (lastAddedVoxel[1] + highlighted[1]) / 2,
-                                                    (lastAddedVoxel[2] + highlighted[2]) / 2,
+                                                    (lastAddedVoxel[0] & highlighted[0]) + ((lastAddedVoxel[0] ^ highlighted[0]) >> 1),
+                                                    (lastAddedVoxel[1] & highlighted[1]) + ((lastAddedVoxel[1] ^ highlighted[1]) >> 1),
+                                                    (lastAddedVoxel[2] & highlighted[2]) + ((lastAddedVoxel[2] ^ highlighted[2]) >> 1)
                                             };
                                             if (data.searchVoxel(mid, false) == null) {
                                                 // only draw if there is no voxels already here
@@ -492,6 +494,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         data.removeVoxel(voxel.id);
                                     }
                                     break;
+                                default: break;
                             }
                         }
                     } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
@@ -559,6 +562,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             Math.round(currentSelectionShift[1] - (stopPos.y - dragStartPos.y)/VitcoSettings.VOXEL_SIZE),
                             Math.round(currentSelectionShift[2] - (stopPos.z - dragStartPos.z)/VitcoSettings.VOXEL_SIZE));
                     break;
+                default: break;
             }
         }
 
@@ -622,8 +626,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             }
             // do a single click search as well
             SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
-                    (int)Math.round(e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
-                    (int)Math.round(e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
+                    e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                    e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
             Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
             if (res[1] != null) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
@@ -661,8 +665,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             voxelMode == VOXELMODE.DRAW && !rightMouseDown);
                 } else { // find voxel in same plane
                     SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
-                            (int)Math.round(e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND),
-                            (int)Math.round(e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND)).normalize();
+                            e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                            e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
                     // hit nothing, draw preview on zero level
                     if (dir.y > 0.05) { // angle big enough
                         // calculate position
@@ -691,6 +695,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         // remove voxel highlights
                         data.highlightVoxel(null);
                         break;
+                    default: break;
                 }
             }
         }
@@ -748,6 +753,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 currentSelectionShift = data.getVoxelSelectionShift().clone();
                                 dragStartPos = convert2D3D(e.getX(), e.getY(), dragStartReferencePos);
                                 break;
+                            default: break;
                         }
                     } else {
                         executeNormalMode(e);
@@ -778,6 +784,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                         case 2:
                             selectMode = 0;
                             break;
+                        default: break;
                     }
                     hover(e);
                     invalidateVoxels();
@@ -823,6 +830,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 executeSelectionMode(e);
                                 forceRepaint();
                                 break;
+                            default: break;
                         }
                     }
                 }

@@ -32,7 +32,7 @@ public class RTree<T> implements Serializable
 
   private Node root;
 
-  private volatile int size;
+  private int size;
 
   /**
    * Creates a new RTree.
@@ -793,7 +793,7 @@ public class RTree<T> implements Serializable
 
   private void visualize(Node n, java.io.PrintWriter pw, int x0, int y0, int w, int h)
   {
-    pw.printf( "<div style=\"position:absolute; left: %d; top: %d; width: %d; height: %d; border: 1px dashed\">\n",
+    pw.printf( "<div style=\"position:absolute; left: %d; top: %d; width: %d; height: %d; border: 1px dashed\">%n",
                x0, y0, w, h);
     pw.println( "<pre>");
     pw.println( "Node: " + n.toString() + " (root==" + (n == root) + ") \n" );

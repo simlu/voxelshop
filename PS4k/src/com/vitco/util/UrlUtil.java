@@ -17,8 +17,7 @@ public class UrlUtil {
         StringBuilder result = new StringBuilder();
         try {
             url2 = new URL(url);
-            BufferedReader in = new BufferedReader(new InputStreamReader(url2
-                    .openStream()), 1024);
+            BufferedReader in = new BufferedReader(new InputStreamReader(url2.openStream(), "utf-8"), 1024);
 
             String inputLine;
 

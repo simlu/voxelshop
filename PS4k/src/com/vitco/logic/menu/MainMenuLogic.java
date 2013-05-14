@@ -13,10 +13,7 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 /**
  * Handles the main menu logic.
@@ -130,6 +127,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 case JOptionPane.CANCEL_OPTION: // cancel = do nothing
                     // cancel
                     break;
+                default: break;
             }
         } else { // no unsaved changes
             result = true;
@@ -335,18 +333,22 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             ((DefaultDockableBarDockableHolder) frame).getLayoutPersistence().getLayoutRawData());
 
                     // do not print any thread errors (JFileChooser thread can cause this!)
-                    PrintStream nullStream = new PrintStream(new OutputStream() {
-                        public void write(int b) throws IOException {
-                        }
+                    try {
+                        PrintStream nullStream = new PrintStream(new OutputStream() {
+                            public void write(int b) throws IOException {
+                            }
 
-                        public void write(byte b[]) throws IOException {
-                        }
+                            public void write(byte b[]) throws IOException {
+                            }
 
-                        public void write(byte b[], int off, int len) throws IOException {
-                        }
-                    });
-                    System.setErr(nullStream);
-                    System.setOut(nullStream);
+                            public void write(byte b[], int off, int len) throws IOException {
+                            }
+                        }, true, "utf-8");
+                        System.setErr(nullStream);
+                        System.setOut(nullStream);
+                    } catch (UnsupportedEncodingException e1) {
+                        errorHandler.handle(e1);
+                    }
 
                     // and exit
                     ((DefaultDockableBarDockableHolder) frame).setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

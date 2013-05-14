@@ -707,6 +707,7 @@ public final class AnimationDataTest {
                             util.debug("selectFrame", k, seed);
                         }
                         break;
+                    default: break;
                 }
             }
             System.out.println(seed);
