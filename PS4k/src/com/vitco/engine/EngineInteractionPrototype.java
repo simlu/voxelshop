@@ -192,7 +192,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 public void performAction() {
                     camera.setEnabled(true);
                     needToRebuild = true;
-                    if (e.getModifiers() == MouseEvent.BUTTON1_MASK) { // left mb
+                    if ((e.getModifiers() & MouseEvent.BUTTON1_MASK) == MouseEvent.BUTTON1_MASK) { // left mb
                         if (dragPoint != -1 && wasDragged != -1) {
                             // do not save this move action if the point position did not change
                             ExtendedVector point = data.getPoint(dragPoint);
@@ -252,7 +252,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     if (highlighted_point != -1) {
                         camera.setEnabled(false);
                     }
-                    switch (e.getModifiers()) {
+                    switch (e.getModifiers() & (MouseEvent.BUTTON3_MASK | MouseEvent.BUTTON1_MASK)) {
                         case MouseEvent.BUTTON3_MASK:
                             if (highlighted_point != -1) {
                                 // highlighted point -> ask to remove
@@ -445,6 +445,54 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         // in this massVoxel add event
         private int[] lastAddedVoxel = null;
 
+        // helper for flood fille
+        private int dist(int pos[], int node[]) {
+            return Math.max( Math.max(Math.abs(pos[0] - node[0]), Math.abs(pos[1] - node[1])), Math.abs(pos[2] - node[2]));
+        }
+
+        private void floodFill(int[] pos, HashMap<String, int[]> result, int size, int limit) {
+            ArrayList<int[]> queue = new ArrayList<int[]>();
+            queue.add(0, new int[]{pos[0], pos[1], pos[2], 0});
+            int count = 0;
+            while (!queue.isEmpty()) {
+                Collections.sort(queue, new Comparator<int[]>() {
+                    @Override
+                    public int compare(int[] o1, int[] o2) {
+                        return o1[3] - o2[3];
+                    }
+                });
+                int[] node = queue.remove(0);
+                String strPos = node[0] + "_" + node[1] + "_" + node[2];
+                if (count < limit && node[3] < size) {
+                    if (!result.containsKey(strPos)) {
+                        if (data.searchVoxel(node, false) == null) {
+                            // add to result list
+                            result.put(strPos, new int[] {node[0], node[1], node[2]});
+                            count++;
+                            if (side != 2) {
+                                queue.add(0, new int[] {node[0] + 1, node[1], node[2],
+                                        dist(pos, new int[] {node[0] + 1, node[1], node[2]})});
+                                queue.add(0, new int[] {node[0] - 1, node[1], node[2],
+                                        dist(pos, new int[] {node[0] - 1, node[1], node[2]})});
+                            }
+                            if (side != 1) {
+                                queue.add(0, new int[] {node[0], node[1] + 1, node[2],
+                                        dist(pos, new int[] {node[0], node[1] + 1, node[2]})});
+                                queue.add(0, new int[] {node[0], node[1] - 1, node[2],
+                                        dist(pos, new int[] {node[0], node[1] - 1, node[2]})});
+                            }
+                            if (side != 0) {
+                                queue.add(0, new int[] {node[0], node[1], node[2] + 1,
+                                        dist(pos, new int[] {node[0], node[1], node[2] + 1})});
+                                queue.add(0, new int[] {node[0], node[1], node[2] - 1,
+                                        dist(pos, new int[] {node[0], node[1], node[2] - 1})});
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // execute on mouse event
         protected void executeNormalMode(MouseEvent e) {
             if (container.getBounds().contains(e.getPoint())) {
@@ -454,7 +502,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     camera.setEnabled(voxelMode == VOXELMODE.VIEW);
                     if (voxelMode == VOXELMODE.DRAW) { // add voxel
                         if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
-                            switch (e.getModifiersEx()) {
+                            switch (e.getModifiersEx() & (InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) {
                                 case InputEvent.BUTTON1_DOWN_MASK: // left click
                                     if (!massVoxel && side == -1) {
                                         // memorise position
@@ -482,8 +530,22 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         }
 
                                         if (data.searchVoxel(highlighted, false) == null) {
-                                            // only draw if there is no voxels already here
-                                            data.addVoxel(ColorTools.hsbToColor(currentColor), texture, highlighted);
+                                            if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+                                                // flood fill
+                                                HashMap<String, int[]> result = new HashMap<String, int[]>();
+                                                floodFill(highlighted, result, side == -1 ? 2 : 100, side == -1 ? 27 : 841);
+                                                int selectedLayer = data.getSelectedLayer();
+                                                Voxel[] resultArray = new Voxel[result.size()];
+                                                int i = 0;
+                                                for (int[] pos : result.values()) {
+                                                    resultArray[i++] =
+                                                            new Voxel(-1, pos, ColorTools.hsbToColor(currentColor), false, null, selectedLayer);
+                                                }
+                                                data.massAddVoxel(resultArray);
+                                            } else {
+                                                // only draw if there is no voxels already here
+                                                data.addVoxel(ColorTools.hsbToColor(currentColor), texture, highlighted);
+                                            }
                                             lastAddedVoxel = highlighted;
                                         }
                                     }
@@ -643,7 +705,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             searchResult.toArray(toSet);
             if (toSet.length > 0) {
                 changedSelection = true;
-                data.massSetVoxelSelected(toSet, e.getModifiers() == MouseEvent.BUTTON1_MASK);
+                data.massSetVoxelSelected(toSet, (e.getModifiers() & MouseEvent.BUTTON1_MASK) == MouseEvent.BUTTON1_MASK);
             }
 
             container.setPreviewRect(null);
@@ -726,7 +788,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             asyncActionManager.addAsyncAction(new AsyncAction() {
                 @Override
                 public void performAction() {
-                    rightMouseDown = e.getModifiers() == MouseEvent.BUTTON3_MASK;
+                    rightMouseDown = (e.getModifiers() & MouseEvent.BUTTON3_MASK) == MouseEvent.BUTTON3_MASK;
                     if (rightMouseDown) {
                         hover(e);
                     }
@@ -768,7 +830,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 @Override
                 public void performAction() {
                     camera.setEnabled(true);
-                    rightMouseDown = rightMouseDown && e.getModifiers() == MouseEvent.BUTTON3_DOWN_MASK;
+                    rightMouseDown = rightMouseDown && (e.getModifiers() & MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK;
                     massVoxel = false;
                     lastAddedVoxel = null;
                     dragDrawStartPos = null;

@@ -346,7 +346,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        if (e.getModifiers() == MouseEvent.BUTTON1_MASK) {
+                        if ((e.getModifiers() & MouseEvent.BUTTON1_MASK) == MouseEvent.BUTTON1_MASK) {
                             mouse_down_point = e.getPoint();
                         } else {
                             mouse_down_point = null;

@@ -383,16 +383,21 @@ public class ShortcutManager implements ShortcutManagerInterface {
     @Override
     public final boolean isValidShortcut(KeyStroke keyStroke) {
         // check that this is a format that is allowed as shortcut
-        return keyStroke == null || ((keyStroke.getModifiers() == (InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK)) ||
-                (keyStroke.getModifiers() == (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK)) ||
-                (keyStroke.getModifiers() == (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK)) ||
-                (keyStroke.getModifiers() == ((InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK) | (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK))) ||
-                (keyStroke.getModifiers() == ((InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK) | (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK))) ||
-                (keyStroke.getModifiers() == ((InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK) | (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK))))
+        int altmask = (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK);
+        int ctrlmask = (InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK);
+        int shiftmask = (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK);
+        int modifier = keyStroke == null ? 0 : (keyStroke.getModifiers()
+                & ( ctrlmask | altmask | shiftmask ));
+        return keyStroke == null || ((modifier == ctrlmask) ||
+                (modifier == altmask) ||
+                (modifier == shiftmask) ||
+                (modifier == (ctrlmask | altmask)) ||
+                (modifier == (ctrlmask | shiftmask)) ||
+                (modifier == (altmask | shiftmask)))
                 // allow only certain keys as trigger keys
                 && VALID_KEYS_WITH_MODIFIER.contains(keyStroke.getKeyCode()) ||
                 // allow some keys without modifiers
-                ((keyStroke.getModifiers() == 0)
+                ((modifier == 0)
                         && VALID_KEYS_WITHOUT_MODIFIER.contains(keyStroke.getKeyCode()));
     }
 

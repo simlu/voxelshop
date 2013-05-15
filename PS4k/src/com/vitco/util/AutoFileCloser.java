@@ -9,7 +9,7 @@ public abstract class AutoFileCloser {
     protected abstract void doWork() throws Throwable;
 
     // track a list of closeable thingies to close when finished
-    private List<Closeable> closeables_ = new LinkedList<Closeable>();
+    private final List<Closeable> closeables_ = new LinkedList<Closeable>();
 
     // give the implementer a way to track things to close
     // assumes this is called in order for nested closeables,

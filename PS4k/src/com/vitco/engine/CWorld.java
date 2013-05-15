@@ -96,7 +96,7 @@ public class CWorld extends World {
         // ========================
         // remove/replace voxel
 
-        // returns true iff this wrapper was removed
+        // returns true iff this wrapper was not removed
         private boolean removed = false;
         public boolean notRemoved() {
             return !removed;

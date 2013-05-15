@@ -1,5 +1,5 @@
 getdown.txt = 296a373ed628880372f6615e6b99f1be
-PS4k.jar = 3b1f60af21ba2707445477e9f8b3f1f1
+PS4k.jar = a51982d60f72702b897967e43e1f9b52
 lib/commons-logging-1.1.1.jar = 073a5c734e213bcbbb43af48ed479da3
 lib/jide-action.jar = 13ff569265600210420f1e60a7523f96
 lib/jide-common.jar = 6ecbd67e31a706e5421c8992f342be93
@@ -25,4 +25,4 @@ lib/poly2tri-ardor3d-0.1.1-SNAPSHOT.jar = f4642dacddab3fc0eddf1c236a76e73d
 lib/poly2tri-core-0.1.1-SNAPSHOT.jar = 188a7a02665ccfe8888ab18b34d6c051
 lib/slf4j-api-1.6.5.jar = af2b1b1a2480089d1372ee42d33a653d
 lib/slf4j-log4j12-1.6.5.jar = a98efa48ec23ca689d9b69318060265e
-digest.txt = 85cc44063a8962e0e561852a1b849bc6
+digest.txt = f153059f91f62f87d8abead888fd4113
