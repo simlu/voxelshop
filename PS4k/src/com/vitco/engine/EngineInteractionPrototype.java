@@ -450,6 +450,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             return Math.max( Math.max(Math.abs(pos[0] - node[0]), Math.abs(pos[1] - node[1])), Math.abs(pos[2] - node[2]));
         }
 
+        // flood fill with new voxel
         private void floodFill(int[] pos, HashMap<String, int[]> result, int size, int limit) {
             ArrayList<int[]> queue = new ArrayList<int[]>();
             queue.add(0, new int[]{pos[0], pos[1], pos[2], 0});
@@ -487,6 +488,35 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                 queue.add(0, new int[] {node[0], node[1], node[2] - 1,
                                         dist(pos, new int[] {node[0], node[1], node[2] - 1})});
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        // flood fill (recolor)
+        private void floodColor(int[] pos, Color color, HashMap<String, Integer> result) {
+            ArrayList<int[]> queue = new ArrayList<int[]>();
+            queue.add(0, pos.clone());
+            while (!queue.isEmpty()) {
+                int[] node = queue.remove(0);
+                String strPos = node[0] + "_" + node[1] + "_" + node[2];
+                if (!result.containsKey(strPos)) {
+                    Voxel voxel = data.searchVoxel(node, false);
+                    if (voxel != null && voxel.getColor().equals(color)) {
+                        // add to result list
+                        result.put(strPos, voxel.id);
+                        if (side != 2) {
+                            queue.add(0, new int[] {node[0] + 1, node[1], node[2]});
+                            queue.add(0, new int[] {node[0] - 1, node[1], node[2]});
+                        }
+                        if (side != 1) {
+                            queue.add(0, new int[] {node[0], node[1] + 1, node[2]});
+                            queue.add(0, new int[] {node[0], node[1] - 1, node[2]});
+                        }
+                        if (side != 0) {
+                            queue.add(0, new int[] {node[0], node[1], node[2] + 1});
+                            queue.add(0, new int[] {node[0], node[1], node[2] - 1});
                         }
                     }
                 }
@@ -554,14 +584,25 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         dragDrawStartPos = highlighted;
                                     }
                                     if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
-                                        // get the texture
-                                        int selectedTexture = data.getSelectedTexture();
-                                        int[] texture = selectedTexture == -1 ? null : new int[] {
-                                                selectedTexture, selectedTexture, selectedTexture,
-                                                selectedTexture, selectedTexture, selectedTexture
-                                        };
 
-                                        if (data.searchVoxel(highlighted, false) == null) {
+                                        Voxel voxel = data.searchVoxel(highlighted, false);
+                                        if (voxel != null) {
+                                            Color color = ColorTools.hsbToColor(currentColor);
+                                            if (!color.equals(voxel.getColor())) {
+                                                // flood recolor
+                                                HashMap<String, Integer> result = new HashMap<String, Integer>();
+                                                floodColor(voxel.getPosAsInt(), voxel.getColor(), result);
+                                                Integer[] resultArray = new Integer[result.size()];
+                                                result.values().toArray(resultArray);
+                                                data.massSetColor(resultArray, color);
+                                            }
+                                        } else {
+                                            // get the texture
+                                            int selectedTexture = data.getSelectedTexture();
+                                            int[] texture = selectedTexture == -1 ? null : new int[] {
+                                                    selectedTexture, selectedTexture, selectedTexture,
+                                                    selectedTexture, selectedTexture, selectedTexture
+                                            };
                                             // flood fill
                                             HashMap<String, int[]> result = new HashMap<String, int[]>();
                                             floodFill(highlighted, result, side == -1 ? 2 : 100, side == -1 ? 27 : 841);
@@ -573,9 +614,55 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                                         new Voxel(-1, pos, ColorTools.hsbToColor(currentColor), false, texture, selectedLayer);
                                             }
                                             data.massAddVoxel(resultArray);
-                                            // last added voxel is center
-                                            lastAddedVoxel = highlighted;
                                         }
+                                        // last added voxel is center
+                                        lastAddedVoxel = highlighted;
+                                    }
+                                    break;
+                                case InputEvent.BUTTON3_DOWN_MASK: // right click
+                                    if (!massVoxel && side == -1) {
+                                        // memorise position
+                                        dragDrawStartPos = highlighted;
+                                    }
+                                    if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
+
+                                        Voxel voxel = data.searchVoxel(highlighted, false);
+                                        if (voxel != null) {
+                                            Color color = ColorTools.hsbToColor(currentColor);
+                                            Color beforeColor = voxel.getColor();
+                                            if (!color.equals(beforeColor)) {
+                                                // flood recolor <all voxels> of this color (not only connected)
+                                                Voxel[] voxels;
+                                                switch (side) {
+                                                    case -1:
+                                                        voxels = data.getVisibleLayerVoxel();
+                                                        break;
+                                                    case 2:
+                                                        voxels = data.getVoxelsYZ(highlighted[0]);
+                                                        break;
+                                                    case 1:
+                                                        voxels = data.getVoxelsXZ(highlighted[1]);
+                                                        break;
+                                                    case 0:
+                                                        voxels = data.getVoxelsXY(highlighted[2]);
+                                                        break;
+                                                    default:
+                                                        voxels = new Voxel[0];
+                                                        break;
+                                                }
+                                                HashSet<Integer> result = new HashSet<Integer>();
+                                                for (Voxel vox : voxels) {
+                                                    if (vox.getColor().equals(beforeColor)) {
+                                                        result.add(vox.id);
+                                                    }
+                                                }
+                                                Integer[] resultArray = new Integer[result.size()];
+                                                result.toArray(resultArray);
+                                                data.massSetColor(resultArray, color);
+                                            }
+                                        }
+                                        // last added voxel is center
+                                        lastAddedVoxel = highlighted;
                                     }
                                     break;
                                 default: break;
@@ -746,7 +833,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 int[] voxelPos = null;
                 if (dragDrawStartPos == null) { // normal hover
                     voxelPos = voxelPosForHoverPos(e.getPoint(),
-                            voxelMode == VOXELMODE.DRAW && !rightMouseDown);
+                            (voxelMode == VOXELMODE.DRAW) && !rightMouseDown);
                 } else { // find voxel in same plane
                     SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
                             e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
