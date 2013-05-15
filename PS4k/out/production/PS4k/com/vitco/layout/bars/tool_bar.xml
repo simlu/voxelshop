@@ -39,6 +39,10 @@
                tool-tip="voxel_mode_select_type_picker_tooltip"
                checkable="true" hideable="true"
                action="voxel_mode_select_type_picker"/>
+    <icon-item src="resource/img/bars/tool_bar/floodfill.png"
+               tool-tip="voxel_mode_select_type_floodfill_tool_tooltip"
+               checkable="true" hideable="true"
+               action="voxel_mode_select_type_floodfill_tool"/>
     <icon-item src="resource/img/bars/tool_bar/color_changer.png"
                tool-tip="voxel_mode_select_type_color_changer_tooltip"
                checkable="true" hideable="true"

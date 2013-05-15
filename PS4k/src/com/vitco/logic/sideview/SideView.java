@@ -78,7 +78,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
         };
         // nullify if we didn't find a voxel (and not in draw mode)
-        if (voxelMode != VOXELMODE.DRAW) {
+        if (voxelMode != VOXELMODE.DRAW && voxelMode != VOXELMODE.FLOODFILL) {
             if (data.searchVoxel(pos, false) == null) {
                 pos = null;
             }

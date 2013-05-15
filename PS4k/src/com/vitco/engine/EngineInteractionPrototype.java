@@ -358,7 +358,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 }
             }
         } else {
-            if (voxelMode == VOXELMODE.DRAW) { // trying to draw
+            if (voxelMode == VOXELMODE.DRAW || voxelMode == VOXELMODE.FLOODFILL) { // trying to draw
                 // hit nothing, draw preview on zero level
                 if (dir.y > 0.05) { // angle big enough
                     // calculate position
@@ -530,22 +530,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                         }
 
                                         if (data.searchVoxel(highlighted, false) == null) {
-                                            if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
-                                                // flood fill
-                                                HashMap<String, int[]> result = new HashMap<String, int[]>();
-                                                floodFill(highlighted, result, side == -1 ? 2 : 100, side == -1 ? 27 : 841);
-                                                int selectedLayer = data.getSelectedLayer();
-                                                Voxel[] resultArray = new Voxel[result.size()];
-                                                int i = 0;
-                                                for (int[] pos : result.values()) {
-                                                    resultArray[i++] =
-                                                            new Voxel(-1, pos, ColorTools.hsbToColor(currentColor), false, null, selectedLayer);
-                                                }
-                                                data.massAddVoxel(resultArray);
-                                            } else {
-                                                // only draw if there is no voxels already here
-                                                data.addVoxel(ColorTools.hsbToColor(currentColor), texture, highlighted);
-                                            }
+                                            // only draw if there is no voxels already here
+                                            data.addVoxel(ColorTools.hsbToColor(currentColor), texture, highlighted);
                                             lastAddedVoxel = highlighted;
                                         }
                                     }
@@ -554,6 +540,42 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                     Voxel voxel = data.searchVoxel(highlighted, true);
                                     if (null != voxel) {
                                         data.removeVoxel(voxel.id);
+                                    }
+                                    break;
+                                default: break;
+                            }
+                        }
+                    } else if (voxelMode == VOXELMODE.FLOODFILL) { // remove voxel
+                        if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
+                            switch (e.getModifiersEx() & (InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) {
+                                case InputEvent.BUTTON1_DOWN_MASK: // left click
+                                    if (!massVoxel && side == -1) {
+                                        // memorise position
+                                        dragDrawStartPos = highlighted;
+                                    }
+                                    if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
+                                        // get the texture
+                                        int selectedTexture = data.getSelectedTexture();
+                                        int[] texture = selectedTexture == -1 ? null : new int[] {
+                                                selectedTexture, selectedTexture, selectedTexture,
+                                                selectedTexture, selectedTexture, selectedTexture
+                                        };
+
+                                        if (data.searchVoxel(highlighted, false) == null) {
+                                            // flood fill
+                                            HashMap<String, int[]> result = new HashMap<String, int[]>();
+                                            floodFill(highlighted, result, side == -1 ? 2 : 100, side == -1 ? 27 : 841);
+                                            int selectedLayer = data.getSelectedLayer();
+                                            Voxel[] resultArray = new Voxel[result.size()];
+                                            int i = 0;
+                                            for (int[] pos : result.values()) {
+                                                resultArray[i++] =
+                                                        new Voxel(-1, pos, ColorTools.hsbToColor(currentColor), false, texture, selectedLayer);
+                                            }
+                                            data.massAddVoxel(resultArray);
+                                            // last added voxel is center
+                                            lastAddedVoxel = highlighted;
+                                        }
                                     }
                                     break;
                                 default: break;

@@ -40,7 +40,7 @@ public class Main {
             ((ComplexActionManager) context.getBean("ComplexActionManager")).performValidityCheck();
         }
         // perform shortcut check
-        ((ShortcutManager) context.getBean("ShortcutManager")).doSanityCheck();
+        ((ShortcutManager) context.getBean("ShortcutManager")).doSanityCheck(debug);
 //        // test console
 //        final Console console = ((Console) context.getBean("Console"));
 //        new Thread() {

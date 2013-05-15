@@ -531,7 +531,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     }
 
     // check if there are duplicate shortcuts
-    public final void doSanityCheck() {
+    public final void doSanityCheck(boolean debug) {
         // check global keystrokes for duplicates
         HashMap<String, ShortcutObject> globalShortcuts = new HashMap<String, ShortcutObject>();
         for (ShortcutObject so : global) {
@@ -539,9 +539,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 String stroke = asString(so.keyStroke);
                 if (globalShortcuts.containsKey(stroke)) {
                     ShortcutObject dup = globalShortcuts.get(stroke);
-                    System.err.println("Warning: The two actions " +
-                            so.actionName + " and " + dup.actionName +
-                            " have the same global shortcut (" + stroke + ").");
+                    System.err.println("Warning: The two actions \"" +
+                            (debug ? so.actionName : langSel.getString(so.caption)) + "\" and \"" +
+                            (debug ? dup.actionName : langSel.getString(dup.caption)) +
+                            "\" have the same global shortcut (" + stroke + ").");
                 }
                 globalShortcuts.put(stroke, so);
             }
@@ -556,16 +557,18 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     String stroke = asString(so.keyStroke);
                     if (shortcuts.containsKey(stroke)) {
                         ShortcutObject dup = shortcuts.get(stroke);
-                        System.err.println("Warning: The two actions " +
-                                so.actionName + " and " + dup.actionName +
-                                " for frame \"" + key + "\" have the same shortcut (" + stroke + ").");
+                        System.err.println("Warning: The two actions \"" +
+                                (debug ? so.actionName : langSel.getString(so.caption)) + "\" and \"" +
+                                (debug ? dup.actionName : langSel.getString(dup.caption)) +
+                                "\" for frame \"" + key + "\" have the same shortcut (" + stroke + ").");
                     }
                     // check if this clashes with a global shortcut
                     if (globalShortcuts.containsKey(stroke)) {
                         ShortcutObject dup = globalShortcuts.get(stroke);
-                        System.err.println("Warning: The two actions " +
-                                dup.actionName + " (global) and " + so.actionName +
-                                " (frame \"" + key + "\") have the same shortcut (" + stroke + ").");
+                        System.err.println("Warning: The two actions \"" +
+                                (debug ? dup.actionName : langSel.getString(dup.caption)) + "\" (global) and \"" +
+                                (debug ? so.actionName : langSel.getString(so.caption)) +
+                                "\" (frame \"" + key + "\") have the same shortcut (" + stroke + ").");
                     }
                     shortcuts.put(stroke, so);
                 }

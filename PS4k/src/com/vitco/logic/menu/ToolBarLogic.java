@@ -114,6 +114,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_picker", new ToolAction(VOXELMODE.PICKER));
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_color_changer", new ToolAction(VOXELMODE.COLORCHANGER));
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_select_tool", new ToolAction(VOXELMODE.SELECT));
+        actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_floodfill_tool", new ToolAction(VOXELMODE.FLOODFILL));
         actionGroupManager.registerGroup("voxel_paint_modes");
         // =====================================
 

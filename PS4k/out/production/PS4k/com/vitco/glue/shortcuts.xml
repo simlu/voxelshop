@@ -27,8 +27,9 @@
         <shortcut ctrl="no" alt="no" shift="no" key="F2" action="voxel_mode_select_type_draw" caption="voxel_mode_select_type_draw_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="F4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F5" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F6" action="voxel_mode_select_type_select_tool" caption="voxel_mode_select_type_select_tool_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F5" action="voxel_mode_select_type_floodfill_tool" caption="voxel_mode_select_type_floodfill_tool_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F6" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="F7" action="voxel_mode_select_type_select_tool" caption="voxel_mode_select_type_select_tool_caption" />
         <shortcut action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
         <!--Selection Interaction-->
         <shortcut ctrl="yes" alt="no" shift="no" key="X" action="selection_tool_cut" caption="selection_tool_cut_caption" />
