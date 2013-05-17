@@ -270,6 +270,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         public final void doNotSkipNextWorldRender() {
             doNotSkipNextWorldRender = true;
         }
+        // reset the redraw flags
+        public final void resetSkipRenderFlags() {
+            skipNextWorldRender = false;
+            doNotSkipNextWorldRender = false;
+        }
 
         // to set the preview rect
         private Rectangle previewRect = null;
@@ -587,16 +592,22 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
         }
 
-        private BufferedImage toDraw = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        private BufferedImage overlayBuffer = new BufferedImage(100,100,BufferedImage.TYPE_INT_ARGB);
-        private Graphics2D overlayBufferGraphics = (Graphics2D) overlayBuffer.getGraphics();
+        // constructor
+        public MPanel() {
+            // initialize the drawing buffer
+            notifyAboutResize(100, 100);
+        }
+
+        private BufferedImage toDraw;
+        private BufferedImage overlayBuffer;
+        private Graphics2D overlayBufferGraphics;
         public void notifyAboutResize(int width, int height) {
             toDraw = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics gr = toDraw.getGraphics();
             gr.setColor(bgColor);
-            gr.drawRect(0, 0, width, height);
+            gr.fillRect(0, 0, width, height);
             // the overlay
-            overlayBuffer = new BufferedImage(buffer.getOutputWidth(), buffer.getOutputHeight(), BufferedImage.TYPE_INT_ARGB);
+            overlayBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             // draw the lines
             overlayBufferGraphics = (Graphics2D)overlayBuffer.getGraphics();
             // Anti-alias
@@ -718,7 +729,10 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
 
         // handle the redrawing of this component
-        // note: this MUSTN'T have any call to synchronized
+        // Note1: this MUSTN'T have any call to synchronized
+        // Note2: this method should be super fast to execute,
+        // otherwise we might have many pending repaint events
+        // in the queue!
         @Override
         protected final void paintComponent(Graphics g1) {
             if (toDraw != null) {
@@ -730,6 +744,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             repainting = false;
             if (needRepainting) {
                 needRepainting = false;
+                container.resetSkipRenderFlags();
                 if (lastSkipNextWorldRender) {
                     container.skipNextWorldRender();
                 }
@@ -765,6 +780,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     private boolean repainting = false;
     private boolean needRepainting = false;
 
+    // memorize to trigger additional repaint (queued)
     private boolean lastSkipNextWorldRender;
     private boolean lastDoNotSkipNextWorldRender;
 
@@ -773,6 +789,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             repainting = true;
             final boolean skipNextWorldRender = container.skipNextWorldRender;
             final boolean doNotSkipNextWorldRender = container.doNotSkipNextWorldRender;
+            container.resetSkipRenderFlags();
             asyncActionManager.addAsyncAction(new AsyncAction("repaint" + side) {
                 @Override
                 public void performAction() {
@@ -782,10 +799,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     if (doNotSkipNextWorldRender) {
                         container.doNotSkipNextWorldRender();
                     }
-                    lastSkipNextWorldRender = container.skipNextWorldRender;
-                    lastDoNotSkipNextWorldRender = container.doNotSkipNextWorldRender;
                     container.render();
-                    // this is thread save!
+                    // this is thread save (but will execute with a delay!)
+                    // AWT event queue is ok as long as this method is fast to execute
                     container.repaint();
                 }
 
@@ -795,6 +811,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 }
             });
         } else {
+            lastSkipNextWorldRender = container.skipNextWorldRender;
+            lastDoNotSkipNextWorldRender = container.doNotSkipNextWorldRender;
             needRepainting = true;
         }
     }

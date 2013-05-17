@@ -44,7 +44,7 @@ public final class Voxel implements Serializable {
     }
 
     // set the color of this voxel
-    protected final void setColor(Color color) {
+    public final void setColor(Color color) {
         this.color = color;
     }
 
@@ -85,6 +85,15 @@ public final class Voxel implements Serializable {
     // get the flip of this voxel
     public final boolean[] getFlip() {
         return sideFlip == null ? null : sideFlip.clone();
+    }
+
+    // set the texture of this voxel
+    public final boolean setTexture(int[] textureIds) {
+        if (textureIds == null || textureIds.length == 6) {
+            this.textureIds = textureIds == null ? null : textureIds.clone();
+            return true;
+        }
+        return false;
     }
 
     // get the texture of this voxel

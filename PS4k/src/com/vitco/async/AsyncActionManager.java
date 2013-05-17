@@ -67,6 +67,8 @@ public class AsyncActionManager {
     }
 
     // needs to be one as those tasks can not be executed in parallel!
+    // Note: ExecutorService is much faster than using a new thread to
+    // execute each AsyncAction
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final LifeTimeThread workerThread = new LifeTimeThread() {
@@ -102,7 +104,6 @@ public class AsyncActionManager {
                     // remove first in case the action adds
                     // itself to the cue again (e.g. for refreshWorld())
                     actionNames.remove(actionName);
-                    //action.performAction();
                     executor.execute(action);
                 } else {
                     idleStack.add(actionName);
@@ -112,9 +113,11 @@ public class AsyncActionManager {
                 while (!idleStack.isEmpty()) {
                     stack.add(idleStack.remove(0));
                 }
-                synchronized (workerThread) {
-                    // sometimes notify "fails"(?), so we need a timeout here
-                    workerThread.wait(500);
+                if (stack.isEmpty()) {
+                    synchronized (workerThread) {
+                        // sometimes notify is "too early"/fails(?), so we need a timeout here
+                        workerThread.wait(500);
+                    }
                 }
             }
         }

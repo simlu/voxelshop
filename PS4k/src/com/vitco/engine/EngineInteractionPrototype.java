@@ -358,7 +358,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 }
             }
         } else {
-            if (voxelMode == VOXELMODE.DRAW || voxelMode == VOXELMODE.FLOODFILL) { // trying to draw
+            if (voxelMode == VOXELMODE.DRAW) { // trying to draw
                 // hit nothing, draw preview on zero level
                 if (dir.y > 0.05) { // angle big enough
                     // calculate position
@@ -503,7 +503,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 String strPos = node[0] + "_" + node[1] + "_" + node[2];
                 if (!result.containsKey(strPos)) {
                     Voxel voxel = data.searchVoxel(node, false);
-                    if (voxel != null && voxel.getColor().equals(color)) {
+                    if (voxel != null && voxel.getColor().equals(color) && voxel.getTexture() == null) {
                         // add to result list
                         result.put(strPos, voxel.id);
                         if (side != 2) {
@@ -576,97 +576,82 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                             }
                         }
                     } else if (voxelMode == VOXELMODE.FLOODFILL) { // remove voxel
-                        if (data.getLayerVisible(data.getSelectedLayer())) { // is visible
-                            switch (e.getModifiersEx() & (InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) {
-                                case InputEvent.BUTTON1_DOWN_MASK: // left click
-                                    if (!massVoxel && side == -1) {
-                                        // memorise position
-                                        dragDrawStartPos = highlighted;
+                        switch (e.getModifiersEx() & (InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) {
+                            case InputEvent.BUTTON1_DOWN_MASK: // left click
+                                Voxel voxelLEFT = data.searchVoxel(highlighted, false);
+                                if (voxelLEFT != null) {
+                                    Color color = ColorTools.hsbToColor(currentColor);
+                                    if (!color.equals(voxelLEFT.getColor())) {
+                                        // flood recolor
+                                        HashMap<String, Integer> result = new HashMap<String, Integer>();
+                                        floodColor(voxelLEFT.getPosAsInt(), voxelLEFT.getColor(), result);
+                                        Integer[] resultArray = new Integer[result.size()];
+                                        result.values().toArray(resultArray);
+                                        data.massSetColor(resultArray, color);
                                     }
-                                    if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
-
-                                        Voxel voxel = data.searchVoxel(highlighted, false);
-                                        if (voxel != null) {
-                                            Color color = ColorTools.hsbToColor(currentColor);
-                                            if (!color.equals(voxel.getColor())) {
-                                                // flood recolor
-                                                HashMap<String, Integer> result = new HashMap<String, Integer>();
-                                                floodColor(voxel.getPosAsInt(), voxel.getColor(), result);
-                                                Integer[] resultArray = new Integer[result.size()];
-                                                result.values().toArray(resultArray);
-                                                data.massSetColor(resultArray, color);
-                                            }
-                                        } else {
-                                            // get the texture
-                                            int selectedTexture = data.getSelectedTexture();
-                                            int[] texture = selectedTexture == -1 ? null : new int[] {
-                                                    selectedTexture, selectedTexture, selectedTexture,
-                                                    selectedTexture, selectedTexture, selectedTexture
-                                            };
-                                            // flood fill
-                                            HashMap<String, int[]> result = new HashMap<String, int[]>();
-                                            floodFill(highlighted, result, side == -1 ? 2 : 100, side == -1 ? 27 : 841);
-                                            int selectedLayer = data.getSelectedLayer();
-                                            Voxel[] resultArray = new Voxel[result.size()];
-                                            int i = 0;
-                                            for (int[] pos : result.values()) {
-                                                resultArray[i++] =
-                                                        new Voxel(-1, pos, ColorTools.hsbToColor(currentColor), false, texture, selectedLayer);
-                                            }
-                                            data.massAddVoxel(resultArray);
+                                } else {
+                                    // not main view, and layer visible
+                                    if (side != -1 && data.getLayerVisible(data.getSelectedLayer())) {
+                                        // get the texture
+                                        int selectedTexture = data.getSelectedTexture();
+                                        int[] texture = selectedTexture == -1 ? null : new int[] {
+                                                selectedTexture, selectedTexture, selectedTexture,
+                                                selectedTexture, selectedTexture, selectedTexture
+                                        };
+                                        // flood fill
+                                        HashMap<String, int[]> result = new HashMap<String, int[]>();
+                                        floodFill(highlighted, result, 100, 841);
+                                        int selectedLayer = data.getSelectedLayer();
+                                        Voxel[] resultArray = new Voxel[result.size()];
+                                        int i = 0;
+                                        for (int[] pos : result.values()) {
+                                            resultArray[i++] =
+                                                    new Voxel(-1, pos, ColorTools.hsbToColor(currentColor), false, texture, selectedLayer);
                                         }
+                                        data.massAddVoxel(resultArray);
                                         // last added voxel is center
                                         lastAddedVoxel = highlighted;
                                     }
-                                    break;
-                                case InputEvent.BUTTON3_DOWN_MASK: // right click
-                                    if (!massVoxel && side == -1) {
-                                        // memorise position
-                                        dragDrawStartPos = highlighted;
-                                    }
-                                    if (side != -1 || (dragDrawStartPos != null && dragDrawStartPos[1] == highlighted[1])) {
-
-                                        Voxel voxel = data.searchVoxel(highlighted, false);
-                                        if (voxel != null) {
-                                            Color color = ColorTools.hsbToColor(currentColor);
-                                            Color beforeColor = voxel.getColor();
-                                            if (!color.equals(beforeColor)) {
-                                                // flood recolor <all voxels> of this color (not only connected)
-                                                Voxel[] voxels;
-                                                switch (side) {
-                                                    case -1:
-                                                        voxels = data.getVisibleLayerVoxel();
-                                                        break;
-                                                    case 2:
-                                                        voxels = data.getVoxelsYZ(highlighted[0]);
-                                                        break;
-                                                    case 1:
-                                                        voxels = data.getVoxelsXZ(highlighted[1]);
-                                                        break;
-                                                    case 0:
-                                                        voxels = data.getVoxelsXY(highlighted[2]);
-                                                        break;
-                                                    default:
-                                                        voxels = new Voxel[0];
-                                                        break;
-                                                }
-                                                HashSet<Integer> result = new HashSet<Integer>();
-                                                for (Voxel vox : voxels) {
-                                                    if (vox.getColor().equals(beforeColor)) {
-                                                        result.add(vox.id);
-                                                    }
-                                                }
-                                                Integer[] resultArray = new Integer[result.size()];
-                                                result.toArray(resultArray);
-                                                data.massSetColor(resultArray, color);
+                                }
+                                break;
+                            case InputEvent.BUTTON3_DOWN_MASK: // right click
+                                Voxel voxelRIGHT = data.searchVoxel(highlighted, false);
+                                if (voxelRIGHT != null) {
+                                    Color color = ColorTools.hsbToColor(currentColor);
+                                    Color beforeColor = voxelRIGHT.getColor();
+                                    if (!color.equals(beforeColor)) {
+                                        // flood recolor <all voxels> of this color (not only connected)
+                                        Voxel[] voxels;
+                                        switch (side) {
+                                            case -1:
+                                                voxels = data.getVisibleLayerVoxel();
+                                                break;
+                                            case 2:
+                                                voxels = data.getVoxelsYZ(highlighted[0]);
+                                                break;
+                                            case 1:
+                                                voxels = data.getVoxelsXZ(highlighted[1]);
+                                                break;
+                                            case 0:
+                                                voxels = data.getVoxelsXY(highlighted[2]);
+                                                break;
+                                            default:
+                                                voxels = new Voxel[0];
+                                                break;
+                                        }
+                                        HashSet<Integer> result = new HashSet<Integer>();
+                                        for (Voxel vox : voxels) {
+                                            if (vox.getColor().equals(beforeColor) && vox.getTexture() == null) {
+                                                result.add(vox.id);
                                             }
                                         }
-                                        // last added voxel is center
-                                        lastAddedVoxel = highlighted;
+                                        Integer[] resultArray = new Integer[result.size()];
+                                        result.toArray(resultArray);
+                                        data.massSetColor(resultArray, color);
                                     }
-                                    break;
-                                default: break;
-                            }
+                                }
+                                break;
+                            default: break;
                         }
                     } else if (voxelMode == VOXELMODE.ERASE) { // remove voxel
                         Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
@@ -686,22 +671,36 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     } else if (voxelMode == VOXELMODE.COLORCHANGER) {
                         Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
                         if (highlightedVoxel != null) {
-                            int selectedTexture = data.getSelectedTexture();
-                            if (selectedTexture == -1) {
-                                // change color
-                                data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
-                            } else {
-                                int[] textureIds = highlightedVoxel.getTexture();
-                                if (textureIds != null && e.isControlDown()) {
-                                    // rotate the texture
-                                    data.rotateVoxelTexture(highlightedVoxel.id, lastVoxelHitSide);
-                                } else if (textureIds != null && e.isShiftDown()) {
-                                    // flip the texture
-                                    data.flipVoxelTexture(highlightedVoxel.id, lastVoxelHitSide);
-                                } else {
-                                    // set the texture
-                                    data.setTexture(highlightedVoxel.id, lastVoxelHitSide, selectedTexture);
-                                }
+                            switch (e.getModifiersEx() & (InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK)) {
+                                case InputEvent.BUTTON1_DOWN_MASK: // left click
+                                    int selectedTexture = data.getSelectedTexture();
+                                    if (selectedTexture == -1) {
+                                        // change color
+                                        data.setColor(highlightedVoxel.id, ColorTools.hsbToColor(currentColor));
+                                    } else {
+                                        int[] textureIds = highlightedVoxel.getTexture();
+                                        if (textureIds != null && e.isControlDown()) {
+                                            // rotate the texture
+                                            data.rotateVoxelTexture(highlightedVoxel.id, lastVoxelHitSide);
+                                        } else if (textureIds != null && e.isShiftDown()) {
+                                            // flip the texture
+                                            data.flipVoxelTexture(highlightedVoxel.id, lastVoxelHitSide);
+                                        } else {
+                                            // set the texture
+                                            data.setTexture(highlightedVoxel.id, lastVoxelHitSide, selectedTexture);
+                                        }
+                                    }
+                                    break;
+                                case InputEvent.BUTTON3_DOWN_MASK: // right click
+                                    // "color picker"
+                                    int[] textureIds = highlightedVoxel.getTexture();
+                                    if (textureIds == null) {
+                                        preferences.storeObject("currently_used_color",
+                                                ColorTools.colorToHSB(highlightedVoxel.getColor()));
+                                    }
+                                    data.selectTextureSoft(textureIds == null ? -1 : textureIds[lastVoxelHitSide]);
+                                    break;
+                                default: break;
                             }
                         }
                     } else if (voxelMode == VOXELMODE.VIEW) {
@@ -803,10 +802,12 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
             if (res[1] != null) { // something hit
                 Object3D obj3D = ((Object3D)res[1]);
                 Voxel hitVoxel = data.getVoxel(world.getVoxelId(obj3D.getID()));
-                if (!searchResult.contains(hitVoxel.id)) {
-                    searchResult.add(hitVoxel.id);
+                if (hitVoxel != null) {
+                    if (!searchResult.contains(hitVoxel.id)) {
+                        searchResult.add(hitVoxel.id);
+                    }
+                    result = hitVoxel.id;
                 }
-                result = hitVoxel.id;
             }
 
             // execute the select

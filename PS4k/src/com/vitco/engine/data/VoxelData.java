@@ -478,31 +478,26 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     private final class ColorVoxelIntent extends VoxelActionIntent {
-        private final int voxelId;
+        private final Voxel voxel;
         private final Color newColor;
+        private final Color oldColor;
 
         protected ColorVoxelIntent(int voxelId, Color newColor, boolean attach) {
             super(attach);
-            this.voxelId = voxelId;
+            this.voxel = dataContainer.voxels.get(voxelId);
+            this.oldColor = voxel.getColor();
             this.newColor = newColor;
+            this.effected = new int[][]{voxel.getPosAsInt()};
         }
 
         @Override
         protected void applyAction() {
-            if (isFirstCall()) {
-                Voxel voxel = dataContainer.voxels.get(voxelId);
-                historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
-                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(), newColor,
-                        voxel.isSelected(), null, voxel.getLayerId(), true));
-
-                // what is effected
-                effected = new int[][]{voxel.getPosAsInt()};
-            }
+            voxel.setColor(newColor);
         }
 
         @Override
         protected void unapplyAction() {
-            // nothing to do here
+            voxel.setColor(oldColor);
         }
 
         private int[][] effected = null;
@@ -965,45 +960,39 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // texture a voxel with a given texture (id)
     private final class TextureVoxelIntent extends VoxelActionIntent {
-        private final int voxelId;
-        private final int newTextureId;
-        private final Integer voxelSide;
+        private final Voxel voxel;
+        private final int[] oldVoxelTexture;
+        private final int[] newVoxelTexture;
 
         protected TextureVoxelIntent(int voxelId, Integer voxelSide, int newTextureId, boolean attach) {
             super(attach);
-            this.voxelId = voxelId;
-            this.newTextureId = newTextureId;
-            this.voxelSide = voxelSide;
+            this.voxel = dataContainer.voxels.get(voxelId);
+            this.oldVoxelTexture = voxel.getTexture();
+            if (newTextureId != -1) { // otherwise unset texture
+                if (oldVoxelTexture == null || voxelSide == null) {
+                    newVoxelTexture = new int[] {
+                            newTextureId, newTextureId, newTextureId,
+                            newTextureId, newTextureId, newTextureId
+                    };
+                } else {
+                    newVoxelTexture = oldVoxelTexture.clone();
+                    newVoxelTexture[voxelSide] = newTextureId;
+                }
+            } else {
+                newVoxelTexture = null;
+            }
+            // what is effected
+            effected = new int[][]{voxel.getPosAsInt()};
         }
 
         @Override
         protected void applyAction() {
-            if (isFirstCall()) {
-                Voxel voxel = dataContainer.voxels.get(voxelId);
-                historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
-                int[] voxelTexture = null;
-                if (newTextureId != -1) { // otherwise unset texture
-                    voxelTexture = voxel.getTexture();
-                    if (voxelTexture == null || voxelSide == null) {
-                        voxelTexture = new int[] {
-                                newTextureId, newTextureId, newTextureId,
-                                newTextureId, newTextureId, newTextureId
-                        };
-                    } else {
-                        voxelTexture[voxelSide] = newTextureId;
-                    }
-                }
-                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(),
-                        voxel.getColor(), voxel.isSelected(), voxelTexture, voxel.getLayerId(), true));
-
-                // what is effected
-                effected = new int[][]{voxel.getPosAsInt()};
-            }
+            voxel.setTexture(newVoxelTexture);
         }
 
         @Override
         protected void unapplyAction() {
-            // nothing to do here
+            voxel.setTexture(oldVoxelTexture);
         }
 
         private int[][] effected = null;

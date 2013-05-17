@@ -7,8 +7,6 @@ import java.util.UUID;
  */
 public abstract class AsyncAction implements Runnable {
 
-    //public final String ident;
-
     public abstract void performAction();
 
     @Override
@@ -19,24 +17,21 @@ public abstract class AsyncAction implements Runnable {
     // name of this AsyncAction
     public final String name;
 
+    // can be overriden to delay execution of this AsyncAction
     public boolean ready() {
         return true;
     }
 
+    // giving a name to an async action guarantees that
+    // there are not a lot of delayed actions with the
+    // same name queueing up in the AsyncActionManager
+    // IMPORTANT: it doesn't enforce this for not delayed actions
     public AsyncAction(String name) {
         this.name = name;
-        // get the stack trace
-//        StringWriter sw = new StringWriter();
-//        new Exception().printStackTrace(new PrintWriter(sw));
-//        this.ident = sw.toString(); // stack trace as a string
     }
 
     public AsyncAction() {
         name = UUID.randomUUID().toString() + System.currentTimeMillis();
-        // get the stack trace
-//        StringWriter sw = new StringWriter();
-//        new Exception().printStackTrace(new PrintWriter(sw));
-//        this.ident = sw.toString(); // stack trace as a string
     }
 
 }
