@@ -332,6 +332,9 @@ public class WorldUtil {
         box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
         box.setCollisionOptimization(Object3D.COLLISION_DETECTION_OPTIMIZED);
 
+        //box.setCulling(false);
+        //box.setTransparency(0);
+
         if (boxType.equals("111111")) {
             // no need to show this object or to check for collision
             box.setVisibility(false);

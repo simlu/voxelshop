@@ -36,6 +36,18 @@ public final class VoxelLayer implements Serializable {
         return result;
     }
 
+//    // called after deserialization
+//    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+//        // build fast index here
+//        // ...
+//        // also update fast index where necessary
+//        // ...
+//        // remove RTree
+//        // ...
+//        // implement range queries with loop over fast Index entries (?)
+//        // ...
+//    }
+
     public Voxel[] search(int[] pos, int radius) {
         List<Voxel> search = voxelIndex.search(
                 new float[]{pos[0] - radius, pos[1] - radius, pos[2] - radius},

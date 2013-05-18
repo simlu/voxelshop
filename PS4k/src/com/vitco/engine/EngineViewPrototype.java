@@ -832,7 +832,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // only perform these actions once (even if the class is instantiated several times)
     static {
         Config.fadeoutLight = false;
-        Config.maxPolysVisible = 5000;
+        //Config.maxPolysVisible = 10000;
 
         Config.useMultipleThreads = true;
         Config.maxNumberOfCores = Runtime.getRuntime().availableProcessors();
@@ -880,6 +880,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 });
             }
         });
+
+        // define the max poly count for this object
+        Config.maxPolysVisible = side == -1 ? 10000 : 2000;
 
         // set up world objects
         world = new CWorld(true, side);
