@@ -4,6 +4,7 @@ import com.vitco.logic.console.ConsoleInterface;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
 import com.vitco.util.UrlUtil;
+import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.thread.LifeTimeThread;
@@ -11,6 +12,8 @@ import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -48,7 +51,42 @@ public class Updater {
         this.console = console;
     }
 
+    // var & setter
+    protected ActionManager actionManager;
+    @Autowired(required=true)
+    public final void setActionManager(ActionManager actionManager) {
+        this.actionManager = actionManager;
+    }
+
     private String digest = null;
+
+    private final LifeTimeThread updaterThread = new LifeTimeThread() {
+        private int i = 0;
+        private boolean notify = false;
+
+        @Override
+        public void loop() throws InterruptedException {
+            synchronized (updaterThread) {
+                updaterThread.wait(60000);
+            }
+            if (notify) { // wait an additional minute before notifying
+                console.addLine(langSelector.getString("update_available_please_restart"));
+                stopThread();
+            } else {
+                String updaterInfo = UrlUtil.readUrl(VitcoSettings.PROGRAM_UPDATER_URL, errorHandler);
+                if (updaterInfo != null && !updaterInfo.equals("")) {
+                    //console.addLine("===" + updaterInfo + "===");
+                    String newDigest = FileTools.md5Hash(updaterInfo, errorHandler);
+                    if (digest != null) {
+                        if (!digest.equals(newDigest) && !newDigest.equals("")) {
+                            notify = true;
+                        }
+                    }
+                    digest = newDigest;
+                }
+            }
+        }
+    };
 
     @PostConstruct
     public final void init() {
@@ -71,35 +109,16 @@ public class Updater {
             errorHandler.handle(e);
         }
 
-        // initialize the update checker
-        threadManager.manage(new LifeTimeThread() {
-            private int i = 0;
-            private boolean notify = false;
-
+        actionManager.registerAction("force_update_check", new AbstractAction() {
             @Override
-            public void loop() throws InterruptedException {
-                if (++i >= 60) { // check for update every minute
-                    if (notify) { // wait an additional minute before notifying
-                        console.addLine(langSelector.getString("update_available_please_restart"));
-                        stopThread();
-                    } else {
-                        String updaterInfo = UrlUtil.readUrl(VitcoSettings.PROGRAM_UPDATER_URL, errorHandler);
-                        if (updaterInfo != null && !updaterInfo.equals("")) {
-                            //console.addLine("===" + updaterInfo + "===");
-                            String newDigest = FileTools.md5Hash(updaterInfo, errorHandler);
-                            if (digest != null) {
-                                if (!digest.equals(newDigest) && !newDigest.equals("")) {
-                                    notify = true;
-                                }
-                            }
-                            digest = newDigest;
-                        }
-                    }
-
-                    i = 0;
+            public void actionPerformed(ActionEvent e) {
+                synchronized (updaterThread) {
+                    updaterThread.notify();
                 }
-                sleep(1000);
             }
         });
+
+        // initialize the update checker
+        threadManager.manage(updaterThread);
     }
 }

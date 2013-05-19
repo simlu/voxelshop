@@ -56,11 +56,10 @@ public class CWorld extends World {
             // calculate the required sides
             for (int i = 0; i < 6; i++) {
                 int add = i%2 == 0 ? 1 : -1;
-                int[] pos = voxel.getPosAsInt();
                 neighbours[i] = voxelPos.get(
-                        (i/2 == 0 ? pos[0] + add : pos[0]) + "_" +
-                                (i/2 == 1 ? pos[1] + add : pos[1]) + "_" +
-                                (i/2 == 2 ? pos[2] + add : pos[2])
+                        (i/2 == 0 ? voxel.x + add : voxel.x) + "_" +
+                                (i/2 == 1 ? voxel.y + add : voxel.y) + "_" +
+                                (i/2 == 2 ? voxel.z + add : voxel.z)
                 );
                 if (neighbours[i] != null) {
                     neighbours[i].addNeighbour(this, i%2 == 0?i+1:i-1);
@@ -161,9 +160,9 @@ public class CWorld extends World {
         }
         public SimpleVector getVectorPos() {
             return new SimpleVector(
-                    voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
-                    voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
-                    voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE);
+                    voxel.x * VitcoSettings.VOXEL_SIZE,
+                    voxel.y * VitcoSettings.VOXEL_SIZE,
+                    voxel.z * VitcoSettings.VOXEL_SIZE);
         }
         public int getVoxelId() {
             return voxel.id;
@@ -249,6 +248,16 @@ public class CWorld extends World {
         return result;
     }
 
+    public final boolean clearPosition(Voxel voxel) {
+        boolean result = false;
+        String posStr = voxel.getPosAsString();
+        if (voxelPos.containsKey(posStr)) {
+            voxelPos.get(posStr).remove();
+            result = true;
+        }
+        return result;
+    }
+
     // refresh world partially - returns true if fully refreshed
     public final boolean refreshWorld() {
         int count = 200;
@@ -261,6 +270,12 @@ public class CWorld extends World {
                worldIdToVoxelId.remove(worldId);
             }
             if (voxel.notRemoved()) {
+                String sides;
+                if (side == -1) {
+                    sides = voxel.getSides();
+                } else {
+                    sides = side == 0 ? "111110" : (side == 1 ? "111011" : "101111");
+                }
                 // add this (updated) voxel to the world
                 int newWorldId = WorldUtil.addBoxSides(this,
                         voxel.getVectorPos(),
@@ -269,7 +284,7 @@ public class CWorld extends World {
                         voxel.getFlip(),
                         voxel.getTexture(),
                         // draw the appropriate site only
-                        voxel.getSides(),
+                        sides,
                         culling,
                         side == -1);
                 // remember the world id

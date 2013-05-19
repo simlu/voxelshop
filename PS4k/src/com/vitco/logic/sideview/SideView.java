@@ -3,7 +3,6 @@ package com.vitco.logic.sideview;
 import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.swing.JideButton;
 import com.threed.jpct.Config;
-import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.vitco.async.AsyncAction;
 import com.vitco.engine.EngineInteractionPrototype;
@@ -21,6 +20,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Creates one side view instance (one perspective) and the specific user interaction.
@@ -113,7 +114,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         } else {
             // remove voxels
             for (Voxel remove : changedVoxel[0]) {
-                voxelOutline.removePosition(remove.getPosAsFloat());
+                voxelOutline.removePosition(remove);
             }
             // update has changed
             if (changedVoxel[0].length > 0) {
@@ -123,7 +124,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
 
         // add new voxels
         for (Voxel add : changedVoxel[1]) {
-            voxelOutline.addPosition(add.getPosAsFloat());
+            voxelOutline.addPosition(add);
         }
 
         // update has changed
@@ -160,9 +161,82 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         return data.getNewSideVoxel("side" + side, side, currentplane);
     }
 
+    // index to keep it to "one voxel per position"
+    private final HashMap<String, Voxel> selectedAtPos = new HashMap<String, Voxel>();
+    private final HashMap<String, Integer> selectedCountAtPos = new HashMap<String, Integer>();
+
     @Override
     protected Voxel[][] getChangedSelectedVoxels() {
-        return data.getNewSelectedVoxel("side" + side);
+        // logic to keep it to "one voxel per position" (e.g. there is no need
+        // to add many voxel "in depth" since the view can't rotate)
+        Voxel[][] changed = data.getNewSelectedVoxel("side" + side);
+        ArrayList<Voxel> toRemove = new ArrayList<Voxel>();
+        ArrayList<Voxel> toAdd = new ArrayList<Voxel>();
+        if (changed[0] == null) { // rebuild
+            selectedAtPos.clear();
+            selectedCountAtPos.clear();
+            toRemove = null;
+        } else {
+            // remove individual voxel
+            for (Voxel remove : changed[0]) {
+                String strId = null;
+                switch (side) {
+                    case 0:
+                        strId = remove.x + "_" + remove.y;
+                        break;
+                    case 1:
+                        strId = remove.x + "_" + remove.z;
+                        break;
+                    case 2:
+                        strId = remove.y + "_" + remove.z;
+                        break;
+                    default: break;
+                }
+                Integer count = selectedCountAtPos.get(strId);
+                if (count != null) {
+                    count -= 1;
+                    if (count == 0) {
+                        selectedCountAtPos.remove(strId);
+                        toRemove.add(selectedAtPos.remove(strId));
+                    } else {
+                        selectedCountAtPos.put(strId, count);
+                    }
+                }
+                selectedVoxelsWorld.clearPosition(remove);
+            }
+        }
+        for (Voxel added : changed[1]) {
+            String strId = null;
+            switch (side) {
+                case 0:
+                    strId = added.x + "_" + added.y;
+                    break;
+                case 1:
+                    strId = added.x + "_" + added.z;
+                    break;
+                case 2:
+                    strId = added.y + "_" + added.z;
+                    break;
+                default: break;
+            }
+            Integer count = selectedCountAtPos.get(strId);
+            if (count == null) {
+                selectedCountAtPos.put(strId, 1);
+                selectedAtPos.put(strId, added);
+                toAdd.add(added);
+            } else {
+                selectedCountAtPos.put(strId, count+1);
+            }
+        }
+        Voxel[][] result = new Voxel[][]{
+                toRemove == null ? null : new Voxel[toRemove.size()],
+                new Voxel[toAdd.size()]
+        };
+        if (toRemove != null) {
+            toRemove.toArray(result[0]);
+        }
+        toAdd.toArray(result[1]);
+        return result;
     }
 
     // get the reference point depending on the selected layer

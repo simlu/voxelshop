@@ -118,7 +118,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         } else {
             // remove individual voxel
             for (Voxel remove : changed[0]) {
-                world.clearPosition(remove.getPosAsInt());
+                world.clearPosition(remove);
             }
         }
         for (Voxel added : changed[1]) {
@@ -142,7 +142,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         } else {
             // remove individual voxel
             for (Voxel remove : changed[0]) {
-                selectedVoxelsWorld.clearPosition(remove.getPosAsInt());
+                selectedVoxelsWorld.clearPosition(remove);
             }
         }
         for (Voxel added : changed[1]) {
@@ -881,13 +881,18 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
         });
 
-        // define the max poly count for this object
-        Config.maxPolysVisible = side == -1 ? 10000 : 2000;
+        // NOTE: The sum should be not more than 40k (!)
 
+        // define the max poly count for this world
+        Config.maxPolysVisible = side == -1 ? 10000 : 2500;
         // set up world objects
         world = new CWorld(true, side);
-        // no culling, since we want to see all selected voxels
-        selectedVoxelsWorld = new CWorld(false, side);
+
+        // define the max poly count for this selected world
+        Config.maxPolysVisible = side == -1 ? 10000 : 2500;
+        // no culling, since we want to see all selected voxels (in the main view only)
+        selectedVoxelsWorld = new CWorld(side != -1, side);
+
         camera = new CCamera();
         world.setCameraTo(camera);
         selectedVoxelsWorld.setCameraTo(camera);

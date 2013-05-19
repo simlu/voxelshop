@@ -31,7 +31,7 @@ public abstract class AsyncAction implements Runnable {
     }
 
     public AsyncAction() {
-        name = UUID.randomUUID().toString() + System.currentTimeMillis();
+        name = UUID.randomUUID().toString();
     }
 
 }

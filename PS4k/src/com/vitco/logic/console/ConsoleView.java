@@ -150,6 +150,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/clear", "console_action_clear");
         consoleAction.put("/debug exception", "create_error_for_debug");
         consoleAction.put("/study", "study_object_complexity");
+        consoleAction.put("/check update", "force_update_check");
 
         // register all console actions (so debug know that they are used)
         for (String action : consoleAction.values()) {

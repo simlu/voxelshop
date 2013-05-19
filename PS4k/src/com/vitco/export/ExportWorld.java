@@ -50,16 +50,16 @@ public class ExportWorld {
         }
 
         // constructor
-        public VoxelSide(int[] pos, Color color) {
-            this.pos = pos.clone();
-            this.color = color;
+        public VoxelSide(Voxel voxel) {
+            this.pos = voxel.getPosAsInt();
+            this.color = voxel.getColor();
             // update all the sides
             for (int i = 0; i < 6; i++) {
                 int add = i%2 == 0 ? 1 : -1;
                 VoxelSide found = index.get(
-                        (i/2 == 0 ? pos[0] + add : pos[0]) + "_" +
-                                (i/2 == 1 ? pos[1] + add : pos[1]) + "_" +
-                                (i/2 == 2 ? pos[2] + add : pos[2])
+                        (i/2 == 0 ? voxel.x + add : voxel.x) + "_" +
+                                (i/2 == 1 ? voxel.y + add : voxel.y) + "_" +
+                                (i/2 == 2 ? voxel.z + add : voxel.z)
                 );
                 if (found != null) {
                     hideSide(i);
@@ -67,14 +67,14 @@ public class ExportWorld {
                 }
             }
 
-            index.put(pos[0] + "_" + pos[1] + "_" + pos[2], this);
+            index.put(voxel.getPosAsString(), this);
         }
     }
 
     // constructor
     public ExportWorld(Voxel[] input) {
         for (Voxel voxel : input) {
-            voxels.add(new VoxelSide(voxel.getPosAsInt(), voxel.getColor()));
+            voxels.add(new VoxelSide(voxel));
         }
     }
 

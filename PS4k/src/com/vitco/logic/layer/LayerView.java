@@ -292,12 +292,24 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 // refresh this group
                 actionGroupManager.refreshGroup("voxel_layer_interaction");
                 // refresh table
-                SwingAsyncHelper.handle(new Runnable() {
+
+                asyncActionManager.addAsyncAction(new AsyncAction("RenderLayerViewTable") {
+                    private final long time = System.currentTimeMillis();
                     @Override
-                    public void run() {
-                        table.updateUI();
+                    public void performAction() {
+                        SwingAsyncHelper.handle(new Runnable() {
+                            @Override
+                            public void run() {
+                                table.updateUI();
+                            }
+                        }, errorHandler);
                     }
-                }, errorHandler);
+
+                    @Override
+                    public boolean ready() {
+                        return System.currentTimeMillis() - 200 > time;
+                    }
+                });
             }
         });
 

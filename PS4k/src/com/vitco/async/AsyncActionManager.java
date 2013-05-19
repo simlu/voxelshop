@@ -109,10 +109,17 @@ public class AsyncActionManager {
                     idleStack.add(actionName);
                 }
             } else {
-                // add back to main stack
-                while (!idleStack.isEmpty()) {
-                    stack.add(idleStack.remove(0));
+                // -- the main stack is empty
+                // add <ready> idle stack back to main stack
+                if (!idleStack.isEmpty()) {
+                    for (String asyncAction : idleStack) {
+                        if (actionNames.get(asyncAction).ready()) {
+                            stack.add(asyncAction);
+                        }
+                    }
+                    idleStack.removeAll(stack);
                 }
+
                 if (stack.isEmpty()) {
                     synchronized (workerThread) {
                         // sometimes notify is "too early"/fails(?), so we need a timeout here

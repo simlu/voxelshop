@@ -1,30 +1,23 @@
 package com.vitco.engine;
 
-import com.newbrightidea.util.RTree;
-import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.vitco.async.AsyncAction;
-import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.ColorTools;
-import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
-import com.vitco.util.thread.ThreadManagerInterface;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -61,7 +54,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         private long wasDragged = -1; // -1 if not dragged or the time in ms of first drag event
 
         // rebuild 2d index to do hit test when mouse is moving
-        private final RTree<ExtendedVector> points2D = new RTree<ExtendedVector>(50, 2, 2); //2D Rtree
+        private final ArrayList<ExtendedVector> points2D = new ArrayList<ExtendedVector>();
         private boolean needToRebuild = true;
         private void rebuild2DIndex() {
             if (needToRebuild) {
@@ -69,7 +62,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 for (ExtendedVector point : data.getPoints()) {
                     ExtendedVector tmp = convertExt3D2D(point);
                     if (tmp != null) {
-                        points2D.insert(new float[]{tmp.x, tmp.y}, new float[] {0,0}, tmp);
+                        points2D.add(tmp);
                     }
                 }
                 needToRebuild = false;
@@ -83,7 +76,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
                         e.getX() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
                         e.getY() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
-                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 1000000);
+                Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
                 if (res[1] != null) {
                     Object3D obj3D = ((Object3D)res[1]);
                     result = obj3D.getOrigin();
@@ -144,18 +137,11 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                     int selected_point = data.getSelectedPoint();
 
                     // find if there is a point nearby
-                    List<ExtendedVector> search = points2D.search(new float[]{e.getX() - VitcoSettings.ANIMATION_CIRCLE_RADIUS,e.getY() - VitcoSettings.ANIMATION_CIRCLE_RADIUS},
-                            new float[]{
-                                    VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
-                                    VitcoSettings.ANIMATION_CIRCLE_RADIUS * VitcoSettings.SAMPLING_MODE_MULTIPLICAND});
-
-                    // make sure this is in circle (and not just in square!)
-                    for (int i = 0, len = search.size(); i < len; i++) {
-                        if ( Math.pow(search.get(i).x - e.getX(),2.0) + Math.pow(search.get(i).y - e.getY(),2.0)
-                                > Math.pow((double)VitcoSettings.ANIMATION_CIRCLE_RADIUS,2.0)) {
-                            search.remove(i);
-                            i--;
-                            len--;
+                    Point center = e.getPoint();
+                    List<ExtendedVector> search = new ArrayList<ExtendedVector>();
+                    for (ExtendedVector point : points2D) {
+                        if (center.distance(point.x, point.y) <= VitcoSettings.ANIMATION_CIRCLE_RADIUS) {
+                            search.add(point);
                         }
                     }
 
@@ -495,9 +481,9 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         // flood fill (recolor)
-        private void floodColor(int[] pos, Color color, HashMap<String, Integer> result) {
+        private void floodColor(Voxel start, Color color, HashMap<String, Integer> result) {
             ArrayList<int[]> queue = new ArrayList<int[]>();
-            queue.add(0, pos.clone());
+            queue.add(0, start.getPosAsInt());
             while (!queue.isEmpty()) {
                 int[] node = queue.remove(0);
                 String strPos = node[0] + "_" + node[1] + "_" + node[2];
@@ -584,7 +570,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                     if (!color.equals(voxelLEFT.getColor())) {
                                         // flood recolor
                                         HashMap<String, Integer> result = new HashMap<String, Integer>();
-                                        floodColor(voxelLEFT.getPosAsInt(), voxelLEFT.getColor(), result);
+                                        floodColor(voxelLEFT, voxelLEFT.getColor(), result);
                                         Integer[] resultArray = new Integer[result.size()];
                                         result.values().toArray(resultArray);
                                         data.massSetColor(resultArray, color);
@@ -782,11 +768,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 //======================
                 // use all voxles
                 for (Voxel voxel : voxels) {
-                    float[] pos = voxel.getPosAsFloat();
                     SimpleVector vec = convert3D2D(new SimpleVector(
-                            pos[0] * VitcoSettings.VOXEL_SIZE,
-                            pos[1] * VitcoSettings.VOXEL_SIZE,
-                            pos[2] * VitcoSettings.VOXEL_SIZE));
+                            voxel.x * VitcoSettings.VOXEL_SIZE,
+                            voxel.y * VitcoSettings.VOXEL_SIZE,
+                            voxel.z * VitcoSettings.VOXEL_SIZE));
                     if (vec != null) {
                         if (vec.x >= start.x && vec.x <= stop.x && vec.y >= start.y && vec.y <= stop.y) {
                             searchResult.add(voxel.id);

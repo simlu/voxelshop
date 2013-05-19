@@ -72,11 +72,11 @@ public class VoxelDataTest {
         data.undoV();
         boolean moved = data.moveVoxel(id1, new int[]{3,1,2});
         assert moved;
-        assert data.getVoxel(id1).getPosAsInt()[0] == 3;
+        assert data.getVoxel(id1).x == 3;
         data.undoV();
-        assert data.getVoxel(id1).getPosAsInt()[0] == 5;
+        assert data.getVoxel(id1).x == 5;
         data.redoV();
-        assert data.getVoxel(id1).getPosAsInt()[2] == 2;
+        assert data.getVoxel(id1).z == 2;
     }
 
     @Test
@@ -109,79 +109,27 @@ public class VoxelDataTest {
 
     }
 
-    @Test
-    public void testClearRange() throws Exception {
-        int lid1 = data.createLayer("layer1");
-        data.selectLayer(lid1);
-        int id1 = data.addVoxel(Color.RED, null, new int[] {6,4,3});
-        int id2 = data.addVoxel(Color.RED, null, new int[] {4,4,4});
-        int id3 = data.addVoxel(Color.RED, null, new int[] {5,4,4});
-        int id4 = data.addVoxel(Color.RED, null, new int[] {6,5,2});
-        data.clearRange(new int[]{6,4,3}, 1);
-        assert data.getVoxel(id1) == null;
-        assert data.getVoxel(id2).id == id2;
-        assert data.getVoxel(id3) == null;
-        assert data.getVoxel(id4) == null;
-        data.undoV();
-        assert data.getVoxel(id1).id == id1;
-        assert data.getVoxel(id2).id == id2;
-        assert data.getVoxel(id3).id == id3;
-        assert data.getVoxel(id4).id == id4;
-        data.redoV();
-        assert data.getVoxel(id1) == null;
-        assert data.getVoxel(id2).id == id2;
-        assert data.getVoxel(id3) == null;
-        assert data.getVoxel(id4) == null;
-    }
-
-    @Test
-    public void testFillRange() throws Exception {
-        int lid1 = data.createLayer("layer1");
-        data.selectLayer(lid1);
-        data.fillRange(new int[]{6,5,3}, 3, Color.RED);
-        assert !data.fillRange(new int[]{6,5,3}, 3, Color.RED);
-        assert data.getLayerVoxels(lid1).length == 343;
-        data.undoV();
-        assert data.getLayerVoxels(lid1).length == 0;
-        data.redoV();
-        data.clearRange(new int[]{6,5,3},2);
-        assert data.getLayerVoxels(lid1).length == 218;
-        data.undoV();
-        assert data.getLayerVoxels(lid1).length == 343;
-        data.undoV();
-        assert data.getLayerVoxels(lid1).length == 0;
-        data.redoV();
-        assert data.getLayerVoxels(lid1).length == 343;
-        data.redoV();
-        assert data.getLayerVoxels(lid1).length == 218;
-        data.fillRange(new int[]{6,8,3}, 2, Color.GREEN);
-        int colGreen = 0;
-        for (Voxel voxel : data.getLayerVoxels(lid1)) {
-            colGreen += (voxel.getColor() == Color.GREEN ? 1 : 0);
-        }
-        assert colGreen == 100;
-    }
 
     @Test
     public void testClear() throws Exception {
         int lid1 = data.createLayer("layer1");
         data.selectLayer(lid1);
-        data.fillRange(new int[]{6,5,3}, 3, Color.RED);
-        assert data.getLayerVoxels(lid1).length == 343;
+        data.addVoxel(Color.RED, null, new int[] {0,0,0});
+        assert data.getLayerVoxels(lid1).length == 1;
         data.undoV();
         assert data.getLayerVoxels(lid1).length == 0;
         data.redoV();
         data.clearV(lid1);
         assert data.getLayerVoxels(lid1).length == 0;
         data.undoV();
-        assert data.getLayerVoxels(lid1).length == 343;
+        assert data.getLayerVoxels(lid1).length == 1;
         data.undoV();
         assert data.getLayerVoxels(lid1).length == 0;
         data.redoV();
         data.redoV();
         assert data.getLayerVoxels(lid1).length == 0;
         data.undoV();
-        assert data.getLayerVoxels(lid1).length == 343;
+        assert data.getLayerVoxels(lid1).length == 1;
     }
 
     @Test
@@ -200,7 +148,7 @@ public class VoxelDataTest {
         assert data.getVoxel(id3) == null;
         Voxel[] voxel = data.getLayerVoxels(data.getSelectedLayer());
         assert voxel.length == 2;
-        assert (voxel[1].getPosAsInt()[2] == 2 && voxel[1].getColor() == Color.GREEN);
+        assert (voxel[1].z == 2 && voxel[1].getColor() == Color.GREEN);
     }
 
     @Test
@@ -600,7 +548,7 @@ public class VoxelDataTest {
                         int rem = rand.nextInt(voxels.length);
                         int[] newPos = randPos();
                         if (data.moveVoxel(voxels[rem].id, newPos)) {
-                            assert data.getVoxel(voxels[rem].id).getPosAsInt()[2] == newPos[2];
+                            assert data.getVoxel(voxels[rem].id).z == newPos[2];
                         }
                     }
                 }
@@ -626,24 +574,6 @@ public class VoxelDataTest {
                         int alpha = rand.nextInt();
                         data.setAlpha(voxels[rem].id, alpha);
                         assert alpha == data.getVoxel(voxels[rem].id).getAlpha();
-                    }
-                }
-            }
-
-            public void clearRange() {
-                if ( data.getSelectedLayer() != -1) {
-                    int voxCount = data.getLayerVoxels(data.getSelectedLayer()).length;
-                    if (data.clearRange(randPos(),rand.nextInt()%3)) {
-                        assert voxCount > data.getLayerVoxels(data.getSelectedLayer()).length;
-                    }
-                }
-            }
-
-            public void fillRange() {
-                if ( data.getSelectedLayer() != -1) {
-                    int voxCount = data.getLayerVoxels(data.getSelectedLayer()).length;
-                    if (data.fillRange(randPos(),rand.nextInt()%3, randCol())) {
-                        assert voxCount < data.getLayerVoxels(data.getSelectedLayer()).length;
                     }
                 }
             }
@@ -744,7 +674,7 @@ public class VoxelDataTest {
             }
         }
 
-        final int poss = 26;
+        final int poss = 24;
 
         for (int seed = 1140; seed < 2000; seed ++) {
             Util util = new Util(seed);
@@ -816,72 +746,61 @@ public class VoxelDataTest {
                         break;
                     case 13:
                         if (util.getFloat() < prob[12]) {
-                            util.clearRange();
+                            util.clear();
                         }
                         break;
                     case 14:
                         if (util.getFloat() < prob[13]) {
-                            util.fillRange();
+                            util.selectLayerSoft();
                         }
                         break;
                     case 15:
                         if (util.getFloat() < prob[14]) {
-                            util.clear();
+                            util.mergeLayers();
                         }
                         break;
                     case 16:
                         if (util.getFloat() < prob[15]) {
-                            util.selectLayerSoft();
+                            util.migrateSelection();
                         }
                         break;
-
                     case 17:
                         if (util.getFloat() < prob[16]) {
-                            util.mergeLayers();
+                            util.massSelect();
                         }
                         break;
                     case 18:
                         if (util.getFloat() < prob[17]) {
-                            util.migrateSelection();
+                            util.massRemove();
                         }
                         break;
                     case 19:
                         if (util.getFloat() < prob[18]) {
-                            util.massSelect();
+                            util.massAdd();
                         }
                         break;
                     case 20:
                         if (util.getFloat() < prob[19]) {
-                            util.massRemove();
+                            util.massColor();
                         }
                         break;
                     case 21:
                         if (util.getFloat() < prob[20]) {
-                            util.massAdd();
+                            util.massMove();
                         }
                         break;
                     case 22:
                         if (util.getFloat() < prob[21]) {
-                            util.massColor();
+                            util.rotate();
                         }
                         break;
                     case 23:
                         if (util.getFloat() < prob[22]) {
-                            util.massMove();
+                            util.mirror();
                         }
                         break;
                     case 24:
                         if (util.getFloat() < prob[23]) {
-                            util.rotate();
-                        }
-                        break;
-                    case 25:
-                        if (util.getFloat() < prob[24]) {
-                            util.mirror();
-                        }
-                        break;
-                    case 26:
-                        if (util.getFloat() < prob[25]) {
                             util.selectVoxel();
                         }
                         break;
