@@ -184,12 +184,18 @@ public class SpriteManager {
     private void processGroup(ArrayList<SpriteObject> mapSprites, short zone, String type, String dir) {
         // get the size of the first image to do calculations
         int width = 0, height = 0;
-        try {
-            BufferedImage img = ImageIO.read(mapSprites.get(0).file);
-            width = img.getWidth();
-            height = img.getHeight();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (type.equals("npc")) {
+            // npc sprites need to be cropped
+            width = 24;
+            height = 32;
+        } else {
+            try {
+                BufferedImage img = ImageIO.read(mapSprites.get(0).file);
+                width = img.getWidth();
+                height = img.getHeight();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         int sheetCount = 1;
@@ -223,7 +229,12 @@ public class SpriteManager {
                 // copy on image
                 try {
                     // load the image
-                    texSheet.getGraphics().drawImage(new PngImage().read(spriteObject.file),texSheetPos.point.x, texSheetPos.point.y, null);
+                    BufferedImage pngImage = new PngImage().read(spriteObject.file);
+                    if (type.equals("npc")) {
+                        // crop to correct size if npc type
+                        pngImage = pngImage.getSubimage(24, 64, 24, 32);
+                    }
+                    texSheet.getGraphics().drawImage(pngImage,texSheetPos.point.x, texSheetPos.point.y, null);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

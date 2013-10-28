@@ -290,8 +290,10 @@ public class PlaneManager extends ColladaFile {
     }
 
     public final void addPlane(Polygon poly, float height) {
-        // make the covered area smaller (increases point count?)
-        Geometry inside = poly.buffer(-0.3f, 0);
+        // Note: this is needed to avoid hole detection for image-> polygon when
+        // the polygon "touches" at the corners of the border (this will
+        // cause a crash for the triangle reduction algorithm)
+        Geometry inside = poly.buffer(-0.3f, 0); // make the covered area smaller (increases point count?)
         Coordinate[] coords = inside.getCoordinates();
 
         // holds the points that were already seen, so we know

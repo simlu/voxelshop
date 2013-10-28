@@ -73,7 +73,7 @@ public class WorldUtil {
             // add the triangles
             if (bin.charAt(0) == '0') {
                 // Right
-                box.addTriangle(upperRightFront,0.001f,0.001f, lowerRightFront,0.001f,0.999f, upperRightBack,0.999f,0);
+                box.addTriangle(upperRightFront,0.001f,0.001f, lowerRightFront,0.001f,0.999f, upperRightBack,0.999f,0.001f);
                 box.addTriangle(upperRightBack,0.999f,0.001f, lowerRightFront, 0.001f,0.999f, lowerRightBack,0.999f,0.999f);
             }
             if (bin.charAt(1) == '0') {
@@ -88,7 +88,7 @@ public class WorldUtil {
             }
             if (bin.charAt(3) == '0') {
                 // Upper
-                box.addTriangle(upperLeftBack,0.001f,0.001f, upperLeftFront,0.001f,0.999f, upperRightBack,0.999f,0);
+                box.addTriangle(upperLeftBack,0.001f,0.001f, upperLeftFront,0.001f,0.999f, upperRightBack,0.999f,0.001f);
                 box.addTriangle(upperRightBack,0.999f,0.001f, upperLeftFront,0.001f,0.999f, upperRightFront,0.999f,0.999f);
             }
             if (bin.charAt(4) == '0') {
@@ -98,7 +98,7 @@ public class WorldUtil {
             }
             if (bin.charAt(5) == '0') {
                 // Front
-                box.addTriangle(upperLeftFront,0.001f,0.001f, lowerLeftFront,0.001f,0.999f, upperRightFront,0.999f,0);
+                box.addTriangle(upperLeftFront,0.001f,0.001f, lowerLeftFront,0.001f,0.999f, upperRightFront,0.999f,0.001f);
                 box.addTriangle(upperRightFront,0.999f,0.001f, lowerLeftFront,0.001f,0.999f, lowerRightFront,0.999f,0.999f);
             }
 
@@ -180,18 +180,18 @@ public class WorldUtil {
 
     public static void enableGrid(boolean enabled) {
         if (!enabled) {
-            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2 = (Graphics2D) overlay.getGraphics();
-            g2.setColor(new Color(255,255,255,255));
+            g2.setColor(Color.WHITE);
             g2.fillRect(0,0,32,32);
             WorldUtil.loadTexture("__overlay__", overlay, false);
         } else {
             // load the voxel overlay
-            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2 = (Graphics2D) overlay.getGraphics();
-            g2.setColor(new Color(0,0,0,0));
+            g2.setColor(Color.BLACK);
             g2.fillRect(0,0,32,32);
-            g2.setColor(new Color(255,255,255,255));
+            g2.setColor(Color.WHITE);
             g2.fillRect(1,1,30,30);
             WorldUtil.loadTexture("__overlay__", overlay, false);
         }

@@ -71,9 +71,18 @@ public abstract class Entity {
                         x + noRefreshWidth * 3, y + noRefreshHeight * 3));
         nearbyEntities.remove(this); // exclude the entity itself
 
+        // todo: fix tests for gray zone
+        // find the gray area - entities that are visible don't become invisible, but new
+        // entities (that come from "outside") don't become visible
+        List<Entity> nearbyEntitiesGrayZone =
+                world.entityList.search(new Rectangle(x - noRefreshWidth * 3 - screenWidth/2,
+                        y - noRefreshHeight * 3 - screenHeight/2,
+                        x + noRefreshWidth * 3 + screenWidth/2,
+                        y + noRefreshHeight * 3 + screenHeight/2));
+
         // find the entities that are no longer visible and remove them
         Set<Entity> removedEntities = new HashSet<Entity>(visibleList);
-        removedEntities.removeAll(nearbyEntities);
+        removedEntities.removeAll(nearbyEntitiesGrayZone);
         for (Entity toRemove : removedEntities) {
             toRemove.removeFromVisibleList(this);
             visibleList.remove(toRemove);

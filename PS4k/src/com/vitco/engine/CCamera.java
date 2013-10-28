@@ -16,6 +16,9 @@ public class CCamera extends Camera {
     private final float[] amountRotated = new float[2];
     private SimpleVector resetViewLookAt = new SimpleVector(1,1,1).normalize();
 
+    // defaults to (0,0,0)
+    private final SimpleVector centerShift = new SimpleVector();
+
     // the zoom limit
     private float ZOOM_OUT_MAX = -1;
     private float ZOOM_IN_MAX = -1;
@@ -53,9 +56,19 @@ public class CCamera extends Camera {
         }
     }
 
+    public final void setCenterShift(SimpleVector centerShift) {
+        this.centerShift.set(centerShift);
+        // reset the "complex shift"
+        amountShifted[0] = 0;
+        amountShifted[1] = 0;
+        amountShifted2D[0] = 0;
+        amountShifted2D[1] = 0;
+        update();
+    }
+
     // get the current origin
     private SimpleVector getOrigin() {
-        return new SimpleVector(0, -amountShifted[1], 0);
+        return new SimpleVector(-centerShift.x, -centerShift.y-amountShifted[1], -centerShift.z);
     }
 
     public void zoomIn(float speed) {
@@ -109,7 +122,9 @@ public class CCamera extends Camera {
 
     public final void setView(SimpleVector pos) {
         if (enableCamera) {
-            resetViewLookAt = pos.normalize();
+            centerShift.set(SimpleVector.ORIGIN);
+            resetViewLookAt.set(pos);
+            resetViewLookAt = resetViewLookAt.normalize();
             resetViewLookAt.scalarMul(-1);
             amountRotated[0] = 0;
             amountRotated[1] = 0;

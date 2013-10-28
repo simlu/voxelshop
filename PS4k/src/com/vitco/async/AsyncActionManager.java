@@ -17,19 +17,6 @@ import java.util.concurrent.Executors;
  */
 public class AsyncActionManager {
 
-    // var & setter
-    protected ErrorHandlerInterface errorHandler;
-    @Autowired(required=true)
-    public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
-        this.errorHandler = errorHandler;
-    }
-
-    protected ActionManager actionManager;
-    @Autowired(required=true)
-    public final void setActionManager(ActionManager actionManager) {
-        this.actionManager = actionManager;
-    }
-
     private ThreadManagerInterface threadManager;
     // set the action handler
     @Autowired
@@ -74,7 +61,7 @@ public class AsyncActionManager {
     private final LifeTimeThread workerThread = new LifeTimeThread() {
 
         @Override
-        public void onBeforeStop() {
+        public void onAfterStop() {
             executor.shutdown();
             // Wait until all threads are finish
             //noinspection StatementWithEmptyBody

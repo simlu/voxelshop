@@ -240,9 +240,9 @@ public class CWorld extends World {
     // clear field by position
     public final boolean clearPosition(int[] pos) {
         boolean result = false;
-        String posStr = pos[0] + "_" + pos[1] + "_" + pos[2];
-        if (voxelPos.containsKey(posStr)) {
-            voxelPos.get(posStr).remove();
+        VoxelW wrapper = voxelPos.get(pos[0] + "_" + pos[1] + "_" + pos[2]);
+        if (wrapper != null) {
+            wrapper.remove();
             result = true;
         }
         return result;
@@ -250,9 +250,9 @@ public class CWorld extends World {
 
     public final boolean clearPosition(Voxel voxel) {
         boolean result = false;
-        String posStr = voxel.getPosAsString();
-        if (voxelPos.containsKey(posStr)) {
-            voxelPos.get(posStr).remove();
+        VoxelW wrapper = voxelPos.get(voxel.getPosAsString());
+        if (wrapper != null) {
+            wrapper.remove();
             result = true;
         }
         return result;

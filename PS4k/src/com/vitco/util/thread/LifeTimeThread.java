@@ -18,12 +18,12 @@ public abstract class LifeTimeThread extends Thread {
 
     // to interrupt the thread
     public final void stopThread() {
-        onBeforeStop();
         stopped = true;
         interrupt();
+        onAfterStop();
     }
 
-    public void onBeforeStop() {}
+    public void onAfterStop() {}
 
     public final boolean wasStopped() {
         return stopped;

@@ -61,7 +61,6 @@ public class Updater {
     private String digest = null;
 
     private final LifeTimeThread updaterThread = new LifeTimeThread() {
-        private int i = 0;
         private boolean notify = false;
 
         @Override

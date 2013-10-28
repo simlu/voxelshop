@@ -202,7 +202,6 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                         selectedCountAtPos.put(strId, count);
                     }
                 }
-                selectedVoxelsWorld.clearPosition(remove);
             }
         }
         for (Voxel added : changed[1]) {

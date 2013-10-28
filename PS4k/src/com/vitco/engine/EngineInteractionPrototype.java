@@ -285,7 +285,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
     // return reference point (for new points to add - same distance)
     protected SimpleVector getRefPoint() {
-        return SimpleVector.ORIGIN;
+        return new SimpleVector(SimpleVector.ORIGIN);
     }
 
     // ===============================
@@ -481,7 +481,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
         }
 
         // flood fill (recolor)
-        private void floodColor(Voxel start, Color color, HashMap<String, Integer> result) {
+        private void floodColor(Voxel start, HashMap<String, Integer> result) {
+            Color color = start.getColor();
             ArrayList<int[]> queue = new ArrayList<int[]>();
             queue.add(0, start.getPosAsInt());
             while (!queue.isEmpty()) {
@@ -532,7 +533,10 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                                 selectedTexture, selectedTexture, selectedTexture
                                         };
 
-                                        if (lastAddedVoxel != null) {
+                                        boolean posFree = data.searchVoxel(highlighted, false) == null;
+
+                                        // only add if "voxel was added and next voxel is going to be added"
+                                        if (lastAddedVoxel != null && posFree) {
                                             // try to add voxels in between
                                             int[] mid = new int[] {
                                                     (lastAddedVoxel[0] & highlighted[0]) + ((lastAddedVoxel[0] ^ highlighted[0]) >> 1),
@@ -545,7 +549,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                             }
                                         }
 
-                                        if (data.searchVoxel(highlighted, false) == null) {
+                                        if (posFree) {
                                             // only draw if there is no voxels already here
                                             data.addVoxel(ColorTools.hsbToColor(currentColor), texture, highlighted);
                                             lastAddedVoxel = highlighted;
@@ -570,7 +574,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                                     if (!color.equals(voxelLEFT.getColor())) {
                                         // flood recolor
                                         HashMap<String, Integer> result = new HashMap<String, Integer>();
-                                        floodColor(voxelLEFT, voxelLEFT.getColor(), result);
+                                        floodColor(voxelLEFT, result);
                                         Integer[] resultArray = new Integer[result.size()];
                                         result.values().toArray(resultArray);
                                         data.massSetColor(resultArray, color);

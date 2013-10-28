@@ -2,102 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="18c5107b-ae75-4de3-ae59-787df7d65303" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PS4k/resource/img/bars/option_bar/mirrorflag.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../MapGeneration/data/voxel_ground_TXT05_with_textures_hm_alex.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/LayoutLoader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/bars/OptionBarLinkage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/menu/OptionBarLogic.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/bars/option_bar.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/res/namespace/vitco-layout-1.0.xsd" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$12.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\production\PS4k\com\vitco\logic\menu\ToolBarLogic$13.class" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\settings\pref.ser" afterPath="" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar\boundingBox.png" afterPath="$PROJECT_DIR$/../PS4k/resource/img/bars/option_bar/boundingBox.png" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar\grid.png" afterPath="$PROJECT_DIR$/../PS4k/resource/img/bars/option_bar/grid.png" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar\light.png" afterPath="$PROJECT_DIR$/../PS4k/resource/img/bars/option_bar/light.png" />
-      <change type="MOVED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\resource\img\bars\tool_bar\settings.png" afterPath="$PROJECT_DIR$/../PS4k/resource/img/bars/option_bar/settings.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/async/AsyncActionManager$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/async/AsyncActionManager$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/async/AsyncActionManager$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/async/AsyncActionManager$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/async/AsyncActionManager.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/async/AsyncActionManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$4$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$4$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$4$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$4$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$4.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$5$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$5$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$5.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype$MPanel.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/EngineViewPrototype.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$2$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$2$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$3$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$3$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$4.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$5.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$6.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$6.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$7.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$7.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$8.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$8.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$9.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$9.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$CellEditor$1$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$CellEditor$1$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$CellEditor$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$CellEditor$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$CellEditor.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$CellEditor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$LayerTableModel$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$LayerTableModel$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$LayerTableModel.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$LayerTableModel.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$TableRenderer.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView$TableRenderer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/layer/LayerView.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/out/production/MapGeneration/com/vitco/Main.class" afterPath="$PROJECT_DIR$/../MapGeneration/out/production/MapGeneration/com/vitco/Main.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/Main.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/data/notification/NotificationService.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/engine/data/notification/NotificationService.class" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\PS4k_jar\lib\log4j-1.2.6.jar" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\VM Win 7\Dropbox\Git\fo2\PS4k\out\artifacts\webdata\lib\log4j-1.2.6.jar" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/PS4k.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/PS4k_jar/PS4k.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/PS4k.jar" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/PS4k.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/newbrightidea/util/RTree$Entry.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/newbrightidea/util/RTree$Entry.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/newbrightidea/util/RTree$Node.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/newbrightidea/util/RTree$Node.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/newbrightidea/util/RTree.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/newbrightidea/util/RTree.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/bars/ToolBarLinkage.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/bars/ToolBarLinkage.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/menu/ToolBarLogic.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/logic/menu/ToolBarLogic.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$2.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$2.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$3.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$3.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$4.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$4.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$5.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$5.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$6.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$6.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$7.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$7.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$8.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$8.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$9.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager$9.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/WindowManager.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/WorldUtil.class" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/util/WorldUtil.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/result/ result.dae" afterPath="$PROJECT_DIR$/../MapGeneration/result/ result.dae" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/async/AsyncActionManager.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/async/AsyncActionManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/EngineViewPrototype.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/EngineViewPrototype.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/objects/Entity.java" afterPath="$PROJECT_DIR$/src/com/vitco/objects/Entity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/resource/bundle/LangBundle.properties" afterPath="$PROJECT_DIR$/../PS4k/resource/bundle/LangBundle.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/layer/LayerView.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/layer/LayerView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/src/com/vitco/Main.java" afterPath="$PROJECT_DIR$/../MapGeneration/src/com/vitco/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/Main.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/data/notification/NotificationService.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/engine/data/notification/NotificationService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" afterPath="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/newbrightidea/util/RTree.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/newbrightidea/util/RTree.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/bars/ToolBarLinkage.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/bars/ToolBarLinkage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/menu/ToolBarLogic.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/logic/menu/ToolBarLogic.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/resource/layout/TopLayout.ilayout" afterPath="$PROJECT_DIR$/../PS4k/resource/layout/TopLayout.ilayout" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/WindowManager.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/WindowManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/WorldUtil.java" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/util/WorldUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/glue/config.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/glue/config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/src/com/vitco/map/PlaneManager.java" afterPath="$PROJECT_DIR$/../MapGeneration/src/com/vitco/map/PlaneManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/digest.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/resource/layout/layout.xml" afterPath="$PROJECT_DIR$/../PS4k/resource/layout/layout.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/bars/tool_bar.xml" afterPath="$PROJECT_DIR$/../PS4k/out/production/PS4k/com/vitco/layout/bars/tool_bar.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/bars/tool_bar.xml" afterPath="$PROJECT_DIR$/../PS4k/src/com/vitco/layout/bars/tool_bar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/getdown.txt" afterPath="$PROJECT_DIR$/../PS4k/out/artifacts/webdata/getdown.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../MapGeneration/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../MapGeneration/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../PS4k/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PlayerMoveRTree.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Main.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368084641516" ignored="false" />
-    <file path="/Dummy.txt" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368438172584" ignored="false" />
+    <file path="/Dummy.txt" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368515704035" ignored="false" />
     <file path="/a.dummy" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368104776776" ignored="false" />
     <file path="/Player.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368108262246" ignored="false" />
     <file path="/Server.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368177579770" ignored="false" />
@@ -106,7 +26,7 @@
     <file path="/fragment.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368090610997" ignored="false" />
     <file path="$PROJECT_DIR$/src/com/vitco/PlayerTest.groovy" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368090516192" ignored="false" />
     <file path="/PlayerTest.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368377958123" ignored="false" />
-    <file path="/Entity.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368177237980" ignored="false" />
+    <file path="/Entity.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368516430722" ignored="false" />
     <file path="/RTree.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368378067218" ignored="false" />
     <file path="/World.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368172023283" ignored="false" />
     <file path="/BiMap.java" changelist="18c5107b-ae75-4de3-ae59-787df7d65303" time="1368109589870" ignored="false" />
@@ -209,7 +129,7 @@
       <file leaf-file-name="Entity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/Entity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="50" selection-start="3353" selection-end="3353" vertical-scroll-proportion="0.029668411">
+            <state line="73" column="11" selection-start="3017" selection-end="3017" vertical-scroll-proportion="0.27272728">
               <folding />
             </state>
           </provider>
@@ -246,9 +166,9 @@
         <option value="$PROJECT_DIR$/src/com/vitco/util/BiMap.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/objects/World.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/sample/Server.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/objects/Entity.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/objects/PlayerTest.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/RTree.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/objects/Entity.java" />
       </list>
     </option>
   </component>
@@ -284,8 +204,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -376,6 +294,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -391,12 +311,12 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.includeInheritedMembers" value="true" />
-    <property name="MemberChooser.showClasses" value="true" />
-    <property name="Repository.Attach.Sources" value="false" />
     <property name="FullScreen" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="Downloaded.Files.Path" value="C:\Users\VM Win 7\Dropbox\Git\fo2\PlayerMoveRTree\lib" />
     <property name="dynamic.classpath" value="false" />
+    <property name="Downloaded.Files.Path" value="C:\Users\VM Win 7\Dropbox\Git\fo2\PlayerMoveRTree\lib" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.Recents.Supers">
@@ -414,7 +334,7 @@
       <recent name="C:\Users\VM Win 7\Dropbox\Git\fo2\PlayerMoveRTree\src" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.PlayerTest.testRTree">
+  <component name="RunManager" selected="JUnit.PlayerTest">
     <configuration default="false" name="PlayerTest.testPlayerLists" type="JUnit" factoryName="JUnit" temporary="true">
       <module name="PlayerMoveRTree" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -545,19 +465,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -583,6 +490,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -628,9 +548,9 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.PlayerTest.testRTree" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerDelete" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.PlayerTest" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.PlayerTest" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.PlayerTest.testRTree" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerDelete" />
         <item index="3" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerListsSimple" />
         <item index="4" class="java.lang.String" itemvalue="JUnit.PlayerTest.testPlayerLists" />
       </list>
@@ -673,7 +593,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -684,16 +604,16 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="FindBugs-IDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32888147" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24924242" sideWeight="0.67001677" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24924242" sideWeight="0.67001677" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32888147" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39865997" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -855,7 +775,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/objects/Entity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="50" selection-start="3353" selection-end="3353" vertical-scroll-proportion="0.029668411">
+        <state line="73" column="11" selection-start="3017" selection-end="3017" vertical-scroll-proportion="0.27272728">
           <folding />
         </state>
       </provider>

@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -52,6 +53,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         });
     }
 
+    // holds the voxel positions that are currently selected (so we only notify
+    // position where the selection state has actually changed!)
+    private final HashSet<String> currentSelectedVoxel = new HashSet<String>();
+
     // invalidate cache
     protected final void invalidateV(int[][] effected) {
         if (effected != null) {
@@ -68,18 +73,34 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             }
 
             // notification of changed selected voxels
-            for (HashMap<String, int[]> map : changedSelectedVoxel.values()) {
-                if (map != null) {
-                    for (int[] invalid : effected) {
-                        String key = invalid[0] + "_" + invalid[1] + "_" + invalid[2];
-                        if (!map.containsKey(key)) {
-                            map.put(key, invalid);
+            HashMap<String, int[]> invalidSelected = new HashMap<String, int[]>();
+            for (int[] invalid : effected) {
+                Voxel voxel = searchVoxel(invalid, false);
+                if (voxel == null) {
+                    String key = invalid[0] + "_" + invalid[1] + "_" + invalid[2];
+                    if (currentSelectedVoxel.remove(key)) {
+                        invalidSelected.put(key, invalid);
+                    }
+                } else {
+                    String key = voxel.getPosAsString();
+                    if (voxel.isSelected()) {
+                        if (currentSelectedVoxel.add(key)) {
+                            invalidSelected.put(key, invalid);
+                        }
+                    } else {
+                        if (currentSelectedVoxel.remove(key)) {
+                            invalidSelected.put(key, invalid);
                         }
                     }
                 }
             }
+            for (HashMap<String, int[]> map : changedSelectedVoxel.values()) {
+                if (map != null) {
+                    map.putAll(invalidSelected);
+                }
+            }
 
-            // notification of changed visible voxels for this plane
+            // notification of changed visible voxel for this plane
             for (Integer side : changedVisibleVoxelPlane.keySet()) {
                 int missingSide = 1;
                 switch (side) {
@@ -103,6 +124,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 }
             }
         } else {
+            currentSelectedVoxel.clear();
             changedSelectedVoxel.clear();
             changedVisibleVoxel.clear();
             changedVisibleVoxelPlane.clear();

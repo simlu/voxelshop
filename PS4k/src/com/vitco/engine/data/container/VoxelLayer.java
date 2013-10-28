@@ -160,6 +160,7 @@ public final class VoxelLayer implements Serializable {
         return index.get(pos[0] + "_" + pos[1] + "_" + pos[2]);
     }
 
+    // search position by using another voxel as reference
     public Voxel search(Voxel voxel) {
         return index.get(voxel.getPosAsString());
     }
@@ -173,6 +174,7 @@ public final class VoxelLayer implements Serializable {
         return !index.containsKey(pos[0] + "_" + pos[1] + "_" + pos[2]);
     }
 
+    // check position by using another voxel
     public boolean voxelPositionFree(Voxel voxel) {
         return !index.containsKey(voxel.getPosAsString());
     }

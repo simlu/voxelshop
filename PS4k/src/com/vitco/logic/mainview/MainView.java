@@ -2,7 +2,6 @@ package com.vitco.logic.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
-import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.util.Light;
 import com.vitco.async.AsyncAction;
@@ -20,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.image.BufferedImage;
+import java.util.HashSet;
 
 /**
  * Creates the main view instance and attaches the specific user interaction.
@@ -328,6 +327,20 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION);
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
+            }
+        });
+
+        actionManager.registerAction("center_main_view_camera", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                camera.setCenterShift(new SimpleVector(
+                        -preferences.loadInteger("currentplane_sideview3") * VitcoSettings.VOXEL_SIZE,
+                        -preferences.loadInteger("currentplane_sideview2") * VitcoSettings.VOXEL_SIZE,
+                        -preferences.loadInteger("currentplane_sideview1") * VitcoSettings.VOXEL_SIZE
+                ));
+                container.doNotSkipNextWorldRender();
                 forceRepaint();
             }
         });

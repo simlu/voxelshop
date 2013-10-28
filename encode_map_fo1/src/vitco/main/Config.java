@@ -36,8 +36,19 @@ public class Config {
     public final static boolean compileMinimaps = true;
     public final static HashSet<String> minimapsToCompile = new HashSet<String>();
     static {
-        minimapsToCompile.add("Forgotten Under Underground");
-        minimapsToCompile.add("Forgotten Underground");
+        //minimapsToCompile.add("Infested Undercity");
+        //minimapsToCompile.add("Cave of Despair");
+        //minimapsToCompile.add("Forgotten Wasteland");
+        //minimapsToCompile.add("Underground Market");
+        //minimapsToCompile.add("Frozen North");
+
+        //minimapsToCompile.add("Zombies");
+        //minimapsToCompile.add("Underground Market");
+        //minimapsToCompile.add("Cave of Despair");
+        //minimapsToCompile.add("Forgotten Wasteland");
+        //minimapsToCompile.add("Temple of Lost Souls");
+        //minimapsToCompile.add("Forgotten Under Underground");
+        //minimapsToCompile.add("Forgotten Underground");
     }
 
     // "manual" can result in non 32 bit compression
