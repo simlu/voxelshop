@@ -2,6 +2,7 @@ package com.vitco.logic.menu;
 
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.FileTools;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.annotation.PostConstruct;
@@ -12,10 +13,7 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 /**
  * Handles the main menu logic.
@@ -129,6 +127,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 case JOptionPane.CANCEL_OPTION: // cancel = do nothing
                     // cancel
                     break;
+                default: break;
             }
         } else { // no unsaved changes
             result = true;
@@ -243,15 +242,24 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                     if(!dir.toLowerCase().endsWith(".dae")) {
                         dir += ".dae";
                     }
+                    // dae file
                     File exportTo = new File(dir);
+                    // attached texture file
+                    String textureImgDir = FileTools.changeExtension(dir, ".png");
+                    File exportTextureTo = new File(textureImgDir);
                     // query if file already exists
-                    if (!exportTo.exists() ||
+                    if ((!exportTo.exists() ||
                             JOptionPane.showConfirmDialog(frame,
                                     dir + " " + langSelector.getString("replace_file_query"),
                                     langSelector.getString("replace_file_query_title"),
-                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) &&
+                            (!exportTextureTo.exists() ||
+                                    JOptionPane.showConfirmDialog(frame,
+                                            textureImgDir + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
 
-                        if (data.exportToCollada(exportTo)) {
+                        if (data.exportToCollada(exportTo, exportTextureTo)) {
                             console.addLine(langSelector.getString("export_file_successful"));
                         } else {
                             console.addLine(langSelector.getString("export_file_error"));
@@ -325,18 +333,22 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             ((DefaultDockableBarDockableHolder) frame).getLayoutPersistence().getLayoutRawData());
 
                     // do not print any thread errors (JFileChooser thread can cause this!)
-                    PrintStream nullStream = new PrintStream(new OutputStream() {
-                        public void write(int b) throws IOException {
-                        }
+                    try {
+                        PrintStream nullStream = new PrintStream(new OutputStream() {
+                            public void write(int b) throws IOException {
+                            }
 
-                        public void write(byte b[]) throws IOException {
-                        }
+                            public void write(byte b[]) throws IOException {
+                            }
 
-                        public void write(byte b[], int off, int len) throws IOException {
-                        }
-                    });
-                    System.setErr(nullStream);
-                    System.setOut(nullStream);
+                            public void write(byte b[], int off, int len) throws IOException {
+                            }
+                        }, true, "utf-8");
+                        System.setErr(nullStream);
+                        System.setOut(nullStream);
+                    } catch (UnsupportedEncodingException e1) {
+                        errorHandler.handle(e1);
+                    }
 
                     // and exit
                     ((DefaultDockableBarDockableHolder) frame).setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

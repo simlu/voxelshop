@@ -1,5 +1,6 @@
 package com.vitco.res;
 
+import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.vitco.engine.data.container.VOXELMODE;
 
@@ -13,6 +14,17 @@ import java.awt.image.BufferedImage;
  */
 public final class VitcoSettings {
 
+    // object that all data access is synced to
+    public static final Object SYNC = new Object();
+
+    // Alternative (slower but better quality):
+    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
+    public static final int SAMPLING_MODE_MULTIPLICAND = 2;
+    public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
+
+    // color for the "big bounding box"
+    public static final Color BOUNDING_BOX_COLOR = new Color(255, 255, 255, 100);
+
     // texture window settings
     public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
     public static final Color TEXTURE_BORDER = Color.BLACK;
@@ -20,7 +32,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.1.1)";
+    public static final String VERSION_ID = "PS4k - Alpha Version (V1.2.17)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -28,7 +40,7 @@ public final class VitcoSettings {
     public static final Color SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED = new Color(175, 255, 172);
 
     // ghost overlay line color
-    public static final Color GHOST_VOXEL_OVERLAY_LINE_COLOR = new Color(255, 255, 255, 50);
+    public static final Color GHOST_VOXEL_OVERLAY_LINE_COLOR = new Color(255, 255, 255, 100);
 
     // these can change externally
     public static final String PROGRAM_UPDATER_URL = "http://www.fantasy-mmorpg.com/tools/ps4k/upd/digest.txt";
@@ -72,7 +84,7 @@ public final class VitcoSettings {
     public static final float SIDE_VIEW_COARSE_ZOOM_SPEED = 1000f; // for buttons
     public static final float SIDE_VIEW_FINE_ZOOM_SPEED = 300f; // for mouse wheel
     public static final float SIDE_VIEW_MIN_ZOOM = 10000f;
-    public static final float SIDE_VIEW_MAX_ZOOM = 30000f;
+    public static final float SIDE_VIEW_MAX_ZOOM = 40000f;
     public static final float SIDE_VIEW_ZOOM_START = 20000f;
     public static final float SIDE_VIEW_ZOOM_FOV = 0.015f;
     public static final float SIDE_VIEW_SIDE_MOVE_FACTOR = 1f; // "drag" move content
@@ -91,7 +103,7 @@ public final class VitcoSettings {
     // main view
     public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 15;
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
-    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1000;
+    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1200;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
     public static final float MAIN_VIEW_ZOOM_FOV = 1.25f;
     public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-400, -500, -500);
@@ -111,16 +123,8 @@ public final class VitcoSettings {
     public static final Integer MAX_LAYER_COUNT = 50;
 
     // general table
-    public static final Font TABLE_FONT = new Font(
-            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
-            UIManager.getDefaults().getFont("TabbedPane.font").getStyle(),
-            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
-    );
-    public static final Font TABLE_FONT_BOLD = new Font(
-            UIManager.getDefaults().getFont("TabbedPane.font").getName(),
-            Font.BOLD,
-            UIManager.getDefaults().getFont("TabbedPane.font").getSize()+1
-    );
+    public static final Font TABLE_FONT = new Font("Tohama", Font.PLAIN, 12);
+    public static final Font TABLE_FONT_BOLD = new Font("Tohama", Font.BOLD, 12);
     public static final int DEFAULT_TABLE_INCREASE = 10;
     public static final Border DEFAULT_CELL_BORDER =
             BorderFactory.createEmptyBorder(0, 10, 0, 0);
@@ -130,7 +134,7 @@ public final class VitcoSettings {
     // general config
     public static final Float VOXEL_SIZE = 10f;
     public static final Float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
-    public static final Float VOXEL_GROUND_PLANE_SIZE = 35 * VOXEL_SIZE; // when changing this make sure the edges are ok
+    public static final Float VOXEL_GROUND_PLANE_SIZE = 21 * VOXEL_SIZE; // when changing this make sure the edges are ok
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);

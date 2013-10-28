@@ -6,8 +6,10 @@ import com.vitco.res.VitcoSettings;
 import com.vitco.util.WorldUtil;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * This is a world wrapper that provides easy voxel interaction.
@@ -34,28 +36,37 @@ public class CWorld extends World {
     private final HashSet<VoxelW> toUpdate = new HashSet<VoxelW>();
 
     // Wrapper object that holds voxel information used by CWorld
-    private final class VoxelW {
+    private static final class VoxelW implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         // holds the current wrapped voxel object
         private Voxel voxel;
         // holds the neighbor information (different sides)
         private final VoxelW[] neighbours = new VoxelW[6];
 
-        public VoxelW(Voxel voxel) {
+        // holds the voxel wrapper positions
+        private final HashMap<String, VoxelW> voxelPos;
+
+        // voxel that need to be redrawn
+        private final HashSet<VoxelW> toUpdate;
+
+        public VoxelW(Voxel voxel, HashMap<String, VoxelW> voxelPos, HashSet<VoxelW> toUpdate) {
             this.voxel = voxel;
             // find neighbours and update side information (of them and this)
             // calculate the required sides
             for (int i = 0; i < 6; i++) {
                 int add = i%2 == 0 ? 1 : -1;
-                int[] pos = voxel.getPosAsInt();
                 neighbours[i] = voxelPos.get(
-                        (i/2 == 0 ? pos[0] + add : pos[0]) + "_" +
-                                (i/2 == 1 ? pos[1] + add : pos[1]) + "_" +
-                                (i/2 == 2 ? pos[2] + add : pos[2])
+                        (i/2 == 0 ? voxel.x + add : voxel.x) + "_" +
+                                (i/2 == 1 ? voxel.y + add : voxel.y) + "_" +
+                                (i/2 == 2 ? voxel.z + add : voxel.z)
                 );
                 if (neighbours[i] != null) {
                     neighbours[i].addNeighbour(this, i%2 == 0?i+1:i-1);
                 }
             }
+            this.voxelPos = voxelPos;
+            this.toUpdate = toUpdate;
             // add this voxel to the position info
             voxelPos.put(getPos(), this);
             toUpdate.add(this);
@@ -64,7 +75,7 @@ public class CWorld extends World {
         // the voxel might be the same that is already stored
         public void refresh(Voxel voxel) {
             // note: this might be the same voxel,
-            // e.g. this.voxel == voxel can happen
+            // e.g. this.voxel == voxel can happen (in that case we still need to update!)
             this.voxel = voxel;
             toUpdate.add(this);
         }
@@ -84,10 +95,10 @@ public class CWorld extends World {
         // ========================
         // remove/replace voxel
 
-        // returns true iff this wrapper was removed
+        // returns true iff this wrapper was not removed
         private boolean removed = false;
-        public boolean wasRemoved() {
-            return removed;
+        public boolean notRemoved() {
+            return !removed;
         }
 
         // remove this voxel
@@ -149,12 +160,15 @@ public class CWorld extends World {
         }
         public SimpleVector getVectorPos() {
             return new SimpleVector(
-                    voxel.getPosAsInt()[0] * VitcoSettings.VOXEL_SIZE,
-                    voxel.getPosAsInt()[1] * VitcoSettings.VOXEL_SIZE,
-                    voxel.getPosAsInt()[2] * VitcoSettings.VOXEL_SIZE);
+                    voxel.x * VitcoSettings.VOXEL_SIZE,
+                    voxel.y * VitcoSettings.VOXEL_SIZE,
+                    voxel.z * VitcoSettings.VOXEL_SIZE);
         }
         public int getVoxelId() {
             return voxel.id;
+        }
+        public Voxel getVoxel() {
+            return voxel;
         }
     }
 
@@ -193,7 +207,9 @@ public class CWorld extends World {
         SimpleVector result = null;
         Camera camera = getCamera();
         camera.moveCamera(offset, length);
-        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer, (int) Math.round(point.getX() * 2), (int) Math.round(point.getY() * 2)).normalize();
+        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
+                point.x * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                point.y * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
         Object[] res = calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
         if (res[1] != null) { // something hit
             // find collision point
@@ -211,7 +227,7 @@ public class CWorld extends World {
         if (voxelPos.containsKey(pos)) {
             voxelPos.get(pos).refresh(voxel); // update voxel
         } else {
-            new VoxelW(voxel); // add new voxel
+            new VoxelW(voxel, voxelPos, toUpdate); // add new voxel
         }
     }
 
@@ -224,24 +240,42 @@ public class CWorld extends World {
     // clear field by position
     public final boolean clearPosition(int[] pos) {
         boolean result = false;
-        String posStr = pos[0] + "_" + pos[1] + "_" + pos[2];
-        if (voxelPos.containsKey(posStr)) {
-            voxelPos.get(posStr).remove();
+        VoxelW wrapper = voxelPos.get(pos[0] + "_" + pos[1] + "_" + pos[2]);
+        if (wrapper != null) {
+            wrapper.remove();
             result = true;
         }
         return result;
     }
 
-    // refresh world
-    public final void refreshWorld() {
-        for (VoxelW voxel : toUpdate) {
+    public final boolean clearPosition(Voxel voxel) {
+        boolean result = false;
+        VoxelW wrapper = voxelPos.get(voxel.getPosAsString());
+        if (wrapper != null) {
+            wrapper.remove();
+            result = true;
+        }
+        return result;
+    }
+
+    // refresh world partially - returns true if fully refreshed
+    public final boolean refreshWorld() {
+        int count = 200;
+        for (Iterator<VoxelW> it = toUpdate.iterator(); it.hasNext() && count-- > 0;) {
+            VoxelW voxel = it.next();
             Integer worldId = voxel.getWorldId();
             if (worldId != null) {
                 // remove current representation in world
                removeObject(worldId);
                worldIdToVoxelId.remove(worldId);
             }
-            if (!voxel.wasRemoved()) {
+            if (voxel.notRemoved()) {
+                String sides;
+                if (side == -1) {
+                    sides = voxel.getSides();
+                } else {
+                    sides = side == 0 ? "111110" : (side == 1 ? "111011" : "101111");
+                }
                 // add this (updated) voxel to the world
                 int newWorldId = WorldUtil.addBoxSides(this,
                         voxel.getVectorPos(),
@@ -250,15 +284,17 @@ public class CWorld extends World {
                         voxel.getFlip(),
                         voxel.getTexture(),
                         // draw the appropriate site only
-                        voxel.getSides(),
-                        culling);
+                        sides,
+                        culling,
+                        side == -1);
                 // remember the world id
                 voxel.setWorldId(newWorldId);
                 // remember the mapping
                 worldIdToVoxelId.put(newWorldId, voxel.getVoxelId());
             }
+            it.remove();
         }
-        toUpdate.clear();
+        return toUpdate.isEmpty();
     }
 
     // maps world ids to voxel ids
@@ -267,6 +303,18 @@ public class CWorld extends World {
     // retrieve voxel for object id
     public final Integer getVoxelId(Integer objectId) {
         return worldIdToVoxelId.get(objectId);
+    }
+
+    // retrieve all visible voxels in this world
+    public HashMap<Voxel, String> getVisibleVoxel() {
+        HashMap<Voxel, String> result = new HashMap<Voxel, String>();
+        for (VoxelW voxel : voxelPos.values()) {
+            String sides = voxel.getSides();
+            if (!sides.equals("111111")) {
+                result.put(voxel.getVoxel(), voxel.getSides());
+            }
+        }
+        return result;
     }
 
 }

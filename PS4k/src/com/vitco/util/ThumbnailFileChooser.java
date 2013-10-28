@@ -21,13 +21,13 @@ public class ThumbnailFileChooser extends JFileChooser {
     private final int ICON_SIZE_Y;
 
     /** This blank icon will be used while previews are loading */
-    private final Image LOADING_IMAGE;
+    private transient final Image LOADING_IMAGE;
 
     /** Edit this to determine what file types will be previewed. */
     private final Pattern imageFilePattern = Pattern.compile(".+?\\.(png|jpe?g|gif|tiff?)$", Pattern.CASE_INSENSITIVE);
 
     /** Use a weak hash map to cache images until the next garbage collection (saves memory) */
-    private final Map<File, ImageIcon> imageCache = new WeakHashMap<File, ImageIcon>();
+    private transient final Map<File, ImageIcon> imageCache = new WeakHashMap<File, ImageIcon>();
 
     // constructor
     public ThumbnailFileChooser(int x, int y) {
@@ -91,7 +91,9 @@ public class ThumbnailFileChooser extends JFileChooser {
             icon.setImage(img);
 
             // Repaint the dialog so we see the new icon.
-            SwingUtilities.invokeLater(new Runnable() {public void run() {repaint();}});
+            SwingUtilities.invokeLater(new Runnable() {public void run() {
+                repaint();
+            }});
         }
     }
 

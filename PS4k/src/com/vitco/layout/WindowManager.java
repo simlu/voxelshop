@@ -7,6 +7,7 @@ import com.jidesoft.action.DockableBarFactory;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.jidesoft.docking.DockingManager;
+import com.jidesoft.plaf.LookAndFeelFactory;
 import com.jidesoft.plaf.UIDefaultsLookup;
 import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
@@ -27,9 +28,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -102,7 +102,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
     // prepare all frames
     @Override
-    public final DockableFrame prepareFrame(String key) {
+    public final DockableFrame prepareFrame(final String key) {
         DockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
             frame = frameLinkageMap.get(key).buildFrame(key, thisFrame);
@@ -187,14 +187,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         ));
 
         try {
-
-            // custom style (would go here)
-            // UIManager.setLookAndFeel(WindowsLookAndFeel.class.getName());
-            // LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_XERTO);
-
-            // make the frame background match the tabbed pane background (border)
-            UIManager.getDefaults().put("DockableFrame.background", UIDefaultsLookup.getColor("JideTabbedPane.background"));
-
             // init loading
             ////////////////
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -253,39 +245,58 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         }
 
         actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
-            private static final String frame = "xyView";
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleFrameSwap(frame);
+                handleFrameSwap("mainView", "xyView");
             }
         });
 
         actionManager.registerAction("swap_mainView_with_xzView", new AbstractAction() {
-            private static final String frame = "xzView";
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleFrameSwap(frame);
+                handleFrameSwap("mainView", "xzView");
             }
         });
 
         actionManager.registerAction("swap_mainView_with_yzView", new AbstractAction() {
-            private static final String frame = "yzView";
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleFrameSwap(frame);
+                handleFrameSwap("mainView", "yzView");
+            }
+        });
+
+        actionManager.registerAction("swap_xyView_with_mainView", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleFrameSwap("xyView", "mainView");
+            }
+        });
+
+        actionManager.registerAction("swap_xzView_with_mainView", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleFrameSwap("xzView", "mainView");
+            }
+        });
+
+        actionManager.registerAction("swap_yzView_with_mainView", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleFrameSwap("yzView", "mainView");
             }
         });
 
     }
 
-    // handle swap of frames
-    private void handleFrameSwap(String frame) {
+    // handle swap of frames (second frame is activated)
+    private void handleFrameSwap(String frame1, String frame2) {
         DockingManager dm = getDockingManager();
         dm.addFrame(new DockableFrame("__dummy"));
-        dm.moveFrame("__dummy", frame);
-        dm.moveFrame(frame, "mainView");
-        dm.moveFrame("mainView", "__dummy");
+        dm.moveFrame("__dummy", frame1);
+        dm.moveFrame(frame1, frame2);
+        dm.moveFrame(frame2, "__dummy");
         dm.removeFrame("__dummy");
+        dm.activateFrame(frame2);
     }
 
 }

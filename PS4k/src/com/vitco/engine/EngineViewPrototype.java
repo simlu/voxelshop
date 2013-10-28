@@ -1,14 +1,16 @@
 package com.vitco.engine;
 
 import com.threed.jpct.*;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.G2DUtil;
+import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.pref.PrefChangeListener;
-import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +23,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Rendering functionality of this World (data + overlay)
@@ -29,6 +34,13 @@ import java.util.*;
  * Can switch each of them on/off. Defines the basic objects: data, world, buffer, camera.
  */
 public abstract class EngineViewPrototype extends ViewPrototype {
+
+    protected AsyncActionManager asyncActionManager;
+    @Autowired
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
+    }
+
     // var & setter
     protected Data data;
     @Autowired
@@ -36,22 +48,17 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         this.data = data;
     }
 
-    protected ThreadManagerInterface threadManager;
-    // set the action handler
-    @Autowired
-    public final void setThreadManager(ThreadManagerInterface threadManager) {
-        this.threadManager = threadManager;
-    }
-
     // the world-required objects
     protected final CWorld world;
     protected final CWorld selectedVoxelsWorld;
-    protected FrameBuffer buffer;
+    protected FrameBuffer buffer = new FrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
     protected final CCamera camera;
 
     // conversion
     protected final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
-        SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer, x*2, y*2).normalize();
+        SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer,
+                x*VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
+                y*VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
         result.scalarMul(camera.getPosition().distance(referencePoint));
         result.add(camera.getPosition());
         return result;
@@ -61,7 +68,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected final SimpleVector convert3D2D(SimpleVector point) {
         SimpleVector result = Interact2D.project3D2D(camera, buffer, point);
         if (result != null) {
-            result.scalarMul(0.5f);
+            result.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
         }
         return result;
     }
@@ -71,7 +78,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         ExtendedVector result = null;
         SimpleVector point2d = Interact2D.project3D2D(camera, buffer, point);
         if (point2d != null) {
-            point2d.scalarMul(0.5f);
+            point2d.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
             result = new ExtendedVector(point2d, point.id);
         }
         return result;
@@ -102,6 +109,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected abstract Voxel[][] getChangedSelectedVoxels();
 
     // helper - make sure the voxel objects in the world are up to date
+    // and also trigger refresh for redraws
     private void updateWorldWithVoxels() {
         // only retrieve the changed voxels
         Voxel[][] changed = getChangedVoxels();
@@ -110,13 +118,22 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         } else {
             // remove individual voxel
             for (Voxel remove : changed[0]) {
-                world.clearPosition(remove.getPosAsInt());
+                world.clearPosition(remove);
             }
         }
         for (Voxel added : changed[1]) {
             world.updateVoxel(added);
         }
-        world.refreshWorld();
+        asyncActionManager.addAsyncAction(new AsyncAction("asyncWorld" + side) {
+            @Override
+            public void performAction() {
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
+                if (!world.refreshWorld()) {
+                    asyncActionManager.addAsyncAction(this);
+                }
+            }
+        });
 
         // only retrieve the changed voxels
         changed = getChangedSelectedVoxels();
@@ -125,13 +142,22 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         } else {
             // remove individual voxel
             for (Voxel remove : changed[0]) {
-                selectedVoxelsWorld.clearPosition(remove.getPosAsInt());
+                selectedVoxelsWorld.clearPosition(remove);
             }
         }
         for (Voxel added : changed[1]) {
             selectedVoxelsWorld.updateVoxel(added);
         }
-        selectedVoxelsWorld.refreshWorld();
+        asyncActionManager.addAsyncAction(new AsyncAction("asyncSelWorld" + side) {
+            @Override
+            public void performAction() {
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
+                if (!selectedVoxelsWorld.refreshWorld()) {
+                    asyncActionManager.addAsyncAction(this);
+                }
+            }
+        });
     }
 
     // true iff the world does not need to be updated with voxels
@@ -139,16 +165,18 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     // force update of world before next draw
     protected final void invalidateVoxels() {
         if (localMouseDown) { // instant update needed for interaction
-            refreshVoxels();
+            refreshVoxels(true);
         } else {
             worldVoxelCurrent = false;
         }
     }
 
-    // make sure the voxels are valid "right now", no matter what
-    private void refreshVoxels() {
-        updateWorldWithVoxels();
-        worldVoxelCurrent = true;
+    // force true: make sure the voxels are valid "right now", no matter what
+    private void refreshVoxels(boolean force) {
+        if (!worldVoxelCurrent || force) {
+            worldVoxelCurrent = true;
+            updateWorldWithVoxels();
+        }
     }
 
     // ==============================
@@ -173,6 +201,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // true iff camera has changed since last draw call
         private boolean cameraChanged = true;
+        // true iff container has resized since last draw call
+        private boolean hasResized = true;
 
         // initialize
         public void init() {
@@ -200,7 +230,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             });
         }
 
-        // this draws opengl content if enabled
+        // this draws jpct engine content if enabled
         private boolean drawWorld = true;
         public final void setDrawWorld(boolean b) {
             drawWorld = b;
@@ -240,6 +270,11 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         public final void doNotSkipNextWorldRender() {
             doNotSkipNextWorldRender = true;
         }
+        // reset the redraw flags
+        public final void resetSkipRenderFlags() {
+            skipNextWorldRender = false;
+            doNotSkipNextWorldRender = false;
+        }
 
         // to set the preview rect
         private Rectangle previewRect = null;
@@ -276,7 +311,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
 
             // draw the preview voxel
-            final int[] voxel = data.getHighlightedVoxel();
+            int[] voxel = data.getHighlightedVoxel();
             // draw selected voxel (ghost / preview voxel)
             if (voxel != null) {
                 Color previewColor = VitcoSettings.VOXEL_PREVIEW_LINE_COLOR;
@@ -420,7 +455,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 ExtendedVector point2db = convertExt3D2D(line[1]);
                 if (point2da != null && point2db != null) {
                     ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                    mid.scalarMul(0.5f);
+                    mid.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
                     objects.add(new ExtendedVector[] {point2da, point2db, mid});
                 }
             }
@@ -432,7 +467,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 ExtendedVector point2db = convertExt3D2D(preview_line[1]);
                 if (point2da != null && point2db != null) {
                     ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                    mid.scalarMul(0.5f);
+                    mid.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
                     objects.add(new ExtendedVector[] {point2da, point2db, mid});
                 }
             }
@@ -557,10 +592,38 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             }
         }
 
-        // handle the redrawing of this component
-        @Override
-        protected final void paintComponent(Graphics g1) {
-            isRepainting = true;
+        // constructor
+        public MPanel() {
+            // initialize the drawing buffer
+            notifyAboutResize(100, 100);
+        }
+
+        private BufferedImage toDraw;
+        private BufferedImage overlayBuffer;
+        private Graphics2D overlayBufferGraphics;
+        public void notifyAboutResize(int width, int height) {
+            toDraw = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics gr = toDraw.getGraphics();
+            gr.setColor(bgColor);
+            gr.fillRect(0, 0, width, height);
+            // the overlay
+            overlayBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            // draw the lines
+            overlayBufferGraphics = (Graphics2D)overlayBuffer.getGraphics();
+            // Anti-alias
+            overlayBufferGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            // bg color to clear
+            overlayBufferGraphics.setBackground(new Color(0,0,0,0));
+            // set color
+            overlayBufferGraphics.setColor(VitcoSettings.GHOST_VOXEL_OVERLAY_LINE_COLOR);
+            overlayBufferGraphics.setStroke(
+                    new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL,
+                            0, new float[]{4,5}, 2));
+            hasResized = true;
+        }
+
+        protected final void render() {
             if (skipNextWorldRender && !doNotSkipNextWorldRender) {
                 skipNextWorldRender = false;
             } else {
@@ -570,9 +633,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 }
                 buffer.clear(bgColor);
                 if (drawWorld) {
-                    if (!worldVoxelCurrent) {
-                        refreshVoxels();
-                    }
+                    refreshVoxels(false);
                     world.renderScene(buffer);
                     if (useWireFrame) {
                         world.drawWireframe(buffer, VitcoSettings.WIREFRAME_COLOR);
@@ -590,82 +651,175 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                     drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
                 }
             }
-            buffer.display(g1);
+            Graphics2D gr = (Graphics2D) toDraw.getGraphics();
+
+            buffer.display(gr);
+
+            if (drawBoundingBox) {
+                drawBoundingBox(gr);
+            }
             // draw the under/overlay (voxels in parallel planes)
             if (drawGhostOverlay) {
-                drawGhostOverlay((Graphics2D) g1, cameraChanged);
+                drawGhostOverlay(gr, cameraChanged, hasResized);
             }
             if (drawOverlay && drawAnimationOverlay) { // overlay part 2
-                drawAnimationOverlay((Graphics2D) g1); // refreshes with animation data
+                drawAnimationOverlay(gr); // refreshes with animation data
             }
             if (drawOverlay && drawVoxelOverlay) {
-                drawVoxelOverlay((Graphics2D) g1);
+                drawVoxelOverlay(gr);
             }
             cameraChanged = false; // camera is current for this redraw
-            isRepainting = false;
+            hasResized = false; // no resize pending
+        }
+
+        public final void setDrawBoundingBox(boolean value) {
+            drawBoundingBox = value;
+        }
+
+        private boolean drawBoundingBox = false;
+        private final float size = VitcoSettings.VOXEL_GROUND_PLANE_SIZE / VitcoSettings.VOXEL_SIZE;
+        private final SimpleVector[] vectors = new SimpleVector[] {
+                new SimpleVector( + 0.5, -0.5 + 0.5/size + 0.5,  + 0.5),
+                new SimpleVector( + 0.5, -0.5 + 0.5/size + 0.5,  - 0.5),
+                new SimpleVector( + 0.5, -0.5 + 0.5/size - 0.5,  - 0.5),
+                new SimpleVector( + 0.5, -0.5 + 0.5/size - 0.5,  + 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size + 0.5,  + 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size + 0.5,  - 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size - 0.5,  - 0.5),
+                new SimpleVector( - 0.5, -0.5 + 0.5/size - 0.5,  + 0.5)
+        };
+        private void drawBoundingBox(Graphics2D gr) {
+
+            // Anti-alias
+            gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // get an instance that we can modify
+            SimpleVector[] vectors = new SimpleVector[this.vectors.length];
+
+            boolean valid = true;
+            for (int i = 0; i < vectors.length; i++) {
+                // scale and convert the points
+                vectors[i] = new SimpleVector(this.vectors[i]);
+                vectors[i].scalarMul(VitcoSettings.VOXEL_GROUND_PLANE_SIZE);
+                vectors[i] = convert3D2D(vectors[i]);
+                // check that valid
+                if (vectors[i] == null) {
+                    valid = false;
+                }
+            }
+
+            if (valid) {
+                // calculate the z range
+                float[] zRange = new float[] {vectors[0].z, vectors[0].z}; // min and max z value
+                for (int i = 1; i < 8; i ++) {
+                    zRange[0] = Math.min(vectors[i].z, zRange[0]);
+                    zRange[1] = Math.max(vectors[i].z, zRange[1]);
+                }
+                float distance = zRange[1] - zRange[0];
+
+                // draw the cube
+                gr.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                for (int i = 0; i < 4; i++) {
+                    drawCubeLine(gr, vectors, i, (i + 1) % 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                    drawCubeLine(gr, vectors, i + 4, (i + 1) % 4 + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                    drawCubeLine(gr, vectors, i, i + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                }
+            }
+        }
+
+        // handle the redrawing of this component
+        // Note1: this MUSTN'T have any call to synchronized
+        // Note2: this method should be super fast to execute,
+        // otherwise we might have many pending repaint events
+        // in the queue!
+        @Override
+        protected final void paintComponent(Graphics g1) {
+            if (toDraw != null) {
+                g1.drawImage(toDraw, 0, 0, null);
+            } else {
+                g1.setColor(bgColor);
+                g1.fillRect(0, 0, this.getWidth(), this.getHeight());
+            }
+            repainting = false;
+            if (needRepainting) {
+                needRepainting = false;
+                container.resetSkipRenderFlags();
+                if (lastSkipNextWorldRender) {
+                    container.skipNextWorldRender();
+                }
+                if (lastDoNotSkipNextWorldRender) {
+                    container.doNotSkipNextWorldRender();
+                }
+                forceRepaint();
+            }
         }
 
         // draw some ghosting lines (the voxel outline)
-        private BufferedImage overlayBuffer = new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
-        private void drawGhostOverlay(Graphics2D g1, boolean cameraChanged) {
-            boolean resized =
-                    buffer.getOutputWidth() != overlayBuffer.getWidth() ||
-                            buffer.getOutputHeight() != overlayBuffer.getHeight();
-            if (resized) {
-                overlayBuffer = new BufferedImage(buffer.getOutputWidth(), buffer.getOutputHeight(), BufferedImage.TYPE_INT_ARGB);
-            }
+        private void drawGhostOverlay(Graphics2D g1, boolean cameraChanged, boolean hasResized) {
             boolean updated = updateGhostOverlay();
-            if (updated || cameraChanged || resized) {
-                // draw the lines
-                Graphics2D g = (Graphics2D)overlayBuffer.getGraphics();
-                // Anti-alias
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
+            if (updated || cameraChanged || hasResized) {
                 // clear the previous drawings
-                g.setBackground(new Color(0,0,0,0));
-                g.clearRect(0,0,buffer.getOutputWidth(),buffer.getOutputHeight());
-                // set color
-                g.setColor(VitcoSettings.GHOST_VOXEL_OVERLAY_LINE_COLOR);
+                overlayBufferGraphics.clearRect(0,0,overlayBuffer.getWidth(),overlayBuffer.getHeight());
                 // draw
                 for (SimpleVector[] line : getGhostOverlay()) {
                     SimpleVector p1 = convert3D2D(line[0]);
                     SimpleVector p2 = convert3D2D(line[1]);
-                    g.drawLine(Math.round(p1.x), Math.round(p1.y), Math.round(p2.x), Math.round(p2.y));
+                    overlayBufferGraphics.drawLine(Math.round(p1.x), Math.round(p1.y), Math.round(p2.x), Math.round(p2.y));
                 }
             }
             g1.drawImage(overlayBuffer, 0, 0, null);
         }
 
-        private boolean isRepainting = false;
-        protected boolean isRepainting() {
-            return isRepainting;
-        }
-
     }
 
-    private boolean needRepaint = true;
+    // makes sure the repaint doesn't get called too often
+    // (only one in queue at a time)
+    // Note: we still need this even though repaint() is thread safe,
+    // as it still pushes another event on the Swing queue
+    private boolean repainting = false;
+    private boolean needRepainting = false;
+
+    // memorize to trigger additional repaint (queued)
+    private boolean lastSkipNextWorldRender;
+    private boolean lastDoNotSkipNextWorldRender;
+
     protected final void forceRepaint() {
-        needRepaint = true;
+        if (!repainting) {
+            repainting = true;
+            final boolean skipNextWorldRender = container.skipNextWorldRender;
+            final boolean doNotSkipNextWorldRender = container.doNotSkipNextWorldRender;
+            container.resetSkipRenderFlags();
+            asyncActionManager.addAsyncAction(new AsyncAction("repaint" + side) {
+                @Override
+                public void performAction() {
+                    if (skipNextWorldRender) {
+                        container.skipNextWorldRender();
+                    }
+                    if (doNotSkipNextWorldRender) {
+                        container.doNotSkipNextWorldRender();
+                    }
+                    container.render();
+                    // this is thread save (but will execute with a delay!)
+                    // AWT event queue is ok as long as this method is fast to execute
+                    container.repaint();
+                }
+
+                @Override
+                public boolean ready() {
+                    return !globalMouseDown || localMouseDown;
+                }
+            });
+        } else {
+            lastSkipNextWorldRender = container.skipNextWorldRender;
+            lastDoNotSkipNextWorldRender = container.doNotSkipNextWorldRender;
+            needRepainting = true;
+        }
     }
 
     @PostConstruct
     public final void startup() {
-        // manages the repainting of this container instance
-        threadManager.manage(new LifeTimeThread() {
-            @Override
-            public void loop() throws InterruptedException {
-                if (needRepaint && !container.isRepainting()) {
-                    needRepaint = false;
-                    container.repaint();
-                }
-                sleep(33); // about 25 fps
-                // stop repaint when mouse is down on another view
-                while (globalMouseDown && !localMouseDown) {
-                    sleep(50);
-                }
-            }
-        });
-        // initialize the conainer
+        // initialize the container
         container.init();
     }
 
@@ -675,54 +829,73 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         buffer.dispose();
     }
 
+    // only perform these actions once (even if the class is instantiated several times)
+    static {
+        Config.fadeoutLight = false;
+        //Config.maxPolysVisible = 10000;
+
+        Config.useMultipleThreads = true;
+        Config.maxNumberOfCores = Runtime.getRuntime().availableProcessors();
+        Config.loadBalancingStrategy = 1; // default 0
+        // usually not worth it (http://www.jpct.net/doc/com/threed/jpct/Config.html#useMultiThreadedBlitting)
+        //Config.useMultiThreadedBlitting = false;   //default false
+
+        Config.mipmap = true;
+
+        //Config.mtDebug = true;
+        Logger.setLogLevel(Logger.ERROR);
+    }
+
     protected final int side;
     private boolean localMouseDown = false;
     private static boolean globalMouseDown = false;
-    private static boolean initialized = false;
+    // constructor
     protected EngineViewPrototype(Integer side) {
         // make sure side defaults to -1
         if (side == null || side < 0 || side > 2) {
             side = -1;
         }
         this.side = side;
-        // only perform these actions once (even if the class is instantiated several times)
-        if (!initialized) {
-//            Config.tuneForIndoor();
-            Config.fadeoutLight=false;
-            Config.maxPolysVisible = 5000;
-            //Config.mtDebug = true;
-
-            // doesnt seem to have much effect ...
-//            Config.maxNumberOfCores = 2;
-//            Config.useMultipleThreads = true;
-//            Config.loadBalancingStrategy = 2; // default 0
-
-            Logger.setLogLevel(Logger.ERROR);
-            initialized = true;
-        }
 
         container.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                globalMouseDown = true;
-                localMouseDown = true;
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        globalMouseDown = true;
+                        localMouseDown = true;
+                    }
+                });
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                globalMouseDown = false;
-                localMouseDown = false;
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        globalMouseDown = false;
+                        localMouseDown = false;
+                    }
+                });
             }
         });
 
+        // NOTE: The sum should be not more than 40k (!)
+
+        // define the max poly count for this world
+        Config.maxPolysVisible = side == -1 ? 10000 : 2500;
         // set up world objects
         world = new CWorld(true, side);
-        selectedVoxelsWorld = new CWorld(false, side);
+
+        // define the max poly count for this selected world
+        Config.maxPolysVisible = side == -1 ? 10000 : 2500;
+        // no culling, since we want to see all selected voxels (in the main view only)
+        selectedVoxelsWorld = new CWorld(side != -1, side);
+
         camera = new CCamera();
         world.setCameraTo(camera);
         selectedVoxelsWorld.setCameraTo(camera);
-        buffer = new FrameBuffer(100, 100, FrameBuffer.SAMPLINGMODE_OGSS);
-
         // lighting (1,1,1) = true color
         world.setAmbientLight(1, 1, 1);
 
@@ -734,11 +907,17 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             @Override
             public void componentResized(ComponentEvent e) {
                 if (container.getWidth() > 0 && container.getHeight() > 0) {
-                    buffer.dispose();
-                    buffer = null; // so the gc can collect before creation if necessary
-                    buffer = new FrameBuffer(container.getWidth(), container.getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
+                    asyncActionManager.addAsyncAction(new AsyncAction() {
+                        @Override
+                        public void performAction() {
+                            cleanup();
+                            buffer = null; // so the gc can collect before creation if necessary
+                            buffer = new FrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
+                            container.notifyAboutResize(container.getWidth(), container.getHeight());
+                            container.doNotSkipNextWorldRender();
+                            forceRepaint();
+                        }
+                    });
                 }
             }
         });

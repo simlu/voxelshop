@@ -3,6 +3,9 @@ package com.vitco.logic.mainview;
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
+import com.threed.jpct.util.Light;
+import com.vitco.async.AsyncAction;
+import com.vitco.engine.CameraChangeListener;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
@@ -16,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.HashSet;
 
 /**
  * Creates the main view instance and attaches the specific user interaction.
@@ -53,6 +57,20 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         return data.getNewSelectedVoxel("main_view");
     }
 
+    // true if the "grid mode is on"
+    private boolean gridModeOn = true;
+
+    // true if the "light is on"
+    private boolean staticLightOn = false;
+    private void moveLightBehindCamera(Light light) {
+        SimpleVector direction = camera.getPosition().normalize();
+        direction.scalarMul(2000f);
+        light.setPosition(direction);
+    }
+
+    // true if using "bounding box"
+    private boolean useBoundingBox = true;
+
     @Override
     public final JPanel build() {
 
@@ -60,15 +78,110 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
         selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
 
+        // lighting
+        final Light dark_light = WorldUtil.addLight(world, SimpleVector.ORIGIN, -10);
+        final Light light1 = WorldUtil.addLight(world, new SimpleVector(-1500, -2000, -1000), 3);
+        final Light light2 = WorldUtil.addLight(world, new SimpleVector(1500, 2000, 1000), 3);
+        camera.addCameraChangeListener(new CameraChangeListener() {
+            @Override
+            public void onCameraChange() {
+                if (!staticLightOn) {
+                    moveLightBehindCamera(dark_light);
+                }
+            }
+        });
+
+        if (!preferences.contains("light_mode_active")) {
+            preferences.storeBoolean("light_mode_active", staticLightOn);
+        }
+
+        // react to changes on the light status
+        preferences.addPrefChangeListener("light_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                staticLightOn = (Boolean) o;
+                if (staticLightOn) {
+                    dark_light.disable();
+                    light1.enable();
+                    light2.enable();
+                    world.setAmbientLight(0, 0, 0);
+                } else {
+                    dark_light.enable();
+                    light1.disable();
+                    light2.disable();
+                    world.setAmbientLight(60, 60, 60);
+                }
+                moveLightBehindCamera(dark_light);
+                forceRepaint();
+            }
+        });
+
+        // react to changes on the light status
+        preferences.addPrefChangeListener("light_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                staticLightOn = (Boolean) o;
+                if (staticLightOn) {
+                    dark_light.disable();
+                    light1.enable();
+                    light2.enable();
+                    world.setAmbientLight(0, 0, 0);
+                } else {
+                    dark_light.enable();
+                    light1.disable();
+                    light2.disable();
+                    world.setAmbientLight(60, 60, 60);
+                }
+                moveLightBehindCamera(dark_light);
+                forceRepaint();
+            }
+        });
+
+        // register the toggle light mode action (always possible)
+        actionManager.registerAction("toggle_light_mode", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                preferences.storeBoolean("light_mode_active", !staticLightOn);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !staticLightOn;
+            }
+        });
+
+        if (!preferences.contains("grid_mode_active")) {
+            preferences.storeBoolean("grid_mode_active", gridModeOn);
+        }
+
+        // react to changes on the grid status
+        preferences.addPrefChangeListener("grid_mode_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                gridModeOn = (Boolean) o;
+                WorldUtil.enableGrid(gridModeOn);
+                forceRepaint();
+            }
+        });
+
+        // register the toggle grid mode action (always possible)
+        actionManager.registerAction("toggle_grid_mode", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                preferences.storeBoolean("grid_mode_active", !gridModeOn);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return gridModeOn;
+            }
+        });
+
         // camera settings
         camera.setFOVLimits(VitcoSettings.MAIN_VIEW_ZOOM_FOV,VitcoSettings.MAIN_VIEW_ZOOM_FOV);
         camera.setFOV(VitcoSettings.MAIN_VIEW_ZOOM_FOV);
         camera.setZoomLimits(VitcoSettings.MAIN_VIEW_ZOOM_IN_LIMIT, VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT);
         camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION); // camera initial position
-
-        world.setAmbientLight(0, 0, 0); // compensate a bit for the lights
-        WorldUtil.addLight(world, new SimpleVector(-1500, -2000, -1000), 3);
-        WorldUtil.addLight(world, new SimpleVector(1500, 2000, 1000), 3);
 
         // add ground plane
         final int worldPlane = WorldUtil.addPlane(
@@ -80,53 +193,113 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 0
         );
 
+        // =============== BOUNDING BOX
+        // add the bounding box (texture)
+        final int boundingBox = WorldUtil.addGridPlane(world);
+
+        preferences.addPrefChangeListener("use_bounding_box", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                useBoundingBox = (Boolean)o;
+                container.setDrawBoundingBox(useBoundingBox); // overlay part
+                world.getObject(boundingBox).setVisibility(useBoundingBox); // texture part
+                // default ground plane
+                world.getObject(worldPlane).setVisibility(!useBoundingBox);
+                // redraw container
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
+            }
+        });
+
+        // make sure the preference is set
+        if (!preferences.contains("use_bounding_box")) {
+            preferences.storeBoolean("use_bounding_box", useBoundingBox);
+        }
+
+        actionManager.registerAction("toggle_bounding_box", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                preferences.storeBoolean("use_bounding_box", !useBoundingBox);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return useBoundingBox;
+            }
+        });
+        // ===============
+
         // user mouse input - change camera position
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
-            public void mouseWheelMoved(MouseWheelEvent e) { // scroll = zoom in and out
-                int rotation = e.getWheelRotation();
-                if (rotation < 0) {
-                    camera.zoomIn(Math.abs(rotation) * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
-                } else {
-                    camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
-                }
-                forceRepaint();
+            public void mouseWheelMoved(final MouseWheelEvent e) { // scroll = zoom in and out
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        int rotation = e.getWheelRotation();
+                        if (rotation < 0) {
+                            camera.zoomIn(Math.abs(rotation) * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                        } else {
+                            camera.zoomOut(rotation * VitcoSettings.MAIN_VIEW_ZOOM_SPEED_SLOW);
+                        }
+                        voxelAdapter.replayHover();
+                        container.doNotSkipNextWorldRender();
+                        forceRepaint();
+                    }
+                });
             }
 
             private Point leftMouseDown = null;
             private Point rightMouseDown = null;
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                switch (e.getButton()) {
-                    case 1: leftMouseDown = e.getPoint(); break;
-                    case 3: rightMouseDown = e.getPoint(); break;
-                }
+            public void mousePressed(final MouseEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        switch (e.getModifiers() & (MouseEvent.BUTTON1_MASK | MouseEvent.BUTTON3_MASK)) {
+                            case MouseEvent.BUTTON1_MASK: leftMouseDown = e.getPoint(); break;
+                            case MouseEvent.BUTTON3_MASK: rightMouseDown = e.getPoint(); break;
+                            default: break;
+                        }
+                    }
+                });
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
-                switch (e.getButton()) {
-                    case 1: leftMouseDown = null; break;
-                    case 3: rightMouseDown = null; break;
-                }
+            public void mouseReleased(final MouseEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        switch (e.getModifiers() & (MouseEvent.BUTTON1_MASK | MouseEvent.BUTTON3_MASK)) {
+                            case MouseEvent.BUTTON1_MASK: leftMouseDown = null; break;
+                            case MouseEvent.BUTTON3_MASK: rightMouseDown = null; break;
+                            default: break;
+                        }
+                    }
+                });
             }
 
             @Override
-            public void mouseDragged(MouseEvent e) {
-                if (leftMouseDown != null) {
-                    camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
-                    leftMouseDown.x = e.getX();
-                    leftMouseDown.y = e.getY();
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
-                } else if (rightMouseDown != null) {
-                    camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
-                    rightMouseDown.x = e.getX();
-                    rightMouseDown.y = e.getY();
-                    container.doNotSkipNextWorldRender();
-                    forceRepaint();
-                }
+            public void mouseDragged(final MouseEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        if (leftMouseDown != null) {
+                            camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
+                            leftMouseDown.x = e.getX();
+                            leftMouseDown.y = e.getY();
+                            container.doNotSkipNextWorldRender();
+                            forceRepaint();
+                        } else if (rightMouseDown != null) {
+                            camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
+                            rightMouseDown.x = e.getX();
+                            rightMouseDown.y = e.getY();
+                            container.doNotSkipNextWorldRender();
+                            forceRepaint();
+                        }
+                    }
+                });
             }
         };
         container.addMouseWheelListener(mouseAdapter);
@@ -154,6 +327,20 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             public void actionPerformed(ActionEvent e) {
                 camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION);
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
+            }
+        });
+
+        actionManager.registerAction("center_main_view_camera", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                camera.setCenterShift(new SimpleVector(
+                        -preferences.loadInteger("currentplane_sideview3") * VitcoSettings.VOXEL_SIZE,
+                        -preferences.loadInteger("currentplane_sideview2") * VitcoSettings.VOXEL_SIZE,
+                        -preferences.loadInteger("currentplane_sideview1") * VitcoSettings.VOXEL_SIZE
+                ));
+                container.doNotSkipNextWorldRender();
                 forceRepaint();
             }
         });
@@ -188,14 +375,12 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         });
 
         // register button action for wireframe toggle
-
         actionManager.registerAction("main_window_toggle_wireframe", new StateActionPrototype() {
             private boolean useWireFrame = false; // always false on startup
             @Override
             public void action(ActionEvent actionEvent) {
                 useWireFrame = !useWireFrame;
                 useWireFrame(useWireFrame);
-                //world.getObject(worldPlane).setVisibility(!useWireFrame);
                 forceRepaint();
             }
 

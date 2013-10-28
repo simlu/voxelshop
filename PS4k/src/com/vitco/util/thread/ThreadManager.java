@@ -25,16 +25,18 @@ public class ThreadManager implements ThreadManagerInterface {
 
     // manage a thread
     @Override
-    public void manage(LifeTimeThread thread) {
+    public synchronized void manage(LifeTimeThread thread) {
         threads.add(thread);
         thread.start();
     }
 
     // remove a thread from the managed list
     @Override
-    public void remove(LifeTimeThread thread) {
+    public synchronized void remove(LifeTimeThread thread) {
         threads.remove(thread);
     }
+
+    private final ThreadManager thisInstance = this;
 
     @PostConstruct
     @Override
@@ -47,8 +49,10 @@ public class ThreadManager implements ThreadManagerInterface {
                     @Override
                     public void actionFired(boolean b) {
                         if (b) {
-                            for (LifeTimeThread thread : threads) {
-                                thread.stopThread();
+                            synchronized (thisInstance) {
+                                for (LifeTimeThread thread : threads) {
+                                    thread.stopThread();
+                                }
                             }
                         }
                     }

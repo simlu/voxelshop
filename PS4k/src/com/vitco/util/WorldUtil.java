@@ -18,11 +18,12 @@ public class WorldUtil {
     private final static SimpleVector ZEROS = new SimpleVector(0,0,0);
 
     // add a light-source
-    public static void addLight (World world, SimpleVector position, float strength) {
+    public static Light addLight (World world, SimpleVector position, float strength) {
         Light light = new Light(world);
         light.setDiscardDistance(-1);
         light.setIntensity(strength, strength, strength);
         light.setPosition(position);
+        return light;
     }
 
     // add a box to the world
@@ -72,7 +73,7 @@ public class WorldUtil {
             // add the triangles
             if (bin.charAt(0) == '0') {
                 // Right
-                box.addTriangle(upperRightFront,0.001f,0.001f, lowerRightFront,0.001f,0.999f, upperRightBack,0.999f,0);
+                box.addTriangle(upperRightFront,0.001f,0.001f, lowerRightFront,0.001f,0.999f, upperRightBack,0.999f,0.001f);
                 box.addTriangle(upperRightBack,0.999f,0.001f, lowerRightFront, 0.001f,0.999f, lowerRightBack,0.999f,0.999f);
             }
             if (bin.charAt(1) == '0') {
@@ -87,7 +88,7 @@ public class WorldUtil {
             }
             if (bin.charAt(3) == '0') {
                 // Upper
-                box.addTriangle(upperLeftBack,0.001f,0.001f, upperLeftFront,0.001f,0.999f, upperRightBack,0.999f,0);
+                box.addTriangle(upperLeftBack,0.001f,0.001f, upperLeftFront,0.001f,0.999f, upperRightBack,0.999f,0.001f);
                 box.addTriangle(upperRightBack,0.999f,0.001f, upperLeftFront,0.001f,0.999f, upperRightFront,0.999f,0.999f);
             }
             if (bin.charAt(4) == '0') {
@@ -97,7 +98,7 @@ public class WorldUtil {
             }
             if (bin.charAt(5) == '0') {
                 // Front
-                box.addTriangle(upperLeftFront,0.001f,0.001f, lowerLeftFront,0.001f,0.999f, upperRightFront,0.999f,0);
+                box.addTriangle(upperLeftFront,0.001f,0.001f, lowerLeftFront,0.001f,0.999f, upperRightFront,0.999f,0.001f);
                 box.addTriangle(upperRightFront,0.999f,0.001f, lowerLeftFront,0.001f,0.999f, lowerRightFront,0.999f,0.999f);
             }
 
@@ -174,6 +175,26 @@ public class WorldUtil {
         Config.texelFilter = false;
 
         textureManager = TextureManager.getInstance();
+
+    }
+
+    public static void enableGrid(boolean enabled) {
+        if (!enabled) {
+            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2 = (Graphics2D) overlay.getGraphics();
+            g2.setColor(Color.WHITE);
+            g2.fillRect(0,0,32,32);
+            WorldUtil.loadTexture("__overlay__", overlay, false);
+        } else {
+            // load the voxel overlay
+            BufferedImage overlay = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2 = (Graphics2D) overlay.getGraphics();
+            g2.setColor(Color.BLACK);
+            g2.fillRect(0,0,32,32);
+            g2.setColor(Color.WHITE);
+            g2.fillRect(1,1,30,30);
+            WorldUtil.loadTexture("__overlay__", overlay, false);
+        }
     }
 
     // internal - helper
@@ -183,6 +204,7 @@ public class WorldUtil {
             case 1: return new int[] {0,0};
             case 2: return new int[] {1,1};
             case 3: return new int[] {0,1};
+            default: break;
         }
         return null;
     }
@@ -194,6 +216,7 @@ public class WorldUtil {
             case 1: return new int[] {1,1};
             case 2: return new int[] {0,0};
             case 3: return new int[] {0,1};
+            default: break;
         }
         return null;
     }
@@ -202,30 +225,32 @@ public class WorldUtil {
     private final static TextureManager textureManager;
 
     // load a texture to the world (from string)
-    public static void loadTexture(String name, String url) {
+    public static void loadTexture(String name, String url, boolean useAlpha) {
         Image image = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
                 ClassLoader.getSystemResource(url)
         )).getImage();
-        loadTexture(name, image);
+        loadTexture(name, image, useAlpha);
     }
 
     // load a texture to the world (from image)
-    public static void loadTexture(String name, Image image) {
-        Texture texture = new Texture(image);
+    public static void loadTexture(String name, Image image, boolean useAlpha) {
+        Texture texture = new Texture(image, useAlpha);
+        loadTexture(name, texture);
+    }
+
+    public static void loadTexture(String name, Texture texture) {
         if (textureManager.containsTexture(name)) {
             textureManager.replaceTexture(name, texture);
         } else {
             textureManager.addTexture(name, texture);
         }
-        // make sure the id is assigned
-        //textureManager.getNameByID(textureManager.getTextureID(name));
     }
 
-    public static void loadTexture(String name, ImageIcon image) {
+    public static void loadTexture(String name, ImageIcon image, boolean useAlpha) {
         // Create a texture from image
         BufferedImage text_top = new BufferedImage(image.getIconWidth(), image.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         text_top.getGraphics().drawImage(image.getImage(), 0, 0, null);
-        loadTexture(name, text_top);
+        loadTexture(name, text_top, useAlpha);
     }
 
     public static void removeTexture(String name) {
@@ -235,7 +260,8 @@ public class WorldUtil {
     // add a box to the world
     public static int addBoxSides (World world, SimpleVector pos, Color color,
                                    int[] rotation, boolean[] flip,
-                                   int[] textureIds, String boxType, boolean culling) {
+                                   int[] textureIds, String boxType,
+                                   boolean culling, boolean useGrid) {
 
         Object3D box = boxTypes.get(boxType).cloneObject();
         // set other settings, build and add
@@ -243,6 +269,26 @@ public class WorldUtil {
         // select: color or texture
         if (textureIds == null) { // for color overlay
             box.setAdditionalColor(color);
+            if (useGrid) {
+                PolygonManager polygonManager = box.getPolygonManager();
+                char[] charArray = boxType.toCharArray();
+                int polyCount = 0;
+                int id = textureManager.getTextureID(String.valueOf("__overlay__"));
+                for (int i = 0; i < charArray.length; i++) {
+                    if (charArray[i] == '0') {
+                        float[] uvMapping = uvRotation.get(i + "_0_0");
+                        polygonManager.setPolygonTexture(polyCount, new TextureInfo(id,
+                                uvMapping[0],uvMapping[1],uvMapping[2],
+                                uvMapping[3],uvMapping[4],uvMapping[5]
+                        ));
+                        polygonManager.setPolygonTexture(polyCount+1, new TextureInfo(id,
+                                uvMapping[6],uvMapping[7],uvMapping[8],
+                                uvMapping[9],uvMapping[10],uvMapping[11]
+                        ));
+                        polyCount+=2;
+                    }
+                }
+            }
         } else { // for texture overlay
             box.setAdditionalColor(Color.WHITE);
             PolygonManager polygonManager = box.getPolygonManager();
@@ -253,6 +299,10 @@ public class WorldUtil {
             for (int i = 0; i < charArray.length; i++) {
                 if (charArray[i] == '0') {
                     int id = textureManager.getTextureID(String.valueOf(textureIds[i]));
+                    if (id == -1) { // if the texture is not loaded
+                        loadTexture(String.valueOf(textureIds[i]), new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB), false);
+                        id = textureManager.getTextureID(String.valueOf(textureIds[i]));
+                    }
                     if ((hasRotation && rotation[i] != 0) || (hasFlip && flip[i])) {
                         int rotationValue = rotation == null ? 0 : rotation[i];
                         int flipValue = flip == null ? 0 : (flip[i] ? 1 : 0);
@@ -278,11 +328,17 @@ public class WorldUtil {
 
         box.setOrigin(pos);
         box.setShadingMode(Object3D.SHADING_FAKED_FLAT);
-        box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
         box.setCulling(culling);
+        box.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
+        box.setCollisionOptimization(Object3D.COLLISION_DETECTION_OPTIMIZED);
 
-        if (boxType.equals("111111")) { // no need to show this object
+        //box.setCulling(false);
+        //box.setTransparency(0);
+
+        if (boxType.equals("111111")) {
+            // no need to show this object or to check for collision
             box.setVisibility(false);
+            box.setCollisionMode(Object3D.COLLISION_CHECK_NONE);
         }
         box.build();
         world.addObject(box);
@@ -303,5 +359,46 @@ public class WorldUtil {
         plane.rotateZ(rotation.z);
         world.addObject(plane);
         return plane.getID();
+    }
+
+    // add a grid plane
+    public static int addGridPlane(World world) {
+
+        WorldUtil.loadTexture("__grid__", Toolkit.getDefaultToolkit().getImage(
+                ClassLoader.getSystemResource("resource/tex/bounding_box_256.png")
+        ), false);
+
+        // get object
+        Object3D box = boxTypes.get("000000").cloneObject();
+        box.setTransparency(0);
+
+        // set texture
+        box.setAdditionalColor(Color.WHITE);
+        PolygonManager polygonManager = box.getPolygonManager();
+        int id = textureManager.getTextureID("__grid__");
+        int polyCount = 0;
+        for (int i : new int[]{0,1,2,3,4,5}) {
+            float[] uvMapping = uvRotation.get(i + "_0_0");
+            // also include the "edges"
+            for (int k = 0; k < uvMapping.length; k++) {
+                uvMapping[k] = Math.round(uvMapping[k]);
+            }
+            polygonManager.setPolygonTexture(polyCount, new TextureInfo(id,
+                    uvMapping[0],uvMapping[1],uvMapping[2],
+                    uvMapping[3],uvMapping[4],uvMapping[5]
+            ));
+            polygonManager.setPolygonTexture(polyCount+1, new TextureInfo(id,
+                    uvMapping[6],uvMapping[7],uvMapping[8],
+                    uvMapping[9],uvMapping[10],uvMapping[11]
+            ));
+            polyCount+=2;
+        }
+
+        // set location and culling
+        box.setOrigin(new SimpleVector(0,-VitcoSettings.VOXEL_GROUND_PLANE_SIZE/2 + VitcoSettings.VOXEL_GROUND_DISTANCE, 0));
+        box.scale(VitcoSettings.VOXEL_GROUND_PLANE_SIZE/VitcoSettings.VOXEL_SIZE);
+        box.invertCulling(true);
+        world.addObject(box);
+        return box.getID();
     }
 }

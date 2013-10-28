@@ -1,0 +1,8 @@
+<component name="libraryTable">
+  <library name="org.slf4j:slf4j-log4j12:1.6.5" type="repository">
+    <properties maven-id="org.slf4j:slf4j-log4j12:1.6.5" />
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

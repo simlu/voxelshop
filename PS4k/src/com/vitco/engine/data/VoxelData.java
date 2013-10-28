@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -52,6 +53,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         });
     }
 
+    // holds the voxel positions that are currently selected (so we only notify
+    // position where the selection state has actually changed!)
+    private final HashSet<String> currentSelectedVoxel = new HashSet<String>();
+
     // invalidate cache
     protected final void invalidateV(int[][] effected) {
         if (effected != null) {
@@ -68,23 +73,40 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             }
 
             // notification of changed selected voxels
-            for (HashMap<String, int[]> map : changedSelectedVoxel.values()) {
-                if (map != null) {
-                    for (int[] invalid : effected) {
-                        String key = invalid[0] + "_" + invalid[1] + "_" + invalid[2];
-                        if (!map.containsKey(key)) {
-                            map.put(key, invalid);
+            HashMap<String, int[]> invalidSelected = new HashMap<String, int[]>();
+            for (int[] invalid : effected) {
+                Voxel voxel = searchVoxel(invalid, false);
+                if (voxel == null) {
+                    String key = invalid[0] + "_" + invalid[1] + "_" + invalid[2];
+                    if (currentSelectedVoxel.remove(key)) {
+                        invalidSelected.put(key, invalid);
+                    }
+                } else {
+                    String key = voxel.getPosAsString();
+                    if (voxel.isSelected()) {
+                        if (currentSelectedVoxel.add(key)) {
+                            invalidSelected.put(key, invalid);
+                        }
+                    } else {
+                        if (currentSelectedVoxel.remove(key)) {
+                            invalidSelected.put(key, invalid);
                         }
                     }
                 }
             }
+            for (HashMap<String, int[]> map : changedSelectedVoxel.values()) {
+                if (map != null) {
+                    map.putAll(invalidSelected);
+                }
+            }
 
-            // notification of changed visible voxels for this plane
+            // notification of changed visible voxel for this plane
             for (Integer side : changedVisibleVoxelPlane.keySet()) {
                 int missingSide = 1;
                 switch (side) {
                     case 0: missingSide = 2; break;
                     case 2: missingSide = 0; break;
+                    default: break;
                 }
                 for (String requestId : changedVisibleVoxelPlane.get(side).keySet()) {
                     for (int[] invalid : effected) {
@@ -102,6 +124,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 }
             }
         } else {
+            currentSelectedVoxel.clear();
             changedSelectedVoxel.clear();
             changedVisibleVoxel.clear();
             changedVisibleVoxelPlane.clear();
@@ -451,9 +474,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
 
                 // remove if something is at new position in this layer
-                Voxel[] toRemove = dataContainer.layers.get(voxel.getLayerId()).search(newPos, 0);
-                if (toRemove.length > 0) {
-                    historyManagerV.applyIntent(new RemoveVoxelIntent(toRemove[0].id, true));
+                Voxel toRemove = dataContainer.layers.get(voxel.getLayerId()).search(newPos);
+                if (toRemove != null) {
+                    historyManagerV.applyIntent(new RemoveVoxelIntent(toRemove.id, true));
                 }
 
                 // add the voxel at new position
@@ -477,31 +500,26 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     private final class ColorVoxelIntent extends VoxelActionIntent {
-        private final int voxelId;
+        private final Voxel voxel;
         private final Color newColor;
+        private final Color oldColor;
 
         protected ColorVoxelIntent(int voxelId, Color newColor, boolean attach) {
             super(attach);
-            this.voxelId = voxelId;
+            this.voxel = dataContainer.voxels.get(voxelId);
+            this.oldColor = voxel.getColor();
             this.newColor = newColor;
+            this.effected = new int[][]{voxel.getPosAsInt()};
         }
 
         @Override
         protected void applyAction() {
-            if (isFirstCall()) {
-                Voxel voxel = dataContainer.voxels.get(voxelId);
-                historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
-                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(), newColor,
-                        voxel.isSelected(), null, voxel.getLayerId(), true));
-
-                // what is effected
-                effected = new int[][]{voxel.getPosAsInt()};
-            }
+            voxel.setColor(newColor);
         }
 
         @Override
         protected void unapplyAction() {
-            // nothing to do here
+            voxel.setColor(oldColor);
         }
 
         private int[][] effected = null;
@@ -537,99 +555,6 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         @Override
         protected void unapplyAction() {
             dataContainer.layers.get(voxel.getLayerId()).setVoxelAlpha(voxel, oldAlpha);
-        }
-
-        private int[][] effected = null;
-        @Override
-        public int[][] effected() {
-            return effected;
-        }
-    }
-
-    private final class ClearVoxelRangeIntent extends VoxelActionIntent {
-        private final int[] pos;
-        private final int radius;
-        private final int layerId;
-
-        protected ClearVoxelRangeIntent(int[] pos, int radius, int layerId, boolean attach) {
-            super(attach);
-            this.pos = pos;
-            this.radius = radius;
-            this.layerId = layerId;
-        }
-
-        @Override
-        protected void applyAction() {
-            if (isFirstCall()) {
-                ArrayList<int[]> effected = new ArrayList<int[]>();
-
-                // get all voxels in this area and remove them
-                for (Voxel voxel : dataContainer.layers.get(layerId).search(pos, radius)) {
-                    effected.add(voxel.getPosAsInt());
-                    historyManagerV.applyIntent(new RemoveVoxelIntent(voxel.id, true));
-                }
-
-                // what is effected
-                this.effected = new int[effected.size()][];
-                effected.toArray(this.effected);
-            }
-        }
-
-        @Override
-        protected void unapplyAction() {
-            // nothing to do
-        }
-
-        private int[][] effected = null;
-        @Override
-        public int[][] effected() {
-            return effected;
-        }
-    }
-
-    private final class FillVoxelRangeIntent extends VoxelActionIntent {
-        private final int[] pos;
-        private final int radius;
-        private final int layerId;
-        private final Color color;
-
-        protected FillVoxelRangeIntent(int[] pos, int radius, int layerId, Color color, boolean attach) {
-            super(attach);
-            this.pos = pos;
-            this.radius = radius;
-            this.layerId = layerId;
-            this.color = color;
-        }
-
-        @Override
-        protected void applyAction() {
-            if (isFirstCall()) {
-                ArrayList<int[]> effected = new ArrayList<int[]>();
-
-                // add all the voxels in this area that do not exist yet
-                VoxelLayer layer = dataContainer.layers.get(layerId);
-                for (int x = pos[0] - radius; x <= pos[0] + radius; x++) {
-                    for (int y = pos[1] - radius; y <= pos[1] + radius; y++) {
-                        for (int z = pos[2] - radius;z <= pos[2] + radius; z++) {
-                            int[] pos = new int[]{x,y,z};
-                            if (layer.search(pos, 0).length == 0) {
-                                historyManagerV.applyIntent(new AddVoxelIntent(getFreeVoxelId(), pos, color,
-                                        false, null, layerId, true));
-                                effected.add(pos);
-                            }
-                        }
-                    }
-                }
-
-                // what is effected
-                this.effected = new int[effected.size()][];
-                effected.toArray(this.effected);
-            }
-        }
-
-        @Override
-        protected void unapplyAction() {
-            // nothing to do
         }
 
         private int[][] effected = null;
@@ -696,7 +621,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     if (dataContainer.layers.get(layerId).isVisible()) { // only visible
                         Voxel[] voxels = getLayerVoxels(layerId); // get voxels
                         for (Voxel voxel : voxels) {
-                            if (dataContainer.layers.get(mergedLayerId).voxelPositionFree(voxel.getPosAsInt())) { // add if this voxel does not exist
+                            if (dataContainer.layers.get(mergedLayerId).voxelPositionFree(voxel)) { // add if this voxel does not exist
                                 effected.add(voxel.getPosAsInt());
                                 historyManagerV.applyIntent( // we <need> a new id for this voxel
                                         new AddVoxelIntent(getFreeVoxelId(), voxel.getPosAsInt(),
@@ -964,45 +889,39 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // texture a voxel with a given texture (id)
     private final class TextureVoxelIntent extends VoxelActionIntent {
-        private final int voxelId;
-        private final int newTextureId;
-        private final Integer voxelSide;
+        private final Voxel voxel;
+        private final int[] oldVoxelTexture;
+        private final int[] newVoxelTexture;
 
         protected TextureVoxelIntent(int voxelId, Integer voxelSide, int newTextureId, boolean attach) {
             super(attach);
-            this.voxelId = voxelId;
-            this.newTextureId = newTextureId;
-            this.voxelSide = voxelSide;
+            this.voxel = dataContainer.voxels.get(voxelId);
+            this.oldVoxelTexture = voxel.getTexture();
+            if (newTextureId != -1) { // otherwise unset texture
+                if (oldVoxelTexture == null || voxelSide == null) {
+                    newVoxelTexture = new int[] {
+                            newTextureId, newTextureId, newTextureId,
+                            newTextureId, newTextureId, newTextureId
+                    };
+                } else {
+                    newVoxelTexture = oldVoxelTexture.clone();
+                    newVoxelTexture[voxelSide] = newTextureId;
+                }
+            } else {
+                newVoxelTexture = null;
+            }
+            // what is effected
+            effected = new int[][]{voxel.getPosAsInt()};
         }
 
         @Override
         protected void applyAction() {
-            if (isFirstCall()) {
-                Voxel voxel = dataContainer.voxels.get(voxelId);
-                historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, true));
-                int[] voxelTexture = null;
-                if (newTextureId != -1) { // otherwise unset texture
-                    voxelTexture = voxel.getTexture();
-                    if (voxelTexture == null || voxelSide == null) {
-                        voxelTexture = new int[] {
-                                newTextureId, newTextureId, newTextureId,
-                                newTextureId, newTextureId, newTextureId
-                        };
-                    } else {
-                        voxelTexture[voxelSide] = newTextureId;
-                    }
-                }
-                historyManagerV.applyIntent(new AddVoxelIntent(voxelId, voxel.getPosAsInt(),
-                        voxel.getColor(), voxel.isSelected(), voxelTexture, voxel.getLayerId(), true));
-
-                // what is effected
-                effected = new int[][]{voxel.getPosAsInt()};
-            }
+            voxel.setTexture(newVoxelTexture);
         }
 
         @Override
         protected void unapplyAction() {
-            // nothing to do here
+            voxel.setTexture(oldVoxelTexture);
         }
 
         private int[][] effected = null;
@@ -1353,16 +1272,16 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 for (int i = 0; i < voxels.length; i++) {
                     Voxel voxel = voxels[i];
                     int[] pos = voxel.getPosAsInt();
-                    effected[i] = voxel.getPosAsInt().clone(); // what is effected
+                    effected[i] = voxel.getPosAsInt(); // what is effected
                     pos[0] -= shift[0];
                     pos[1] -= shift[1];
                     pos[2] -= shift[2];
                     effected[i + voxels.length] = pos.clone(); // what is effected
                     shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.isSelected(), voxel.getTexture(), voxel.getLayerId());
                     // remove existing voxels in this layer
-                    Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
-                    for (Voxel remVoxel : result) {
-                        historyManagerV.applyIntent(new RemoveVoxelIntent(remVoxel.id, true));
+                    Voxel result = dataContainer.layers.get(voxel.getLayerId()).search(pos);
+                    if (result != null) {
+                        historyManagerV.applyIntent(new RemoveVoxelIntent(result.id, true));
                     }
                 }
                 // (re)add all the shifted voxels (null ~ the voxel layer id is used)
@@ -1408,17 +1327,17 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 Integer[] voxelIds = new Integer[voxels.length];
                 for (int i = 0; i < voxels.length; i++) {
                     voxelIds[i] = voxels[i].id;
-                    int[] pos = voxels[i].getPosAsInt();
+                    Voxel voxel = voxels[i];
                     if (centerMin == null) {
-                        centerMin = pos.clone();
-                        centerMax = pos.clone();
+                        centerMin = voxel.getPosAsInt();
+                        centerMax = voxel.getPosAsInt();
                     }
-                    centerMin[0] = Math.min(centerMin[0],pos[0]);
-                    centerMin[1] = Math.min(centerMin[1],pos[1]);
-                    centerMin[2] = Math.min(centerMin[2],pos[2]);
-                    centerMax[0] = Math.max(centerMax[0],pos[0]);
-                    centerMax[1] = Math.max(centerMax[1],pos[1]);
-                    centerMax[2] = Math.max(centerMax[2],pos[2]);
+                    centerMin[0] = Math.min(centerMin[0],voxel.x);
+                    centerMin[1] = Math.min(centerMin[1],voxel.y);
+                    centerMin[2] = Math.min(centerMin[2],voxel.z);
+                    centerMax[0] = Math.max(centerMax[0],voxel.x);
+                    centerMax[1] = Math.max(centerMax[1],voxel.y);
+                    centerMax[2] = Math.max(centerMax[2],voxel.z);
                 }
                 // calculate center - note: voxels.length must not be zero
                 assert centerMin != null;
@@ -1443,6 +1362,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                         rot1 = 1;
                         rot2 = 2;
                         break;
+                    default: break;
                 }
 
                 // remove all voxels
@@ -1454,7 +1374,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 for (int i = 0; i < voxels.length; i++) {
                     Voxel voxel = voxels[i];
                     int[] pos = voxel.getPosAsInt();
-                    effected[i] = voxel.getPosAsInt().clone(); // what is effected
+                    effected[i] = voxel.getPosAsInt(); // what is effected
 
                     // rotate the point around the center
                     // todo check for duplicates (overlaps when rotating)
@@ -1467,9 +1387,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     effected[i + voxels.length] = pos.clone(); // what is effected
                     shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.isSelected(), voxel.getTexture(), voxel.getLayerId());
                     // remove existing voxels in this layer
-                    Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
-                    for (Voxel remVoxel : result) {
-                        historyManagerV.applyIntent(new RemoveVoxelIntent(remVoxel.id, true));
+                    Voxel result = dataContainer.layers.get(voxel.getLayerId()).search(pos);
+                    if (result != null) {
+                        historyManagerV.applyIntent(new RemoveVoxelIntent(result.id, true));
                     }
                 }
                 // (re)add all the rotated voxels (null ~ the voxel layer id is used)
@@ -1512,17 +1432,17 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 Integer[] voxelIds = new Integer[voxels.length];
                 for (int i = 0; i < voxels.length; i++) {
                     voxelIds[i] = voxels[i].id;
-                    int[] pos = voxels[i].getPosAsInt();
+                    Voxel voxel = voxels[i];
                     if (centerMin == null) {
-                        centerMin = pos.clone();
-                        centerMax = pos.clone();
+                        centerMin = voxel.getPosAsInt();
+                        centerMax = voxel.getPosAsInt();
                     }
-                    centerMin[0] = Math.min(centerMin[0],pos[0]);
-                    centerMin[1] = Math.min(centerMin[1],pos[1]);
-                    centerMin[2] = Math.min(centerMin[2],pos[2]);
-                    centerMax[0] = Math.max(centerMax[0],pos[0]);
-                    centerMax[1] = Math.max(centerMax[1],pos[1]);
-                    centerMax[2] = Math.max(centerMax[2],pos[2]);
+                    centerMin[0] = Math.min(centerMin[0],voxel.x);
+                    centerMin[1] = Math.min(centerMin[1],voxel.y);
+                    centerMin[2] = Math.min(centerMin[2],voxel.z);
+                    centerMax[0] = Math.max(centerMax[0],voxel.x);
+                    centerMax[1] = Math.max(centerMax[1],voxel.y);
+                    centerMax[2] = Math.max(centerMax[2],voxel.z);
                 }
                 // calculate center - note: voxels.length must not be zero
                 assert centerMin != null;
@@ -1541,7 +1461,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 for (int i = 0; i < voxels.length; i++) {
                     Voxel voxel = voxels[i];
                     int[] pos = voxel.getPosAsInt();
-                    effected[i] = voxel.getPosAsInt().clone(); // what is effected
+                    effected[i] = voxel.getPosAsInt(); // what is effected
 
                     // switch the point with the center
                     pos[axe] = Math.round(- pos[axe] + 2*center[axe]);
@@ -1549,9 +1469,9 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     effected[i + voxels.length] = pos.clone(); // what is effected
                     shiftedVoxels[i] = new Voxel(voxel.id, pos, voxel.getColor(), voxel.isSelected(), voxel.getTexture(), voxel.getLayerId());
                     // remove existing voxels in this layer
-                    Voxel[] result = dataContainer.layers.get(voxel.getLayerId()).search(pos, 0);
-                    for (Voxel remVoxel : result) {
-                        historyManagerV.applyIntent(new RemoveVoxelIntent(remVoxel.id, true));
+                    Voxel result = dataContainer.layers.get(voxel.getLayerId()).search(pos);
+                    if (result != null) {
+                        historyManagerV.applyIntent(new RemoveVoxelIntent(result.id, true));
                     }
                 }
                 // (re)add all the rotated voxels (null ~ the voxel layer id is used)
@@ -1605,257 +1525,268 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     @Override
     public final int addVoxelDirect(Color color, int[] pos) {
-        int result = -1;
-        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
-        if (layer != null && layer.voxelPositionFree(pos)) {
-            result = getFreeVoxelId();
-            Voxel voxel = new Voxel(result, pos, color, false, null, dataContainer.selectedLayer);
-            dataContainer.voxels.put(voxel.id, voxel);
-            dataContainer.layers.get(voxel.getLayerId()).addVoxel(voxel);
+        synchronized (VitcoSettings.SYNC) {
+            int result = -1;
+            VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+            if (layer != null && layer.voxelPositionFree(pos)) {
+                result = getFreeVoxelId();
+                Voxel voxel = new Voxel(result, pos, color, false, null, dataContainer.selectedLayer);
+                dataContainer.voxels.put(voxel.id, voxel);
+                dataContainer.layers.get(voxel.getLayerId()).addVoxel(voxel);
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final int addVoxel(Color color, int[] textureId, int[] pos) {
-        int result = -1;
-        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
-        if (layer != null && layer.getSize() < VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER && layer.voxelPositionFree(pos)) {
-            result = getFreeVoxelId();
-            historyManagerV.applyIntent(new AddVoxelIntent(result, pos, color, false, textureId, dataContainer.selectedLayer, false));
+        synchronized (VitcoSettings.SYNC) {
+            int result = -1;
+            VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+            if (layer != null && layer.getSize() < VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER && layer.voxelPositionFree(pos)) {
+                result = getFreeVoxelId();
+                historyManagerV.applyIntent(new AddVoxelIntent(result, pos, color, false, textureId, dataContainer.selectedLayer, false));
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean massAddVoxel(Voxel[] voxels) {
-        boolean result = false;
-        VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
-        if (layer != null) {
-            ArrayList<Voxel> validVoxel = new ArrayList<Voxel>();
-            ArrayList<String> voxelPos = new ArrayList<String>();
-            for (Voxel voxel : voxels) {
-                String posHash = voxel.getPosAsString();
-                if (layer.voxelPositionFree(voxel.getPosAsInt())
-                        && !voxelPos.contains(posHash)) {
-                    validVoxel.add(voxel);
-                    voxelPos.add(posHash);
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+            if (layer != null) {
+                ArrayList<Voxel> validVoxel = new ArrayList<Voxel>();
+                ArrayList<String> voxelPos = new ArrayList<String>();
+                for (Voxel voxel : voxels) {
+                    String posHash = voxel.getPosAsString();
+                    if (layer.voxelPositionFree(voxel)
+                            && !voxelPos.contains(posHash)) {
+                        validVoxel.add(voxel);
+                        voxelPos.add(posHash);
+                    }
+                }
+                if (validVoxel.size() > 0 && layer.getSize() + validVoxel.size() <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
+                    Voxel[] valid = new Voxel[validVoxel.size()];
+                    validVoxel.toArray(valid);
+                    historyManagerV.applyIntent(new MassAddVoxelIntent(valid, layer.id, false));
+                    result = true;
                 }
             }
-            if (validVoxel.size() > 0 && layer.getSize() + validVoxel.size() <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
-                Voxel[] valid = new Voxel[validVoxel.size()];
-                validVoxel.toArray(valid);
-                historyManagerV.applyIntent(new MassAddVoxelIntent(valid, layer.id, false));
-                result = true;
-            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean removeVoxel(int voxelId) {
-        boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId)) {
-            historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                historyManagerV.applyIntent(new RemoveVoxelIntent(voxelId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean massRemoveVoxel(Integer[] voxelIds) {
-        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
-        for (int voxelId : voxelIds) {
-            if (dataContainer.voxels.containsKey(voxelId)) {
-                validVoxel.add(voxelId);
+        synchronized (VitcoSettings.SYNC) {
+            ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+            for (int voxelId : voxelIds) {
+                if (dataContainer.voxels.containsKey(voxelId)) {
+                    validVoxel.add(voxelId);
+                }
             }
-        }
-        if (validVoxel.size() > 0) {
-            Integer[] valid = new Integer[validVoxel.size()];
-            validVoxel.toArray(valid);
-            historyManagerV.applyIntent(new MassRemoveVoxelIntent(valid, false));
-            return true;
-        } else {
-            return false;
+            if (validVoxel.size() > 0) {
+                Integer[] valid = new Integer[validVoxel.size()];
+                validVoxel.toArray(valid);
+                historyManagerV.applyIntent(new MassRemoveVoxelIntent(valid, false));
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     @Override
     public final boolean moveVoxel(int voxelId, int[] newPos) {
-        boolean result = false;
-        Voxel voxel = dataContainer.voxels.get(voxelId);
-        if (voxel != null) {
-            historyManagerV.applyIntent(new MoveVoxelIntent(voxel.id, newPos, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            Voxel voxel = dataContainer.voxels.get(voxelId);
+            if (voxel != null) {
+                historyManagerV.applyIntent(new MoveVoxelIntent(voxel.id, newPos, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean massMoveVoxel(Voxel[] voxel, int[] shift) {
-        boolean result = false;
-        if (voxel.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
-            historyManagerV.applyIntent(new MassMoveVoxelIntent(voxel, shift.clone(), false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (voxel.length > 0 && (shift[0] != 0 || shift[1] != 0 || shift[2] != 0)) {
+                historyManagerV.applyIntent(new MassMoveVoxelIntent(voxel, shift.clone(), false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     // rotate voxel around their center (but not the voxel "texture" itself)
     @Override
     public final boolean rotateVoxelCenter(Voxel[] voxel, int axe, float degree) {
-        boolean result = false;
-        if (voxel.length > 0 && degree/360 != 0 && axe <= 2 && axe >= 0) {
-            historyManagerV.applyIntent(new VoxelData.RotateVoxelCenterIntent(voxel, axe, degree, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (voxel.length > 0 && degree/360 != 0 && axe <= 2 && axe >= 0) {
+                historyManagerV.applyIntent(new VoxelData.RotateVoxelCenterIntent(voxel, axe, degree, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean mirrorVoxel(Voxel[] voxel, int axe) {
-        boolean result = false;
-        if (voxel.length > 0 && axe <= 2 && axe >= 0) {
-            historyManagerV.applyIntent(new MirrorVoxelIntent(voxel, axe, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (voxel.length > 0 && axe <= 2 && axe >= 0) {
+                historyManagerV.applyIntent(new MirrorVoxelIntent(voxel, axe, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final Voxel getVoxel(int voxelId) {
-        Voxel result = null;
-        if (dataContainer.voxels.containsKey(voxelId)) {
-            result = dataContainer.voxels.get(voxelId);
+        synchronized (VitcoSettings.SYNC) {
+            Voxel result = null;
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                result = dataContainer.voxels.get(voxelId);
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean setColor(int voxelId, Color color) {
-        boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId) &&
-                (!dataContainer.voxels.get(voxelId).getColor().equals(color) ||
-                        dataContainer.voxels.get(voxelId).getTexture() != null)) {
-            historyManagerV.applyIntent(new ColorVoxelIntent(voxelId, color, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.voxels.containsKey(voxelId) &&
+                    (!dataContainer.voxels.get(voxelId).getColor().equals(color) ||
+                            dataContainer.voxels.get(voxelId).getTexture() != null)) {
+                historyManagerV.applyIntent(new ColorVoxelIntent(voxelId, color, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean massSetColor(Integer[] voxelIds, Color color) {
-        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
-        for (int voxelId : voxelIds) {
-            if (dataContainer.voxels.containsKey(voxelId)) {
-                validVoxel.add(voxelId);
+        synchronized (VitcoSettings.SYNC) {
+            ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+            for (int voxelId : voxelIds) {
+                if (dataContainer.voxels.containsKey(voxelId)) {
+                    validVoxel.add(voxelId);
+                }
             }
-        }
-        if (validVoxel.size() > 0) {
-            Integer[] valid = new Integer[validVoxel.size()];
-            validVoxel.toArray(valid);
-            historyManagerV.applyIntent(new MassColorVoxelIntent(valid, color, false));
-            return true;
-        } else {
-            return false;
+            if (validVoxel.size() > 0) {
+                Integer[] valid = new Integer[validVoxel.size()];
+                validVoxel.toArray(valid);
+                historyManagerV.applyIntent(new MassColorVoxelIntent(valid, color, false));
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     @Override
     public final Color getColor(int voxelId) {
-        Color result = null;
-        if (dataContainer.voxels.containsKey(voxelId)) {
-            result = dataContainer.voxels.get(voxelId).getColor();
+        synchronized (VitcoSettings.SYNC) {
+            Color result = null;
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                result = dataContainer.voxels.get(voxelId).getColor();
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean setAlpha(int voxelId, int alpha) {
-        boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).getAlpha() != alpha) {
-            historyManagerV.applyIntent(new AlphaVoxelIntent(voxelId, alpha, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).getAlpha() != alpha) {
+                historyManagerV.applyIntent(new AlphaVoxelIntent(voxelId, alpha, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final int getAlpha(int voxelId) {
-        int result = -1;
-        if (dataContainer.voxels.containsKey(voxelId)) {
-            result = dataContainer.voxels.get(voxelId).getAlpha();
+        synchronized (VitcoSettings.SYNC) {
+            int result = -1;
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                result = dataContainer.voxels.get(voxelId).getAlpha();
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final int getLayer(int voxelId) {
-        int result = -1;
-        if (dataContainer.voxels.containsKey(voxelId)) {
-            result = dataContainer.voxels.get(voxelId).getLayerId();
-        }
-        return result;
-    }
-
-    @Override
-    public final boolean clearRange(int[] center, int rad) {
-        boolean result = false;
-        if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
-            if (dataContainer.layers.get(dataContainer.selectedLayer).search(center, rad).length > 0) {
-                historyManagerV.applyIntent(new ClearVoxelRangeIntent(center, rad, dataContainer.selectedLayer, false));
-                result = true;
+        synchronized (VitcoSettings.SYNC) {
+            int result = -1;
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                result = dataContainer.voxels.get(voxelId).getLayerId();
             }
+            return result;
         }
-        return result;
-    }
-
-    @Override
-    public final boolean fillRange(int[] center, int rad, Color color) {
-        boolean result = false;
-        if (dataContainer.layers.containsKey(dataContainer.selectedLayer)) {
-            if (dataContainer.layers.get(dataContainer.selectedLayer).search(center, rad).length < Math.pow(rad*2 + 1, 3)) { // if there are still free voxels
-                historyManagerV.applyIntent(new FillVoxelRangeIntent(center, rad, dataContainer.selectedLayer, color, false));
-                result = true;
-            }
-        }
-        return result;
     }
 
     @Override
     public final boolean clearV(int layerId) {
-        boolean result = false;
-        if (dataContainer.layers.containsKey(layerId)) {
-            if (dataContainer.layers.get(layerId).getSize() > 0) {
-                historyManagerV.applyIntent(new ClearVoxelIntent(layerId, false));
-                result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.layers.containsKey(layerId)) {
+                if (dataContainer.layers.get(layerId).getSize() > 0) {
+                    historyManagerV.applyIntent(new ClearVoxelIntent(layerId, false));
+                    result = true;
+                }
             }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer) {
-        Voxel[] result;
-        if (onlyCurrentLayer) { // search only the current layers
-            VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
-            if (layer != null && layer.isVisible()) {
-                result = layer.search(pos, 0);
-                if (result.length > 0) {
-                    return result[0];
+        synchronized (VitcoSettings.SYNC) {
+            if (onlyCurrentLayer) { // search only the current layers
+                VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
+                if (layer != null && layer.isVisible()) {
+                    Voxel result = layer.search(pos);
+                    if (result != null) {
+                        return result;
+                    }
                 }
-            }
-        } else { // search all layers in correct order
-            for (Integer layerId : dataContainer.layerOrder) {
-                if (dataContainer.layers.get(layerId).isVisible()) {
-                    result = dataContainer.layers.get(layerId).search(pos, 0);
-                    if (result.length > 0) {
-                        return result[0];
+            } else { // search all layers in correct order
+                for (Integer layerId : dataContainer.layerOrder) {
+                    if (dataContainer.layers.get(layerId).isVisible()) {
+                        Voxel result = dataContainer.layers.get(layerId).search(pos);
+                        if (result != null) {
+                            return result;
+                        }
                     }
                 }
             }
+            return null;
         }
-        return null;
     }
 
     // ================================ selection of voxels
@@ -1863,95 +1794,107 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     // select a voxel
     @Override
     public final boolean setVoxelSelected(int voxelId, boolean selected) {
-        boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
-            historyManagerV.applyIntent(new SelectVoxelIntent(voxelId, selected, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
+                historyManagerV.applyIntent(new SelectVoxelIntent(voxelId, selected, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean isSelected(int voxelId) {
-        return dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected();
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected();
+        }
     }
 
     private final HashMap<String, HashMap<String, int[]>> changedSelectedVoxel = new HashMap<String, HashMap<String, int[]>>();
     @Override
     public final Voxel[][] getNewSelectedVoxel(String requestId) {
-        if (!changedSelectedVoxel.containsKey(requestId)) {
-            changedSelectedVoxel.put(requestId, null);
-        }
-        if (changedSelectedVoxel.get(requestId) == null) {
-            changedSelectedVoxel.put(requestId, new HashMap<String, int[]>());
-            return new Voxel[][] {null, getSelectedVoxels()};
-        } else {
-            ArrayList<Voxel> removed = new ArrayList<Voxel>();
-            ArrayList<Voxel> added = new ArrayList<Voxel>();
-            for (int[] pos : changedSelectedVoxel.get(requestId).values()) {
-                Voxel voxel = searchVoxel(pos, false);
-                if (voxel != null && voxel.isSelected()) {
-                    added.add(voxel);
-                } else {
-                    removed.add(new Voxel(-1, pos, null, false, null, -1));
-                }
+        synchronized (VitcoSettings.SYNC) {
+            if (!changedSelectedVoxel.containsKey(requestId)) {
+                changedSelectedVoxel.put(requestId, null);
             }
-            Voxel[][] result = new Voxel[2][];
-            result[0] = new Voxel[removed.size()];
-            removed.toArray(result[0]);
-            result[1] = new Voxel[added.size()];
-            added.toArray(result[1]);
-            changedSelectedVoxel.get(requestId).clear();
-            return result;
+            if (changedSelectedVoxel.get(requestId) == null) {
+                changedSelectedVoxel.put(requestId, new HashMap<String, int[]>());
+                return new Voxel[][] {null, getSelectedVoxels()};
+            } else {
+                ArrayList<Voxel> removed = new ArrayList<Voxel>();
+                ArrayList<Voxel> added = new ArrayList<Voxel>();
+                for (int[] pos : changedSelectedVoxel.get(requestId).values()) {
+                    Voxel voxel = searchVoxel(pos, false);
+                    if (voxel != null && voxel.isSelected()) {
+                        added.add(voxel);
+                    } else {
+                        removed.add(new Voxel(-1, pos, null, false, null, -1));
+                    }
+                }
+                Voxel[][] result = new Voxel[2][];
+                result[0] = new Voxel[removed.size()];
+                removed.toArray(result[0]);
+                result[1] = new Voxel[added.size()];
+                added.toArray(result[1]);
+                changedSelectedVoxel.get(requestId).clear();
+                return result;
+            }
         }
     }
 
     // get selected visible voxels
     @Override
     public final Voxel[] getSelectedVoxels() {
-        if (!selectedVoxelBufferValid) {
-            // get all presented voxels
-            Voxel voxels[] = _getVisibleLayerVoxel();
-            // filter the selected
-            ArrayList<Voxel> selected = new ArrayList<Voxel>();
-            for (Voxel voxel : voxels) {
-                if (voxel.isSelected()) {
-                    selected.add(voxel);
+        synchronized (VitcoSettings.SYNC) {
+            if (!selectedVoxelBufferValid) {
+                // get all presented voxels
+                Voxel voxels[] = _getVisibleLayerVoxel();
+                // filter the selected
+                ArrayList<Voxel> selected = new ArrayList<Voxel>();
+                for (Voxel voxel : voxels) {
+                    if (voxel.isSelected()) {
+                        selected.add(voxel);
+                    }
                 }
+                selectedVoxelBuffer = new Voxel[selected.size()];
+                selected.toArray(selectedVoxelBuffer);
+                selectedVoxelBufferValid = true;
             }
-            selectedVoxelBuffer = new Voxel[selected.size()];
-            selected.toArray(selectedVoxelBuffer);
-            selectedVoxelBufferValid = true;
+            return selectedVoxelBuffer.clone();
         }
-        return selectedVoxelBuffer.clone();
     }
 
     @Override
     public final boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected) {
-        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
-        for (int voxelId : voxelIds) {
-            if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
-                validVoxel.add(voxelId);
+        synchronized (VitcoSettings.SYNC) {
+            ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+            for (int voxelId : voxelIds) {
+                if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
+                    validVoxel.add(voxelId);
+                }
             }
-        }
-        if (validVoxel.size() > 0) {
-            Integer[] valid = new Integer[validVoxel.size()];
-            validVoxel.toArray(valid);
-            historyManagerV.applyIntent(new MassSelectVoxelIntent(valid, selected, false));
-            return true;
-        } else {
-            return false;
+            if (validVoxel.size() > 0) {
+                Integer[] valid = new Integer[validVoxel.size()];
+                validVoxel.toArray(valid);
+                historyManagerV.applyIntent(new MassSelectVoxelIntent(valid, selected, false));
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     @Override
     public final boolean migrateVoxels(Voxel[] voxels) {
-        boolean result = false;
-        if (voxels.length > 0 && voxels.length <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
-            historyManagerV.applyIntent(new MigrateIntent(voxels, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (voxels.length > 0 && voxels.length <= VitcoSettings.MAX_VOXEL_COUNT_PER_LAYER) {
+                historyManagerV.applyIntent(new MigrateIntent(voxels, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
 
@@ -1962,17 +1905,19 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     int layerVoxelBufferLastLayer;
     @Override
     public final Voxel[] getLayerVoxels(int layerId) {
-        if (!layerVoxelBufferValid || layerVoxelBufferLastLayer != layerId) {
-            VoxelLayer layer = dataContainer.layers.get(layerId);
-            if (layer != null) {
-                layerVoxelBuffer = layer.getVoxels();
-            } else {
-                layerVoxelBuffer = new Voxel[0];
+        synchronized (VitcoSettings.SYNC) {
+            if (!layerVoxelBufferValid || layerVoxelBufferLastLayer != layerId) {
+                VoxelLayer layer = dataContainer.layers.get(layerId);
+                if (layer != null) {
+                    layerVoxelBuffer = layer.getVoxels();
+                } else {
+                    layerVoxelBuffer = new Voxel[0];
+                }
+                layerVoxelBufferValid = true;
+                layerVoxelBufferLastLayer = layerId;
             }
-            layerVoxelBufferValid = true;
-            layerVoxelBufferLastLayer = layerId;
+            return layerVoxelBuffer.clone();
         }
-        return layerVoxelBuffer.clone();
     }
 
     // get the new visible voxels, NOTE: if first element of array is null
@@ -1980,30 +1925,32 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     private final HashMap<String, HashMap<String, int[]>> changedVisibleVoxel = new HashMap<String, HashMap<String, int[]>>();
     @Override
     public final Voxel[][] getNewVisibleLayerVoxel(String requestId) {
-        if (!changedVisibleVoxel.containsKey(requestId)) {
-            changedVisibleVoxel.put(requestId, null);
-        }
-        if (changedVisibleVoxel.get(requestId) == null) {
-            changedVisibleVoxel.put(requestId, new HashMap<String, int[]>());
-            return new Voxel[][] {null, _getVisibleLayerVoxel()};
-        } else {
-            ArrayList<Voxel> removed = new ArrayList<Voxel>();
-            ArrayList<Voxel> added = new ArrayList<Voxel>();
-            for (int[] pos : changedVisibleVoxel.get(requestId).values()) {
-                Voxel voxel = searchVoxel(pos, false);
-                if (voxel != null) {
-                    added.add(voxel);
-                } else {
-                    removed.add(new Voxel(-1, pos, null, false, null, -1));
-                }
+        synchronized (VitcoSettings.SYNC) {
+            if (!changedVisibleVoxel.containsKey(requestId)) {
+                changedVisibleVoxel.put(requestId, null);
             }
-            Voxel[][] result = new Voxel[2][];
-            result[0] = new Voxel[removed.size()];
-            removed.toArray(result[0]);
-            result[1] = new Voxel[added.size()];
-            added.toArray(result[1]);
-            changedVisibleVoxel.get(requestId).clear();
-            return result;
+            if (changedVisibleVoxel.get(requestId) == null) {
+                changedVisibleVoxel.put(requestId, new HashMap<String, int[]>());
+                return new Voxel[][] {null, _getVisibleLayerVoxel()};
+            } else {
+                ArrayList<Voxel> removed = new ArrayList<Voxel>();
+                ArrayList<Voxel> added = new ArrayList<Voxel>();
+                for (int[] pos : changedVisibleVoxel.get(requestId).values()) {
+                    Voxel voxel = searchVoxel(pos, false);
+                    if (voxel != null) {
+                        added.add(voxel);
+                    } else {
+                        removed.add(new Voxel(-1, pos, null, false, null, -1));
+                    }
+                }
+                Voxel[][] result = new Voxel[2][];
+                result[0] = new Voxel[removed.size()];
+                removed.toArray(result[0]);
+                result[1] = new Voxel[added.size()];
+                added.toArray(result[1]);
+                changedVisibleVoxel.get(requestId).clear();
+                return result;
+            }
         }
     }
 
@@ -2017,7 +1964,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 if (dataContainer.layers.get(layerId).isVisible()) {
                     Voxel[] voxels = dataContainer.layers.get(layerId).getVoxels();
                     for (Voxel voxel : voxels) {
-                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
+                        if (result.voxelPositionFree(voxel)) {
                             result.addVoxel(voxel);
                         }
                     }
@@ -2032,8 +1979,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     // returns visible voxels
     @Override
     public final Voxel[] getVisibleLayerVoxel() {
-        updateVisVoxTreeInternal();
-        return visibleLayerVoxelBuffer;
+        synchronized (VitcoSettings.SYNC) {
+            updateVisVoxTreeInternal();
+            return visibleLayerVoxelBuffer;
+        }
     }
 
     // helper to update buffers for visible voxels
@@ -2060,26 +2009,42 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
-    // true iff any voxels visible
+    // true iff any voxel are visible
     @Override
     public final boolean anyLayerVoxelVisible() {
-        updateVisVoxTreeInternal();
-        return anyVoxelsVisibleBuffer;
+        synchronized (VitcoSettings.SYNC) {
+            updateVisVoxTreeInternal();
+            return anyVoxelsVisibleBuffer;
+        }
+    }
+
+    // true iff any voxel are selected
+    @Override
+    public final boolean anyVoxelSelected() {
+        synchronized (VitcoSettings.SYNC) {
+            if (!selectedVoxelBufferValid) {
+                return getSelectedVoxels().length > 0;
+            } else {
+                return selectedVoxelBuffer.length > 0;
+            }
+        }
     }
 
     // to invalidate the side view buffer
     @Override
     public final void invalidateSideViewBuffer(String requestId, Integer side, Integer plane) {
-        // make sure this plane is set
-        if (!changedVisibleVoxelPlane.containsKey(side)) {
-            changedVisibleVoxelPlane.put(side, new HashMap<String, HashMap<Integer, HashMap<String, int[]>>>());
+        synchronized (VitcoSettings.SYNC) {
+            // make sure this plane is set
+            if (!changedVisibleVoxelPlane.containsKey(side)) {
+                changedVisibleVoxelPlane.put(side, new HashMap<String, HashMap<Integer, HashMap<String, int[]>>>());
+            }
+            // make sure the requestId is set
+            if (!changedVisibleVoxelPlane.get(side).containsKey(requestId)) {
+                changedVisibleVoxelPlane.get(side).put(requestId, new HashMap<Integer, HashMap<String, int[]>>());
+            }
+            // make sure this plane has no information stored (force complete refresh)
+            changedVisibleVoxelPlane.get(side).get(requestId).remove(plane);
         }
-        // make sure the requestId is set
-        if (!changedVisibleVoxelPlane.get(side).containsKey(requestId)) {
-            changedVisibleVoxelPlane.get(side).put(requestId, new HashMap<Integer, HashMap<String, int[]>>());
-        }
-        // make sure this plane has no information stored (force complete refresh)
-        changedVisibleVoxelPlane.get(side).get(requestId).remove(plane);
     }
 
     // side -> requestId -> plane -> positions
@@ -2087,54 +2052,57 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             = new HashMap<Integer, HashMap<String, HashMap<Integer, HashMap<String, int[]>>>>();
     @Override
     public final Voxel[][] getNewSideVoxel(String requestId, Integer side, Integer plane) {
-        // default result (delete all + empty)
-        Voxel[][] result = new Voxel[][]{null, new Voxel[0]};
-        // make sure this plane is set
-        if (!changedVisibleVoxelPlane.containsKey(side)) {
-            changedVisibleVoxelPlane.put(side, new HashMap<String, HashMap<Integer, HashMap<String, int[]>>>());
-        }
-        // make sure the requestId is set
-        if (!changedVisibleVoxelPlane.get(side).containsKey(requestId)) {
-            changedVisibleVoxelPlane.get(side).put(requestId, new HashMap<Integer, HashMap<String, int[]>>());
-        }
+        synchronized (VitcoSettings.SYNC) {
+            // default result (delete all + empty)
+            Voxel[][] result = new Voxel[][]{null, new Voxel[0]};
+            // make sure this plane is set
+            if (!changedVisibleVoxelPlane.containsKey(side)) {
+                changedVisibleVoxelPlane.put(side, new HashMap<String, HashMap<Integer, HashMap<String, int[]>>>());
+            }
+            // make sure the requestId is set
+            if (!changedVisibleVoxelPlane.get(side).containsKey(requestId)) {
+                changedVisibleVoxelPlane.get(side).put(requestId, new HashMap<Integer, HashMap<String, int[]>>());
+            }
 
-        if (changedVisibleVoxelPlane.get(side).get(requestId).get(plane) == null) {
-            // if the plane is null, fetch all data and set it no empty
-            switch (side) {
-                case 0:
-                    result = new Voxel[][] {null, getVoxelsXY(plane)};
-                    break;
-                case 1:
-                    result = new Voxel[][] {null, getVoxelsXZ(plane)};
-                    break;
-                case 2:
-                    result = new Voxel[][] {null, getVoxelsYZ(plane)};
-                    break;
-            }
-            // reset
-            changedVisibleVoxelPlane.get(side).get(requestId).put(plane, new HashMap<String, int[]>());
-        } else {
-            // if there are changed positions, notify only those positions
-            ArrayList<Voxel> removed = new ArrayList<Voxel>();
-            ArrayList<Voxel> added = new ArrayList<Voxel>();
-            for (int[] pos : changedVisibleVoxelPlane.get(side).get(requestId).get(plane).values()) {
-                Voxel voxel = searchVoxel(pos, false);
-                if (voxel != null) {
-                    added.add(voxel);
-                } else {
-                    removed.add(new Voxel(-1, pos, null, false, null, -1));
+            if (changedVisibleVoxelPlane.get(side).get(requestId).get(plane) == null) {
+                // if the plane is null, fetch all data and set it no empty
+                switch (side) {
+                    case 0:
+                        result = new Voxel[][] {null, getVoxelsXY(plane)};
+                        break;
+                    case 1:
+                        result = new Voxel[][] {null, getVoxelsXZ(plane)};
+                        break;
+                    case 2:
+                        result = new Voxel[][] {null, getVoxelsYZ(plane)};
+                        break;
+                    default: break;
                 }
+                // reset
+                changedVisibleVoxelPlane.get(side).get(requestId).put(plane, new HashMap<String, int[]>());
+            } else {
+                // if there are changed positions, notify only those positions
+                ArrayList<Voxel> removed = new ArrayList<Voxel>();
+                ArrayList<Voxel> added = new ArrayList<Voxel>();
+                for (int[] pos : changedVisibleVoxelPlane.get(side).get(requestId).get(plane).values()) {
+                    Voxel voxel = searchVoxel(pos, false);
+                    if (voxel != null) {
+                        added.add(voxel);
+                    } else {
+                        removed.add(new Voxel(-1, pos, null, false, null, -1));
+                    }
+                }
+                result = new Voxel[2][];
+                result[0] = new Voxel[removed.size()];
+                removed.toArray(result[0]);
+                result[1] = new Voxel[added.size()];
+                added.toArray(result[1]);
+                // these changes have now been forwarded
+                changedVisibleVoxelPlane.get(side).get(requestId).get(plane).clear();
             }
-            result = new Voxel[2][];
-            result[0] = new Voxel[removed.size()];
-            removed.toArray(result[0]);
-            result[1] = new Voxel[added.size()];
-            added.toArray(result[1]);
-            // these changes have now been forwarded
-            changedVisibleVoxelPlane.get(side).get(requestId).get(plane).clear();
+            // return the result
+            return result;
         }
-        // return the result
-        return result;
     }
 
     int lastVoxelXYBufferZValue;
@@ -2142,26 +2110,26 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     Voxel[] layerVoxelXYBuffer = new Voxel[0];
     @Override
     public final Voxel[] getVoxelsXY(int z) {
-        if (!layerVoxelXYBufferValid || z != lastVoxelXYBufferZValue) {
+        synchronized (VitcoSettings.SYNC) {
+            if (!layerVoxelXYBufferValid || z != lastVoxelXYBufferZValue) {
 
-            VoxelLayer result = new VoxelLayer(-1, "tmp");
-            for (Integer layerId : dataContainer.layerOrder) {
-                if (dataContainer.layers.get(layerId).isVisible()) {
-                    Voxel[] voxels = dataContainer.layers.get(layerId).search(
-                        new float[] {Integer.MIN_VALUE/2, Integer.MIN_VALUE/2, z},
-                        new float[] {Integer.MAX_VALUE, Integer.MAX_VALUE, 0});
-                    for (Voxel voxel : voxels) {
-                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
-                            result.addVoxel(voxel);
+                VoxelLayer result = new VoxelLayer(-1, "tmp");
+                for (Integer layerId : dataContainer.layerOrder) {
+                    if (dataContainer.layers.get(layerId).isVisible()) {
+                        Voxel[] voxels = dataContainer.layers.get(layerId).getZPlane(z);
+                        for (Voxel voxel : voxels) {
+                            if (result.voxelPositionFree(voxel)) {
+                                result.addVoxel(voxel);
+                            }
                         }
                     }
                 }
+                layerVoxelXYBuffer = result.getVoxels();
+                layerVoxelXYBufferValid = true;
+                lastVoxelXYBufferZValue = z;
             }
-            layerVoxelXYBuffer = result.getVoxels();
-            layerVoxelXYBufferValid = true;
-            lastVoxelXYBufferZValue = z;
+            return layerVoxelXYBuffer.clone();
         }
-        return layerVoxelXYBuffer.clone();
     }
 
     int lastVoxelXZBufferYValue;
@@ -2169,26 +2137,26 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     Voxel[] layerVoxelXZBuffer = new Voxel[0];
     @Override
     public final Voxel[] getVoxelsXZ(int y) {
-        if (!layerVoxelXZBufferValid || y != lastVoxelXZBufferYValue) {
+        synchronized (VitcoSettings.SYNC) {
+            if (!layerVoxelXZBufferValid || y != lastVoxelXZBufferYValue) {
 
-            VoxelLayer result = new VoxelLayer(-1, "tmp");
-            for (Integer layerId : dataContainer.layerOrder) {
-                if (dataContainer.layers.get(layerId).isVisible()) {
-                    Voxel[] voxels = dataContainer.layers.get(layerId).search(
-                        new float[] {Integer.MIN_VALUE/2, y, Integer.MIN_VALUE/2},
-                        new float[] {Integer.MAX_VALUE, 0, Integer.MAX_VALUE});
-                    for (Voxel voxel : voxels) {
-                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
-                            result.addVoxel(voxel);
+                VoxelLayer result = new VoxelLayer(-1, "tmp");
+                for (Integer layerId : dataContainer.layerOrder) {
+                    if (dataContainer.layers.get(layerId).isVisible()) {
+                        Voxel[] voxels = dataContainer.layers.get(layerId).getYPlane(y);
+                        for (Voxel voxel : voxels) {
+                            if (result.voxelPositionFree(voxel)) {
+                                result.addVoxel(voxel);
+                            }
                         }
                     }
                 }
+                layerVoxelXZBuffer = result.getVoxels();
+                layerVoxelXZBufferValid = true;
+                lastVoxelXZBufferYValue = y;
             }
-            layerVoxelXZBuffer = result.getVoxels();
-            layerVoxelXZBufferValid = true;
-            lastVoxelXZBufferYValue = y;
+            return layerVoxelXZBuffer.clone();
         }
-        return layerVoxelXZBuffer.clone();
     }
 
     int lastVoxelYZBufferXValue;
@@ -2196,428 +2164,502 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     Voxel[] layerVoxelYZBuffer = new Voxel[0];
     @Override
     public final Voxel[] getVoxelsYZ(int x) {
-        if (!layerVoxelYZBufferValid || x != lastVoxelYZBufferXValue) {
+        synchronized (VitcoSettings.SYNC) {
+            if (!layerVoxelYZBufferValid || x != lastVoxelYZBufferXValue) {
 
-            VoxelLayer result = new VoxelLayer(-1, "tmp");
-            for (Integer layerId : dataContainer.layerOrder) {
-                if (dataContainer.layers.get(layerId).isVisible()) {
-                    Voxel[] voxels = dataContainer.layers.get(layerId).search(
-                            new float[] {x, Integer.MIN_VALUE/2, Integer.MIN_VALUE/2},
-                            new float[] {0, Integer.MAX_VALUE, Integer.MAX_VALUE});
-                    for (Voxel voxel : voxels) {
-                        if (result.voxelPositionFree(voxel.getPosAsInt())) {
-                            result.addVoxel(voxel);
+                VoxelLayer result = new VoxelLayer(-1, "tmp");
+                for (Integer layerId : dataContainer.layerOrder) {
+                    if (dataContainer.layers.get(layerId).isVisible()) {
+                        Voxel[] voxels = dataContainer.layers.get(layerId).getXPlane(x);
+                        for (Voxel voxel : voxels) {
+                            if (result.voxelPositionFree(voxel)) {
+                                result.addVoxel(voxel);
+                            }
                         }
                     }
                 }
+                layerVoxelYZBuffer = result.getVoxels();
+                layerVoxelYZBufferValid = true;
+                lastVoxelYZBufferXValue = x;
             }
-            layerVoxelYZBuffer = result.getVoxels();
-            layerVoxelYZBufferValid = true;
-            lastVoxelYZBufferXValue = x;
+            return layerVoxelYZBuffer.clone();
         }
-        return layerVoxelYZBuffer.clone();
     }
 
     @Override
     public final int getVoxelCount(int layerId) {
-        int result = 0;
-        if (dataContainer.layers.containsKey(layerId)) {
-            result = dataContainer.layers.get(layerId).getSize();
+        synchronized (VitcoSettings.SYNC) {
+            int result = 0;
+            if (dataContainer.layers.containsKey(layerId)) {
+                result = dataContainer.layers.get(layerId).getSize();
+            }
+            return result;
         }
-        return result;
     }
 
     // ==================================
 
     @Override
     public final void undoV() {
-        historyManagerV.unapply();
+        synchronized (VitcoSettings.SYNC) {
+            historyManagerV.unapply();
+        }
     }
 
     @Override
     public final void redoV() {
-        historyManagerV.apply();
+        synchronized (VitcoSettings.SYNC) {
+            historyManagerV.apply();
+        }
     }
 
     @Override
     public final boolean canUndoV() {
-        return historyManagerV.canUndo();
+        synchronized (VitcoSettings.SYNC) {
+            return historyManagerV.canUndo();
+        }
     }
 
     @Override
     public final boolean canRedoV() {
-        return historyManagerV.canRedo();
+        synchronized (VitcoSettings.SYNC) {
+            return historyManagerV.canRedo();
+        }
     }
 
     @Override
     public final int createLayer(String layerName) {
-        int layerId = getFreeLayerId();
-        historyManagerV.applyIntent(new CreateLayerIntent(layerId, layerName, false));
-        return layerId;
+        synchronized (VitcoSettings.SYNC) {
+            int layerId = getFreeLayerId();
+            historyManagerV.applyIntent(new CreateLayerIntent(layerId, layerName, false));
+            return layerId;
+        }
     }
 
     @Override
-    public final boolean deleteLayer(int layerId) {
-        boolean result = false;
-        if (dataContainer.layers.containsKey(layerId)) {
-            historyManagerV.applyIntent(new DeleteLayerIntent(layerId, false));
-            result = true;
+    public  final boolean deleteLayer(int layerId) {
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.layers.containsKey(layerId)) {
+                historyManagerV.applyIntent(new DeleteLayerIntent(layerId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
-    public final boolean renameLayer(int layerId, String newName) {
-        boolean result = false;
-        if (dataContainer.layers.containsKey(layerId) && !newName.equals(dataContainer.layers.get(layerId).getName())) {
-            historyManagerV.applyIntent(new RenameLayerIntent(layerId, newName, false));
-            result = true;
+    public  final boolean renameLayer(int layerId, String newName) {
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.layers.containsKey(layerId) && !newName.equals(dataContainer.layers.get(layerId).getName())) {
+                historyManagerV.applyIntent(new RenameLayerIntent(layerId, newName, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final String getLayerName(int layerId) {
-        return dataContainer.layers.containsKey(layerId) ? dataContainer.layers.get(layerId).getName() : null;
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.layers.containsKey(layerId) ? dataContainer.layers.get(layerId).getName() : null;
+        }
     }
 
     private boolean layerNameBufferValid = false;
     private String[] layerNameBuffer = new String[]{};
     @Override
     public final String[] getLayerNames() {
-        if (!layerNameBufferValid) {
-            if (layerNameBuffer.length != dataContainer.layers.size()) {
-                layerNameBuffer = new String[dataContainer.layers.size()];
+        synchronized (VitcoSettings.SYNC) {
+            if (!layerNameBufferValid) {
+                if (layerNameBuffer.length != dataContainer.layers.size()) {
+                    layerNameBuffer = new String[dataContainer.layers.size()];
+                }
+                int i = 0;
+                for (Integer layerId : dataContainer.layerOrder) {
+                    layerNameBuffer[i++] = getLayerName(layerId);
+                }
+                layerNameBufferValid = true;
             }
-            int i = 0;
-            for (Integer layerId : dataContainer.layerOrder) {
-                layerNameBuffer[i++] = getLayerName(layerId);
-            }
-            layerNameBufferValid = true;
+            return layerNameBuffer.clone();
         }
-        return layerNameBuffer.clone();
     }
 
     @Override
     public final boolean selectLayer(int layerId) {
-        boolean result = false;
-        if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
-            historyManagerV.applyIntent(new SelectLayerIntent(layerId, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
+                historyManagerV.applyIntent(new SelectLayerIntent(layerId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean selectLayerSoft(int layerId) {
-        boolean result = false;
-        if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
-            dataContainer.selectedLayer = layerId;
-            invalidateV(new int[0][]);
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
+                dataContainer.selectedLayer = layerId;
+                invalidateV(new int[0][]);
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final int getSelectedLayer() {
-        // make sure the selected layer is always valid
-        return dataContainer.layers.containsKey(dataContainer.selectedLayer) ? dataContainer.selectedLayer : -1;
+        synchronized (VitcoSettings.SYNC) {
+            // make sure the selected layer is always valid
+            return dataContainer.layers.containsKey(dataContainer.selectedLayer) ? dataContainer.selectedLayer : -1;
+        }
     }
 
     private boolean layerBufferValid = false;
     private Integer[] layerBuffer = new Integer[]{};
     @Override
     public final Integer[] getLayers() {
-        if (!layerBufferValid) {
-            if (layerBuffer.length != dataContainer.layers.size()) {
-                layerBuffer = new Integer[dataContainer.layers.size()];
+        synchronized (VitcoSettings.SYNC) {
+            if (!layerBufferValid) {
+                if (layerBuffer.length != dataContainer.layers.size()) {
+                    layerBuffer = new Integer[dataContainer.layers.size()];
+                }
+                dataContainer.layerOrder.toArray(layerBuffer);
+                layerBufferValid = true;
             }
-            dataContainer.layerOrder.toArray(layerBuffer);
-            layerBufferValid = true;
+            return layerBuffer.clone();
         }
-        return layerBuffer.clone();
     }
 
     @Override
     public final boolean setVisible(int layerId, boolean b) {
-        boolean result = false;
-        if (dataContainer.layers.containsKey(layerId) && dataContainer.layers.get(layerId).isVisible() != b) {
-            historyManagerV.applyIntent(new LayerVisibilityIntent(layerId, b, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.layers.containsKey(layerId) && dataContainer.layers.get(layerId).isVisible() != b) {
+                historyManagerV.applyIntent(new LayerVisibilityIntent(layerId, b, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean getLayerVisible(int layerId) {
-        boolean result = false;
-        if (dataContainer.layers.containsKey(layerId)) {
-            result = dataContainer.layers.get(layerId).isVisible();
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.layers.containsKey(layerId)) {
+                result = dataContainer.layers.get(layerId).isVisible();
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean moveLayerUp(int layerId) {
-        boolean result = false;
-        if (canMoveLayerUp(layerId)) {
-            historyManagerV.applyIntent(new MoveLayerIntent(layerId, true, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (canMoveLayerUp(layerId)) {
+                historyManagerV.applyIntent(new MoveLayerIntent(layerId, true, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean moveLayerDown(int layerId) {
-        boolean result = false;
-        if (canMoveLayerDown(layerId)) {
-            historyManagerV.applyIntent(new MoveLayerIntent(layerId, false, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (canMoveLayerDown(layerId)) {
+                historyManagerV.applyIntent(new MoveLayerIntent(layerId, false, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean canMoveLayerUp(int layerId) {
-        return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) > 0;
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) > 0;
+        }
     }
 
     @Override
     public final boolean canMoveLayerDown(int layerId) {
-        return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) < dataContainer.layerOrder.size() - 1;
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.layers.containsKey(layerId) && dataContainer.layerOrder.lastIndexOf(layerId) < dataContainer.layerOrder.size() - 1;
+        }
     }
 
     @Override
     public final boolean mergeVisibleLayers() {
-        if (canMergeVisibleLayers()) {
-            historyManagerV.applyIntent(new MergeLayersIntent(false));
-            return true;
+        synchronized (VitcoSettings.SYNC) {
+            if (canMergeVisibleLayers()) {
+                historyManagerV.applyIntent(new MergeLayersIntent(false));
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 
     @Override
     public final boolean canMergeVisibleLayers() {
-        // if there are more than one visible layer
-        int visibleLayers = 0;
-        for (int layerId : dataContainer.layerOrder) {
-            if (dataContainer.layers.get(layerId).isVisible()) {
-                if (visibleLayers > 0) {
-                    return true;
+        synchronized (VitcoSettings.SYNC) {
+            // if there are more than one visible layer
+            int visibleLayers = 0;
+            for (int layerId : dataContainer.layerOrder) {
+                if (dataContainer.layers.get(layerId).isVisible()) {
+                    if (visibleLayers > 0) {
+                        return true;
+                    }
+                    visibleLayers++;
                 }
-                visibleLayers++;
             }
+            return false;
         }
-        return false;
     }
 
     // texture actions
 
     @Override
     public final void addTexture(BufferedImage image) {
-        // make sure that the graphic is a mutiple of 32
+        synchronized (VitcoSettings.SYNC) {
+            // make sure that the graphic is a mutiple of 32
+            int width = ((int)Math.ceil(image.getWidth() / 32f)) * 32;
+            int height = ((int)Math.ceil(image.getHeight() / 32f)) * 32;
 
-        int width = ((int)Math.ceil(image.getWidth() / 32f)) * 32;
-        int height = ((int)Math.ceil(image.getHeight() / 32f)) * 32;
-
-        BufferedImage texture;
-        if (width != image.getWidth() || height != image.getHeight()) {
-            texture = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            texture.getGraphics().drawImage(image, 0, 0, null);
-        } else {
-            texture = GraphicTools.deepCopy(image);
+            BufferedImage texture;
+            if (width != image.getWidth() || height != image.getHeight()) {
+                texture = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                texture.getGraphics().drawImage(image, 0, 0, null);
+            } else {
+                texture = GraphicTools.deepCopy(image);
+            }
+            historyManagerV.applyIntent(new AddTextureGridIntent(texture, false));
         }
-        historyManagerV.applyIntent(new AddTextureGridIntent(texture, false));
     }
 
     @Override
     public final boolean removeTexture(int textureId) {
-        boolean result = false;
-        // check that this texture is not used (return false if used)
-        for (Voxel voxel : dataContainer.voxels.values()) {
-            if (ArrayUtil.contains(voxel.getTexture(), textureId)) {
-                return false;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            // check that this texture is not used (return false if used)
+            for (Voxel voxel : dataContainer.voxels.values()) {
+                if (ArrayUtil.contains(voxel.getTexture(), textureId)) {
+                    return false;
+                }
             }
+            if (dataContainer.textures.containsKey(textureId)) {
+                historyManagerV.applyIntent(new RemoveTextureIntent(textureId, false));
+                result = true;
+            }
+            return result;
         }
-        if (dataContainer.textures.containsKey(textureId)) {
-            historyManagerV.applyIntent(new RemoveTextureIntent(textureId, false));
-            result = true;
-        }
-        return result;
     }
 
     @Override
     public final boolean removeAllTexture() {
-        boolean result = false;
-        if (dataContainer.textures.size() > 0) {
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.textures.size() > 0) {
 
-            // check which textures are not in use
-            ArrayList<Integer> unusedTextures = new ArrayList<Integer>(dataContainer.textures.keySet());
-            for (Voxel voxel : dataContainer.voxels.values()) {
-                int[] textures = voxel.getTexture();
-                if (textures != null) {
-                    for (Integer textureId : textures) {
-                        unusedTextures.remove(textureId);
+                // check which textures are not in use
+                ArrayList<Integer> unusedTextures = new ArrayList<Integer>(dataContainer.textures.keySet());
+                for (Voxel voxel : dataContainer.voxels.values()) {
+                    int[] textures = voxel.getTexture();
+                    if (textures != null) {
+                        for (Integer textureId : textures) {
+                            unusedTextures.remove(textureId);
+                        }
                     }
                 }
+                if (unusedTextures.size() > 0) {
+                    historyManagerV.applyIntent(new RemoveAllTextureIntent(unusedTextures, false));
+                    result = true;
+                }
             }
-            if (unusedTextures.size() > 0) {
-                historyManagerV.applyIntent(new RemoveAllTextureIntent(unusedTextures, false));
-                result = true;
-            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean replaceTexture(int textureId, ImageIcon texture) {
-        boolean result = false;
-        if (dataContainer.textures.containsKey(textureId) &&
-                texture.getIconWidth() == 32 && texture.getIconHeight() == 32) {
-            historyManagerV.applyIntent(new ReplaceTextureIntent(textureId, texture, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.textures.containsKey(textureId) &&
+                    texture.getIconWidth() == 32 && texture.getIconHeight() == 32) {
+                historyManagerV.applyIntent(new ReplaceTextureIntent(textureId, texture, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final Integer[] getTextureList() {
-        Integer[] result = new Integer[dataContainer.textures.size()];
-        dataContainer.textures.keySet().toArray(result);
-        return result;
+        synchronized (VitcoSettings.SYNC) {
+            Integer[] result = new Integer[dataContainer.textures.size()];
+            dataContainer.textures.keySet().toArray(result);
+            return result;
+        }
     }
 
     @Override
     public final ImageIcon getTexture(Integer textureId) {
-        Image internalImg = dataContainer.textures.get(textureId).getImage();
-        BufferedImage result = new BufferedImage(
-                internalImg.getWidth(null), internalImg.getHeight(null),
-                BufferedImage.TYPE_INT_ARGB);
-        result.getGraphics().drawImage(internalImg, 0, 0, null);
-        return new ImageIcon(result);
+        synchronized (VitcoSettings.SYNC) {
+            Image internalImg = dataContainer.textures.get(textureId).getImage();
+            BufferedImage result = new BufferedImage(
+                    internalImg.getWidth(null), internalImg.getHeight(null),
+                    BufferedImage.TYPE_INT_ARGB);
+            result.getGraphics().drawImage(internalImg, 0, 0, null);
+            return new ImageIcon(result);
+        }
     }
 
     @Override
     public final String getTextureHash(Integer textureId) {
-        if (dataContainer.textures.containsKey(textureId)) {
-            if (dataContainer.textures.get(textureId).getDescription() == null) {
-                ImageIcon img = dataContainer.textures.get(textureId);
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                BufferedImage bi = new BufferedImage(
-                        img.getIconWidth(),img.getIconHeight(),BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2 = bi.createGraphics();
-                g2.drawImage(img.getImage(),0,0,null);
-                try {
-                    ImageIO.write(bi, "png", os);
-                    MessageDigest md = MessageDigest.getInstance("MD5");
-                    md.update(os.toByteArray());
-                    byte[] hash = md.digest();
-                    dataContainer.textures.get(textureId).setDescription(HexTools.byteToHex(hash));
-                    // todo: need error handler to handle these exceptions
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace(); // should never happen
-                } catch (IOException e) {
-                    e.printStackTrace(); // should also never happen
-                }
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.textures.containsKey(textureId)) {
+                if (dataContainer.textures.get(textureId).getDescription() == null) {
+                    // todo: move this to util class
+                    ImageIcon img = dataContainer.textures.get(textureId);
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    BufferedImage bi = new BufferedImage(
+                            img.getIconWidth(),img.getIconHeight(),BufferedImage.TYPE_INT_RGB);
+                    Graphics2D g2 = bi.createGraphics();
+                    g2.drawImage(img.getImage(),0,0,null);
+                    try {
+                        ImageIO.write(bi, "png", os);
+                        MessageDigest md = MessageDigest.getInstance("MD5");
+                        md.update(os.toByteArray());
+                        byte[] hash = md.digest();
+                        dataContainer.textures.get(textureId).setDescription(HexTools.byteToHex(hash));
+                        // todo: need error handler to handle these exceptions
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace(); // should never happen
+                    } catch (IOException e) {
+                        e.printStackTrace(); // should also never happen
+                    }
 
+                }
+                return dataContainer.textures.get(textureId).getDescription();
+            } else {
+                return "";
             }
-            return dataContainer.textures.get(textureId).getDescription();
-        } else {
-            return "";
         }
     }
 
     @Override
     public final void selectTexture(int textureId) {
-        if (textureId != -1 && dataContainer.textures.containsKey(textureId)) {
-            if (textureId != dataContainer.selectedTexture) {
-                historyManagerV.applyIntent(new SelectTextureIntent(textureId, false));
-            }
-        } else {
-            if (dataContainer.selectedTexture != -1) {
-                historyManagerV.applyIntent(new SelectTextureIntent(-1, false));
+        synchronized (VitcoSettings.SYNC) {
+            if (textureId != -1 && dataContainer.textures.containsKey(textureId)) {
+                if (textureId != dataContainer.selectedTexture) {
+                    historyManagerV.applyIntent(new SelectTextureIntent(textureId, false));
+                }
+            } else {
+                if (dataContainer.selectedTexture != -1) {
+                    historyManagerV.applyIntent(new SelectTextureIntent(-1, false));
+                }
             }
         }
     }
 
     @Override
     public final void selectTextureSoft(int textureId) {
-        if (dataContainer.selectedTexture != textureId &&
-                (textureId == -1 || dataContainer.textures.containsKey(textureId))) {
-            dataContainer.selectedTexture = textureId;
-            notifier.onTextureDataChanged();
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.selectedTexture != textureId &&
+                    (textureId == -1 || dataContainer.textures.containsKey(textureId))) {
+                dataContainer.selectedTexture = textureId;
+                notifier.onTextureDataChanged();
+            }
         }
     }
 
     @Override
     public final int getSelectedTexture() {
-        if (!dataContainer.textures.containsKey(dataContainer.selectedTexture)) {
-            selectTextureSoft(-1);
+        synchronized (VitcoSettings.SYNC) {
+            if (!dataContainer.textures.containsKey(dataContainer.selectedTexture)) {
+                selectTextureSoft(-1);
+            }
+            return dataContainer.selectedTexture;
         }
-        return dataContainer.selectedTexture;
     }
 
     @Override
     public final boolean setTexture(int voxelId, int voxelSide, int textureId) {
-        boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId) &&
-                (dataContainer.voxels.get(voxelId).getTexture() == null ||
-                dataContainer.voxels.get(voxelId).getTexture()[voxelSide] != textureId)) {
-            historyManagerV.applyIntent(new TextureVoxelIntent(voxelId, voxelSide, textureId, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.voxels.containsKey(voxelId) &&
+                    (dataContainer.voxels.get(voxelId).getTexture() == null ||
+                    dataContainer.voxels.get(voxelId).getTexture()[voxelSide] != textureId)) {
+                historyManagerV.applyIntent(new TextureVoxelIntent(voxelId, voxelSide, textureId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean massSetTexture(Integer[] voxelIds, int textureId) {
-        ArrayList<Integer> validVoxel = new ArrayList<Integer>();
-        for (int voxelId : voxelIds) {
-            if (dataContainer.voxels.containsKey(voxelId)) {
-                validVoxel.add(voxelId);
+        synchronized (VitcoSettings.SYNC) {
+            ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+            for (int voxelId : voxelIds) {
+                if (dataContainer.voxels.containsKey(voxelId)) {
+                    validVoxel.add(voxelId);
+                }
             }
-        }
-        if (validVoxel.size() > 0) {
-            Integer[] valid = new Integer[validVoxel.size()];
-            validVoxel.toArray(valid);
-            historyManagerV.applyIntent(new MassTextureVoxelIntent(valid, textureId, false));
-            return true;
-        } else {
-            return false;
+            if (validVoxel.size() > 0) {
+                Integer[] valid = new Integer[validVoxel.size()];
+                validVoxel.toArray(valid);
+                historyManagerV.applyIntent(new MassTextureVoxelIntent(valid, textureId, false));
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
     // get texture id of a voxel
     @Override
     public final int[] getVoxelTextureIds(int voxelId) {
-        if (dataContainer.voxels.containsKey(voxelId)) {
-            return dataContainer.voxels.get(voxelId).getTexture();
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.voxels.containsKey(voxelId)) {
+                return dataContainer.voxels.get(voxelId).getTexture();
+            }
+            return null; // error
         }
-        return null; // error
     }
 
     // flip the texture of a voxel
     @Override
     public final boolean flipVoxelTexture(int voxelId, int voxelSide) {
-        boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId) &&
-                dataContainer.voxels.get(voxelId).getTexture() != null) {
-            historyManagerV.applyIntent(new FlipVoxelTextureIntent(voxelId, voxelSide, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.voxels.containsKey(voxelId) &&
+                    dataContainer.voxels.get(voxelId).getTexture() != null) {
+                historyManagerV.applyIntent(new FlipVoxelTextureIntent(voxelId, voxelSide, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     // rotate the texture of a voxel
     @Override
     public final boolean rotateVoxelTexture(int voxelId, int voxelSide) {
-        boolean result = false;
-        if (dataContainer.voxels.containsKey(voxelId) &&
-                dataContainer.voxels.get(voxelId).getTexture() != null) {
-            historyManagerV.applyIntent(new RotateVoxelTextureIntent(voxelId, voxelSide, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.voxels.containsKey(voxelId) &&
+                    dataContainer.voxels.get(voxelId).getTexture() != null) {
+                historyManagerV.applyIntent(new RotateVoxelTextureIntent(voxelId, voxelSide, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 }

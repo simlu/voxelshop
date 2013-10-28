@@ -1,11 +1,14 @@
 package com.vitco.logic.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
 import com.vitco.util.FileTools;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
 import com.vitco.util.pref.PreferencesInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,15 +30,18 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Handles shortcut linking (logic)
  */
 public class ShortcutManager implements ShortcutManagerInterface {
+
+    protected AsyncActionManager asyncActionManager;
+    @Autowired
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
+    }
 
     // what shortcuts we allow
     private final ArrayList<Integer> VALID_KEYS_WITH_MODIFIER =
@@ -48,7 +54,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
                     // delete, escape, space, enter
-                    127, 27, 32, 10
+                    127, 27, 32, 10,
+                    // up, down, left, right, pgup, pgdown
+                    KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
+                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
@@ -60,7 +69,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     // f1 - f12
                     112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
                     // delete, escape, space, enter
-                    127, 27, 32, 10
+                    127, 27, 32, 10,
+                    // up, down, left, right, pgup, pgdown
+                    KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
+                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP
             }));
 
     // global setting for all activatable actions
@@ -95,15 +107,20 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // hook that catches KeyStroke if this is registered as global
     private final KeyEventDispatcher globalProcessor = new KeyEventDispatcher() {
         @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+        public boolean dispatchKeyEvent(final KeyEvent e) {
+            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
             if (globalByKeyStroke.containsKey(keyStroke)
                     // only fire if all actions are activated
                     && enableAllActivatableActions) {
-                // fire new action
-                actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                        new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
-                );
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        // fire new action
+                        actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
+                                new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
+                        );
+                    }
+                });
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
             }
@@ -210,9 +227,12 @@ public class ShortcutManager implements ShortcutManagerInterface {
     @Override
     public final String[][] getFrames() {
         String[][] result = new String[map.size()][];
+        // fetch and sort frames (note: global is created separate!)
+        ArrayList<String> list = new ArrayList<String>(map.keySet());
+        Collections.sort(list);
         // loop over all the frames
         int i = 0;
-        for (String key : map.keySet()) {
+        for (String key : list) {
             result[i++] = new String[]{
                     key,
                     langSel.getString(key + "_caption")
@@ -363,16 +383,21 @@ public class ShortcutManager implements ShortcutManagerInterface {
     @Override
     public final boolean isValidShortcut(KeyStroke keyStroke) {
         // check that this is a format that is allowed as shortcut
-        return keyStroke == null || ((keyStroke.getModifiers() == (InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK)) ||
-                (keyStroke.getModifiers() == (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK)) ||
-                (keyStroke.getModifiers() == (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK)) ||
-                (keyStroke.getModifiers() == ((InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK) | (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK))) ||
-                (keyStroke.getModifiers() == ((InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK) | (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK))) ||
-                (keyStroke.getModifiers() == ((InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK) | (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK))))
+        int altmask = (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_MASK);
+        int ctrlmask = (InputEvent.CTRL_DOWN_MASK | InputEvent.CTRL_MASK);
+        int shiftmask = (InputEvent.SHIFT_DOWN_MASK | InputEvent.SHIFT_MASK);
+        int modifier = keyStroke == null ? 0 : (keyStroke.getModifiers()
+                & ( ctrlmask | altmask | shiftmask ));
+        return keyStroke == null || ((modifier == ctrlmask) ||
+                (modifier == altmask) ||
+                (modifier == shiftmask) ||
+                (modifier == (ctrlmask | altmask)) ||
+                (modifier == (ctrlmask | shiftmask)) ||
+                (modifier == (altmask | shiftmask)))
                 // allow only certain keys as trigger keys
                 && VALID_KEYS_WITH_MODIFIER.contains(keyStroke.getKeyCode()) ||
                 // allow some keys without modifiers
-                ((keyStroke.getModifiers() == 0)
+                ((modifier == 0)
                         && VALID_KEYS_WITHOUT_MODIFIER.contains(keyStroke.getKeyCode()));
     }
 
@@ -506,7 +531,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
     }
 
     // check if there are duplicate shortcuts
-    public final void doSanityCheck() {
+    public final void doSanityCheck(boolean debug) {
         // check global keystrokes for duplicates
         HashMap<String, ShortcutObject> globalShortcuts = new HashMap<String, ShortcutObject>();
         for (ShortcutObject so : global) {
@@ -514,9 +539,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 String stroke = asString(so.keyStroke);
                 if (globalShortcuts.containsKey(stroke)) {
                     ShortcutObject dup = globalShortcuts.get(stroke);
-                    System.err.println("Warning: The two actions " +
-                            so.actionName + " and " + dup.actionName +
-                            " have the same global shortcut (" + stroke + ").");
+                    System.err.println("Warning: The two actions \"" +
+                            (debug ? so.actionName : langSel.getString(so.caption)) + "\" and \"" +
+                            (debug ? dup.actionName : langSel.getString(dup.caption)) +
+                            "\" have the same global shortcut (" + stroke + ").");
                 }
                 globalShortcuts.put(stroke, so);
             }
@@ -531,16 +557,18 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     String stroke = asString(so.keyStroke);
                     if (shortcuts.containsKey(stroke)) {
                         ShortcutObject dup = shortcuts.get(stroke);
-                        System.err.println("Warning: The two actions " +
-                                so.actionName + " and " + dup.actionName +
-                                " for frame \"" + key + "\" have the same shortcut (" + stroke + ").");
+                        System.err.println("Warning: The two actions \"" +
+                                (debug ? so.actionName : langSel.getString(so.caption)) + "\" and \"" +
+                                (debug ? dup.actionName : langSel.getString(dup.caption)) +
+                                "\" for frame \"" + key + "\" have the same shortcut (" + stroke + ").");
                     }
                     // check if this clashes with a global shortcut
                     if (globalShortcuts.containsKey(stroke)) {
                         ShortcutObject dup = globalShortcuts.get(stroke);
-                        System.err.println("Warning: The two actions " +
-                                dup.actionName + " (global) and " + so.actionName +
-                                " (frame \"" + key + "\") have the same shortcut (" + stroke + ").");
+                        System.err.println("Warning: The two actions \"" +
+                                (debug ? dup.actionName : langSel.getString(dup.caption)) + "\" (global) and \"" +
+                                (debug ? so.actionName : langSel.getString(so.caption)) +
+                                "\" (frame \"" + key + "\") have the same shortcut (" + stroke + ").");
                     }
                     shortcuts.put(stroke, so);
                 }
@@ -563,6 +591,18 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 result = 32;
             } else if (str.equals("ENTER")) {
                 result = 10;
+            } else if (str.equals("UP")) {
+                result = KeyEvent.VK_UP;
+            } else if (str.equals("DOWN")) {
+                result = KeyEvent.VK_DOWN;
+            } else if (str.equals("LEFT")) {
+                result = KeyEvent.VK_LEFT;
+            } else if (str.equals("RIGHT")) {
+                result = KeyEvent.VK_RIGHT;
+            } else if (str.equals("PAGE_DOWN")) {
+                result = KeyEvent.VK_PAGE_DOWN;
+            } else if (str.equals("PAGE_UP")) {
+                result = KeyEvent.VK_PAGE_UP;
             } else
             if (str.startsWith("F")) {
                 str = str.substring(1);

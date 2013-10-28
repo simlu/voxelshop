@@ -26,5 +26,5 @@
                action="align_main_to_sideview3"/>
     <icon-item src="resource/img/framebars/view/yzSwap.png"
                tool-tip="swap_mainView_with_yzView_tooltip"
-               action="swap_mainView_with_yzView"/>
+               action="swap_yzView_with_mainView"/>
 </head>

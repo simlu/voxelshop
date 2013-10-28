@@ -112,6 +112,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_draw", new ToolAction(VOXELMODE.DRAW));
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_erase", new ToolAction(VOXELMODE.ERASE));
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_picker", new ToolAction(VOXELMODE.PICKER));
+        actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_floodfill_tool", new ToolAction(VOXELMODE.FLOODFILL));
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_color_changer", new ToolAction(VOXELMODE.COLORCHANGER));
         actionGroupManager.addAction("voxel_paint_modes", "voxel_mode_select_type_select_tool", new ToolAction(VOXELMODE.SELECT));
         actionGroupManager.registerGroup("voxel_paint_modes");
@@ -265,30 +266,6 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
                 actionGroupManager.refreshGroup("voxel_paint_modes");
             }
         });
-
-        // create the complex action to select the color of the background plane
-        PresetColorChooser bgPlaneColorChooser = new PresetColorChooser();
-        bgPlaneColorChooser.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(float[] hsb) {
-                preferences.storeObject("main_view_ground_plane_color", ColorTools.hsbToColor(hsb));
-
-            }
-        });
-        complexActionManager.registerAction("pick_color_voxel_ground_plane", bgPlaneColorChooser);
-
-        // create the complex action to select the color of the background
-        PresetColorChooser bgColorChooser = new PresetColorChooser();
-        if (!preferences.contains("engine_view_bg_color")) {
-            preferences.storeObject("engine_view_bg_color", VitcoSettings.ANIMATION_BG_COLOR);
-        }
-        bgColorChooser.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(float[] hsb) {
-                preferences.storeObject("engine_view_bg_color", ColorTools.hsbToColor(hsb));
-            }
-        });
-        complexActionManager.registerAction("pick_color_voxel_bg", bgColorChooser);
 
     }
 

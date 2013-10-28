@@ -27,11 +27,15 @@
         </property>
     </bean>
 
-    <!-- invoke default look and feel (jide) -->
-    <!-- needs to go first !! -->
+    <!-- laod the initial layout -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass"><value>com.jidesoft.plaf.LookAndFeelFactory</value></property>
-        <property name="targetMethod"><value>installDefaultLookAndFeelAndExtension</value></property>
+        <property name="targetClass"><value>com.vitco.layout.LayoutLoader</value></property>
+        <property name="targetMethod"><value>loadLayoutFile</value></property>
+        <property name="arguments">
+            <list>
+                <value>resource/layout/layout.xml</value>
+            </list>
+        </property>
     </bean>
 
     <!-- manages the console data -->
@@ -104,6 +108,7 @@
     <bean id="MainMenuLogic" class="com.vitco.logic.menu.MainMenuLogic"/>
     <bean id="ToolBarLogic" class="com.vitco.logic.menu.ToolBarLogic"/>
     <bean id="SelectBarLogic" class="com.vitco.logic.menu.SelectBarLogic"/>
+    <bean id="OptionBarLogic" class="com.vitco.logic.menu.OptionBarLogic"/>
 
     <!--ENGINE STUFF-->
     <!-- animation data -->
@@ -125,6 +130,9 @@
 
     <!-- updater -->
     <bean id="Updater" class="com.vitco.logic.Updater"/>
+
+    <!-- worker thread -->
+    <bean id="AsyncActionManager" class="com.vitco.async.AsyncActionManager"/>
 
     <!-- creates the main window -->
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
@@ -154,6 +162,12 @@
                     <key><value>selectBar</value></key>
                     <bean id="SelectBarLinkage" class="com.vitco.layout.bars.SelectBarLinkage">
                         <property name="menuLogic" ref="SelectBarLogic"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>optionBar</value></key>
+                    <bean id="OptionBarLinkage" class="com.vitco.layout.bars.OptionBarLinkage">
+                        <property name="menuLogic" ref="OptionBarLogic"/>
                     </bean>
                 </entry>
             </map>

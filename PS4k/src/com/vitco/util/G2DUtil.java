@@ -15,7 +15,7 @@ public class G2DUtil {
         // set outer line size
         ig.setStroke(new BasicStroke(borderSize, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
         ig.setColor(innerColor);
-        int rad2times = Math.round(radius *2);
+        int rad2times = Math.round(radius * 2);
         ig.fillOval(Math.round(point.x - radius), Math.round(point.y - radius), rad2times, rad2times);
         ig.setColor(outerColor);
         ig.drawOval(Math.round(point.x - radius), Math.round(point.y - radius), rad2times, rad2times);

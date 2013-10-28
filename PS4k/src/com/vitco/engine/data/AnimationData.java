@@ -7,6 +7,7 @@ import com.vitco.engine.data.container.Frame;
 import com.vitco.engine.data.history.BasicActionIntent;
 import com.vitco.engine.data.history.HistoryChangeListener;
 import com.vitco.engine.data.history.HistoryManager;
+import com.vitco.res.VitcoSettings;
 
 import java.util.ArrayList;
 
@@ -467,214 +468,260 @@ public abstract class AnimationData extends GeneralData implements AnimationData
 
     @Override
     public final boolean isValid(int pointId) {
-        return dataContainer.points.containsKey(pointId);
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.points.containsKey(pointId);
+        }
     }
 
     @Override
     public final int addPoint(SimpleVector position) {
-        int pointId = getFreePointId();
-        ExtendedVector point = new ExtendedVector(position.x, position.y, position.z, pointId);
-        historyManagerA.applyIntent(new AddPointIntent(point, false));
-        return pointId;
+        synchronized (VitcoSettings.SYNC) {
+            int pointId = getFreePointId();
+            ExtendedVector point = new ExtendedVector(position.x, position.y, position.z, pointId);
+            historyManagerA.applyIntent(new AddPointIntent(point, false));
+            return pointId;
+        }
     }
 
     @Override
     public final boolean removePoint(int pointId) {
-        boolean result = false;
-        if (isValid(pointId)) {
-            historyManagerA.applyIntent(new RemovePointIntent(pointId, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (isValid(pointId)) {
+                historyManagerA.applyIntent(new RemovePointIntent(pointId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean movePoint(int pointId, SimpleVector pos) {
-        boolean result = false;
-        if (isValid(pointId)) {
-            if (dataContainer.activeFrame == -1) { // move real point
-                historyManagerA.applyIntent(new MovePointIntent(pointId, pos, false));
-            } else { // move frame point
-                historyManagerA.applyIntent(new PlaceFramePointIntent(pointId, pos, dataContainer.activeFrame, false));
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (isValid(pointId)) {
+                if (dataContainer.activeFrame == -1) { // move real point
+                    historyManagerA.applyIntent(new MovePointIntent(pointId, pos, false));
+                } else { // move frame point
+                    historyManagerA.applyIntent(new PlaceFramePointIntent(pointId, pos, dataContainer.activeFrame, false));
+                }
+                result = true;
             }
-            result = true;
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean areConnected(int id1, int id2) {
-        return dataContainer.lines.containsKey(Math.min(id1, id2) + "_" + Math.max(id1, id2));
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.lines.containsKey(Math.min(id1, id2) + "_" + Math.max(id1, id2));
+        }
     }
 
     @Override
     public final boolean connect(int id1, int id2) {
-        boolean result = false;
-        if (isValid(id1) && isValid(id2) && !areConnected(id1, id2)) {
-            historyManagerA.applyIntent(new ConnectIntent(id1, id2, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (isValid(id1) && isValid(id2) && !areConnected(id1, id2)) {
+                historyManagerA.applyIntent(new ConnectIntent(id1, id2, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean clearA() {
-        boolean result = false;
-        if (dataContainer.points.size() > 0) {
-            historyManagerA.applyIntent(new ClearAIntent(false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.points.size() > 0) {
+                historyManagerA.applyIntent(new ClearAIntent(false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean disconnect(int id1, int id2) {
-        boolean result = false;
-        if (isValid(id1) && isValid(id2) && areConnected(id1, id2)) {
-            historyManagerA.applyIntent(new DisconnectIntent(id1, id2, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (isValid(id1) && isValid(id2) && areConnected(id1, id2)) {
+                historyManagerA.applyIntent(new DisconnectIntent(id1, id2, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final ExtendedVector getPoint(int pointId) {
-        if (dataContainer.activeFrame != -1) { // return frame point if defined
-            ExtendedVector point = dataContainer.frames.get(dataContainer.activeFrame).getPoint(pointId);
-            if (point != null) {
-                return point;
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.activeFrame != -1) { // return frame point if defined
+                ExtendedVector point = dataContainer.frames.get(dataContainer.activeFrame).getPoint(pointId);
+                if (point != null) {
+                    return point;
+                }
             }
+            return dataContainer.points.get(pointId);
         }
-        return dataContainer.points.get(pointId);
     }
 
     private ExtendedVector[] pointBuffer = new ExtendedVector[]{};
     private boolean pointBufferValid = false;
     @Override
     public final ExtendedVector[] getPoints() {
-        if (!pointBufferValid) {
-            if (pointBuffer.length != dataContainer.points.size()) {
-                pointBuffer = new ExtendedVector[dataContainer.points.size()];
+        synchronized (VitcoSettings.SYNC) {
+            if (!pointBufferValid) {
+                if (pointBuffer.length != dataContainer.points.size()) {
+                    pointBuffer = new ExtendedVector[dataContainer.points.size()];
+                }
+                int i = 0;
+                for (int pointId : dataContainer.points.keySet()) {
+                    pointBuffer[i++] = getPoint(pointId);
+                }
+                pointBufferValid = true;
             }
-            int i = 0;
-            for (int pointId : dataContainer.points.keySet()) {
-                pointBuffer[i++] = getPoint(pointId);
-            }
-            pointBufferValid = true;
+            return pointBuffer.clone();
         }
-        return pointBuffer.clone();
     }
 
     private ExtendedVector[][] lineBuffer = new ExtendedVector[][]{};
     private boolean lineBufferValid = false;
     @Override
     public final ExtendedVector[][] getLines() {
-        if (!lineBufferValid) {
-            if (lineBuffer.length != dataContainer.lines.size()) {
-                lineBuffer = new ExtendedVector[dataContainer.lines.size()][2];
+        synchronized (VitcoSettings.SYNC) {
+            if (!lineBufferValid) {
+                if (lineBuffer.length != dataContainer.lines.size()) {
+                    lineBuffer = new ExtendedVector[dataContainer.lines.size()][2];
+                }
+                int i = 0;
+                for (ExtendedLine line : dataContainer.lines.values()) {
+                    lineBuffer[i][0] = getPoint(line.point1);
+                    lineBuffer[i][1] = getPoint(line.point2);
+                    i++;
+                }
+                lineBufferValid = true;
             }
-            int i = 0;
-            for (ExtendedLine line : dataContainer.lines.values()) {
-                lineBuffer[i][0] = getPoint(line.point1);
-                lineBuffer[i][1] = getPoint(line.point2);
-                i++;
-            }
-            lineBufferValid = true;
+            return lineBuffer.clone();
         }
-        return lineBuffer.clone();
     }
 
     @Override
     public final void undoA() {
-        historyManagerA.unapply();
+        synchronized (VitcoSettings.SYNC) {
+            historyManagerA.unapply();
+        }
     }
 
     @Override
     public final void redoA() {
-        historyManagerA.apply();
+        synchronized (VitcoSettings.SYNC) {
+            historyManagerA.apply();
+        }
     }
 
     @Override
     public final boolean canUndoA() {
-        return historyManagerA.canUndo();
+        synchronized (VitcoSettings.SYNC) {
+            return historyManagerA.canUndo();
+        }
     }
 
     @Override
     public final boolean canRedoA() {
-        return historyManagerA.canRedo();
+        synchronized (VitcoSettings.SYNC) {
+            return historyManagerA.canRedo();
+        }
     }
 
     @Override
     public final boolean selectFrame(int frameId) {
-        boolean result = false;
-        if (dataContainer.frames.containsKey(frameId) || frameId == -1) {
-            historyManagerA.applyIntent(new SetActiveFrameIntent(frameId, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.frames.containsKey(frameId) || frameId == -1) {
+                historyManagerA.applyIntent(new SetActiveFrameIntent(frameId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final int getSelectedFrame() {
-        return dataContainer.activeFrame;
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.activeFrame;
+        }
     }
 
     @Override
     public final int createFrame(String frameName) {
-        int frameId = getFreeFrameId();
-        historyManagerA.applyIntent(new CreateFrameIntent(frameId, frameName, false));
-        return frameId;
+        synchronized (VitcoSettings.SYNC) {
+            int frameId = getFreeFrameId();
+            historyManagerA.applyIntent(new CreateFrameIntent(frameId, frameName, false));
+            return frameId;
+        }
     }
 
     @Override
     public final boolean deleteFrame(int frameId) {
-        boolean result = false;
-        if (dataContainer.frames.containsKey(frameId)) {
-            historyManagerA.applyIntent(new DeleteFrameIntent(frameId, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.frames.containsKey(frameId)) {
+                historyManagerA.applyIntent(new DeleteFrameIntent(frameId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final boolean renameFrame(int frameId, String newName) {
-        boolean result = false;
-        if (dataContainer.frames.containsKey(frameId)) {
-            historyManagerA.applyIntent(new RenameFrameIntent(frameId, newName, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.frames.containsKey(frameId)) {
+                historyManagerA.applyIntent(new RenameFrameIntent(frameId, newName, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     private Integer[] frameBuffer = new Integer[]{};
     private boolean frameBufferValid = false;
     @Override
     public final Integer[] getFrames() {
-        if (!frameBufferValid) {
-            if (frameBuffer.length != dataContainer.frames.size()) {
-                frameBuffer = new Integer[dataContainer.frames.size()];
+        synchronized (VitcoSettings.SYNC) {
+            if (!frameBufferValid) {
+                if (frameBuffer.length != dataContainer.frames.size()) {
+                    frameBuffer = new Integer[dataContainer.frames.size()];
+                }
+                dataContainer.frames.keySet().toArray(frameBuffer);
+                frameBufferValid = true;
             }
-            dataContainer.frames.keySet().toArray(frameBuffer);
-            frameBufferValid = true;
+            return frameBuffer.clone();
         }
-        return frameBuffer.clone();
     }
 
     @Override
     public final boolean resetFrame(int frameId) {
-        boolean result = false;
-        if (dataContainer.frames.containsKey(frameId)) {
-            historyManagerA.applyIntent(new ResetFrameIntent(frameId, false));
-            result = true;
+        synchronized (VitcoSettings.SYNC) {
+            boolean result = false;
+            if (dataContainer.frames.containsKey(frameId)) {
+                historyManagerA.applyIntent(new ResetFrameIntent(frameId, false));
+                result = true;
+            }
+            return result;
         }
-        return result;
     }
 
     @Override
     public final String getFrameName(int frameId) {
-        if (dataContainer.frames.containsKey(frameId)) {
-            return dataContainer.frames.get(frameId).getName();
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.frames.containsKey(frameId)) {
+                return dataContainer.frames.get(frameId).getName();
+            }
+            return null;
         }
-        return null;
     }
 }

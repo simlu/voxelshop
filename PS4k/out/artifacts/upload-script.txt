@@ -3,7 +3,7 @@ option batch abort
 # Disable overwrite confirmations that conflict with the previous
 option confirm off
 # Connect using a password
-open sftp://AmY@fantasy-mmorpg.com -hostkey="ssh-rsa 2048 8d:05:de:e2:d9:78:90:43:ae:00:d9:59:de:b1:12:7e"
+open sftp://AmY:H5199N28S377L5d@174.37.227.99 -hostkey="ssh-rsa 2048 8d:05:de:e2:d9:78:90:43:ae:00:d9:59:de:b1:12:7e"
 # Change remote directory
 cd /tools/ps4k
 # Force binary mode transfer

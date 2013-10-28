@@ -2,6 +2,7 @@ package com.vitco.engine.data;
 
 import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.notification.DataChangeAdapter;
+import com.vitco.res.VitcoSettings;
 
 /**
  * Manages everything that has to do with general data
@@ -32,12 +33,16 @@ public class GeneralData extends ListenerData implements GeneralDataInterface {
 
     @Override
     public boolean hasChanged() {
-        return hasChanged;
+        synchronized (VitcoSettings.SYNC) {
+            return hasChanged;
+        }
     }
 
     @Override
     public void resetHasChanged() {
-        hasChanged = false;
+        synchronized (VitcoSettings.SYNC) {
+            hasChanged = false;
+        }
     }
 
 }

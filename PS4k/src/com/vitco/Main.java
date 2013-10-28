@@ -11,7 +11,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Initially executed class
  */
+
 public class Main {
+
+    private static boolean debug = false;
+
+    // true if the program runs in debug mode
+    public static boolean isDebugMode() {
+        return debug;
+    }
 
     public static void main(String[] args) throws Exception {
         // the JIDE license
@@ -20,15 +28,19 @@ public class Main {
         // check if we are in debug mode
         if ((args.length > 0) && args[0].equals("debug")) {
             ErrorHandler.setDebugMode();
+            debug = true;
         }
 
         // build the application
         final ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("com/vitco/glue/config.xml");
 
         // for debugging
-        ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
-        ((ComplexActionManager) context.getBean("ComplexActionManager")).performValidityCheck();
-        ((ShortcutManager) context.getBean("ShortcutManager")).doSanityCheck();
+        if (debug) {
+            ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
+            ((ComplexActionManager) context.getBean("ComplexActionManager")).performValidityCheck();
+        }
+        // perform shortcut check
+        ((ShortcutManager) context.getBean("ShortcutManager")).doSanityCheck(debug);
 //        // test console
 //        final Console console = ((Console) context.getBean("Console"));
 //        new Thread() {
@@ -56,8 +68,5 @@ public class Main {
                 pref.save();
             }
         });
-
-        // for testing
-        // throw new Exception("msg");
     }
 }

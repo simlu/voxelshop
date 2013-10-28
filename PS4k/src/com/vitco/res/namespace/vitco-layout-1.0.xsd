@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- Generated using Flame-Ware Solutions XML-2-XSD v2.0 at http://www.flame-ware.com/Products/XML-2-XSD/ -->
+<xs:schema id="head" targetNamespace="http://www.unfine.de/schema/layout" xmlns="http://www.unfine.de/schema/layout" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified">
+
+    <xs:element name="head">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="entry" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="entry">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="key" type="xs:string" use="required"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

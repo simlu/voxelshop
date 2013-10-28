@@ -17,7 +17,7 @@ public class FileTools {
         BufferedReader br = null;
         try
         {
-            br = new BufferedReader(new FileReader(file));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
             StringBuilder str = new StringBuilder();
             String line = br.readLine();
             while (line != null)
@@ -47,7 +47,7 @@ public class FileTools {
         try {
             byte[] bytesOfMessage = str.getBytes("UTF-8");
             MessageDigest md = MessageDigest.getInstance("MD5");
-            result = new String(md.digest(bytesOfMessage));
+            result = new String(md.digest(bytesOfMessage), "utf-8");
         } catch (UnsupportedEncodingException e) {
             errorHandler.handle(e);
         } catch (NoSuchAlgorithmException e) {
@@ -57,56 +57,48 @@ public class FileTools {
     }
 
     // de-serialize object from file
-    public static Object loadFromFile(File file, ErrorHandlerInterface errorHandler) {
-        Object result = null;
+    public static Object loadFromFile(final File file, ErrorHandlerInterface errorHandler) {
+        final Object[] result = {null};
         if (file != null && file.exists()) {
-            try{
-                InputStream inputStream = new FileInputStream( file );
-                InputStream buffer = new BufferedInputStream( inputStream );
-                ObjectInput input = new ObjectInputStream ( buffer );
-                try {
-                    result = input.readObject();
-                }
-                finally{
-                    input.close();
-                }
-            }
-            catch(ClassNotFoundException ex){
-                errorHandler.handle(ex);
-            }
-            catch(IOException ex){
-                errorHandler.handle(ex);
+            try {
+                new AutoFileCloser() {
+                    @Override protected void doWork() throws Throwable {
+                        InputStream inputStream = autoClose(new FileInputStream( file ));
+                        InputStream buffer = autoClose(new BufferedInputStream( inputStream ));
+                        ObjectInput input = autoClose(new ObjectInputStream ( buffer ));
+                        result[0] = input.readObject();
+                    }
+                };
+            } catch (RuntimeException e) {
+                errorHandler.handle(e);
             }
         }
-        return result;
+        return result[0];
     }
 
     // serialize object to file
-    public static boolean saveToFile(File file, Object object, ErrorHandlerInterface errorHandler) {
-        boolean result = false;
+    public static boolean saveToFile(final File file, final Object object, ErrorHandlerInterface errorHandler) {
+        final boolean[] result = {false};
+        try {
+            new AutoFileCloser() {
+                @Override protected void doWork() throws Throwable {
+                    OutputStream outputStream = autoClose(new FileOutputStream( file ));
+                    OutputStream buffer = autoClose(new BufferedOutputStream( outputStream ));
+                    ObjectOutput output = autoClose(new ObjectOutputStream( buffer ));
 
-        try{
-            OutputStream outputStream = new FileOutputStream( file );
-            OutputStream buffer = new BufferedOutputStream( outputStream );
-            ObjectOutput output = new ObjectOutputStream( buffer );
-            try{
-                output.writeObject(object);
-                result = true;
-            }
-            finally{
-                output.close();
-            }
+                    output.writeObject(object);
+                    result[0] = true;
+                }
+            };
+        } catch (RuntimeException e) {
+            errorHandler.handle(e);
         }
-        catch(IOException ex){
-            errorHandler.handle(ex);
-        }
-
-        return result;
+        return result[0];
     }
 
     // convert inputstream to string
     public static String inputStreamToString(InputStream in) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, "utf-8"));
         StringBuilder stringBuilder = new StringBuilder();
         String line;
         while ((line = bufferedReader.readLine()) != null) {
@@ -149,5 +141,15 @@ public class FileTools {
             }
         }
         return output;
+    }
+
+    // change the extension of a file e.g. "test.txt", ".dat" -> "test.dat"
+    public static String changeExtension(String originalName, String newExtension) {
+        int lastDot = originalName.lastIndexOf(".");
+        if (lastDot != -1) {
+            return originalName.substring(0, lastDot) + newExtension;
+        } else {
+            return originalName + newExtension;
+        }
     }
 }

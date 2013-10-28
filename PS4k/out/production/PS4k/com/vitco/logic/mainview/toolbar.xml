@@ -9,6 +9,9 @@
     <icon-item src="resource/img/framebars/mainview/reset.png"
                tool-tip="reset_camera_main-view_tooltip"
                action="reset_main_view_camera"/>
+    <icon-item src="resource/img/framebars/mainview/center_view.png"
+               tool-tip="center_camera_main-view_tooltip"
+               action="center_main_view_camera"/>
     <separator/>
     <icon-item src="resource/img/framebars/mainview/wireframe.png"
                tool-tip="main_window_toggle_wireframe_tooltip"

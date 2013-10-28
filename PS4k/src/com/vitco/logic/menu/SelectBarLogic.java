@@ -116,7 +116,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                         // apply the shift
                         int i = 0;
                         for (Voxel voxel : storedVoxels) {
-                            pos = voxel.getPosAsInt().clone();
+                            pos = voxel.getPosAsInt();
                             pos[0] -= shift[2];
                             pos[1] -= shift[1];
                             pos[2] -= shift[0];
@@ -279,11 +279,10 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                         for (int i = 0; i < selectedVoxels.length; i++) {
                             Voxel voxel = selectedVoxels[i];
                             voxelIds[i] = voxel.id;
-                            int[] pos = voxel.getPosAsInt();
                             shiftedVoxels[i] = new Voxel(-1, new int[] {
-                                    pos[0] - shift[0],
-                                    pos[1] - shift[1],
-                                    pos[2] - shift[2]
+                                    voxel.x - shift[0],
+                                    voxel.y - shift[1],
+                                    voxel.z - shift[2]
                             }, voxel.getColor(), voxel.isSelected(), voxel.getTexture(),  voxel.getLayerId());
                         }
 

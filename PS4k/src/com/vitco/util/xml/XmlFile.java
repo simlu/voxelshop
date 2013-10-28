@@ -3,6 +3,7 @@ package com.vitco.util.xml;
 import com.vitco.util.error.ErrorHandlerInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,6 +16,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,8 +27,33 @@ import java.util.regex.Pattern;
 public class XmlFile {
     private Document doc;
 
+    // get the direct node children of an element as NodeList
+    // that have a name equal to name
+    public static NodeList getDirectChildren(Element parent, String name)
+    {
+        final List<Node> list = new LinkedList<Node>();
+        NodeList nodeList = new NodeList() {
+            @Override
+            public Node item(int index) {
+                return list.get(index);
+            }
+
+            @Override
+            public int getLength() {
+                return list.size();
+            }
+        };
+        for(Node child = parent.getFirstChild(); child != null; child = child.getNextSibling())
+        {
+            if(child instanceof Element && name.equals(child.getNodeName())) {
+                list.add(child);
+            }
+        }
+        return nodeList;
+    }
+
     // pattern
-    Pattern datePatt = Pattern.compile("(.+?)(\\[)((\\-)?[0-9]+?)(\\])");
+    final Pattern datePatt = Pattern.compile("(.+?)(\\[)((\\-)?[0-9]+?)(\\])");
 
     // current top node
     private Element curTop;
@@ -70,7 +98,7 @@ public class XmlFile {
         String[] pathArray = path.split("/");
         for (String dir : pathArray) {
 
-            // Find the identification
+            // find the identification
             Integer pos = null;
             String name = dir;
             Matcher m = datePatt.matcher(dir);
@@ -79,7 +107,7 @@ public class XmlFile {
                 name = m.group(1);
             }
 
-            NodeList list = cur.getElementsByTagName(name);
+            NodeList list = getDirectChildren(cur, name);
             int length = list.getLength();
 
             if (pos == null) { // position not set
@@ -106,6 +134,58 @@ public class XmlFile {
         }
 
         return cur;
+    }
+
+    // go up one step
+    public boolean goUp() {
+        if (curTop != doc.getDocumentElement()) {
+            curTop = (Element) curTop.getParentNode();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // go up "level" steps
+    public boolean goUp(int level) {
+        int clevel = level;
+        boolean result = true;
+        while (clevel > 0 && result) {
+            result = goUp();
+            clevel--;
+        }
+        return result;
+    }
+
+    // delete the current node and go up
+    public boolean deleteChild(String child) {
+        boolean result = false;
+        // find the identification
+        Integer pos = null;
+        String name = child;
+        Matcher m = datePatt.matcher(child);
+        if (m.matches()) {
+            pos = Integer.valueOf(m.group(3));
+            name = m.group(1);
+        }
+
+        NodeList list = getDirectChildren(curTop, name);
+        int length = list.getLength();
+
+        if (pos == null) { // position not set
+            if (length > 0) { // exists (take the first)
+                curTop.removeChild(list.item(0));
+                result = true;
+            }
+        } else { // position is set
+            if (pos >= 0) { // position valid
+                if (length > pos) { // can select
+                    curTop.removeChild(list.item(pos));
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 
     // creates a path (public)

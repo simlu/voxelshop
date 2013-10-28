@@ -1,7 +1,9 @@
 package com.vitco.engine.data.container;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * A Voxel instance, only getter are available (!)
@@ -10,6 +12,11 @@ public final class Voxel implements Serializable {
     private static final long serialVersionUID = 1L;
     private final int[] posI;
     private final float[] posF = new float[3]; // position
+    private transient String posS = null;
+    // make final when legacy support is removed
+    public transient final int x;
+    public transient final int y;
+    public transient final int z;
     public final int id; // id
     private Color color; // color of voxel
     private int alpha = -1; // alpha of this voxel
@@ -30,6 +37,38 @@ public final class Voxel implements Serializable {
         for (int i = 0; i < pos.length; i++) {
             this.posF[i] = pos[i];
         }
+        posS = posI[0] + "_" + posI[1] + "_" + posI[2];
+        // load the public values for fast access
+        x = pos[0];
+        y = pos[1];
+        z = pos[2];
+    }
+
+    // called after deserialization
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        // build the string representation when loading from file
+        if (posS == null) {
+            posS = posI[0] + "_" + posI[1] + "_" + posI[2];
+        }
+        // read the transient final values after deserialization
+        try {
+            Field f = this.getClass().getDeclaredField("x");
+            f.setAccessible(true);
+            f.set(this, posI[0]);
+            f = this.getClass().getDeclaredField("y");
+            f.setAccessible(true);
+            f.set(this, posI[1]);
+            f = this.getClass().getDeclaredField("z");
+            f.setAccessible(true);
+            f.set(this, posI[2]);
+        } catch (NoSuchFieldException e) {
+            // should never happen
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // should never happen
+            e.printStackTrace();
+        }
     }
 
     // retrieve position
@@ -40,11 +79,11 @@ public final class Voxel implements Serializable {
         return posF.clone();
     }
     public final String getPosAsString() {
-        return posI[0] + "_" + posI[1] + "_" + posI[2];
+        return posS;
     }
 
     // set the color of this voxel
-    protected final void setColor(Color color) {
+    public final void setColor(Color color) {
         this.color = color;
     }
 
@@ -85,6 +124,15 @@ public final class Voxel implements Serializable {
     // get the flip of this voxel
     public final boolean[] getFlip() {
         return sideFlip == null ? null : sideFlip.clone();
+    }
+
+    // set the texture of this voxel
+    public final boolean setTexture(int[] textureIds) {
+        if (textureIds == null || textureIds.length == 6) {
+            this.textureIds = textureIds == null ? null : textureIds.clone();
+            return true;
+        }
+        return false;
     }
 
     // get the texture of this voxel

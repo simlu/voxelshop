@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <icon-item src="resource/img/bars/option_bar/light.png"
+               tool-tip="toggle_light_menubar_tooltip"
+               checkable="true"
+               action="toggle_light_mode"/>
+    <icon-item src="resource/img/bars/option_bar/grid.png"
+               tool-tip="toggle_grid_menubar_tooltip"
+               checkable="true"
+               action="toggle_grid_mode"/>
+    <icon-item src="resource/img/bars/option_bar/boundingBox.png"
+               tool-tip="toggle_bounding_box_tooltip"
+               checkable="true"
+               action="toggle_bounding_box"/>
+    <separator/>
+    <icon-item src="resource/img/bars/option_bar/mirrorflag.png"
+               tool-tip="toggle_mirror_flag_tooltip"
+               checkable="true"
+               grayable="true"
+               action="toggle_mirror_flag"/>
+    <separator/>
+    <split-item src="resource/img/bars/option_bar/settings.png"
+                tool-tip="settings_menubar_tooltip"
+                complex-action="settings_menubar"/>
+</head>

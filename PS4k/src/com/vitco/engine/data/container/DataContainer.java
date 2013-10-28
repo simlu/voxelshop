@@ -1,5 +1,6 @@
 package com.vitco.engine.data.container;
 
+import com.vitco.util.AutoFileCloser;
 import com.vitco.util.error.ErrorHandlerInterface;
 
 import javax.swing.*;
@@ -51,12 +52,8 @@ public final class DataContainer implements Serializable {
         this(null, null);
     }
 
-    // constructor
-    @SuppressWarnings("unchecked")
-    public DataContainer(File file, ErrorHandlerInterface errorHandler) {
-
+    private static final class TmpData {
         boolean result = false;
-
         // ############# create temporary to read from file
         HashMap<Integer, ImageIcon> textures = new HashMap<Integer, ImageIcon>();
         int selectedTexture = -1;
@@ -71,155 +68,151 @@ public final class DataContainer implements Serializable {
         HashMap<Integer, ArrayList<ExtendedLine>> pointsToLines = new HashMap<Integer, ArrayList<ExtendedLine>>();
         int activeFrame = -1;
         HashMap<Integer, Frame> frames = new HashMap<Integer, Frame>();
+    }
+
+    // constructor
+    @SuppressWarnings("unchecked")
+    public DataContainer(final File file, ErrorHandlerInterface errorHandler) {
+
+        final TmpData tmpData = new TmpData();
 
         if (file != null && file.exists()) {
-            try{
-                InputStream inputStream = new FileInputStream( file );
-                InputStream buffer = new BufferedInputStream( inputStream );
-                ObjectInput input = new ObjectInputStream ( buffer );
-                try {
-                    try {
+            try {
+                new AutoFileCloser() {
+                    @Override protected void doWork() throws Throwable {
+                        // declare variables for the readers and "watch" them
+                        InputStream inputStream = autoClose(new FileInputStream( file ));
+                        InputStream buffer = autoClose(new BufferedInputStream( inputStream ));
+                        ObjectInputStream input = autoClose(new ObjectInputStream ( buffer ));
+
                         if (input.available() > 0 && input.readUTF().equals("**VSD2013**")) {
                             while (input.available() > 0) {
                                 String token = input.readUTF();
                                 if (token.equals("#textures#")) {
-                                    textures = (HashMap<Integer, ImageIcon>) input.readObject();
+                                    tmpData.textures = (HashMap<Integer, ImageIcon>) input.readObject();
                                 } else
                                 if (token.equals("#selectedTexture#")) {
-                                    selectedTexture = (Integer)input.readObject();
+                                    tmpData.selectedTexture = (Integer)input.readObject();
                                 } else
                                 if (token.equals("#selectedLayer#")) {
-                                    selectedLayer = (Integer)input.readObject();
+                                    tmpData.selectedLayer = (Integer)input.readObject();
                                 } else
                                 if (token.equals("#layers#")) {
-                                    layers = (HashMap<Integer, VoxelLayer>) input.readObject();
+                                    tmpData.layers = (HashMap<Integer, VoxelLayer>) input.readObject();
                                 } else
                                 if (token.equals("#layerOrder#")) {
-                                    layerOrder = (ArrayList<Integer>) input.readObject();
+                                    tmpData.layerOrder = (ArrayList<Integer>) input.readObject();
                                 } else
                                 if (token.equals("#voxels#")) {
-                                    voxels = (HashMap<Integer, Voxel>) input.readObject();
+                                    tmpData.voxels = (HashMap<Integer, Voxel>) input.readObject();
                                 } else
                                 if (token.equals("#points#")) {
-                                    points = (HashMap<Integer, ExtendedVector>) input.readObject();
+                                    tmpData.points = (HashMap<Integer, ExtendedVector>) input.readObject();
                                 } else
                                 if (token.equals("#lines#")) {
-                                    lines = (HashMap<String, ExtendedLine>) input.readObject();
+                                    tmpData.lines = (HashMap<String, ExtendedLine>) input.readObject();
                                 } else
                                 if (token.equals("#pointsToLines#")) {
-                                    pointsToLines = (HashMap<Integer, ArrayList<ExtendedLine>>) input.readObject();
+                                    tmpData.pointsToLines = (HashMap<Integer, ArrayList<ExtendedLine>>) input.readObject();
                                 } else
                                 if (token.equals("#activeFrame#")) {
-                                    activeFrame = (Integer)input.readObject();
+                                    tmpData.activeFrame = (Integer)input.readObject();
                                 } else
                                 if (token.equals("#frames#")) {
-                                    frames = (HashMap<Integer, Frame>) input.readObject();
+                                    tmpData.frames = (HashMap<Integer, Frame>) input.readObject();
                                 }
                             }
-                            result = true;
+                            tmpData.result = true;
                         }
-                    } catch (EOFException e) {
-                        errorHandler.handle(e);
                     }
-                }
-                finally{
-                    input.close();
-                }
-            }
-            catch(ClassNotFoundException ex){
-                errorHandler.handle(ex);
-            }
-            catch(FileNotFoundException ex){
-                errorHandler.handle(ex);
-            }
-            catch(IOException ex){
-                errorHandler.handle(ex);
+                };
+            } catch (RuntimeException e) {
+                errorHandler.handle(e);
             }
         }
 
 
         // ############# assign temporary vars to vars
-        this.textures = textures;
-        this.selectedTexture = selectedTexture;
+        this.textures = tmpData.textures;
+        this.selectedTexture = tmpData.selectedTexture;
         // ###################### DATA (Voxel)
-        this.selectedLayer = selectedLayer;
-        this.layers = layers;
-        this.layerOrder = layerOrder;
-        this.voxels = voxels;
+        this.selectedLayer = tmpData.selectedLayer;
+        this.layers = tmpData.layers;
+        this.layerOrder = tmpData.layerOrder;
+        this.voxels = tmpData.voxels;
         // ####################### DATA (Animation)
-        this.points = points;
-        this.lines = lines;
-        this.pointsToLines = pointsToLines;
-        this.activeFrame = activeFrame;
-        this.frames = frames;
+        this.points = tmpData.points;
+        this.lines = tmpData.lines;
+        this.pointsToLines = tmpData.pointsToLines;
+        this.activeFrame = tmpData.activeFrame;
+        this.frames = tmpData.frames;
 
-        hasLoaded = result;
+        hasLoaded = tmpData.result;
     }
 
     // save to file function
-    public final boolean saveToVsdFile(File file, ErrorHandlerInterface errorHandler) {
-        boolean result = false;
-        try{
-            OutputStream outputStream = new FileOutputStream( file );
-            OutputStream buffer = new BufferedOutputStream( outputStream );
-            ObjectOutput output = new ObjectOutputStream( buffer );
-            try{
-                // write identifier
-                output.writeUTF("**VSD2013**");
+    public final boolean saveToVsdFile(final File file, ErrorHandlerInterface errorHandler) {
+        final boolean[] result = {false};
+        try {
+            new AutoFileCloser() {
+                @Override protected void doWork() throws Throwable {
+                    OutputStream outputStream = autoClose(new FileOutputStream( file ));
+                    OutputStream buffer = autoClose(new BufferedOutputStream( outputStream ));
+                    ObjectOutputStream output = autoClose(new ObjectOutputStream( buffer ));
 
-                if (textures != null) {
-                    output.writeUTF("#textures#");
-                    output.writeObject(textures);
-                }
+                    // write identifier
+                    output.writeUTF("**VSD2013**");
 
-                output.writeUTF("#selectedTexture#");
-                output.writeObject(selectedTexture);
+                    if (textures != null) {
+                        output.writeUTF("#textures#");
+                        output.writeObject(textures);
+                    }
 
-                output.writeUTF("#selectedLayer#");
-                output.writeObject(selectedLayer);
+                    output.writeUTF("#selectedTexture#");
+                    output.writeObject(selectedTexture);
 
-                if (layers != null) {
-                    output.writeUTF("#layers#");
-                    output.writeObject(layers);
-                }
-                if (layerOrder != null) {
-                    output.writeUTF("#layerOrder#");
-                    output.writeObject(layerOrder);
-                }
-                if (voxels != null) {
-                    output.writeUTF("#voxels#");
-                    output.writeObject(voxels);
-                }
-                if (points != null) {
-                    output.writeUTF("#points#");
-                    output.writeObject(points);
-                }
-                if (lines != null) {
-                    output.writeUTF("#lines#");
-                    output.writeObject(lines);
-                }
-                if (pointsToLines != null) {
-                    output.writeUTF("#pointsToLines#");
-                    output.writeObject(pointsToLines);
-                }
+                    output.writeUTF("#selectedLayer#");
+                    output.writeObject(selectedLayer);
 
-                output.writeUTF("#activeFrame#");
-                output.writeObject(activeFrame);
+                    if (layers != null) {
+                        output.writeUTF("#layers#");
+                        output.writeObject(layers);
+                    }
+                    if (layerOrder != null) {
+                        output.writeUTF("#layerOrder#");
+                        output.writeObject(layerOrder);
+                    }
+                    if (voxels != null) {
+                        output.writeUTF("#voxels#");
+                        output.writeObject(voxels);
+                    }
+                    if (points != null) {
+                        output.writeUTF("#points#");
+                        output.writeObject(points);
+                    }
+                    if (lines != null) {
+                        output.writeUTF("#lines#");
+                        output.writeObject(lines);
+                    }
+                    if (pointsToLines != null) {
+                        output.writeUTF("#pointsToLines#");
+                        output.writeObject(pointsToLines);
+                    }
 
-                if (frames != null) {
-                    output.writeUTF("#frames#");
-                    output.writeObject(frames);
+                    output.writeUTF("#activeFrame#");
+                    output.writeObject(activeFrame);
+
+                    if (frames != null) {
+                        output.writeUTF("#frames#");
+                        output.writeObject(frames);
+                    }
+
+                    result[0] = true;
                 }
-
-                result = true;
-            }
-            finally{
-                output.close();
-            }
+            };
+        } catch (RuntimeException e) {
+            errorHandler.handle(e);
         }
-        catch(IOException ex){
-            errorHandler.handle(ex);
-        }
-        return result;
+        return result[0];
     }
 }

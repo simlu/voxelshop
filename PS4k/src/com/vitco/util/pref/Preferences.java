@@ -1,5 +1,7 @@
 package com.vitco.util.pref;
 
+import com.vitco.res.VitcoSettings;
+import com.vitco.util.AutoFileCloser;
 import com.vitco.util.FileTools;
 import com.vitco.util.error.ErrorHandlerInterface;
 
@@ -21,102 +23,133 @@ public class Preferences implements PreferencesInterface {
 
     @Override
     public void notifyListeners(String key, Object value) {
-        if (listeners.containsKey(key)) {
-            for (PrefChangeListener pcl : listeners.get(key)) {
-                pcl.onPrefChange(value);
+        synchronized (VitcoSettings.SYNC) {
+            if (listeners.containsKey(key)) {
+                for (PrefChangeListener pcl : listeners.get(key)) {
+                    pcl.onPrefChange(value);
+                }
             }
         }
     }
 
     @Override
     public void addPrefChangeListener(String key, PrefChangeListener pcl) {
-        if (!listeners.containsKey(key)) { // make sure this is init
-            listeners.put(key, new ArrayList<PrefChangeListener>());
-        }
-        // add the listener
-        listeners.get(key).add(pcl);
-        // call it if value is known
-        if (map.containsKey(key)) {
-            pcl.onPrefChange(map.get(key));
+        synchronized (VitcoSettings.SYNC) {
+            if (!listeners.containsKey(key)) { // make sure this is init
+                listeners.put(key, new ArrayList<PrefChangeListener>());
+            }
+            // add the listener
+            listeners.get(key).add(pcl);
+            // call it if value is known
+            if (map.containsKey(key)) {
+                pcl.onPrefChange(map.get(key));
+            }
         }
     }
 
     @Override
     public boolean contains(String key) {
-        return map.containsKey(key);
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key);
+        }
     }
 
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Override
     public final void setErrorHandler(ErrorHandlerInterface errorHandler) {
-        this.errorHandler = errorHandler;
+        synchronized (VitcoSettings.SYNC) {
+            this.errorHandler = errorHandler;
+        }
     }
 
     @Override
     public final void storeObject(String key, Object value) {
-        if (!map.containsKey(key) || !map.get(key).equals(value)) {
-            map.put(key, value);
-            notifyListeners(key, value);
+        synchronized (VitcoSettings.SYNC) {
+            if (!map.containsKey(key) || !map.get(key).equals(value)) {
+                map.put(key, value);
+                notifyListeners(key, value);
+            }
         }
     }
 
     @Override
     public Object loadObject(String key) {
-        return map.containsKey(key) ? map.get(key) : null;
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? map.get(key) : null;
+        }
     }
 
     @Override
     public void storeBoolean(String key, boolean value) {
-        storeObject(key, value);
+        synchronized (VitcoSettings.SYNC) {
+            storeObject(key, value);
+        }
     }
 
     @Override
     public void storeInteger(String key, int value) {
-        storeObject(key, value);
+        synchronized (VitcoSettings.SYNC) {
+            storeObject(key, value);
+        }
     }
 
     @Override
     public void storeString(String key, String value) {
-        storeObject(key, value);
+        synchronized (VitcoSettings.SYNC) {
+            storeObject(key, value);
+        }
     }
 
     @Override
     public boolean loadBoolean(String key) {
-        return map.containsKey(key) ? (Boolean)map.get(key) : false;
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? (Boolean)map.get(key) : false;
+        }
     }
 
     @Override
     public int loadInteger(String key) {
-        return map.containsKey(key) ? (Integer)map.get(key) : 0;
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? (Integer)map.get(key) : 0;
+        }
     }
 
     @Override
     public final String loadString(String key) {
-        return map.containsKey(key) ? (String)map.get(key) : "";
+        synchronized (VitcoSettings.SYNC) {
+            return map.containsKey(key) ? (String)map.get(key) : "";
+        }
     }
 
     // var % setter
     private String storageFileName;
     @Override
     public final void setStorageFile(String filename) {
-        storageFileName = filename;
+        synchronized (VitcoSettings.SYNC) {
+            storageFileName = filename;
+        }
     }
 
     // "manually" executed after all PreDestroys are called
     @Override
     public void save() {
-        // store the map in file
-        File dataFile = new File(storageFileName);
-        if (dataFile.getParentFile().exists() || dataFile.getParentFile().mkdirs()) {
-            try {
-                FileOutputStream fileOut = new FileOutputStream(dataFile);
-                ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                out.writeObject(map);
-            } catch (FileNotFoundException e) {
-                errorHandler.handle(e); // should not happen
-            } catch (IOException e) {
-                errorHandler.handle(e); // should not happen
+        synchronized (VitcoSettings.SYNC) {
+            // store the map in file
+            final File dataFile = new File(storageFileName);
+            if (dataFile.getParentFile().exists() || dataFile.getParentFile().mkdirs()) {
+                try {
+                    new AutoFileCloser() {
+                        @Override protected void doWork() throws Throwable {
+                            FileOutputStream fileOut = autoClose(new FileOutputStream(dataFile));
+                            ObjectOutputStream out = autoClose(new ObjectOutputStream(fileOut));
+
+                            out.writeObject(map);
+                        }
+                    };
+                } catch (RuntimeException e) {
+                    errorHandler.handle(e);
+                }
             }
         }
     }
@@ -124,18 +157,21 @@ public class Preferences implements PreferencesInterface {
     // executed when initiated (spring "init-method")
     @Override
     public void load() {
-        File dataFile = new File(storageFileName);
-        if (dataFile.exists()) {
-            try {
-                FileInputStream fileIn = new FileInputStream(dataFile);
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                map = FileTools.castHash((HashMap) in.readObject(), String.class, Object.class);
-                in.close();
-                fileIn.close();
-            } catch (IOException e) {
-                errorHandler.handle(e); // should not happen
-            } catch (ClassNotFoundException e) {
-                errorHandler.handle(e); // should not happen
+        synchronized (VitcoSettings.SYNC) {
+            final File dataFile = new File(storageFileName);
+            if (dataFile.exists()) {
+                try {
+                    new AutoFileCloser() {
+                        @Override protected void doWork() throws Throwable {
+                            FileInputStream fileIn = autoClose(new FileInputStream(dataFile));
+                            ObjectInputStream in = autoClose(new ObjectInputStream(fileIn));
+
+                            map = FileTools.castHash((HashMap) in.readObject(), String.class, Object.class);
+                        }
+                    };
+                } catch (RuntimeException e) {
+                    errorHandler.handle(e);
+                }
             }
         }
     }

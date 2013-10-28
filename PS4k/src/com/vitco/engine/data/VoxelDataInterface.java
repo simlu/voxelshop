@@ -31,10 +31,6 @@ public interface VoxelDataInterface {
     int getAlpha(int voxelId);
     // returns the layer of a voxel
     int getLayer(int voxelId);
-    // delete all voxels in area in current layer
-    boolean clearRange(int[] center, int rad);
-    // set all voxels in an area for current layer (overwrite)
-    boolean fillRange(int[] center, int rad, Color color);
     // delete all voxels in layer
     boolean clearV(int layerId);
     // returns a voxel if the current layer has a voxel at the position
@@ -47,6 +43,8 @@ public interface VoxelDataInterface {
     Voxel[] getVisibleLayerVoxel();
     // true iff any voxels are visible
     boolean anyLayerVoxelVisible();
+    // true iff any voxels are visible
+    boolean anyVoxelSelected();
     // to invalidate the side view buffer
     void invalidateSideViewBuffer(String requestId, Integer side, Integer plane);
     // get changed side view voxels since last call

@@ -2,10 +2,13 @@ package com.vitco.logic.texture;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.swing.JideScrollPane;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.notification.DataChangeAdapter;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.ThumbnailFileChooser;
 import com.vitco.util.WorldUtil;
 import com.vitco.util.WrapLayout;
@@ -35,6 +38,13 @@ import java.util.HashMap;
  */
 public class TextureManager extends ViewPrototype implements TextureManagerInterface {
 
+    protected AsyncActionManager asyncActionManager;
+
+    @Autowired
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
+    }
+
     // var & setter
     protected Data data;
     @Autowired
@@ -56,9 +66,9 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
         // we need the hash to determine when to change the picture
         private String hash = "";
 
-        private Color inactiveColor = VitcoSettings.TEXTURE_BORDER;
-        private Color activeColor = VitcoSettings.TEXTURE_BORDER_ACTIVE;
-        private Color selectedColor = VitcoSettings.TEXTURE_BORDER_SELECTED;
+        private final Color inactiveColor = VitcoSettings.TEXTURE_BORDER;
+        private final Color activeColor = VitcoSettings.TEXTURE_BORDER_ACTIVE;
+        private final Color selectedColor = VitcoSettings.TEXTURE_BORDER_SELECTED;
 
         private boolean selected = false;
 
@@ -69,10 +79,15 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
             //this.setToolTipText("Texture #" + textureId);
             this.addMouseListener(new MouseAdapter() {
                 @Override
-                public void mousePressed(MouseEvent e) {
+                public void mousePressed(final MouseEvent e) {
                     super.mousePressed(e);
-                    // unselect if this is already selected
-                    data.selectTextureSoft(selected ? -1 : textureId);
+                    asyncActionManager.addAsyncAction(new AsyncAction() {
+                        @Override
+                        public void performAction() {
+                            // unselect if this is already selected
+                            data.selectTextureSoft(selected ? -1 : textureId);
+                        }
+                    });
                 }
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -103,7 +118,12 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 selected = selectedNew;
                 this.setBorder(BorderFactory.createLineBorder(selected?selectedColor:inactiveColor));
             }
-            this.updateUI();
+            SwingAsyncHelper.handle(new Runnable() {
+                @Override
+                public void run() {
+                    updateUI();
+                }
+            }, errorHandler);
         }
     }
 
@@ -321,12 +341,18 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                         // store/update internal hash
                         textureHash.put(texId, data.getTextureHash(texId));
                         // load/update texture into world
-                        WorldUtil.loadTexture(String.valueOf(texId), data.getTexture(texId));
+                        WorldUtil.loadTexture(String.valueOf(texId), data.getTexture(texId), true);
                     }
                 }
 
                 // update the UI (force!)
-                textureWrapperPanel.updateUI();
+                SwingAsyncHelper.handle(new Runnable() {
+                    @Override
+                    public void run() {
+                        textureWrapperPanel.updateUI();
+                    }
+                }, errorHandler);
+
 
                 // this updates the values for the getBound() function
                 scrollPane.validate();

@@ -7,7 +7,10 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import java.awt.event.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -114,11 +117,13 @@ public class NumberBox extends JTextField {
     private final int MIN;
     private final int MAX;
 
+    // constructor
     public NumberBox(int min, int max, int current) {
         super(String.valueOf(current), 4);
         MIN = min;
         MAX = max;
         setForeground(Settings.TEXTAREA_TEXT_COLOR);
+        setOpaque(true);
         setBackground(Settings.TEXTAREA_BG_COLOR);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Settings.TEXTAREA_BORDER_COLOR),

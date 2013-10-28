@@ -1,8 +1,12 @@
 package com.vitco.logic.shortcut;
 
 import com.jidesoft.swing.JideTabbedPane;
+import com.vitco.async.AsyncAction;
+import com.vitco.async.AsyncActionManager;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -18,6 +22,13 @@ import java.util.EventObject;
  * Handle the displaying and the logic for the editing of shortcuts. (view & link to logic)
  */
 public class ShortcutManagerView extends ViewPrototype implements ShortcutManagerViewInterface {
+
+    protected AsyncActionManager asyncActionManager;
+    @Autowired
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
+    }
+
 
     // last hover cell
     private int curRow = -1;
@@ -79,40 +90,45 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 }
 
                 @Override
-                public void keyPressed(KeyEvent e) {
-                    KeyStroke keyStroke = e.getKeyCode() == 27
-                            ? null // escape
-                            : KeyStroke.getKeyStrokeForEvent(e); // else
-                    if (shortcutManager.isValidShortcut(keyStroke)) {
-                        if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
-                            // update the shortcut
-                            if (shortcutManager.updateShortcutObject(keyStroke, frame, rowIndex)) {
-                                String shortcutText = shortcutManager.asString(keyStroke);
-                                component.setText(shortcutText);
-                                // make sure the table is up to date
-                                // note: workaround for resize bug
-                                table.setValueAt(shortcutText, rowIndex, vColIndex);
-                            }
-                            component.setBackground(VitcoSettings.EDIT_BG_COLOR);
-                        } else { // this shortcut is already used (!)
-                            // show error color for one second
-                            component.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
-                            Toolkit.getDefaultToolkit().beep(); // play beep
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e1) {
-                                        // no need to track this
-                                        // e1.printStackTrace();
+                public void keyPressed(final KeyEvent e) {
+                    asyncActionManager.addAsyncAction(new AsyncAction() {
+                        @Override
+                        public void performAction() {
+                            KeyStroke keyStroke = e.getKeyCode() == 27
+                                    ? null // escape
+                                    : KeyStroke.getKeyStrokeForEvent(e); // else
+                            if (shortcutManager.isValidShortcut(keyStroke)) {
+                                if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
+                                    // update the shortcut
+                                    if (shortcutManager.updateShortcutObject(keyStroke, frame, rowIndex)) {
+                                        String shortcutText = shortcutManager.asString(keyStroke);
+                                        component.setText(shortcutText);
+                                        // make sure the table is up to date
+                                        // note: workaround for resize bug
+                                        table.setValueAt(shortcutText, rowIndex, vColIndex);
                                     }
                                     component.setBackground(VitcoSettings.EDIT_BG_COLOR);
+                                } else { // this shortcut is already used (!)
+                                    // show error color for one second
+                                    component.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
+                                    Toolkit.getDefaultToolkit().beep(); // play beep
+                                    new Thread() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                Thread.sleep(1000);
+                                            } catch (InterruptedException e1) {
+                                                // no need to track this
+                                                // e1.printStackTrace();
+                                            }
+                                            component.setBackground(VitcoSettings.EDIT_BG_COLOR);
+                                        }
+                                    }.start();
                                 }
-                            }.start();
+                            }
+                            e.consume(); // prevent further use of this keystroke
                         }
-                    }
-                    e.consume(); // prevent further use of this keystroke
+                    });
                 }
 
                 @Override
@@ -187,7 +203,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
 
     // return a JideTabbedPane that is autonomous and manages shortcuts
     @Override
-    public JideTabbedPane getEditTables() {
+    public JTabbedPane getEditTables() {
         // create the content of this frame (Shortcut Manager)
         // default header
         String[] columnNames = {
@@ -195,10 +211,10 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 langSelector.getString("shortcut_mg_header_shortcut")
         };
         // the different frame shortcuts are in different tabs
-        final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.RIGHT,JideTabbedPane.SCROLL_TAB_LAYOUT);
+        final JideTabbedPane tabbedPane = new JideTabbedPane(JTabbedPane.TOP, JideTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.setFocusable(false); // looks nicer
-        tabbedPane.setTabShape(JideTabbedPane.SHAPE_WINDOWS); // make square
-        tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);
+        //tabbedPane.setTabShape(JideTabbedPane.SHAPE_WINDOWS); // make square
+        //tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);
         // add the global shortcuts
         String[][] globalShortcuts = shortcutManager.getShortcuts(null);
         tabbedPane.addTab(

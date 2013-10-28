@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<head xmlns="http://www.unfine.de/schema/layout">
+    <!--set default bg for empty frames-->
+    <entry key="DockableFrame.background">
+        JideTabbedPane.background
+    </entry>
+</head>
