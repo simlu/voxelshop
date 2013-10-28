@@ -1,6 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.colors.SliderColorChooser;
 import com.vitco.util.colors.basics.ColorChangeListener;
@@ -28,9 +29,9 @@ public class ColorSliderLinkage extends FrameLinkagePrototype {
     @Override
     public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/frames/colorslider.png")
-        )));
+        frame = new DockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/colorslider.png").asIconImage()
+        );
         updateTitle(); // update the title
 
         // add the chooser

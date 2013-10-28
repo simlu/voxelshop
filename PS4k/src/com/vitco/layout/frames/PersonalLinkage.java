@@ -1,6 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
@@ -14,9 +15,9 @@ public class PersonalLinkage extends FrameLinkagePrototype {
     @Override
     public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/frames/personal.png")
-        )));
+        frame = new DockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/personal.png").asIconImage()
+        );
         updateTitle(); // update the title
 
         // ...

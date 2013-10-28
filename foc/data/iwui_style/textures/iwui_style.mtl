@@ -1,5 +1,0 @@
-// Symbols for softkeyboard
-CIwMaterial { name "deleteKey_symbol" clampUV true alphaMode "BLEND" texture0 "./deleteKey_symbol.tga" }
-CIwMaterial { name "enterKey_symbol" clampUV true alphaMode "BLEND" texture0 "./enterKey_symbol.tga" }
-CIwMaterial { name "shiftkey_symbol" clampUV true alphaMode "BLEND" texture0 "./shiftkey_symbol.tga" }
-CIwMaterial { name "spaceBar_symbol" clampUV true alphaMode "BLEND" texture0 "./spaceBar_symbol.tga" }

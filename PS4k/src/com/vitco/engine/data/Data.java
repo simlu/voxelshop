@@ -7,6 +7,7 @@ import com.vitco.engine.data.container.Voxel;
 import com.vitco.export.ColladaFile;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.xml.XmlTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +170,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
                 // validate the file
                 if (!XmlTools.validateAgainstXSD(
                         file.getAbsolutePath(),
-                        new StreamSource(ClassLoader.getSystemResourceAsStream("resource/xsd/collada_schema_1_4_1.xsd")),
+                        new SaveResourceLoader("resource/xsd/collada_schema_1_4_1.xsd").asStreamSource(),
                         errorHandler)) {
                     result = false;
                 }

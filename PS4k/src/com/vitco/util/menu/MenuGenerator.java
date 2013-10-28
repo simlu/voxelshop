@@ -8,6 +8,7 @@ import com.jidesoft.swing.JideSplitButton;
 import com.jidesoft.swing.JideToggleButton;
 import com.vitco.logic.shortcut.GlobalShortcutChangeListener;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.action.ChangeListener;
 import com.vitco.util.action.ComplexActionManager;
@@ -79,8 +80,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
             DocumentBuilderFactory factory = DocumentBuilderFactory
                     .newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-
-            Document doc = builder.parse(ClassLoader.getSystemResourceAsStream(xmlFile));
+            Document doc = builder.parse(new SaveResourceLoader(xmlFile).asInputStream());
 
             buildRecursive(doc.getFirstChild(), jComponent);
 
@@ -250,9 +250,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
         if (grayable) {
             // check if there is a custom gray icon defined
             if (e.hasAttribute("src-gray")) {
-                abstractButton.setDisabledIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                        ClassLoader.getSystemResource(e.getAttribute("src-gray"))
-                )));
+                abstractButton.setDisabledIcon(new SaveResourceLoader(e.getAttribute("src-gray")).asIconImage());
             }
         }
 
@@ -287,10 +285,8 @@ public class MenuGenerator implements MenuGeneratorInterface {
     private void addIconItem(JComponent component, final Element e,
                              final boolean checkable, final boolean grayable, final boolean hideable) {
         final JideButton jideButton = checkable
-                ? new JideToggleButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src")))))
-                : new JideButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src")))));
+                ? new JideToggleButton(new SaveResourceLoader(e.getAttribute("src")).asIconImage())
+                : new JideButton(new SaveResourceLoader(e.getAttribute("src")).asIconImage());
 
         // to perform validity check we need to register this name
         actionManager.registerActionIsUsed(e.getAttribute("action"));
@@ -316,8 +312,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
     private void addSplitItem(JComponent component, final Element e,
                               final boolean checkable, final boolean grayable, final boolean hideable) {
 
-        final JideSplitButton splitButton = new JideSplitButton(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(e.getAttribute("src")))));
+        final JideSplitButton splitButton = new JideSplitButton(new SaveResourceLoader(e.getAttribute("src")).asIconImage());
 
         // check if we have an action
         if (e.hasAttribute("action")) {

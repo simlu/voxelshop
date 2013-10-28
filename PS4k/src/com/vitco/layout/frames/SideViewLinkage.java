@@ -2,6 +2,7 @@ package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.logic.sideview.SideViewInterface;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
@@ -22,9 +23,9 @@ public class SideViewLinkage extends FrameLinkagePrototype {
     @Override
     public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/frames/sideView.png")
-        )));
+        frame = new DockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/sideView.png").asIconImage()
+        );
         updateTitle(); // update the title
 
         frame.add(sideView.build());

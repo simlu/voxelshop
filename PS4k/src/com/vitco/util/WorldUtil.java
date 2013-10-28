@@ -226,9 +226,7 @@ public class WorldUtil {
 
     // load a texture to the world (from string)
     public static void loadTexture(String name, String url, boolean useAlpha) {
-        Image image = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource(url)
-        )).getImage();
+        Image image = new SaveResourceLoader(url).asImage();
         loadTexture(name, image, useAlpha);
     }
 
@@ -364,9 +362,11 @@ public class WorldUtil {
     // add a grid plane
     public static int addGridPlane(World world) {
 
-        WorldUtil.loadTexture("__grid__", Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/tex/bounding_box_256.png")
-        ), false);
+        WorldUtil.loadTexture(
+                "__grid__",
+                new SaveResourceLoader("resource/tex/bounding_box_256.png").asImage(),
+                false
+        );
 
         // get object
         Object3D box = boxTypes.get("000000").cloneObject();

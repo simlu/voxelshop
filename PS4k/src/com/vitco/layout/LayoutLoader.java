@@ -1,6 +1,7 @@
 package com.vitco.layout;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
+import com.vitco.util.SaveResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,7 +35,9 @@ public class LayoutLoader {
                     DocumentBuilderFactory factory = DocumentBuilderFactory
                             .newInstance();
                     DocumentBuilder builder = factory.newDocumentBuilder();
-                    Document doc = builder.parse(ClassLoader.getSystemResourceAsStream(xmlFile));
+                    Document doc = builder.parse(
+                            new SaveResourceLoader(xmlFile).asInputStream()
+                    );
                     NodeList list = doc.getFirstChild().getChildNodes();
                     for (int i = 0; i < list.getLength(); i++) {
                         Node node = list.item(i);

@@ -1,8 +1,0 @@
-CIwResGroup
-{
-	name	iwui_style
-	
-	.\iwui_resources.group  { inline true }
-	.\iwui_stylesheet.itx
-	.\iwui_softkeyboard.ui
-}

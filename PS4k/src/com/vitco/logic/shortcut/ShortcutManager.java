@@ -4,6 +4,7 @@ import com.jidesoft.docking.DialogFloatingContainer;
 import com.vitco.async.AsyncAction;
 import com.vitco.async.AsyncActionManager;
 import com.vitco.util.FileTools;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -471,7 +472,9 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     .newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
 
-            Document doc = builder.parse(ClassLoader.getSystemResourceAsStream(xmlFile));
+            Document doc = builder.parse(
+                    new SaveResourceLoader(xmlFile).asInputStream()
+            );
 
             // load the mapping
             Node node = doc.getFirstChild(); // head node

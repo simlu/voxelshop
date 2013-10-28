@@ -2,6 +2,7 @@ package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
 import com.vitco.logic.mainview.MainViewInterface;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.types.StateActionPrototype;
 
 import javax.swing.*;
@@ -23,9 +24,9 @@ public class MainViewLinkage extends FrameLinkagePrototype {
     @Override
     public DockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key, new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                ClassLoader.getSystemResource("resource/img/icons/frames/mainview.png")
-        )));
+        frame = new DockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/mainview.png").asIconImage()
+        );
         updateTitle(); // update the title
         // remove all existing mouse listeners (no idea why there exist any.. jide?!)
         // prevent stupid popup

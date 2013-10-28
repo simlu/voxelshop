@@ -14,6 +14,7 @@ import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.logic.shortcut.ShortcutManagerInterface;
 import com.vitco.res.VitcoSettings;
+import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.ActionManager;
 import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.lang.LangSelectorInterface;
@@ -182,16 +183,18 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // set the icon
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage(
-            ClassLoader.getSystemResource("resource/img/icons/application/paintbucket.png")
-        ));
+        this.setIconImage(
+                new SaveResourceLoader("resource/img/icons/application/paintbucket.png").asImage()
+        );
 
         try {
             // init loading
             ////////////////
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(ClassLoader.getSystemResourceAsStream("resource/layout/TopLayout.ilayout"));
+            Document document = builder.parse(
+                    new SaveResourceLoader("resource/layout/TopLayout.ilayout").asInputStream()
+            );
 
             // prepare
             getDockableBarManager().beginLoadLayoutData();
