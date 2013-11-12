@@ -4,7 +4,7 @@
     <properties id="ant-preprocessing">
       <options enabled="true" />
     </properties>
-    <root id="archive" name="PS4k.jar">
+    <root id="archive" name="main.jar">
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
       </element>

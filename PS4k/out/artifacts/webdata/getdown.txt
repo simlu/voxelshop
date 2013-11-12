@@ -1,11 +1,11 @@
 # The URL from which the client is downloaded
-appbase = http://fantasy-mmorpg.com/tools/ps4k/upd/
+appbase = http://blackflux.com/software/vs/upd/
 
 # UI Configuration
-ui.name = PS4k
+ui.name = VoxelShop
 
 # Application jar files
-code = PS4k.jar
+code = main.jar
 code = lib/commons-logging-1.1.1.jar
 code = lib/jide-action.jar
 code = lib/jide-common.jar

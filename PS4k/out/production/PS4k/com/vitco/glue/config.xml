@@ -12,7 +12,7 @@
     <!-- error handle -->
     <bean id="ErrorHandler" class="com.vitco.util.error.ErrorHandler">
         <property name="langSelector" ref="LangSelector"/>
-        <property name="debugReportUrl" value="http://www.fantasy-mmorpg.com/tools/ps4k/debug/upload.php"/>
+        <property name="debugReportUrl" value="http://www.blackflux.com/software/vs/debug/upload.php"/>
         <property name="console" ref="Console"/>
     </bean>
 

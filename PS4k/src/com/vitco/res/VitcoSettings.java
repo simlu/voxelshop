@@ -32,7 +32,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "PS4k - Alpha Version (V1.2.17)";
+    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.2.20)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -43,7 +43,7 @@ public final class VitcoSettings {
     public static final Color GHOST_VOXEL_OVERLAY_LINE_COLOR = new Color(255, 255, 255, 100);
 
     // these can change externally
-    public static final String PROGRAM_UPDATER_URL = "http://www.fantasy-mmorpg.com/tools/ps4k/upd/digest.txt";
+    public static final String PROGRAM_UPDATER_URL = "http://www.blackflux.com/software/vs/upd/digest.txt";
 
     // cursor
     public static final Cursor CURSOR_DEFAULT = Cursor.getDefaultCursor();

@@ -1,14 +1,12 @@
 package com.vitco.layout;
 
-import com.jidesoft.action.CommandMenuBar;
-import com.jidesoft.action.DefaultDockableBarDockableHolder;
-import com.jidesoft.action.DockableBar;
-import com.jidesoft.action.DockableBarFactory;
+import com.jidesoft.action.*;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.DockableFrameFactory;
 import com.jidesoft.docking.DockingManager;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import com.jidesoft.plaf.UIDefaultsLookup;
+import com.jidesoft.swing.LayoutPersistence;
 import com.vitco.engine.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
@@ -188,6 +186,10 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         );
 
         try {
+            DockingManager dockingManager = getDockingManager();
+            DockableBarManager dockableBarManager = getDockableBarManager();
+            LayoutPersistence layoutPersistence = getLayoutPersistence();
+
             // init loading
             ////////////////
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -197,26 +199,26 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             );
 
             // prepare
-            getDockableBarManager().beginLoadLayoutData();
-            getDockingManager().beginLoadLayoutData();
+            dockableBarManager.beginLoadLayoutData();
+            dockingManager.beginLoadLayoutData();
 
             // add menu bars
-            getDockableBarManager().setDockableBarFactory(new DockableBarFactory() {
+            dockableBarManager.setDockableBarFactory(new DockableBarFactory() {
                 public DockableBar create(String key) {
                     return prepareBar(key);
                 }
             });
 
             // add dock-able frames
-            getDockingManager().setDockableFrameFactory(new DockableFrameFactory() {
+            dockingManager.setDockableFrameFactory(new DockableFrameFactory() {
                 public DockableFrame create(String key) {
                     return prepareFrame(key);
                 }
             });
 
             // finish adding
-            getDockableBarManager().loadInitialLayout(document);
-            getDockingManager().loadInitialLayout(document);
+            dockableBarManager.loadInitialLayout(document);
+            dockingManager.loadInitialLayout(document);
             ////////////////////
 
             // register the shortcut action names
@@ -226,18 +228,19 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             shortcutManager.registerShortcuts(thisFrame);
 
             // try to load the saved layout
-            this.getLayoutPersistence().beginLoadLayoutData();
+            layoutPersistence.beginLoadLayoutData();
             byte[] layoutData = (byte[]) preferences.loadObject("custom_raw_layout_data");
+            layoutPersistence.setUsePref(false);
             if(layoutData != null) {
-                getLayoutPersistence().setLayoutRawData(layoutData);
+                layoutPersistence.setLayoutRawData(layoutData);
             } else {
-                this.getLayoutPersistence().loadLayoutData();
+                layoutPersistence.loadLayoutData();
             }
             this.toFront();
 
             // allow frames to fill empty space
-            getDockingManager().getWorkspace().setAcceptDockableFrame(true);
-            getDockingManager().setEasyTabDock(true);
+            dockingManager.getWorkspace().setAcceptDockableFrame(true);
+            dockingManager.setEasyTabDock(true);
 
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
