@@ -188,6 +188,11 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
         actionGroupManager.registerGroup("history_actions");
         // =====================================
 
+        // set initial preferences
+        if (!preferences.contains("voxel_snap_enabled")) {
+            preferences.storeBoolean("voxel_snap_enabled", VitcoSettings.INITIAL_ANIMATION_VOXEL_SNAP);
+        }
+
         // register voxel snap toggle action
         actionGroupManager.addAction("animation_paint_modes", "toggle_voxel_snap", new StateActionPrototype() {
             @Override

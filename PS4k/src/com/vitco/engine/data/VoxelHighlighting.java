@@ -2,6 +2,9 @@ package com.vitco.engine.data;
 
 import com.vitco.res.VitcoSettings;
 
+import java.awt.*;
+import java.util.HashMap;
+
 /**
  * Functionality for voxel highlighting and selection of voxels.
  */
@@ -36,6 +39,46 @@ public class VoxelHighlighting extends VoxelData implements VoxelHighlightingInt
                 notifier.onVoxelHighlightingChanged();
             }
         }
+    }
+
+    // ================================
+    // set selection boxes
+    private final HashMap<String, int[][]> boxOutlines = new HashMap<String, int[][]>();
+    private int[][][] boxOutlinesArray = new int[0][][];
+
+    @Override
+    public final void setOutlineBox(String key, int[][] rect) {
+        if (rect == null) {
+            boxOutlines.remove(key);
+        } else {
+            boxOutlines.put(key, rect);
+        }
+        // convert to array
+        if (boxOutlinesArray.length != boxOutlines.size()) {
+            boxOutlinesArray = new int[boxOutlines.size()][][];
+        }
+        boxOutlines.values().toArray(boxOutlinesArray);
+        notifier.onOutlineBoxesChanged();
+    }
+
+    @Override
+    public final int[][][] getOutlineBoxes() {
+        return boxOutlinesArray.clone();
+    }
+
+    // ================================
+    // set selection rectangles
+    private Rectangle selectionRect = null;
+
+    @Override
+    public Rectangle getSelectionRect() {
+        return selectionRect;
+    }
+
+    @Override
+    public void setSelectionRect(Rectangle selectionRect) {
+        this.selectionRect = selectionRect;
+        notifier.onSelectionRectChanged();
     }
 
     // ================================

@@ -2232,6 +2232,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         synchronized (VitcoSettings.SYNC) {
             int layerId = getFreeLayerId();
             historyManagerV.applyIntent(new CreateLayerIntent(layerId, layerName, false));
+            notifier.onLayerStateChanged();
             return layerId;
         }
     }
@@ -2242,6 +2243,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             boolean result = false;
             if (dataContainer.layers.containsKey(layerId)) {
                 historyManagerV.applyIntent(new DeleteLayerIntent(layerId, false));
+                notifier.onLayerStateChanged();
                 result = true;
             }
             return result;
@@ -2254,6 +2256,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             boolean result = false;
             if (dataContainer.layers.containsKey(layerId) && !newName.equals(dataContainer.layers.get(layerId).getName())) {
                 historyManagerV.applyIntent(new RenameLayerIntent(layerId, newName, false));
+                notifier.onLayerStateChanged();
                 result = true;
             }
             return result;
@@ -2292,6 +2295,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             boolean result = false;
             if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
                 historyManagerV.applyIntent(new SelectLayerIntent(layerId, false));
+                notifier.onLayerStateChanged();
                 result = true;
             }
             return result;
@@ -2305,6 +2309,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             if ((dataContainer.layers.containsKey(layerId) || layerId == -1) && dataContainer.selectedLayer != layerId) {
                 dataContainer.selectedLayer = layerId;
                 invalidateV(new int[0][]);
+                notifier.onLayerStateChanged();
                 result = true;
             }
             return result;
@@ -2341,6 +2346,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             boolean result = false;
             if (dataContainer.layers.containsKey(layerId) && dataContainer.layers.get(layerId).isVisible() != b) {
                 historyManagerV.applyIntent(new LayerVisibilityIntent(layerId, b, false));
+                notifier.onLayerStateChanged();
                 result = true;
             }
             return result;
@@ -2364,6 +2370,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             boolean result = false;
             if (canMoveLayerUp(layerId)) {
                 historyManagerV.applyIntent(new MoveLayerIntent(layerId, true, false));
+                notifier.onLayerStateChanged();
                 result = true;
             }
             return result;
@@ -2376,6 +2383,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             boolean result = false;
             if (canMoveLayerDown(layerId)) {
                 historyManagerV.applyIntent(new MoveLayerIntent(layerId, false, false));
+                notifier.onLayerStateChanged();
                 result = true;
             }
             return result;
@@ -2401,6 +2409,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         synchronized (VitcoSettings.SYNC) {
             if (canMergeVisibleLayers()) {
                 historyManagerV.applyIntent(new MergeLayersIntent(false));
+                notifier.onLayerStateChanged();
                 return true;
             }
             return false;

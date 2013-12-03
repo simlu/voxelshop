@@ -32,7 +32,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.2.20)";
+    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.2.24)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -54,6 +54,7 @@ public final class VitcoSettings {
     public static final Color INITIAL_CURRENT_COLOR = new Color(199, 89, 68);
     public static final VOXELMODE INITIAL_VOXEL_MODE = VOXELMODE.DRAW;
     public static final boolean INITIAL_MODE_IS_ANIMATION = false;
+    public static final boolean INITIAL_ANIMATION_VOXEL_SNAP = true;
 
     // e.g. for shortcut manager
     public static final Color EDIT_BG_COLOR = new Color(250, 250, 250); // new Color(187, 209, 255);
@@ -134,7 +135,7 @@ public final class VitcoSettings {
     // general config
     public static final Float VOXEL_SIZE = 10f;
     public static final Float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
-    public static final Float VOXEL_GROUND_PLANE_SIZE = 21 * VOXEL_SIZE; // when changing this make sure the edges are ok
+    public static final Float VOXEL_GROUND_PLANE_SIZE = 21 * VitcoSettings.VOXEL_SIZE; // when changing this make sure the edges are ok
     public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);

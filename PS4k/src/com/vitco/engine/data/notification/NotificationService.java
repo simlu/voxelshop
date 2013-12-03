@@ -63,4 +63,24 @@ public final class NotificationService implements NotificationServiceInterface {
         }
     }
 
+    @Override
+    public void onOutlineBoxesChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onOutlineBoxesChanged();
+        }
+    }
+
+    @Override
+    public void onSelectionRectChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onSelectionRectChanged();
+        }
+    }
+
+    @Override
+    public void onLayerStateChanged() {
+        for (DataChangeListener listener : listeners) {
+            listener.onLayerStateChanged();
+        }
+    }
 }

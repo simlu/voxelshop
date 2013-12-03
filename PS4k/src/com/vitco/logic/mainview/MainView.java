@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.HashSet;
 
 /**
  * Creates the main view instance and attaches the specific user interaction.
@@ -183,15 +182,6 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         camera.setZoomLimits(VitcoSettings.MAIN_VIEW_ZOOM_IN_LIMIT, VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT);
         camera.setView(VitcoSettings.MAIN_VIEW_CAMERA_POSITION); // camera initial position
 
-        // add ground plane
-        final int worldPlane = WorldUtil.addPlane(
-                world,
-                new SimpleVector(0, VitcoSettings.VOXEL_GROUND_DISTANCE, 0),
-                new SimpleVector(0, 0, 0),
-                VitcoSettings.VOXEL_GROUND_PLANE_SIZE,
-                VitcoSettings.VOXEL_GROUND_PLANE_COLOR,
-                0
-        );
 
         // =============== BOUNDING BOX
         // add the bounding box (texture)
@@ -203,8 +193,6 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 useBoundingBox = (Boolean)o;
                 container.setDrawBoundingBox(useBoundingBox); // overlay part
                 world.getObject(boundingBox).setVisibility(useBoundingBox); // texture part
-                // default ground plane
-                world.getObject(worldPlane).setVisibility(!useBoundingBox);
                 // redraw container
                 container.doNotSkipNextWorldRender();
                 forceRepaint();
@@ -380,7 +368,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             public void action(ActionEvent actionEvent) {
                 useWireFrame = !useWireFrame;
-                useWireFrame(useWireFrame);
+                container.useWireFrame(useWireFrame);
                 forceRepaint();
             }
 
@@ -409,15 +397,6 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/logic/mainview/toolbar.xml");
         // so the background doesn't show
         menuPanel.setOpaque(true);
-
-        // register color change event of ground plane
-        preferences.addPrefChangeListener("main_view_ground_plane_color", new PrefChangeListener() {
-            @Override
-            public void onPrefChange(Object o) {
-                world.getObject(worldPlane).setAdditionalColor((Color)o);
-                forceRepaint();
-            }
-        });
 
         // add to wrapper
         wrapper.add(menuPanel, BorderLayout.SOUTH);

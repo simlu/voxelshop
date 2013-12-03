@@ -135,8 +135,9 @@ public class ExportWorld {
     }
 
     // build the sides and returns the total number of triangles
-    public int buildSides() {
+    public int[] buildSides() {
         int triCount = 0;
+        int triCountRaw = 0;
         // for all sides
         for (int i = 0; i < 6; i++) {
             // holds the sides per "slice"
@@ -149,6 +150,7 @@ public class ExportWorld {
             // for all voxels
             for (VoxelSide voxel : voxels) {
                 if (voxel.sideVisible(i)) {
+                    triCountRaw += 2;
                     int depthAxis = i/2;
                     ArrayList<Point> pixels = polygons.get(voxel.posForAxis(depthAxis));
                     if (pixels == null) {
@@ -164,7 +166,7 @@ public class ExportWorld {
                     pixels.add(pixel);
                 }
             }
-            if (min2 != null && max2 != null && min3 != null && max3 != null) {
+            if (min2 != null) {
                 // analyze the polygons
                 for (Map.Entry<Integer, ArrayList<Point>> entry : polygons.entrySet()) {
                     TiledImage src = ImageUtils.createConstantImage(max2 - min2 + 1, max3 - min3 + 1, 0);
@@ -177,7 +179,6 @@ public class ExportWorld {
                 }
             }
         }
-
-        return triCount;
+        return new int[] {triCount, triCountRaw};
     }
 }

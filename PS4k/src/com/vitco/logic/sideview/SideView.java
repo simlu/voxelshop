@@ -6,7 +6,6 @@ import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.async.AsyncAction;
 import com.vitco.engine.EngineInteractionPrototype;
-import com.vitco.engine.data.container.VOXELMODE;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.action.ComplexActionManager;
@@ -60,31 +59,6 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         super(side);
         this.side = side;
         resetView();
-    }
-
-    @Override
-    protected final int[] voxelPosForHoverPos(Point point, boolean selectNeighbour) {
-        lastVoxelHitSide = 5 - side*2;
-        // calculate position
-        SimpleVector nPos = convert2D3D((int)Math.round(point.getX()), (int)Math.round(point.getY()),
-                new SimpleVector(
-                        side == 2 ? currentplane : 0,
-                        side == 1 ? currentplane : 0,
-                        side == 0 ? currentplane : 0
-                )
-        );
-        int[] pos = new int[]{
-                side == 2 ? currentplane : Math.round(nPos.x/VitcoSettings.VOXEL_SIZE),
-                side == 1 ? currentplane : Math.round(nPos.y/VitcoSettings.VOXEL_SIZE),
-                side == 0 ? currentplane : Math.round(nPos.z/VitcoSettings.VOXEL_SIZE)
-        };
-        // nullify if we didn't find a voxel (and not in draw mode)
-        if (voxelMode != VOXELMODE.DRAW && voxelMode != VOXELMODE.FLOODFILL) {
-            if (data.searchVoxel(pos, false) == null) {
-                pos = null;
-            }
-        }
-        return pos;
     }
 
     // the current depth of the plane that is shown
@@ -238,21 +212,11 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         return result;
     }
 
-    // get the reference point depending on the selected layer
-    @Override
-    protected SimpleVector getRefPoint() {
-        return new SimpleVector(
-                side == 2 ? currentplane*VitcoSettings.VOXEL_SIZE : 0,
-                side == 1 ? currentplane*VitcoSettings.VOXEL_SIZE : 0,
-                side == 0 ? currentplane*VitcoSettings.VOXEL_SIZE : 0
-        );
-    }
-
     @Override
     public final JPanel build() {
 
         // draw the ghost voxels (outline)
-        setDrawGhostOverlay(true);
+        container.setDrawGhostOverlay(true);
         voxelOutline = new VoxelOutline(side); // prepare outline helper
 
         // make sure we can see into the distance
@@ -267,6 +231,8 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             public void onPrefChange(Object o) {
                 prevcurrentplane = currentplane;
                 currentplane = (Integer)o;
+                // update the container information
+                container.setPlane(currentplane);
                 // invalidate this buffers (as the plane has changed)
                 data.invalidateSideViewBuffer("side" + side, side, currentplane);
                 data.invalidateSideViewBuffer("side" + side, side, prevcurrentplane);

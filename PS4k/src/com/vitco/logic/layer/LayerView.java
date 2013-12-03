@@ -273,8 +273,8 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         }
         // update table when data changes
         data.addDataChangeListener(new DataChangeAdapter() {
-            @Override
-            public void onVoxelDataChanged() {
+
+            private void refresh(final int msDelay) {
                 synchronized (thisInstance) {
                     synchronized (VitcoSettings.SYNC) {
                         selectedLayer = data.getSelectedLayer();
@@ -307,9 +307,19 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
                     @Override
                     public boolean ready() {
-                        return System.currentTimeMillis() - 200 > time;
+                        return System.currentTimeMillis() - msDelay > time;
                     }
                 });
+            }
+
+            @Override
+            public void onVoxelDataChanged() {
+                refresh(200);
+            }
+
+            @Override
+            public void onLayerStateChanged() {
+                refresh(10);
             }
         });
 

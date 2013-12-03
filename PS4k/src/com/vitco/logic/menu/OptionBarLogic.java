@@ -162,16 +162,6 @@ public class OptionBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
     @PostConstruct
     public final void init() {
-        // create the complex action to select the color of the background plane
-        PresetColorChooser bgPlaneColorChooser = new PresetColorChooser();
-        bgPlaneColorChooser.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(float[] hsb) {
-                preferences.storeObject("main_view_ground_plane_color", ColorTools.hsbToColor(hsb));
-
-            }
-        });
-        complexActionManager.registerAction("pick_color_voxel_ground_plane", bgPlaneColorChooser);
 
         // create the complex action to select the color of the background
         PresetColorChooser bgColorChooser = new PresetColorChooser();

@@ -138,7 +138,8 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
                     public void performAction() {
                         console.addLine("Computing \"Reduced Triangle Count\"...");
                         ExportWorld exportWorld = new ExportWorld(data.getVisibleLayerVoxel());
-                        console.addLine("Reduced Triangle Count: " + exportWorld.buildSides());
+                        int[] countInfo = exportWorld.buildSides();
+                        console.addLine("Reduced Triangle Count: " + countInfo[0] + " (" + countInfo[1] + ")");
                     }
                 });
             }

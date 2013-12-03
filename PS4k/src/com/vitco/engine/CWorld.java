@@ -1,6 +1,9 @@
 package com.vitco.engine;
 
-import com.threed.jpct.*;
+import com.threed.jpct.Camera;
+import com.threed.jpct.FrameBuffer;
+import com.threed.jpct.SimpleVector;
+import com.threed.jpct.World;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.WorldUtil;
@@ -202,14 +205,11 @@ public class CWorld extends World {
         }
     }
 
-    public final SimpleVector shiftedCollisionPoint(Point point, FrameBuffer buffer) {
+    public final SimpleVector shiftedCollisionPoint(SimpleVector dir) {
         // check if we hit a <selected> voxel
         SimpleVector result = null;
         Camera camera = getCamera();
         camera.moveCamera(offset, length);
-        SimpleVector dir = Interact2D.reproject2D3DWS(camera, buffer,
-                point.x * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
-                point.y * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
         Object[] res = calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
         if (res[1] != null) { // something hit
             // find collision point

@@ -10,4 +10,7 @@ public interface DataChangeListener {
     void onVoxelHighlightingChanged();
     void onVoxelSelectionShiftChanged();
     void onTextureDataChanged();
+    void onOutlineBoxesChanged();
+    void onSelectionRectChanged();
+    void onLayerStateChanged();
 }

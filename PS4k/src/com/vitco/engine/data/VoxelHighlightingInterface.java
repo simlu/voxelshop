@@ -1,5 +1,7 @@
 package com.vitco.engine.data;
 
+import java.awt.*;
+
 /**
  * Functionality for voxel highlighting and selection of voxels.
  */
@@ -14,4 +16,12 @@ public interface VoxelHighlightingInterface {
     int[] getVoxelSelectionShift();
 
     void setVoxelSelectionShift(int x, int y, int z);
+
+    void setOutlineBox(String key, int[][] rect);
+
+    int[][][] getOutlineBoxes();
+
+    void setSelectionRect(Rectangle selectionRect);
+
+    Rectangle getSelectionRect();
 }

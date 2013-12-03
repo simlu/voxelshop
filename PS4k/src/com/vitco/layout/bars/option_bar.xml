@@ -19,7 +19,7 @@
                grayable="true"
                action="toggle_mirror_flag"/>
     <separator/>
-    <split-item src="resource/img/bars/option_bar/settings.png"
-                tool-tip="settings_menubar_tooltip"
-                complex-action="settings_menubar"/>
+    <split-item src="resource/img/framebars/mainview/color_bg.png"
+                tool-tip="pick_color_voxel_bg_tooltip"
+                complex-action="pick_color_voxel_bg"/>
 </head>

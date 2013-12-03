@@ -22,4 +22,13 @@ public abstract class DataChangeAdapter implements DataChangeListener {
 
     @Override
     public void onTextureDataChanged() {}
+
+    @Override
+    public void onOutlineBoxesChanged() {}
+
+    @Override
+    public void onSelectionRectChanged() {}
+
+    @Override
+    public void onLayerStateChanged() {}
 }
