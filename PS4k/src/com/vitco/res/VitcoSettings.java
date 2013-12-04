@@ -32,7 +32,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.2.24)";
+    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.2.25)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);

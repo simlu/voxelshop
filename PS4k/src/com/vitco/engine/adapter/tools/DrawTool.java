@@ -36,7 +36,9 @@ public class DrawTool extends AbstractVoxelTool {
 
     @Override
     public void move(MouseEvent e) {
-        data.highlightVoxel(getVoxel(e.getPoint(), true));
+        if (!isMouseDown()) {
+            data.highlightVoxel(getVoxel(e.getPoint(), true));
+        }
     }
 
     @Override

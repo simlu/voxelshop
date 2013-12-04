@@ -491,7 +491,24 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         super(side);
         // initialize the drawing buffer
         notifyAboutResize(100, 100);
+
+//        profiler = new Profiler();
+//        profiler.createProfile("clearBg", "buffer.clear([COLOR]);");
+//        profiler.createProfile("renderScene", "world.renderScene(buffer);");
+//        profiler.createProfile("drawWireframe", "world.drawWireframe(buffer, [COLOR]);");
+//        profiler.createProfile("drawBuffer", "world.draw(buffer);");
+//        profiler.createProfile("drawAsShiftedWireframe", "selectedVoxelsWorld.drawAsShiftedWireframe(buffer, [COLOR], [COLOR]);");
+//        profiler.createProfile("bufferUpdate", "buffer.update();");
+//        profiler.createProfile("drawLinkedOverlay", "drawLinkedOverlay((Graphics2D) buffer.getGraphics());");
+//        profiler.createProfile("bufferDisplay", "buffer.display(gr);");
+//
+//        profiler.createProfile("drawGhostOverlay", "drawGhostOverlay(gr, cameraChanged, hasResized);");
+//        profiler.createProfile("drawAnimationOverlay", "drawAnimationOverlay(gr);");
+//        profiler.createProfile("drawVoxelOverlay", "drawVoxelOverlay(gr);");
+
     }
+
+    //private final Profiler profiler;
 
     // handle the resize of this container and
     // update all variables accordingly
@@ -526,42 +543,66 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                 doNotSkipNextWorldRender = false;
                 skipNextWorldRender = false;
             }
+//            profiler.activateProfile("clearBg");
             buffer.clear(bgColor);
+//            profiler.deactivateProfile("clearBg");
             if (drawWorld) {
                 refreshVoxels(false);
+//                profiler.activateProfile("renderScene");
                 world.renderScene(buffer);
+//                profiler.deactivateProfile("renderScene");
                 if (useWireFrame) {
+//                    profiler.activateProfile("drawWireframe");
                     world.drawWireframe(buffer, VitcoSettings.WIREFRAME_COLOR);
+//                    profiler.deactivateProfile("drawWireframe");
                 } else {
-                    world.draw(buffer); // takes time (!) ~ 60ms
+//                    profiler.activateProfile("drawBuffer");
+                    world.draw(buffer);
+//                    profiler.deactivateProfile("drawBuffer");
                     if (drawSelectedVoxels) { // only draw selected voxels if enables
+//                        profiler.activateProfile("drawAsShiftedWireframe");
                         selectedVoxelsWorld.drawAsShiftedWireframe(buffer,
                                 VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR,
                                 VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR_SHIFTED);
+//                        profiler.deactivateProfile("drawAsShiftedWireframe");
                     }
                 }
             }
-            buffer.update(); // takes time (!) ~ 10ms
+//            profiler.activateProfile("bufferUpdate");
+            buffer.update();
+//            profiler.deactivateProfile("bufferUpdate");
             if (drawOverlay) { // overlay part 1
+//                profiler.activateProfile("drawLinkedOverlay");
                 drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
+//                profiler.deactivateProfile("drawLinkedOverlay");
             }
         }
         Graphics2D gr = (Graphics2D) toDraw.getGraphics();
 
+//        profiler.activateProfile("bufferDisplay");
         buffer.display(gr);
+//        profiler.deactivateProfile("bufferDisplay");
 
         // draw the under/overlay (voxels in parallel planes)
         if (drawGhostOverlay) {
+//            profiler.activateProfile("drawGhostOverlay");
             drawGhostOverlay(gr, cameraChanged, hasResized);
+//            profiler.deactivateProfile("drawGhostOverlay");
         }
         if (drawOverlay && drawAnimationOverlay) { // overlay part 2
+//            profiler.activateProfile("drawAnimationOverlay");
             drawAnimationOverlay(gr); // refreshes with animation data
+//            profiler.deactivateProfile("drawAnimationOverlay");
         }
         if (drawOverlay && drawVoxelOverlay) {
+//            profiler.activateProfile("drawVoxelOverlay");
             drawVoxelOverlay(gr);
+//            profiler.deactivateProfile("drawVoxelOverlay");
         }
         cameraChanged = false; // camera is current for this redraw
         hasResized = false; // no resize pending
+
+//        profiler.print();
     }
 
     // handle the redrawing of this component
