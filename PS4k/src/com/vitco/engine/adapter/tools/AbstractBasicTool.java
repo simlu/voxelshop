@@ -18,6 +18,9 @@ public abstract class AbstractBasicTool extends AbstractTool {
     // true if a drag event is happening
     private boolean eventDrag = false;
 
+    // true if a drag has occured
+    private boolean wasDrag = false;
+
     // shift state that was detected on mouse press event
     // (before drag event)
     private boolean shiftDown = false;
@@ -28,12 +31,14 @@ public abstract class AbstractBasicTool extends AbstractTool {
     protected abstract void release(MouseEvent e);
     protected abstract void drag(MouseEvent e);
     protected abstract void click(MouseEvent e);
+    protected abstract void singleClick(MouseEvent e);
 
     protected abstract void shiftMove(MouseEvent e);
     protected abstract void shiftPress(MouseEvent e);
     protected abstract void shiftRelease(MouseEvent e);
     protected abstract void shiftDrag(MouseEvent e);
     protected abstract void shiftClick(MouseEvent e);
+    protected abstract void singleShiftClick(MouseEvent e);
 
     protected abstract void key();
 
@@ -58,6 +63,7 @@ public abstract class AbstractBasicTool extends AbstractTool {
     protected final void mousePressed(MouseEvent e) {
         // control is used for camera
         if (!isCtrlDown()) {
+            wasDrag = false;
             if (isShiftDown()) {
                 shiftClick(e);
             } else {
@@ -88,6 +94,14 @@ public abstract class AbstractBasicTool extends AbstractTool {
             }
             mouseMoved(e); // make this also a move event
             container.enableCamera(true);
+            // do a single click (release) without drag
+            if (!wasDrag) {
+                if (isShiftDown()) {
+                    singleShiftClick(e);
+                } else {
+                    singleClick(e);
+                }
+            }
         }
     }
 
@@ -105,6 +119,7 @@ public abstract class AbstractBasicTool extends AbstractTool {
     @Override
     protected final void mouseDragged(MouseEvent e) {
         if (eventDrag) {
+            wasDrag = true;
             if (shiftDown) {
                 shiftDrag(e);
             } else {

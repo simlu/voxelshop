@@ -52,22 +52,28 @@ public class FloodFillTool extends AbstractVoxelTool {
     }
 
     // flood fill starting from a voxel
-    private void flood(Voxel start, boolean currentLayer) {
-        // find the voxels
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        floodColor(start, result, currentLayer);
-        Integer[] resultArray = new Integer[result.size()];
-        result.values().toArray(resultArray);
+    private boolean flood(Voxel start, boolean currentLayer) {
         // recolor/retexture the voxels
         int selectedTexture = data.getSelectedTexture();
-        if (selectedTexture != -1) {
-            data.massSetTexture(resultArray, selectedTexture);
-        } else {
-            data.massSetColor(resultArray, ColorTools.hsbToColor(getCurrentColor()));
+        Color newColor = ColorTools.hsbToColor(getCurrentColor());
+        if (selectedTexture != -1 || !newColor.equals(start.getColor())) {
+            // find the voxels
+            HashMap<String, Integer> result = new HashMap<String, Integer>();
+            floodColor(start, result, currentLayer);
+            Integer[] resultArray = new Integer[result.size()];
+            result.values().toArray(resultArray);
+            // recolor/retexture the voxels
+            if (selectedTexture != -1) {
+                data.massSetTexture(resultArray, selectedTexture);
+            } else {
+                data.massSetColor(resultArray, newColor);
+            }
+            return true;
         }
+        return false;
     }
 
-    // recolor voxel
+    // recolor voxel (all voxels in layer or plane)
     private void recolor(int[] start, Color color, boolean currentLayer) {
         // find the voxels
         Voxel[] voxels;
@@ -164,6 +170,9 @@ public class FloodFillTool extends AbstractVoxelTool {
     @Override
     protected void click(MouseEvent e) {}
 
+    @Override
+    protected void singleClick(MouseEvent e) {}
+
     // --------------------------
     // shift drawing
     // --------------------------
@@ -212,6 +221,9 @@ public class FloodFillTool extends AbstractVoxelTool {
 
     @Override
     protected void shiftClick(MouseEvent e) {}
+
+    @Override
+    protected void singleShiftClick(MouseEvent e) {}
 
 }
 

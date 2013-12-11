@@ -77,7 +77,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
             }));
 
     // global setting for all activatable actions
-    boolean enableAllActivatableActions = true;
+    private boolean enableAllActivatableActions = true;
 
     // prototype of an action that can be disabled
     private final class ActivatableAction extends AbstractAction {

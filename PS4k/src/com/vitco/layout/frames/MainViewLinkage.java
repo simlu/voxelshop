@@ -5,7 +5,6 @@ import com.vitco.logic.mainview.MainViewInterface;
 import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.types.StateActionPrototype;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;

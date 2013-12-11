@@ -240,7 +240,7 @@ public class XmlFile {
 
     // write this xml document to file
     public boolean writeToFile(File file, ErrorHandlerInterface errorHandler) {
-        boolean result = true;
+        boolean result = false;
 
         try {
             DOMSource domSource = new DOMSource(doc);
@@ -252,6 +252,7 @@ public class XmlFile {
             transformer.transform(domSource, new StreamResult(out));
 
             out.close();
+            result = true;
         } catch (FileNotFoundException e) {
             errorHandler.handle(e);
         } catch (TransformerException e) {

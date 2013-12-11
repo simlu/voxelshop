@@ -199,6 +199,9 @@ public class PointTool extends AbstractAnimationTool {
     }
 
     @Override
+    protected void singleClick(MouseEvent e) {}
+
+    @Override
     protected void shiftMove(MouseEvent e) {}
 
     @Override
@@ -212,6 +215,9 @@ public class PointTool extends AbstractAnimationTool {
 
     @Override
     protected void shiftClick(MouseEvent e) {}
+
+    @Override
+    protected void singleShiftClick(MouseEvent e) {}
 
     @Override
     protected void key() {}

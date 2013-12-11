@@ -30,6 +30,9 @@ public class ViewTool extends AbstractVoxelTool {
     protected void click(MouseEvent e) {}
 
     @Override
+    protected void singleClick(MouseEvent e) {}
+
+    @Override
     protected void shiftMove(MouseEvent e) {
         data.highlightVoxel(getVoxel(e.getPoint(), false));
     }
@@ -56,6 +59,9 @@ public class ViewTool extends AbstractVoxelTool {
 
     @Override
     protected void shiftClick(MouseEvent e) {}
+
+    @Override
+    protected void singleShiftClick(MouseEvent e) {}
 
     @Override
     protected void key() {

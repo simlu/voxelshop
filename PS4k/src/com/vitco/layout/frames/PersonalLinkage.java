@@ -4,7 +4,6 @@ import com.jidesoft.docking.DockableFrame;
 import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.types.StateActionPrototype;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 

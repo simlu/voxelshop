@@ -61,6 +61,9 @@ public class PickerTool extends AbstractVoxelTool {
     @Override
     protected void click(MouseEvent e) {}
 
+    @Override
+    protected void singleClick(MouseEvent e) {}
+
     // --------------------------
     // shift drawing
     // --------------------------
@@ -151,6 +154,9 @@ public class PickerTool extends AbstractVoxelTool {
 
     @Override
     protected void shiftClick(MouseEvent e) {}
+
+    @Override
+    protected void singleShiftClick(MouseEvent e) {}
 
 }
 

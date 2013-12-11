@@ -21,6 +21,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Creates one side view instance (one perspective) and the specific user interaction.
@@ -138,6 +139,10 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     // index to keep it to "one voxel per position"
     private final HashMap<String, Voxel> selectedAtPos = new HashMap<String, Voxel>();
     private final HashMap<String, Integer> selectedCountAtPos = new HashMap<String, Integer>();
+    // list of known voxel
+    // Note: Not really necessary, but might save some trouble in the future
+    // when selection and deselection of a voxel occurs withing the same frame
+    private final HashSet<String> liveVoxel = new HashSet<String>();
 
     @Override
     protected Voxel[][] getChangedSelectedVoxels() {
@@ -149,6 +154,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         if (changed[0] == null) { // rebuild
             selectedAtPos.clear();
             selectedCountAtPos.clear();
+            liveVoxel.clear();
             toRemove = null;
         } else {
             // remove individual voxel
@@ -169,36 +175,48 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                 Integer count = selectedCountAtPos.get(strId);
                 if (count != null) {
                     count -= 1;
-                    if (count == 0) {
-                        selectedCountAtPos.remove(strId);
-                        toRemove.add(selectedAtPos.remove(strId));
-                    } else {
-                        selectedCountAtPos.put(strId, count);
+                    if (liveVoxel.remove(remove.getPosAsString())) {
+                        if (count == 0) {
+                            selectedCountAtPos.remove(strId);
+                            toRemove.add(selectedAtPos.remove(strId));
+                        } else {
+                            selectedCountAtPos.put(strId, count);
+                        }
                     }
                 }
             }
         }
         for (Voxel added : changed[1]) {
             String strId = null;
+            int[] pos = new int[3];
             switch (side) {
                 case 0:
                     strId = added.x + "_" + added.y;
+                    pos[0] = added.x;
+                    pos[1] = added.y;
                     break;
                 case 1:
                     strId = added.x + "_" + added.z;
+                    pos[0] = added.x;
+                    pos[2] = added.z;
                     break;
                 case 2:
                     strId = added.y + "_" + added.z;
+                    pos[1] = added.y;
+                    pos[2] = added.z;
                     break;
                 default: break;
             }
             Integer count = selectedCountAtPos.get(strId);
-            if (count == null) {
-                selectedCountAtPos.put(strId, 1);
-                selectedAtPos.put(strId, added);
-                toAdd.add(added);
-            } else {
-                selectedCountAtPos.put(strId, count+1);
+            if (liveVoxel.add(added.getPosAsString())) {
+                if (count == null) {
+                    selectedCountAtPos.put(strId, 1);
+                    Voxel voxel = new Voxel(-1, pos, added.getColor(), false, null, 0);
+                    selectedAtPos.put(strId, voxel);
+                    toAdd.add(voxel);
+                } else {
+                    selectedCountAtPos.put(strId, count+1);
+                }
             }
         }
         Voxel[][] result = new Voxel[][]{

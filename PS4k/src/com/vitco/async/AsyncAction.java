@@ -1,7 +1,5 @@
 package com.vitco.async;
 
-import java.util.UUID;
-
 /**
  * Action to be performed by AsyncActionManager
  */
@@ -30,8 +28,13 @@ public abstract class AsyncAction implements Runnable {
         this.name = name;
     }
 
+    // once this reaches Integer.MAX_VALUE it will reset to Integer.MIN_VALUE
+    private static int c = 0;
+
     public AsyncAction() {
-        name = UUID.randomUUID().toString();
+        synchronized (AsyncAction.class) {
+            name = String.valueOf(c++);
+        }
     }
 
 }

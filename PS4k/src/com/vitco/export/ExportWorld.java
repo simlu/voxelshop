@@ -1,25 +1,21 @@
 package com.vitco.export;
 
 import com.vitco.engine.data.container.Voxel;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vitco.util.SharedImageFactory;
+import com.vitco.util.triangulate.Grid2Tri;
 import org.jaitools.imageutils.ImageUtils;
-import org.jaitools.media.jai.vectorize.VectorizeDescriptor;
-import org.poly2tri.Poly2Tri;
-import org.poly2tri.geometry.polygon.PolygonPoint;
 
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
 import javax.media.jai.TiledImage;
 import java.awt.*;
-import java.awt.image.RenderedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helps with managing the data structure, so we can easily extract the information we
  * need to generate the export file.
+ *
+ * Todo: Rewrite exporter to always use textures and to use fewer triangles (than for each voxel side two)
  */
 public class ExportWorld {
 
@@ -32,7 +28,6 @@ public class ExportWorld {
     // helper class that represents a voxel
     private final class VoxelSide {
         private final int[] pos;
-        private final Color color;
         private final boolean[] visSides = new boolean[]{true, true, true, true, true, true};
 
         private void hideSide(int side) {
@@ -52,7 +47,6 @@ public class ExportWorld {
         // constructor
         public VoxelSide(Voxel voxel) {
             this.pos = voxel.getPosAsInt();
-            this.color = voxel.getColor();
             // update all the sides
             for (int i = 0; i < 6; i++) {
                 int add = i%2 == 0 ? 1 : -1;
@@ -78,64 +72,9 @@ public class ExportWorld {
         }
     }
 
-    // helper - converts "black and white" image into vector representation
-    private static Collection<com.vividsolutions.jts.geom.Polygon> doVectorize(RenderedImage src) {
-        ParameterBlockJAI pb = new ParameterBlockJAI("Vectorize");
-        pb.setSource("source0", src);
-
-        pb.setParameter("outsideValues", Collections.singleton(0));
-
-        // Get the desintation image: this is the unmodified source image data
-        // plus a property for the generated vectors
-        RenderedOp dest = JAI.create("Vectorize", pb);
-
-        // Get the vectors
-        Object property = dest.getProperty(VectorizeDescriptor.VECTOR_PROPERTY_NAME);
-        ArrayList<com.vividsolutions.jts.geom.Polygon> result = new ArrayList<Polygon>();
-        for (Object polygon : (Collection)property) {
-            result.add((com.vividsolutions.jts.geom.Polygon)polygon);
-        }
-        return result;
-    }
-
-    public final int analyzeSlice(Polygon poly) {
-        // Note: this is needed to avoid hole detection for image-> polygon when
-        // the polygon "touches" at the corners of the border (and this would
-        // cause a crash for the triangle reduction algorithm)
-        Geometry inside = poly.buffer(-0.1f, 0);
-        Coordinate[] coords = inside.getCoordinates();
-
-        // holds the points that were already seen, so we know
-        // where a polygon (full or hole) starts
-        HashSet<String> seenPoints = new HashSet<String>();
-        ArrayList<PolygonPoint> points = new ArrayList<PolygonPoint>();
-        org.poly2tri.geometry.polygon.Polygon polyR = null;
-
-        for (Coordinate coord : coords) {
-            String key = coord.x + ", " + coord.y;
-            if (seenPoints.contains(key)) {
-                // a loop just finished
-                PolygonPoint[] pointArray = new PolygonPoint[points.size()];
-                points.toArray(pointArray);
-                if (polyR == null) { // this is the polygon itself
-                    polyR = new org.poly2tri.geometry.polygon.Polygon(pointArray);
-                } else { // this is a hole
-                    polyR.addHole(new org.poly2tri.geometry.polygon.Polygon(pointArray));
-                }
-                points.clear();
-            } else {
-                seenPoints.add(key);
-                points.add(new PolygonPoint(coord.x, coord.y));
-            }
-        }
-        // triangulate the polygon
-        Poly2Tri.triangulate(polyR);
-
-        return polyR == null ? 0 : polyR.getTriangles().size();
-    }
-
-    // build the sides and returns the total number of triangles
-    public int[] buildSides() {
+    // build the sides and returns the total and
+    // the (minimal possible) reduced number of triangles
+    public int[] analyzeTriCount() {
         int triCount = 0;
         int triCountRaw = 0;
         // for all sides
@@ -169,13 +108,26 @@ public class ExportWorld {
             if (min2 != null) {
                 // analyze the polygons
                 for (Map.Entry<Integer, ArrayList<Point>> entry : polygons.entrySet()) {
-                    TiledImage src = ImageUtils.createConstantImage(max2 - min2 + 1, max3 - min3 + 1, 0);
+                    int w = max2 - min2 + 1;
+                    int h = max3 - min3 + 1;
+                    boolean isAllocated = SharedImageFactory.isTiledImageAllocated(w, h);
+                    TiledImage src;
+                    if (isAllocated) {
+                        src = SharedImageFactory.getTiledImage(w, h);
+                    } else {
+                        src = ImageUtils.createConstantImage(w, h, 0);
+                    }
                     for (Point point : entry.getValue()) {
                         src.setSample(point.x - min2, point.y - min3, 0, 1);
                     }
-                    for (com.vividsolutions.jts.geom.Polygon poly : doVectorize(src)) {
-                        triCount += analyzeSlice(poly);
+                    triCount += Grid2Tri.triangulate(Grid2Tri.doVectorize(src)).size();
+                    // cleanup
+                    if (isAllocated) {
+                        for (Point point : entry.getValue()) {
+                            src.setSample(point.x - min2, point.y - min3, 0, 0);
+                        }
                     }
+
                 }
             }
         }

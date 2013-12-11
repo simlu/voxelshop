@@ -80,15 +80,6 @@ public class SelectTool extends AbstractVoxelTool {
             }
         }
 
-        // execute single selection click
-        int[] pos = getVoxelSimple(c2);
-        if (pos != null) {
-            Voxel voxel = data.searchVoxel(pos, false);
-            if (voxel != null) {
-                searchResult.add(voxel.id);
-            }
-        }
-
         // execute the select
         Integer[] toSet = new Integer[searchResult.size()];
         searchResult.toArray(toSet);
@@ -189,6 +180,20 @@ public class SelectTool extends AbstractVoxelTool {
     @Override
     protected void click(MouseEvent e) {}
 
+    // executed if no drag occurred
+    @Override
+    protected void singleClick(MouseEvent e) {
+        // execute single selection click
+        int[] pos = getVoxelSimple(e.getPoint());
+        if (pos != null) {
+            Voxel voxel = data.searchVoxel(pos, false);
+            if (voxel != null) {
+                //todo: fix that this can cause the wrong cursor to appear
+                data.setVoxelSelected(voxel.id, !mouse3down);
+            }
+        }
+    }
+
     // --------------------------
     // shift drawing
     // --------------------------
@@ -272,6 +277,9 @@ public class SelectTool extends AbstractVoxelTool {
 
     @Override
     protected void shiftClick(MouseEvent e) {}
+
+    @Override
+    protected void singleShiftClick(MouseEvent e) {}
 
 }
 

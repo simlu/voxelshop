@@ -5,7 +5,6 @@ import com.vitco.logic.layer.LayerViewInterface;
 import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.action.types.StateActionPrototype;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 

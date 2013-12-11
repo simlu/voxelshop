@@ -8,8 +8,8 @@ import com.vitco.async.AsyncAction;
 import com.vitco.engine.CameraChangeListener;
 import com.vitco.engine.EngineInteractionPrototype;
 import com.vitco.engine.data.container.Voxel;
+import com.vitco.engine.world.WorldManager;
 import com.vitco.res.VitcoSettings;
-import com.vitco.util.WorldUtil;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
 
@@ -63,7 +63,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
     private boolean staticLightOn = false;
     private void moveLightBehindCamera(Light light) {
         SimpleVector direction = camera.getPosition().normalize();
-        direction.scalarMul(2000f);
+        direction.scalarMul(2000000f);
         light.setPosition(direction);
     }
 
@@ -78,9 +78,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
 
         // lighting
-        final Light dark_light = WorldUtil.addLight(world, SimpleVector.ORIGIN, -10);
-        final Light light1 = WorldUtil.addLight(world, new SimpleVector(-1500, -2000, -1000), 3);
-        final Light light2 = WorldUtil.addLight(world, new SimpleVector(1500, 2000, 1000), 3);
+        final Light dark_light = WorldManager.addLight(world, SimpleVector.ORIGIN, -10);
+        final Light light1 = WorldManager.addLight(world, new SimpleVector(-1500000, -2000000, -1000000), 3);
+        final Light light2 = WorldManager.addLight(world, new SimpleVector(1500000, 2000000, 1000000), 3);
         camera.addCameraChangeListener(new CameraChangeListener() {
             @Override
             public void onCameraChange() {
@@ -158,7 +158,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             public void onPrefChange(Object o) {
                 gridModeOn = (Boolean) o;
-                WorldUtil.enableGrid(gridModeOn);
+                world.setBorder(gridModeOn);
                 forceRepaint();
             }
         });
@@ -185,7 +185,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
         // =============== BOUNDING BOX
         // add the bounding box (texture)
-        final int boundingBox = WorldUtil.addGridPlane(world);
+        final int boundingBox = WorldManager.addGridPlane(world);
 
         preferences.addPrefChangeListener("use_bounding_box", new PrefChangeListener() {
             @Override

@@ -1,7 +1,5 @@
 package com.vitco.async;
 
-import com.vitco.util.action.ActionManager;
-import com.vitco.util.error.ErrorHandlerInterface;
 import com.vitco.util.thread.LifeTimeThread;
 import com.vitco.util.thread.ThreadManagerInterface;
 import org.springframework.beans.factory.annotation.Autowired;

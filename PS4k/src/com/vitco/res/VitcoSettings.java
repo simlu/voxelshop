@@ -17,10 +17,14 @@ public final class VitcoSettings {
     // object that all data access is synced to
     public static final Object SYNC = new Object();
 
-    // Alternative (slower but better quality):
-    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
-    public static final int SAMPLING_MODE_MULTIPLICAND = 2;
-    public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
+    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_NORMAL;
+    public static final int SAMPLING_MODE_MULTIPLICAND = 1;
+    public static final int SAMPLING_MODE_DIVIDEND = 1;
+
+//    // Alternative (slower but better quality):
+//    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
+//    public static final int SAMPLING_MODE_MULTIPLICAND = 2;
+//    public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
 
     // color for the "big bounding box"
     public static final Color BOUNDING_BOX_COLOR = new Color(255, 255, 255, 100);
@@ -32,7 +36,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.2.25)";
+    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.3.00)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -121,7 +125,7 @@ public final class VitcoSettings {
     public static final Color HIDDEN_LAYER_BG = new Color(120, 85, 85);
     public static final Color VISIBLE_SELECTED_LAYER_BG = new Color(56, 77, 115);
     public static final Color HIDDEN_SELECTED_LAYER_BG = new Color(127, 48, 43);
-    public static final Integer MAX_LAYER_COUNT = 50;
+    public static final int MAX_LAYER_COUNT = 50;
 
     // general table
     public static final Font TABLE_FONT = new Font("Tohama", Font.PLAIN, 12);
@@ -133,10 +137,10 @@ public final class VitcoSettings {
             BorderFactory.createEmptyBorder(DEFAULT_TABLE_INCREASE / 2, 10, 0, 0);
 
     // general config
-    public static final Float VOXEL_SIZE = 10f;
-    public static final Float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
-    public static final Float VOXEL_GROUND_PLANE_SIZE = 21 * VitcoSettings.VOXEL_SIZE; // when changing this make sure the edges are ok
-    public static final Float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
+    public static final float VOXEL_SIZE = 10f;
+    public static final float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
+    public static final float VOXEL_GROUND_PLANE_SIZE = 21 * VitcoSettings.VOXEL_SIZE; // when changing this make sure the edges are ok
+    public static final float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
     public static final Color VOXEL_PREVIEW_LINE_COLOR_BRIGHT = new Color(255,255,255,100);
@@ -151,7 +155,21 @@ public final class VitcoSettings {
             new Color(243, 243, 243), new Color(255, 255, 255)
     };
 
-    // file import
-    public static final Integer MAX_VOXEL_COUNT_PER_LAYER = 10000;
+    // maximum voxel count per layer (and for picture import)
+    public static final int MAX_VOXEL_COUNT_PER_LAYER = 20000;
+
+    // grid size for triangulation
+    public static final int TRI_GRID_SIZE = 9;
+    //offset
+    public static final int TRI_GRID_OFFSET = 4;
+
+    // the corners of polygon triangulation are shifted into this direction
+    // to reduce see through edges
+    public static final float TRIANGLE_INTERPOLATION_VALUE = 0.002f;
+    // interpolation to move textures away from the corners,
+    // reduces showing of neighbouring pixels (interpolation errors)
+    public static final float TEXTURE_INTERPOLATION_VALUE = 0.004f;
+    // interpolation to show black outline (moves textures towards the outside)
+    public static final float BORDER_INSET_VALUE = 0.04f;
 
 }

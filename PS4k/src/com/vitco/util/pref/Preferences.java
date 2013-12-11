@@ -8,7 +8,6 @@ import com.vitco.util.error.ErrorHandlerInterface;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Stores & Loads preferences (Integer, String, Object)

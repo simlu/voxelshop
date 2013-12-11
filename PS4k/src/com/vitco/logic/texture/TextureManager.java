@@ -6,11 +6,11 @@ import com.vitco.async.AsyncAction;
 import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.notification.DataChangeAdapter;
+import com.vitco.engine.world.WorldManager;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.SwingAsyncHelper;
 import com.vitco.util.ThumbnailFileChooser;
-import com.vitco.util.WorldUtil;
 import com.vitco.util.WrapLayout;
 import com.vitco.util.action.types.StateActionPrototype;
 import com.vitco.util.pref.PrefChangeListener;
@@ -34,7 +34,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 /**
- * Manages the different Textures.
+ * Manages the different Textures (in the window where the user adds them!).
  */
 public class TextureManager extends ViewPrototype implements TextureManagerInterface {
 
@@ -296,7 +296,8 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                         // delete from internal store
                         textureHash.remove(texId);
                         // delete texture from world
-                        WorldUtil.removeTexture(String.valueOf(texId));
+                        boolean removed = WorldManager.removeTile(String.valueOf(texId));
+                        assert removed;
                         // remove panel
                         textureWrapperPanel.remove(texturePanels.get(texId));
                         texturePanels.remove(texId);
@@ -341,7 +342,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                         // store/update internal hash
                         textureHash.put(texId, data.getTextureHash(texId));
                         // load/update texture into world
-                        WorldUtil.loadTexture(String.valueOf(texId), data.getTexture(texId), true);
+                        WorldManager.loadTile(String.valueOf(texId), data.getTexture(texId));
                     }
                 }
 

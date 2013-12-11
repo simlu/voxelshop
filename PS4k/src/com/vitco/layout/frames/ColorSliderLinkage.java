@@ -8,7 +8,6 @@ import com.vitco.util.colors.basics.ColorChangeListener;
 import com.vitco.util.pref.PrefChangeListener;
 
 import javax.annotation.PreDestroy;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 

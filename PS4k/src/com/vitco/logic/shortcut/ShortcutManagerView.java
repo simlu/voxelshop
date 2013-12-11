@@ -6,7 +6,6 @@ import com.vitco.async.AsyncActionManager;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.res.VitcoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

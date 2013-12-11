@@ -6,12 +6,12 @@ import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.CCamera;
-import com.vitco.engine.CWorld;
 import com.vitco.engine.CameraChangeListener;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.ExtendedVector;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.data.notification.DataChangeAdapter;
+import com.vitco.engine.world.AbstractCWorld;
 import com.vitco.res.VitcoSettings;
 
 import javax.swing.*;
@@ -229,12 +229,12 @@ public abstract class AbstractDrawContainer extends JPanel {
     protected FrameBuffer buffer = new FrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
 
     // the world-required objects
-    protected CWorld world;
-    public final void setWorld(CWorld world) {
+    protected AbstractCWorld world;
+    public final void setWorld(AbstractCWorld world) {
         this.world = world;
     }
-    protected CWorld selectedVoxelsWorld;
-    public final void setSelectedVoxelsWorld(CWorld selectedVoxelsWorld) {
+    protected AbstractCWorld selectedVoxelsWorld;
+    public final void setSelectedVoxelsWorld(AbstractCWorld selectedVoxelsWorld) {
         this.selectedVoxelsWorld = selectedVoxelsWorld;
     }
     protected CCamera camera;
@@ -329,15 +329,15 @@ public abstract class AbstractDrawContainer extends JPanel {
 
     // -----------------------------
 
-    // holds all the direction vectors (right, left, lower, upper, back, front)
-    private final static SimpleVector[] directionVectors = new SimpleVector[] {
-            new SimpleVector(1,0,0),
-            new SimpleVector(-1,0,0),
-            new SimpleVector(0,1,0),
-            new SimpleVector(0,-1,0),
-            new SimpleVector(0,0,1),
-            new SimpleVector(0,0,-1)
-    };
+//    // holds all the direction vectors (right, left, lower, upper, back, front)
+//    private final static SimpleVector[] directionVectors = new SimpleVector[] {
+//            new SimpleVector(1,0,0),
+//            new SimpleVector(-1,0,0),
+//            new SimpleVector(0,1,0),
+//            new SimpleVector(0,-1,0),
+//            new SimpleVector(0,0,1),
+//            new SimpleVector(0,0,-1)
+//    };
 
 
     // gets last active side
@@ -355,33 +355,40 @@ public abstract class AbstractDrawContainer extends JPanel {
         Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
         if (res[1] != null) { // something hit
             Object3D obj3D = ((Object3D)res[1]);
-            Voxel hitVoxel = data.getVoxel(world.getVoxelId(obj3D.getID()));
-            if (hitVoxel != null) {
-                voxelPos = hitVoxel.getPosAsInt();
-                // find collision point
-                SimpleVector colPoint = camera.getPosition();
-                dir.scalarMul((Float)res[0]);
-                colPoint.add(dir);
-                colPoint.sub(obj3D.getOrigin());
-                // find side that it hits
-                lastActiveSide = 0; // assume it's zero (no need to check)
-                float dist = colPoint.distance(directionVectors[0]);
-                for (int i = 1; i < directionVectors.length; i++) {
-                    float tempDist = colPoint.distance(directionVectors[i]);
-                    if (dist > tempDist) {
-                        dist = tempDist;
-                        lastActiveSide = i;
-                    }
-                }
-                if (selectNeighbour) {
-                    switch (lastActiveSide) {
-                        case 0: voxelPos[0] += 1; break;
-                        case 1: voxelPos[0] -= 1; break;
-                        case 2: voxelPos[1] += 1; break;
-                        case 3: voxelPos[1] -= 1; break;
-                        case 4: voxelPos[2] += 1; break;
-                        case 5: voxelPos[2] -= 1; break;
-                        default: break;
+
+            // find collision point
+            SimpleVector colPoint = camera.getPosition();
+            dir.scalarMul((Float)res[0]);
+            colPoint.add(dir);
+            //colPoint.sub(obj3D.getOrigin());
+
+//            // find side that it hits
+//            lastActiveSide = 0; // assume it's zero (no need to check)
+//            float dist = colPoint.distance(directionVectors[0]);
+//            for (int i = 1; i < directionVectors.length; i++) {
+//                float tempDist = colPoint.distance(directionVectors[i]);
+//                if (dist > tempDist) {
+//                    dist = tempDist;
+//                    lastActiveSide = i;
+//                }
+//            }
+
+            voxelPos = world.getVoxelPos(obj3D.getID(), colPoint.x, colPoint.y, colPoint.z);
+            if (voxelPos != null) {
+                Voxel hitVoxel = data.searchVoxel(voxelPos, false);
+                if (hitVoxel != null) {
+                    // find side that it hits
+                    lastActiveSide = world.getSide(obj3D.getID());
+                    if (selectNeighbour) {
+                        switch (lastActiveSide) {
+                            case 0: voxelPos[0] += 1; break;
+                            case 1: voxelPos[0] -= 1; break;
+                            case 2: voxelPos[1] += 1; break;
+                            case 3: voxelPos[1] -= 1; break;
+                            case 4: voxelPos[2] += 1; break;
+                            case 5: voxelPos[2] -= 1; break;
+                            default: break;
+                        }
                     }
                 }
             }

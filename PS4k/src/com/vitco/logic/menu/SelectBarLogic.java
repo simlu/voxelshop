@@ -15,7 +15,9 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInterface {
 
@@ -23,9 +25,9 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
     // status of selection moved
     private boolean voxelsAreMoved = false;
     // true iff there are selected voxels
-    private boolean voxelsAreSelected = true; // todo should be false
+    private boolean voxelsAreSelected = false;
     // true iff there are voxels in layer
-    private boolean voxelsAreInLayer = true; // todo should be false
+    private boolean voxelsAreInLayer = false;
 
     private Integer[] convertVoxelsToIdArray(Voxel[] voxels) {
         Integer[] voxelIds = new Integer[voxels.length];
@@ -179,14 +181,30 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    // todo make this an intent (select layer)
-                    // deselect all voxels
-                    Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
-                    data.massSetVoxelSelected(voxelIds, false);
+                    // todo make this an intent (select layer) -> to prevent two history entries
+                    // deselect voxels (this is necessary if there are voxel selected that are not in the current layer)
+                    Integer[] selected = convertVoxelsToIdArray(data.getSelectedVoxels());
+                    Integer[] toSelect = convertVoxelsToIdArray(data.getLayerVoxels(data.getSelectedLayer()));
+                    if (selected.length > 0) {
+                        HashSet<Integer> toDeselectList = new HashSet<Integer>(Arrays.asList(selected));
+                        HashSet<Integer> toSelectList = new HashSet<Integer>(Arrays.asList(toSelect));
+                        toSelectList.removeAll(toDeselectList);
+                        toDeselectList.removeAll(Arrays.asList(toSelect));
+
+                        if (!toDeselectList.isEmpty()) {
+                            Integer[] toDeselectArray = new Integer[toDeselectList.size()];
+                            toDeselectList.toArray(toDeselectArray);
+                            data.massSetVoxelSelected(toDeselectArray, false);
+                        }
+
+                        toSelect = new Integer[toSelectList.size()];
+                        toSelectList.toArray(toSelect);
+                    }
 
                     // select layer
-                    voxelIds = convertVoxelsToIdArray(data.getLayerVoxels(data.getSelectedLayer()));
-                    data.massSetVoxelSelected(voxelIds, true);
+                    if (toSelect.length != 0) {
+                        data.massSetVoxelSelected(toSelect, true);
+                    }
                 }
             }
 
@@ -511,10 +529,10 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public void onVoxelDataChanged() {
+                // todo: rewrite voxel data to make fetching of these feasible (!)
                 boolean voxelsAreSelectedTemp = true;
                 boolean voxelsAreInLayerTemp = true;
                 if (voxelsAreSelected != voxelsAreSelectedTemp || voxelsAreInLayer != voxelsAreInLayerTemp) {
-                    // todo: change definition above to false when fetching real values
                     voxelsAreSelected = voxelsAreSelectedTemp;
                     voxelsAreInLayer = voxelsAreInLayerTemp;
                     actionGroupManager.refreshGroup("selection_interaction");

@@ -1377,7 +1377,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     effected[i] = voxel.getPosAsInt(); // what is effected
 
                     // rotate the point around the center
-                    // todo check for duplicates (overlaps when rotating)
+                    // todo check for duplicates (overlaps when rotating values other than 90, 180, 270)
                     double[] pt = {pos[rot1], pos[rot2]};
                     AffineTransform.getRotateInstance(Math.toRadians(angle), center[rot1], center[rot2])
                             .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
@@ -1690,7 +1690,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         synchronized (VitcoSettings.SYNC) {
             ArrayList<Integer> validVoxel = new ArrayList<Integer>();
             for (int voxelId : voxelIds) {
-                if (dataContainer.voxels.containsKey(voxelId)) {
+                Voxel voxel = dataContainer.voxels.get(voxelId);
+                if (voxel != null && !voxel.getColor().equals(color)) {
                     validVoxel.add(voxelId);
                 }
             }

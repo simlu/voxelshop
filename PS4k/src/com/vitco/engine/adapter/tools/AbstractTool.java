@@ -30,12 +30,12 @@ public abstract class AbstractTool {
         data.addDataChangeListener(new DataChangeAdapter() {
             @Override
             public void onLayerStateChanged() {
-                layerVisible = data.getLayerVisible(data.getSelectedLayer());
                 currentLayer = data.getSelectedLayer();
+                layerVisible = data.getLayerVisible(currentLayer);
             }
         });
-        layerVisible = data.getLayerVisible(data.getSelectedLayer());
         currentLayer = data.getSelectedLayer();
+        layerVisible = data.getLayerVisible(currentLayer);
     }
 
     // var & setter

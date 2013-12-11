@@ -8,6 +8,8 @@ import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.Data;
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.view.DrawContainer;
+import com.vitco.engine.world.AbstractCWorld;
+import com.vitco.engine.world.CWorld;
 import com.vitco.logic.ViewPrototype;
 import com.vitco.util.pref.PrefChangeListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +42,8 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     }
 
     // the world-required objects
-    protected final CWorld world;
-    protected final CWorld selectedVoxelsWorld;
+    protected final AbstractCWorld world;
+    protected final AbstractCWorld selectedVoxelsWorld;
     protected final CCamera camera;
 
     // information about this container
@@ -238,10 +240,14 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // usually not worth it (http://www.jpct.net/doc/com/threed/jpct/Config.html#useMultiThreadedBlitting)
         Config.useMultiThreadedBlitting = true;   //default false
 
-        Config.mipmap = true;
+        // not really needed (and is very slow when using images, i.e. large textures 512x512)
+        // Config.mipmap = true;
 
-        //Config.mtDebug = true;
-        Logger.setLogLevel(Logger.ERROR);
+        // disable anti-aliasing for textures
+        Config.texelFilter = false;
+
+        Config.mtDebug = false;
+        Logger.setLogLevel(Logger.LL_ERRORS_AND_WARNINGS);
     }
 
     // constructor
@@ -304,12 +310,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         // define the max poly count for this world
         Config.maxPolysVisible = side == -1 ? 10000 : 2500;
         // set up world objects
-        world = new CWorld(true, side);
+        world = new CWorld(true, side, false);
 
         // define the max poly count for this selected world
         Config.maxPolysVisible = side == -1 ? 10000 : 2500;
         // no culling, since we want to see all selected voxels (in the main view only)
-        selectedVoxelsWorld = new CWorld(side != -1, side);
+        selectedVoxelsWorld = new CWorld(side != -1, side, true);
 
         // define camera
         camera = new CCamera();

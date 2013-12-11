@@ -1,9 +1,9 @@
 package com.vitco.engine.data;
 
 import com.vitco.Main;
-import com.vitco.engine.CWorld;
 import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.Voxel;
+import com.vitco.engine.world.CWorld;
 import com.vitco.export.ColladaFile;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
@@ -13,7 +13,6 @@ import com.vitco.util.xml.XmlTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
-import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +48,14 @@ public final class Data extends VoxelHighlighting implements DataInterface {
         freshStart();
     }
 
+    // called when data structure is initialized
+    private void initialNotification() {
+        notifier.onAnimationDataChanged();
+        notifier.onVoxelDataChanged();
+        notifier.onTextureDataChanged();
+        notifier.onLayerStateChanged();
+    }
+
     @Override
     public final void freshStart() {
         synchronized (VitcoSettings.SYNC) {
@@ -59,9 +66,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
             // remove history
             clearHistoryA();
             clearHistoryV();
-            notifier.onAnimationDataChanged();
-            notifier.onVoxelDataChanged();
-            notifier.onTextureDataChanged();
+            initialNotification();
             // file has not changed yet
             hasChanged = false;
         }
@@ -77,11 +82,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
                 clearHistoryA();
                 clearHistoryV();
                 dataContainer = loaded;
-                invalidateA();
-                invalidateV(null);
-                notifier.onTextureDataChanged();
-                // file has not changed yet
-                hasChanged = false;
+
                 result = true;
             } else { // todo remove legacy support (later)
                 // old file format
@@ -93,13 +94,15 @@ public final class Data extends VoxelHighlighting implements DataInterface {
                     if (dataContainer.textures == null) {
                         dataContainer.textures = new HashMap<Integer, ImageIcon>();
                     }
-                    invalidateA();
-                    invalidateV(null);
-                    notifier.onTextureDataChanged();
-                    // file has not changed yet
-                    hasChanged = false;
                     result = true;
                 }
+            }
+            if (result) {
+                invalidateA();
+                invalidateV(null);
+                // file has not changed yet
+                hasChanged = false;
+                initialNotification();
             }
             return result;
         }
@@ -125,7 +128,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
 
             // build the world that we will use for exporting
             Voxel[] voxels = getVisibleLayerVoxel();
-            CWorld world = new CWorld(true, -1);
+            CWorld world = new CWorld(true, -1, true);
             for (Voxel voxel : voxels) {
                 world.updateVoxel(voxel);
             }

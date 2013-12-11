@@ -1,4 +1,4 @@
-package com.vitco.gen;
+package com.vitco.offline;
 
 import com.vitco.res.VitcoSettings;
 

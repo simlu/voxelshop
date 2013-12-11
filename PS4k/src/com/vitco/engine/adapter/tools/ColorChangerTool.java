@@ -41,7 +41,7 @@ public class ColorChangerTool extends AbstractVoxelTool {
     public void press(MouseEvent e) {
 
         int[] highlighted = data.getHighlightedVoxel();
-        Voxel highlightedVoxel = data.searchVoxel(highlighted, isMouse3Down());
+        Voxel highlightedVoxel = data.searchVoxel(highlighted, false);
 
         // get the current texture
         selectedTexture = data.getSelectedTexture();
@@ -99,6 +99,9 @@ public class ColorChangerTool extends AbstractVoxelTool {
 
     @Override
     protected void click(MouseEvent e) {}
+
+    @Override
+    protected void singleClick(MouseEvent e) {}
 
     // --------------------------
     // shift drawing
@@ -183,6 +186,9 @@ public class ColorChangerTool extends AbstractVoxelTool {
 
     @Override
     protected void shiftClick(MouseEvent e) {}
+
+    @Override
+    protected void singleShiftClick(MouseEvent e) {}
 
 }
 
