@@ -100,9 +100,9 @@ public final class Data extends VoxelHighlighting implements DataInterface {
             if (result) {
                 invalidateA();
                 invalidateV(null);
+                initialNotification();
                 // file has not changed yet
                 hasChanged = false;
-                initialNotification();
             }
             return result;
         }

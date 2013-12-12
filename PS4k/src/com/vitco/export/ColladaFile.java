@@ -49,7 +49,7 @@ public class ColladaFile {
     private final int[] nextTexPlaneId = new int[]{0};
 
     // internal - holds all the planes
-    private void addPlane(float x, float y, float z, int type, PlaneMaterial material) {
+    private void _addPlane(float x, float y, float z, int type, PlaneMaterial material) {
         // store the color (only iff no texture is used)
         if (!material.hasTexture) {
             colors.put(String.valueOf(material.color.getRGB()), material.color);
@@ -135,29 +135,29 @@ public class ColladaFile {
     }
 
     // add planes (public wrapper)
-    public void addPlane(float[] pos, int type,
+    public void addPlane(float[] pos, int orientation,
                          Color color, Integer textureId, Integer rotation, Boolean flip) {
         // create the plane material
-        PlaneMaterial material = new PlaneMaterial(color, textureId, rotation, flip, type);
+        PlaneMaterial material = new PlaneMaterial(color, textureId, rotation, flip, orientation);
         // NOTE: Z AXIS IS ALWAYS UP (for blender at least)
-        switch (type) {
+        switch (orientation) {
             case 1:
-                addPlane(-pos[0] + 0.5f, -pos[2], -pos[1], type, material);
+                _addPlane(-pos[0] + 0.5f, -pos[2], -pos[1], orientation, material);
                 break;
             case 0:
-                addPlane(-pos[0] - 0.5f, -pos[2], -pos[1], type, material);
+                _addPlane(-pos[0] - 0.5f, -pos[2], -pos[1], orientation, material);
                 break;
             case 5:
-                addPlane(-pos[0], -pos[2] + 0.5f, -pos[1], type, material);
+                _addPlane(-pos[0], -pos[2] + 0.5f, -pos[1], orientation, material);
                 break;
             case 4:
-                addPlane(-pos[0], -pos[2] - 0.5f, -pos[1], type, material);
+                _addPlane(-pos[0], -pos[2] - 0.5f, -pos[1], orientation, material);
                 break;
             case 3:
-                addPlane(-pos[0], -pos[2], -pos[1] + 0.5f, type, material);
+                _addPlane(-pos[0], -pos[2], -pos[1] + 0.5f, orientation, material);
                 break;
             case 2:
-                addPlane(-pos[0], -pos[2], -pos[1] - 0.5f, type, material);
+                _addPlane(-pos[0], -pos[2], -pos[1] - 0.5f, orientation, material);
                 break;
             default: break;
         }
@@ -212,24 +212,24 @@ public class ColladaFile {
     }
 
     // internal, rotate 4D int[] array
-    private int[] rotate4D(int[] array, boolean addFront) {
+    private int[] rotate4D(int[] array, boolean clockwise) {
         int[] result = array.clone();
-        if (addFront) {
+        if (clockwise) {
             result = new int[] {
-                    result[3], result[0], result[1], result[2]
+                    result[1], result[2], result[3], result[0]
             };
         } else {
             result = new int[] {
-                    result[1], result[2], result[3], result[0]
+                    result[3], result[0], result[1], result[2]
             };
         }
         return result;
     }
 
     // internal - helper function to alter 4D int array
-    // this ensures the uv mapping is correct accoring to
-    // "rotation", "flip" and "plane orientation (type)"
-    private int[] alter4D(int[] array, int rotate, boolean flip, int type) {
+    // this ensures the uv mapping is correct according to
+    // "rotation", "flip" and "plane orientation"
+    private int[] alter4D(int[] array, int rotate, boolean flip, int orientation) {
         int[] result = array.clone();
         if (flip) {
             result = new int[] {
@@ -238,11 +238,13 @@ public class ColladaFile {
         }
         // correct default orientation of all the textures
         // (this depends on the plane orientation)
-        switch (type) {
-            case 0: result = rotate4D(result, true); break;
-            case 1: result = rotate4D(result, false); break;
-            case 4: result = rotate4D(result, false); break;
-            case 5: result = rotate4D(result, true); break;
+        // this needs to be corresponding to what is rendered in the
+        // BorderObject3D's getTexture(...) function
+        switch (orientation) {
+            case 0: result = rotate4D(result, false); break;
+            case 1: result = rotate4D(result, true); break;
+            case 4: result = rotate4D(result, true); break;
+            case 5: result = rotate4D(result, false); break;
             default: break;
         }
         while (rotate > 0) {
@@ -683,7 +685,7 @@ public class ColladaFile {
                         uvIds.get((point.x) + "_" + (point.y) + "@0_0").id,
                         uvIds.get((point.x) + "_" + (point.y+1) + "@0_1").id
                 };
-                planeUV = alter4D(planeUV, material.rotation, material.flip, material.type);
+                planeUV = alter4D(planeUV, material.rotation, material.flip, material.orientation);
                 // a plane
                 pList.append(vertices[0].getId()).append(" ").append(planeUV[0]).append(" ")
                         .append(vertices[1].getId()).append(" ").append(planeUV[1]).append(" ")

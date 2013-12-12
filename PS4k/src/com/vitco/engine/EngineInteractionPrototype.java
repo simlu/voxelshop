@@ -232,6 +232,8 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
                 }
                 container.setDrawAnimationOverlay(isAnimate);
                 container.setDrawSelectedVoxels(!isAnimate);
+                // was added since there were some problems with selecting/deselecting in the side view
+                container.doNotSkipNextWorldRender();
                 forceRepaint();
             }
 

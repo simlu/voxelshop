@@ -14,15 +14,15 @@ public class PlaneMaterial {
     public final int rotation;
     public final boolean flip;
     public final boolean hasTexture;
-    public final int type;
+    public final int orientation;
 
-    public PlaneMaterial(Color color, Integer textureId, int rotation, boolean flip, int type) {
+    public PlaneMaterial(Color color, Integer textureId, int rotation, boolean flip, int orientation) {
         this.color = color;
         this.textureId = textureId;
         this.rotation = rotation;
         this.flip = flip;
         this.hasTexture = textureId != null;
-        this.type = type;
+        this.orientation = orientation;
     }
 
     // serves as a unique identifier for this material

@@ -506,10 +506,12 @@ public abstract class AbstractDrawContainer extends JPanel {
         SimpleVector result;
         if (voxelSnap) {
             SimpleVector dir = getDirection(e.getX(), e.getY());
-            Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
-            if (res[1] != null) {
-                Object3D obj3D = ((Object3D)res[1]);
-                result = obj3D.getOrigin();
+            int[] pos = voxelForHover3D(e.getPoint(), false, false);
+            if (pos != null) {
+                result = new SimpleVector(
+                        pos[0]*VitcoSettings.VOXEL_SIZE,
+                        pos[1]*VitcoSettings.VOXEL_SIZE,
+                        pos[2]*VitcoSettings.VOXEL_SIZE);
             } else {
                 result = convert2D3D(e.getX(), e.getY(), refPoint);
             }

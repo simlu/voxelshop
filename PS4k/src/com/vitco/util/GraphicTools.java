@@ -32,25 +32,25 @@ public class GraphicTools {
 
         switch (orientation) {
             case 1:
-                pb.setParameter("type", TransposeDescriptor.FLIP_VERTICAL);
+                pb.setParameter("type", TransposeDescriptor.FLIP_HORIZONTAL);
                 break;
             case 2:
                 pb.setParameter("type", TransposeDescriptor.ROTATE_90);
                 break;
             case 3:
-                pb.setParameter("type", TransposeDescriptor.FLIP_DIAGONAL);
+                pb.setParameter("type", TransposeDescriptor.FLIP_ANTIDIAGONAL);
                 break;
             case 4:
                 pb.setParameter("type", TransposeDescriptor.ROTATE_180);
                 break;
             case 5:
-                pb.setParameter("type", TransposeDescriptor.FLIP_HORIZONTAL);
+                pb.setParameter("type", TransposeDescriptor.FLIP_VERTICAL);
                 break;
             case 6:
                 pb.setParameter("type", TransposeDescriptor.ROTATE_270);
                 break;
             case 7:
-                pb.setParameter("type", TransposeDescriptor.FLIP_ANTIDIAGONAL);
+                pb.setParameter("type", TransposeDescriptor.FLIP_DIAGONAL);
                 break;
             default:
                 break;

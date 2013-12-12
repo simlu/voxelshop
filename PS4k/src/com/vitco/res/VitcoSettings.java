@@ -36,7 +36,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.3.00)";
+    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.3.03)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);
@@ -87,9 +87,9 @@ public final class VitcoSettings {
     public static final int ANIMATION_CIRCLE_RADIUS = 8;
     // zoom for side view
     public static final float SIDE_VIEW_COARSE_ZOOM_SPEED = 1000f; // for buttons
-    public static final float SIDE_VIEW_FINE_ZOOM_SPEED = 300f; // for mouse wheel
+    public static final float SIDE_VIEW_FINE_ZOOM_SPEED = 500f; // for mouse wheel
     public static final float SIDE_VIEW_MIN_ZOOM = 10000f;
-    public static final float SIDE_VIEW_MAX_ZOOM = 40000f;
+    public static final float SIDE_VIEW_MAX_ZOOM = 60000f;
     public static final float SIDE_VIEW_ZOOM_START = 20000f;
     public static final float SIDE_VIEW_ZOOM_FOV = 0.015f;
     public static final float SIDE_VIEW_SIDE_MOVE_FACTOR = 1f; // "drag" move content
@@ -108,7 +108,7 @@ public final class VitcoSettings {
     // main view
     public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 15;
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
-    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1200;
+    public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1500;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
     public static final float MAIN_VIEW_ZOOM_FOV = 1.25f;
     public static final SimpleVector MAIN_VIEW_CAMERA_POSITION = new SimpleVector(-400, -500, -500);

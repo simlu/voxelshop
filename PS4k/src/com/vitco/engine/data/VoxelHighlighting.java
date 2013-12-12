@@ -48,22 +48,26 @@ public class VoxelHighlighting extends VoxelData implements VoxelHighlightingInt
 
     @Override
     public final void setOutlineBox(String key, int[][] rect) {
-        if (rect == null) {
-            boxOutlines.remove(key);
-        } else {
-            boxOutlines.put(key, rect);
+        synchronized (VitcoSettings.SYNC) {
+            if (rect == null) {
+                boxOutlines.remove(key);
+            } else {
+                boxOutlines.put(key, rect);
+            }
+            // convert to array
+            if (boxOutlinesArray.length != boxOutlines.size()) {
+                boxOutlinesArray = new int[boxOutlines.size()][][];
+            }
+            boxOutlines.values().toArray(boxOutlinesArray);
+            notifier.onOutlineBoxesChanged();
         }
-        // convert to array
-        if (boxOutlinesArray.length != boxOutlines.size()) {
-            boxOutlinesArray = new int[boxOutlines.size()][][];
-        }
-        boxOutlines.values().toArray(boxOutlinesArray);
-        notifier.onOutlineBoxesChanged();
     }
 
     @Override
     public final int[][][] getOutlineBoxes() {
-        return boxOutlinesArray.clone();
+        synchronized (VitcoSettings.SYNC) {
+            return boxOutlinesArray.clone();
+        }
     }
 
     // ================================
@@ -72,13 +76,17 @@ public class VoxelHighlighting extends VoxelData implements VoxelHighlightingInt
 
     @Override
     public Rectangle getSelectionRect() {
-        return selectionRect;
+        synchronized (VitcoSettings.SYNC) {
+            return selectionRect;
+        }
     }
 
     @Override
     public void setSelectionRect(Rectangle selectionRect) {
-        this.selectionRect = selectionRect;
-        notifier.onSelectionRectChanged();
+        synchronized (VitcoSettings.SYNC) {
+            this.selectionRect = selectionRect;
+            notifier.onSelectionRectChanged();
+        }
     }
 
     // ================================

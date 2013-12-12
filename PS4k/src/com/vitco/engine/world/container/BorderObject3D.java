@@ -115,7 +115,7 @@ public class BorderObject3D extends Object3D {
     // generates a texture
     // the seen points are stored in the seen hashmap
     private BufferedImage getTexture(int minx, int miny,
-                                            Collection<Face> faceList, HashSet<String> seenTrianglePoints) {
+                                            Collection<Face> faceList, HashSet<String> seenTrianglePoints, int orientation) {
         // create black image
         BufferedImage textureImage = SharedImageFactory.getBufferedImage(textureSize, textureSize);
         Graphics2D g2 = (Graphics2D) textureImage.getGraphics();
@@ -151,56 +151,48 @@ public class BorderObject3D extends Object3D {
                     if (img != null) {
                         int rotation = face.getRotation();
                         boolean isFlip = face.isFlip();
-                        int orientation = rotation * 2 + (isFlip ? 1 : 0);
+
+                        // account for the orientation "mess"
+                        // (the rotation should be intuitive to use,
+                        // but that doesn't correspond to "simple" code)
+                        int type;
+                        switch (orientation) {
+                            case 0:
+                                type = ((-rotation + 3)%4) * 2 + (isFlip ? 0 : 1);
+                                break;
+                            case 1:
+                                type = ((rotation + 3)%4) * 2 + (isFlip ? 1 : 0);
+                                break;
+                            case 2:
+                                type = ((rotation + 2)%4) * 2 + (isFlip ? 1 : 0);
+                                break;
+                            case 3:
+                                type = ((-rotation + 6)%4) * 2 + (isFlip ? 0 : 1);
+                                break;
+                            case 4:
+                                type = ((-rotation + 4)%4) * 2 + (isFlip ? 0 : 1);
+                                break;
+                            case 5:
+                                type = rotation * 2 + (isFlip ? 1 : 0);
+                                break;
+                            default:
+                                type = rotation * 2 + (isFlip ? 1 : 0);
+                                break;
+                        }
 
                         int d11 = (x + 1)*32, d21 = (y + 1)*32, d12 = d11 + 32, d22 = d21 + 32;
 
 
-                        switch (orientation) {
-                            case 0:
-                                g2.drawImage(GraphicTools.rotate(img, 5),
+                        switch (type) {
+                            case 1:case 2:case 3:case 5:case 6:case 7:
+                                g2.drawImage(GraphicTools.rotate(img, type),
                                         d11, d21, d12, d22,
-                                        s22, s12, s21, s11,
-                                        null);
-                                break;
-                            case 1: // rotation180, no flip
-                                g2.drawImage(img,
-                                        d11, d21, d12, d22,
-                                        s22, s12, s21, s11,
-                                        null);
-                                break;
-                            case 2:
-                                g2.drawImage(GraphicTools.rotate(img, 7),
-                                        d11, d21, d12, d22,
-                                        s22, s12, s21, s11,
-                                        null);
-                                break;
-                            case 3:
-                                g2.drawImage(GraphicTools.rotate(img, 2),
-                                        d11, d21, d12, d22,
-                                        s22, s12, s21, s11,
+                                        s11, s21, s12, s22,
                                         null);
                                 break;
                             case 4:
-                                g2.drawImage(GraphicTools.rotate(img, 1),
-                                        d11, d21, d12, d22,
-                                        s22, s12, s21, s11,
-                                        null);
-                                break;
-                            case 5:
-                                g2.drawImage(GraphicTools.rotate(img, 4),
-                                        d11, d21, d12, d22,
-                                        s22, s12, s21, s11,
-                                        null);
-                                break;
-                            case 6:
-                                g2.drawImage(GraphicTools.rotate(img, 3),
-                                        d11, d21, d12, d22,
-                                        s22, s12, s21, s11,
-                                        null);
-                                break;
-                            case 7:
-                                g2.drawImage(GraphicTools.rotate(img, 6),
+                                // rotation180, no flip
+                                g2.drawImage(img,
                                         d11, d21, d12, d22,
                                         s22, s12, s21, s11,
                                         null);
@@ -281,7 +273,7 @@ public class BorderObject3D extends Object3D {
         // contains seen pixel
         HashSet<String> seenTrianglePoints = new HashSet<String>();
         // generate the texture and store the seen points
-        BufferedImage image = getTexture(minx, miny, faceList, seenTrianglePoints);
+        BufferedImage image = getTexture(minx, miny, faceList, seenTrianglePoints, orientation);
         // load the texture
         WorldManager.loadEfficientTexture(textureKey, image, false);
 
