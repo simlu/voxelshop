@@ -1,5 +1,6 @@
 package com.vitco.util.hull;
 
+import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 
@@ -78,9 +79,7 @@ public class HullManager<T> implements HullFinderInterface<T> {
             T obj = id2obj.get(id);
             for (int i = 0; i < 6; i++) {
                 if (border[i].contains(id)) {
-                    if (null != borderBufferAdded[i].put(id, obj)) {
-                        borderBufferAdded[i].put(id, obj);
-                    }
+                    borderAdded[i].put(id, obj);
                 }
             }
 
@@ -281,6 +280,12 @@ public class HullManager<T> implements HullFinderInterface<T> {
         borderAdded[direction].putAll(borderBufferAdded[direction]);
         borderAdded[direction].putAll(borderBufferRemoved[direction]);
 
+        // remove the values that are pending as remove (remove is stronger!)
+        for (TIntIterator it = borderRemoved[direction].keySet().iterator(); it.hasNext();) {
+            borderAdded[direction].remove(it.next());
+        }
+
+
         // generate result
         Set<T> result = new HashSet<T>(borderAdded[direction].valueCollection());
 
@@ -297,6 +302,11 @@ public class HullManager<T> implements HullFinderInterface<T> {
 
         // generate result
         Set<T> result = new HashSet<T>(borderRemoved[direction].valueCollection());
+
+        // remove the values that are pending as remove (remove is stronger!)
+        for (TIntIterator it = borderRemoved[direction].keySet().iterator(); it.hasNext();) {
+            borderAdded[direction].remove(it.next());
+        }
 
         // clear buffer and changes
         borderRemoved[direction].clear();

@@ -31,43 +31,40 @@ public class HullManagerTest {
         hullManager.update(val, toString(val));
     }
 
-    private static boolean testConversion(int x, int y, int z) {
-        short[] pos = CubeIndexer.getPos(CubeIndexer.getId(new short[]{(short) x, (short) y, (short) z}));
-        if (!(pos[0] == x && pos[1] == y && pos[2] == z)) {
-            System.out.println(x + "," + y + "," + z);
-            System.out.println(
-                    pos[0] + " == " + x + " && " + pos[1] + " == " + y + " && " + pos[2] + " == " + z
-            );
-            return false;
-        }
-        return true;
-    }
-
     @Test
-    public void testMapping() throws Exception {
+    public void testInsideVoxel() throws Exception {
+        HullManager<String> hullManager = new HullManager<String>();
 
-        for (int i = 0; i< 10; i++) {
-            testConversion(i,2,3);
-        }
-
-        testConversion(1,2,3);
-        testConversion(-1,2,3);
-        testConversion(1,-2,3);
-        testConversion(1,2,-3);
-        testConversion(1,-2,-3);
-        testConversion(-1,2,-3);
-        testConversion(-1,-2,3);
-        testConversion(-1,-2,-3);
-
-        short start = -CubeIndexer.radius;
-        short stop = CubeIndexer.radius;
-
-        for (short x = start; x < stop; x++) {
-            for (short y = start; y < stop; y++) {
-                for (short z = start; z < stop; z++) {
-                    assert testConversion(x, y, z);
+        // one block
+        for (short x = 0; x < 10; x++) {
+            for (short y = 0; y < 10; y++) {
+                for (short z = 0; z < 10; z++) {
+                    update(hullManager, get(x, y, z));
                 }
             }
+        }
+        update(hullManager, get(10, 5, 5));
+
+        for (int j = 0; j < 6; j++) {
+            assert hullManager.getHullAdditions(j).size() == (j/2 == 0 ? 100 : 101);
+            assert hullManager.getHullRemovals(j).size() == 0;
+        }
+
+        for (short x = 10; x < 20; x++) {
+            for (short y = 0; y < 10; y++) {
+                for (short z = 0; z < 10; z++) {
+                    update(hullManager, get(x, y, z));
+                }
+            }
+        }
+
+        for (int j = 0; j < 6; j++) {
+            int sa = hullManager.getHullAdditions(j).size();
+            int sr = hullManager.getHullRemovals(j).size();
+            //System.out.println(sa);
+            //System.out.println(sr);
+            assert sa == (j/2 == 0 ? (j == 0 ? 100 : 0) : 100);
+            assert sr == (j/2 == 0 ? (j == 0 ? 100 : 0) : 1);
         }
     }
 
