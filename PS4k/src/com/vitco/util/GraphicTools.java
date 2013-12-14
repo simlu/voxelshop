@@ -1,10 +1,8 @@
 package com.vitco.util;
 
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.TransposeDescriptor;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
@@ -13,6 +11,8 @@ import java.awt.image.WritableRaster;
  * Some basic functionality for graphics/images.
  */
 public class GraphicTools {
+
+    // create a deep copy of a bufferedImage (fast)
     public static BufferedImage deepCopy(BufferedImage bi) {
         ColorModel cm = bi.getColorModel();
         boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
@@ -20,45 +20,60 @@ public class GraphicTools {
         return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
     }
 
-    private final static ParameterBlockJAI pb = new ParameterBlockJAI("Transpose");
-    static {
-        // disable error for rotation
-        System.setProperty("com.sun.media.jai.disableMediaLib", "true");
-    }
     // rotate an image
     public static Image rotate(Image img, int orientation) {
         assert img != null;
-        pb.setSource("source0", img);
+
+        int w = img.getWidth(null);
+        int h = img.getHeight(null);
+
+        BufferedImage tmp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) tmp.getGraphics();
+        g2d.drawImage(img, 0, 0, null);
+        g2d.dispose();
+
+        AffineTransform affineTransform;
 
         switch (orientation) {
-            case 1:
-                pb.setParameter("type", TransposeDescriptor.FLIP_HORIZONTAL);
+            case 1: // FLIP_HORIZONTAL
+                affineTransform = new AffineTransform();
+                affineTransform.scale(-1, 1);
+                affineTransform.translate ( -w, 0 ) ;
                 break;
-            case 2:
-                pb.setParameter("type", TransposeDescriptor.ROTATE_90);
+            case 2: // ROTATE_90
+                affineTransform = AffineTransform.getRotateInstance(Math.toRadians(90));
+                affineTransform.translate ( 0, -h ) ;
+            break;
+            case 3: // FLIP_ANTIDIAGONAL
+                affineTransform = AffineTransform.getRotateInstance(Math.toRadians(90));
+                affineTransform.scale(-1, 1);
+                affineTransform.translate ( -w, -h ) ;
                 break;
-            case 3:
-                pb.setParameter("type", TransposeDescriptor.FLIP_ANTIDIAGONAL);
+            case 4: // ROTATE_180
+                affineTransform = AffineTransform.getRotateInstance(Math.toRadians(180));
+                affineTransform.translate(-w, -h) ;
                 break;
-            case 4:
-                pb.setParameter("type", TransposeDescriptor.ROTATE_180);
+            case 5: // FLIP_VERTICAL
+                affineTransform = AffineTransform.getRotateInstance(Math.toRadians(180));
+                affineTransform.scale(-1, 1);
+                affineTransform.translate(0, -h) ;
                 break;
-            case 5:
-                pb.setParameter("type", TransposeDescriptor.FLIP_VERTICAL);
+            case 6: // ROTATE_270
+                affineTransform = AffineTransform.getRotateInstance(Math.toRadians(270));
+                affineTransform.translate(-w, 0) ;
                 break;
-            case 6:
-                pb.setParameter("type", TransposeDescriptor.ROTATE_270);
-                break;
-            case 7:
-                pb.setParameter("type", TransposeDescriptor.FLIP_DIAGONAL);
+            case 7: // FLIP_DIAGONAL
+                affineTransform = AffineTransform.getRotateInstance(Math.toRadians(270));
+                affineTransform.scale(-1, 1);
+                affineTransform.translate(0, 0) ;
                 break;
             default:
+                affineTransform = new AffineTransform();
                 break;
         }
 
-        RenderedOp renderedOp = JAI.create("Transpose", pb);
-        pb.removeSources(); // free data references
-        return renderedOp.getRendering().getAsBufferedImage();
+        AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        return affineTransformOp.filter(tmp, null);
     }
 
 }
