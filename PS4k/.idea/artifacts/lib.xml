@@ -7,6 +7,7 @@
       <element id="library" level="project" name="render" />
       <element id="library" level="project" name="jide" />
       <element id="library" level="project" name="converter" />
+      <element id="library" level="project" name="trove" />
     </root>
   </artifact>
 </component>

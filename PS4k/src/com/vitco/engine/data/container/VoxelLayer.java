@@ -1,5 +1,7 @@
 package com.vitco.engine.data.container;
 
+import com.vitco.util.hull.CubeIndexer;
+
 import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,7 +20,7 @@ public final class VoxelLayer implements Serializable {
     // list of all voxels
     private final ArrayList<Voxel> voxelList = new ArrayList<Voxel>();
     // string "index"
-    private transient HashMap<String, Voxel> index = new HashMap<String, Voxel>();
+    private transient HashMap<Integer, Voxel> index = new HashMap<Integer, Voxel>();
     // side index
     private transient HashMap<Integer, HashSet<Voxel>> sideX = new HashMap<Integer, HashSet<Voxel>>();
     private transient HashMap<Integer, HashSet<Voxel>> sideY = new HashMap<Integer, HashSet<Voxel>>();
@@ -36,7 +38,7 @@ public final class VoxelLayer implements Serializable {
 
     // helper to add voxel to index
     private void indexVoxel(Voxel voxel) {
-        index.put(voxel.getPosAsString(), voxel);
+        index.put(voxel.posId, voxel);
 
         // side x
         HashSet<Voxel> planeX = sideX.get(voxel.x);
@@ -64,7 +66,7 @@ public final class VoxelLayer implements Serializable {
     private boolean unindexVoxel(Voxel voxel) {
         boolean result = true;
 
-        if (null == index.remove(voxel.getPosAsString())) {
+        if (null == index.remove(voxel.posId)) {
             result = false;
         }
 
@@ -149,7 +151,7 @@ public final class VoxelLayer implements Serializable {
             sideZ = new HashMap<Integer, HashSet<Voxel>>();
         }
         if (index == null) {
-            index = new HashMap<String, Voxel>();
+            index = new HashMap<Integer, Voxel>();
         }
         for (Voxel voxel : voxelList) {
             indexVoxel(voxel);
@@ -157,12 +159,12 @@ public final class VoxelLayer implements Serializable {
     }
 
     public Voxel search(int[] pos) {
-        return index.get(pos[0] + "_" + pos[1] + "_" + pos[2]);
+        return index.get(CubeIndexer.getId(pos[0], pos[1], pos[2]));
     }
 
     // search position by using another voxel as reference
     public Voxel search(Voxel voxel) {
-        return index.get(voxel.getPosAsString());
+        return index.get(voxel.posId);
     }
 
     public int getSize() {
@@ -171,12 +173,12 @@ public final class VoxelLayer implements Serializable {
 
     // check if a position already contains a voxel
     public boolean voxelPositionFree(int[] pos) {
-        return !index.containsKey(pos[0] + "_" + pos[1] + "_" + pos[2]);
+        return !index.containsKey(CubeIndexer.getId(pos[0], pos[1], pos[2]));
     }
 
     // check position by using another voxel
     public boolean voxelPositionFree(Voxel voxel) {
-        return !index.containsKey(voxel.getPosAsString());
+        return !index.containsKey(voxel.posId);
     }
 
     // add a voxel iff that position is not already occupied

@@ -3,19 +3,18 @@ package com.vitco.engine.data;
 import com.vitco.Main;
 import com.vitco.engine.data.container.DataContainer;
 import com.vitco.engine.data.container.Voxel;
-import com.vitco.engine.world.CWorld;
 import com.vitco.export.ColladaFile;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.FileTools;
 import com.vitco.util.SaveResourceLoader;
 import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.util.hull.HullManager;
 import com.vitco.util.xml.XmlTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Data class that puts everything together and defines general data interaction (e.g. save/load)
@@ -128,33 +127,30 @@ public final class Data extends VoxelHighlighting implements DataInterface {
 
             // build the world that we will use for exporting
             Voxel[] voxels = getVisibleLayerVoxel();
-            CWorld world = new CWorld(true, -1, true);
+            HullManager<Voxel> hullManager = new HullManager<Voxel>();
             for (Voxel voxel : voxels) {
-                world.updateVoxel(voxel);
+                hullManager.update(new short[]{(short) voxel.x, (short) voxel.y, (short) voxel.z}, voxel);
             }
 
-            for (Map.Entry<Voxel, String> entry : world.getVisibleVoxel().entrySet()) {
-                char[] sides = entry.getValue().toCharArray();
-                Voxel voxel = entry.getKey();
-                int[] textureId = voxel.getTexture();
-                int[] rotation = voxel.getRotation();
-                boolean[] flip = voxel.getFlip();
-                for (int i = 0; i < sides.length; i++) {
-                    if (sides[i] == '0') {
-                        colladaExport.addPlane(
-                                voxel.getPosAsFloat(),
-                                i,
-                                voxel.getColor(),
-                                textureId == null ? null : textureId[i],
-                                rotation == null ? 0 : rotation[i],
-                                flip != null && flip[i]
-                        );
-                        if (textureId != null) {
-                            colladaExport.registerTexture(textureId[i], this.getTexture(textureId[i]));
-                        }
+            for (int i = 0; i < 6; i++) {
+                for (Voxel voxel : hullManager.getHullAdditions(i)) {
+                    int[] textureId = voxel.getTexture();
+                    int[] rotation = voxel.getRotation();
+                    boolean[] flip = voxel.getFlip();
+                    colladaExport.addPlane(
+                            voxel.getPosAsInt(),
+                            i,
+                            voxel.getColor(),
+                            textureId == null ? null : textureId[i],
+                            rotation == null ? 0 : rotation[i],
+                            flip != null && flip[i]
+                    );
+                    if (textureId != null) {
+                        colladaExport.registerTexture(textureId[i], this.getTexture(textureId[i]));
                     }
                 }
             }
+
 
             colladaExport.finish(textureFile.getName());
 

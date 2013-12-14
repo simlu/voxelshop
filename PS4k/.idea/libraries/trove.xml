@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="trove">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/trove" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/trove" recursive="false" />
+  </library>
+</component>

@@ -135,7 +135,7 @@ public class ColladaFile {
     }
 
     // add planes (public wrapper)
-    public void addPlane(float[] pos, int orientation,
+    public void addPlane(int[] pos, int orientation,
                          Color color, Integer textureId, Integer rotation, Boolean flip) {
         // create the plane material
         PlaneMaterial material = new PlaneMaterial(color, textureId, rotation, flip, orientation);

@@ -599,6 +599,12 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             drawVoxelOverlay(gr);
 //            profiler.deactivateProfile("drawVoxelOverlay");
         }
+
+//        // debug
+//        if (Main.isDebugMode()) {
+//            gr.drawString(String.valueOf(world.getVisibilityList().getSize()), buffer.getWidth() - 40, 20);
+//        }
+
         cameraChanged = false; // camera is current for this redraw
         hasResized = false; // no resize pending
 

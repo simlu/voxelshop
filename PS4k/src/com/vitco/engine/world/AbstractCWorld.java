@@ -5,18 +5,15 @@ import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.World;
 import com.vitco.engine.data.container.Voxel;
-import com.vitco.engine.world.container.FaceListener;
-import com.vitco.engine.world.container.VoxelW;
 import com.vitco.res.VitcoSettings;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
- * Interface - This is a world wrapper that provides easy voxel interaction.
+ * Abstract - This is a world wrapper that provides easy voxel interaction.
  */
 public abstract class AbstractCWorld extends World {
+
     protected final boolean culling;
     protected final Integer side; // default -1 (all sites)
     protected final boolean simpleMode;
@@ -27,15 +24,7 @@ public abstract class AbstractCWorld extends World {
         this.simpleMode = simpleMode;
     }
 
-    // ===========================
-    // data objects
-    // ===========================
-
-    // holds the voxel wrapper positions
-    protected final HashMap<String, VoxelW> voxelPos = new HashMap<String, VoxelW>();
-
-    // voxel that need to be redrawn
-    protected final HashSet<VoxelW> toUpdate = new HashSet<VoxelW>();
+    // --------------
 
     // ==============================
     // drawing of selected (wireframe)
@@ -85,55 +74,19 @@ public abstract class AbstractCWorld extends World {
         return result;
     }
 
-    // ==============================
-    // voxel interaction
-    // ==============================
+    // -----------
 
-    protected FaceListener faceListener = null;
-
-    // add or update a voxel voxel
-    public final void updateVoxel(Voxel voxel) {
-        String pos = voxel.getPosAsString();
-        if (voxelPos.containsKey(pos)) {
-            voxelPos.get(pos).refresh(voxel); // update voxel
-        } else {
-            if (faceListener != null) {
-                // add new voxel and add side listener
-                new VoxelW(voxel, voxelPos, toUpdate).setSideListener(faceListener);
-            } else {
-                new VoxelW(voxel, voxelPos, toUpdate);
-            }
-        }
-    }
+    // add or update a voxel
+    public abstract void updateVoxel(Voxel voxel);
 
     // erase the entire content of this world
-    public final void clear() {
-        for (Object voxel : voxelPos.values().toArray()) {
-            ((VoxelW)voxel).remove();
-        }
-    }
+    public abstract void clear();
 
     // clear field by position
-    public final boolean clearPosition(int[] pos) {
-        boolean result = false;
-        VoxelW wrapper = voxelPos.get(pos[0] + "_" + pos[1] + "_" + pos[2]);
-        if (wrapper != null) {
-            wrapper.remove();
-            result = true;
-        }
-        return result;
-    }
+    public abstract boolean clearPosition(int[] pos);
 
     // clear field by voxel
-    public final boolean clearPosition(Voxel voxel) {
-        boolean result = false;
-        VoxelW wrapper = voxelPos.get(voxel.getPosAsString());
-        if (wrapper != null) {
-            wrapper.remove();
-            result = true;
-        }
-        return result;
-    }
+    public abstract boolean clearPosition(Voxel voxel);
 
     // enable/disable the border on all objects in the world (main view)
     public abstract void setBorder(boolean border);
@@ -147,15 +100,4 @@ public abstract class AbstractCWorld extends World {
     // get side for world object
     public abstract Integer getSide(Integer objectId);
 
-    // retrieve all visible voxels in this world
-    public final HashMap<Voxel, String> getVisibleVoxel() {
-        HashMap<Voxel, String> result = new HashMap<Voxel, String>();
-        for (VoxelW voxel : voxelPos.values()) {
-            String sides = voxel.getSides();
-            if (!sides.equals("111111")) {
-                result.put(voxel.getVoxel(), voxel.getSides());
-            }
-        }
-        return result;
-    }
 }

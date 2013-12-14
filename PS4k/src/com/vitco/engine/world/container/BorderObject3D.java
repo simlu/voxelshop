@@ -4,6 +4,7 @@ import com.threed.jpct.Object3D;
 import com.threed.jpct.PolygonManager;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.TextureInfo;
+import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.world.WorldManager;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.GraphicTools;
@@ -115,7 +116,8 @@ public class BorderObject3D extends Object3D {
     // generates a texture
     // the seen points are stored in the seen hashmap
     private BufferedImage getTexture(int minx, int miny,
-                                            Collection<Face> faceList, HashSet<String> seenTrianglePoints, int orientation) {
+                                     Collection<Voxel> faceList, HashSet<String> seenTrianglePoints,
+                                     int orientation, int axis) {
         // create black image
         BufferedImage textureImage = SharedImageFactory.getBufferedImage(textureSize, textureSize);
         Graphics2D g2 = (Graphics2D) textureImage.getGraphics();
@@ -127,11 +129,11 @@ public class BorderObject3D extends Object3D {
         int s11 = 0, s21 = 0, s12 = 32, s22 = 32;
 
         // load colors into image, pixel by pixel
-        for (Face face : faceList) {
-            int[] pos2D = face.getPos2D();
+        for (Voxel face : faceList) {
+            int[] pos2D = VoxelManager.convert(face, axis);
             int x = pos2D[0] - minx;
             int y = pos2D[1] - miny;
-            Integer texture = face.getTexture();
+            int[] texture = face.getTexture();
             boolean isTexture = texture != null;
             if (!containsTexture && isTexture) {
                 containsTexture = true; // this is now a texture that contains images (!)
@@ -145,12 +147,14 @@ public class BorderObject3D extends Object3D {
             if (containsTexture) {
                 // draw image large
                 if (isTexture) {
-                    Image img = WorldManager.getTile(String.valueOf(texture));
+                    Image img = WorldManager.getTile(String.valueOf(texture[orientation]));
                     // this can happen when the tile was already removed,
                     // but the voxel is not updated yet
                     if (img != null) {
-                        int rotation = face.getRotation();
-                        boolean isFlip = face.isFlip();
+                        int[] rotBuff = face.getRotation();
+                        int rotation = rotBuff == null ? 0 : rotBuff[orientation];
+                        boolean[] flipBuff = face.getFlip();
+                        boolean isFlip = flipBuff != null && flipBuff[orientation];
 
                         // account for the orientation "mess"
                         // (the rotation should be intuitive to use,
@@ -218,8 +222,8 @@ public class BorderObject3D extends Object3D {
 
     // generate final interpolated points (to prevent see-through)
     private static SimpleVector[] getTrianglePointsInterpolated(Integer axis, Integer plane,
-                                                         float move, int[] roundedTrianglePoints,
-                                                         int minx, int miny, byte[] outsideDirection) {
+                                                                float move, int[] roundedTrianglePoints,
+                                                                int minx, int miny, byte[] outsideDirection) {
         SimpleVector[] triangle = new SimpleVector[3];
         for (int i = 0; i < 3; i ++) {
             int x = i*2;
@@ -242,8 +246,8 @@ public class BorderObject3D extends Object3D {
 
     // generate final interpolated points (to prevent see-through)
     private static SimpleVector[] getTrianglePoints(Integer axis, Integer plane,
-                                             float move, int[] roundedTrianglePoints,
-                                             int minx, int miny) {
+                                                    float move, int[] roundedTrianglePoints,
+                                                    int minx, int miny) {
         SimpleVector[] triangle = new SimpleVector[3];
         for (int i = 0; i < 3; i ++) {
             int x = i*2;
@@ -261,7 +265,7 @@ public class BorderObject3D extends Object3D {
     }
 
     // generate triangles and use adjustable edge interpolation
-    private void generateAdvanced(ArrayList<DelaunayTriangle> triangleList, Collection<Face> faceList,
+    private void generateAdvanced(ArrayList<DelaunayTriangle> triangleList, Collection<Voxel> faceList,
                                   int minx, int miny, int w, int h, Integer orientation, Integer axis,
                                   Integer plane, Point areaId, int side) {
 
@@ -273,7 +277,7 @@ public class BorderObject3D extends Object3D {
         // contains seen pixel
         HashSet<String> seenTrianglePoints = new HashSet<String>();
         // generate the texture and store the seen points
-        BufferedImage image = getTexture(minx, miny, faceList, seenTrianglePoints, orientation);
+        BufferedImage image = getTexture(minx, miny, faceList, seenTrianglePoints, orientation, axis);
         // load the texture
         WorldManager.loadEfficientTexture(textureKey, image, false);
 
@@ -396,7 +400,7 @@ public class BorderObject3D extends Object3D {
     // ------------------------------------
 
     // constructor
-    public BorderObject3D(ArrayList<DelaunayTriangle> tris, Collection<Face> faceList,
+    public BorderObject3D(ArrayList<DelaunayTriangle> tris, Collection<Voxel> faceList,
                           int minx, int miny, int w, int h, Integer orientation, Integer axis,
                           Integer plane, Point areaId, boolean simpleMode, int side,
                           boolean culling, boolean hasBorder) {

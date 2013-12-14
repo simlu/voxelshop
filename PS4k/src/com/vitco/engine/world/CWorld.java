@@ -2,11 +2,10 @@ package com.vitco.engine.world;
 
 import com.vitco.engine.data.container.Voxel;
 import com.vitco.engine.world.container.BorderObject3D;
-import com.vitco.engine.world.container.Face;
-import com.vitco.engine.world.container.FaceListener;
-import com.vitco.engine.world.container.FaceManager;
+import com.vitco.engine.world.container.VoxelManager;
 import com.vitco.res.VitcoSettings;
 import com.vitco.util.SharedImageFactory;
+import com.vitco.util.hull.HullManager;
 import com.vitco.util.triangulate.Grid2Tri;
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
@@ -16,29 +15,34 @@ import java.awt.*;
 import java.util.*;
 
 /**
- * This is a world wrapper that provides easy voxel interaction.
+ * This is a world wrapper that provides easy voxel interaction
+ * (allows for adding and removing of voxels)
  */
 public class CWorld extends AbstractCWorld {
     private static final long serialVersionUID = 1L;
+    // constructor
+    public CWorld(boolean culling, Integer side, boolean simpleMode) {
+        super(culling, side, simpleMode);
+    }
 
-    // ==================
+    // convert a voxel to its short[] position
+    private static short[] voxel2Short(Voxel voxel) {
+        return new short[] {(short) voxel.x, (short) voxel.y, (short) voxel.z};
+    }
 
-    // manages the face data structure
-    private transient final FaceManager faceManager = new FaceManager();
+    // ----------------
 
     // static constructor
     static {
         // jvm will convert this to native code
         // => so there is no lag later on
         Poly2Tri.warmup();
-
         // initialize the shared images (for conversion into polygon)
         for (int w = 1; w < VitcoSettings.TRI_GRID_SIZE + 1; w++) {
             for (int h = 1; h < VitcoSettings.TRI_GRID_SIZE + 1; h++) {
                 SharedImageFactory.getTiledImage(w, h);
             }
         }
-
         // initialize the buffered images (for textures)
         for (int e = 2; e < 9; e++) { // from 4 (=2^2) to 512 (=2^9)
             int d = (int)Math.pow(2, e);
@@ -46,90 +50,42 @@ public class CWorld extends AbstractCWorld {
         }
     }
 
-    // holds temporary information about the added sides
-    // E.g. sides that are added and removed do not trigger an area invalidation
-    private final HashMap<String, int[]> addedSidesBuffer = new HashMap<String, int[]>();
+    // manages the voxel "hull" (allows for easy querying of hull changes)
+    private final HullManager<Voxel> hullManager = new HullManager<Voxel>();
 
-    // constructor
-    public CWorld(boolean culling, final Integer side, boolean simpleMode) {
-        super(culling, side, simpleMode);
+    // manages the voxels that are in this world, allows for easy detection
+    // of changed areas (combined faces of neighbouring voxels)
+    private final VoxelManager voxelManager = new VoxelManager();
 
-        // define side listener
-        faceListener = new FaceListener() {
+    // add or update a voxel
+    @Override
+    public void updateVoxel(Voxel voxel) {
+        hullManager.update(voxel2Short(voxel), voxel);
+    }
 
-            // true iff this is a 3D world
-            private final boolean is3D = side == -1;
-            private final int validSide = 5-side*2; //(side == 0 ? 5 : (side == 1 ? 3 : 1))
+    // erase the entire content of this world
+    @Override
+    public void clear() {
+        hullManager.clear();
+        voxelManager.clear();
+        // remove world objects
+        for (Integer objId : worldId2Side.keySet()) {
+            this.removeObject(objId);
+        }
+        worldId2Side.clear();
+        plane2WorldId.clear();
+    }
 
-            // only manage corresponding sides
-            private boolean isValid(int orientation) {
-                return is3D || orientation == validSide;
-            }
+    // clear field by position
+    @Override
+    public boolean clearPosition(int[] pos) {
+        return hullManager.clearPosition(new short[]{(short) pos[0], (short) pos[1], (short) pos[2]});
+    }
 
-            @Override
-            public void onAdd(Voxel voxel, int orientation) {
-                if (isValid(orientation)) {
-                    // create a new face
-                    Face face = new Face(voxel, orientation);
-                    // determine plane this voxel is in
-                    int plane = voxel.getPosAsInt()[orientation/2];
-                    // add this side to the index
-                    boolean overwrite = faceManager.addFace(orientation, plane, face);
-                    assert !overwrite;
-                    // get the area id
-                    Point areaId = FaceManager.getAreaId(face.getPos2D());
-                    // tracks this particular side
-                    String key = orientation + "_" + plane + "_" + face.getPosAsString2D();
-                    // ------------------
-                    if (null == addedSidesBuffer.remove(key)) {
-                        if (!faceManager.isInvalid(orientation, plane, areaId)) {
-                            // only add if this plane is not invalidated
-                            addedSidesBuffer.put(key, new int[]{orientation, plane, areaId.x, areaId.y});
-                        }
-                    } else {
-                        // double added (should never happen)
-                        faceManager.invalidate(orientation, plane, areaId);
-                    }
-                }
-            }
-
-            @Override
-            public void onRemove(Voxel voxel, int orientation) {
-                if (isValid(orientation)) {
-                    // determine layer this voxel is in
-                    int plane = voxel.getPosAsInt()[orientation/2];
-                    // the position in 2D
-                    int[] pos = Face.convert(voxel.getPosAsInt(), orientation / 2);
-                    // remove this entry
-                    boolean removed = faceManager.removeFace(orientation, plane, pos);
-                    assert removed;
-                    // get the area id
-                    Point areaId = FaceManager.getAreaId(pos);
-                    // tracks this particular side
-                    String key = orientation + "_" + plane + "_" + pos[0] + "_" + pos[1];
-                    // ------------------
-                    if (null == addedSidesBuffer.remove(key)) {
-                        faceManager.invalidate(orientation, plane, areaId);
-                    }
-                }
-            }
-
-            @Override
-            public void onRefresh(Voxel voxel, int orientation) {
-                if (isValid(orientation)) {
-                    // determine layer this voxel is in
-                    int plane = voxel.getPosAsInt()[orientation/2];
-                    // the position in 2D
-                    int[] pos = Face.convert(voxel.getPosAsInt(), orientation / 2);
-                    // refresh this entry
-                    faceManager.getFace(orientation, plane, pos).refresh(voxel);
-                    // get the area id
-                    Point areaId = FaceManager.getAreaId(pos);
-                    // ------------------
-                    faceManager.invalidate(orientation, plane, areaId);
-                }
-            }
-        };
+    // clear field by voxel
+    @Override
+    public boolean clearPosition(Voxel voxel) {
+        return hullManager.clearPosition(voxel2Short(voxel));
     }
 
     // ====================================
@@ -164,7 +120,7 @@ public class CWorld extends AbstractCWorld {
     private boolean handleOrientedPlane(int orientation) {
         int axis = orientation/2;
         // processed entries are cleaned here in this function (!)
-        HashMap<Integer, HashSet<Point>> outdatedPlanes = faceManager.getInvalidPlanes(orientation);
+        HashMap<Integer, HashSet<Point>> outdatedPlanes = voxelManager.getInvalidPlanes(orientation);
 
         int progressCounter = 0;
 
@@ -180,7 +136,7 @@ public class CWorld extends AbstractCWorld {
                 String areaKey = orientation + "_" + outdatedPlane + "_" + outdatedArea.x + "_" + outdatedArea.y;
 
                 // handle the triangle building
-                Collection<Face> faceList = faceManager.getFaces(orientation, outdatedPlane, outdatedArea);
+                Collection<Voxel> faceList = voxelManager.getFaces(orientation, outdatedPlane, outdatedArea);
                 if (faceList != null) {
                     // this should never happen as the faceManager deletes unused faceLists
                     assert !faceList.isEmpty();
@@ -190,8 +146,8 @@ public class CWorld extends AbstractCWorld {
                     int max1 = 0;
                     int min2 = 0;
                     int max2 = 0;
-                    for (Face sideW : faceList) {
-                        int[] pos2D = sideW.getPos2D();
+                    for (Voxel face : faceList) {
+                        int[] pos2D = VoxelManager.convert(face, axis);
                         if (first) {
                             min1 = pos2D[0];
                             max1 = pos2D[0];
@@ -211,15 +167,16 @@ public class CWorld extends AbstractCWorld {
                     // --------------
                     // build image to compute triangle overlay
                     TiledImage src = SharedImageFactory.getTiledImage(w, h);
-                    for (Face sideW : faceList) {
-                        int[] pos2D = sideW.getPos2D();
+                    for (Voxel face : faceList) {
+                        int[] pos2D = VoxelManager.convert(face, axis);
                         src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 1);
                     }
                     // triangulate the image
                     ArrayList<DelaunayTriangle> tris = Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
                     // reset image
-                    for (Face face : faceList) {
-                        int[] pos2D = face.getPos2D();
+                    for (Voxel face : faceList) {
+                        // todo optimize
+                        int[] pos2D = VoxelManager.convert(face, axis);
                         src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 0);
                     }
                     // --------------
@@ -267,31 +224,35 @@ public class CWorld extends AbstractCWorld {
 
     // refresh world (partially) - returns true if fully refreshed
     @Override
-    public final boolean refreshWorld() {
+    public boolean refreshWorld() {
         // if this counter is six, the world is ready
         int ready = 0;
-
-        // add the buffered add events
-        for (int[] val : addedSidesBuffer.values()) {
-            faceManager.invalidate(val[0], val[1], new Point(val[2], val[3]));
-        }
-        addedSidesBuffer.clear();
 
         // handle the updating
         if (side == -1) {
             for (int i = 0; i < 6; i++) {
+                for (Voxel voxel : hullManager.getHullAdditions(i)) {
+                    voxelManager.addFace(i, voxel);
+                }
+                for (Voxel voxel : hullManager.getHullRemovals(i)) {
+                    voxelManager.removeFace(i, voxel);
+                }
                 if (handleOrientedPlane(i)) {
                     ready++;
                 }
             }
         } else {
-            if (handleOrientedPlane(side == 0 ? 5 : (side == 1 ? 3 : 1))) {
+            int orientation = side == 0 ? 5 : (side == 1 ? 3 : 1);
+            for (Voxel voxel : hullManager.getHullAdditions(orientation)) {
+                voxelManager.addFace(orientation, voxel);
+            }
+            for (Voxel voxel : hullManager.getHullRemovals(orientation)) {
+                voxelManager.removeFace(orientation, voxel);
+            }
+            if (handleOrientedPlane(orientation)) {
                 ready = 6;
             }
         }
-
-        // legacy
-        toUpdate.clear();
 
         return ready == 6;
 
@@ -313,6 +274,7 @@ public class CWorld extends AbstractCWorld {
         return result;
     }
 
+    // get side for world object
     @Override
     public Integer getSide(Integer objectId) {
         return worldId2Side.get(objectId);

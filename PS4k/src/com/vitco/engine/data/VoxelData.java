@@ -9,6 +9,8 @@ import com.vitco.res.VitcoSettings;
 import com.vitco.util.ArrayUtil;
 import com.vitco.util.GraphicTools;
 import com.vitco.util.HexTools;
+import com.vitco.util.hull.CubeIndexer;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -61,10 +63,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     protected final void invalidateV(int[][] effected) {
         if (effected != null) {
             // notification of changed visible voxels
-            for (HashMap<String, int[]> map : changedVisibleVoxel.values()) {
+            for (TIntObjectHashMap<int[]> map : changedVisibleVoxel.values()) {
                 if (map != null) {
                     for (int[] invalid : effected) {
-                        String key = invalid[0] + "_" + invalid[1] + "_" + invalid[2];
+                        Integer key = CubeIndexer.getId(invalid[0], invalid[1], invalid[2]);
                         if (!map.containsKey(key)) {
                             map.put(key, invalid);
                         }
@@ -1923,7 +1925,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // get the new visible voxels, NOTE: if first element of array is null
     // this means that everything is erased
-    private final HashMap<String, HashMap<String, int[]>> changedVisibleVoxel = new HashMap<String, HashMap<String, int[]>>();
+    private final HashMap<String, TIntObjectHashMap<int[]>> changedVisibleVoxel = new HashMap<String, TIntObjectHashMap<int[]>>();
     @Override
     public final Voxel[][] getNewVisibleLayerVoxel(String requestId) {
         synchronized (VitcoSettings.SYNC) {
@@ -1931,12 +1933,12 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 changedVisibleVoxel.put(requestId, null);
             }
             if (changedVisibleVoxel.get(requestId) == null) {
-                changedVisibleVoxel.put(requestId, new HashMap<String, int[]>());
+                changedVisibleVoxel.put(requestId, new TIntObjectHashMap<int[]>());
                 return new Voxel[][] {null, _getVisibleLayerVoxel()};
             } else {
                 ArrayList<Voxel> removed = new ArrayList<Voxel>();
                 ArrayList<Voxel> added = new ArrayList<Voxel>();
-                for (int[] pos : changedVisibleVoxel.get(requestId).values()) {
+                for (int[] pos : changedVisibleVoxel.get(requestId).valueCollection()) {
                     Voxel voxel = searchVoxel(pos, false);
                     if (voxel != null) {
                         added.add(voxel);
