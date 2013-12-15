@@ -13,8 +13,6 @@ import java.util.Set;
  */
 public class HullManager<T> implements HullFinderInterface<T> {
 
-
-
     // --------------
 
     // maps position to objects
@@ -79,6 +77,8 @@ public class HullManager<T> implements HullFinderInterface<T> {
             T obj = id2obj.get(id);
             for (int i = 0; i < 6; i++) {
                 if (border[i].contains(id)) {
+                    // this does not use the buffer, because the side was not actually
+                    // added this run and we want to allow for an potential remove (!)
                     borderAdded[i].put(id, obj);
                 }
             }

@@ -3,6 +3,7 @@ package com.vitco.engine;
 import com.threed.jpct.Config;
 import com.threed.jpct.Logger;
 import com.threed.jpct.SimpleVector;
+import com.vitco.Main;
 import com.vitco.async.AsyncAction;
 import com.vitco.async.AsyncActionManager;
 import com.vitco.engine.data.Data;
@@ -247,7 +248,12 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         Config.texelFilter = false;
 
         Config.mtDebug = false;
-        Logger.setLogLevel(Logger.LL_ERRORS_AND_WARNINGS);
+        if (Main.isDebugMode()) {
+            // for debug mode show also warnings
+            Logger.setLogLevel(Logger.LL_ERRORS_AND_WARNINGS);
+        } else {
+            Logger.setLogLevel(Logger.LL_ONLY_ERRORS);
+        }
     }
 
     // constructor

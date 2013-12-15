@@ -78,7 +78,7 @@ public abstract class AbstractTool {
 
     // holds keyboard event listener that are currently active (only active
     // tool listens to keyboard events)
-    private static ArrayList<ActiveEvent> keyboardEventListener = new ArrayList<ActiveEvent>();
+    private static final ArrayList<ActiveEvent> keyboardEventListener = new ArrayList<ActiveEvent>();
 
     // set the async manager
     protected static AsyncActionManager asyncActionManager;
@@ -100,8 +100,10 @@ public abstract class AbstractTool {
                                 ctrlDown = e.isControlDown();
                                 altDown = e.isAltDown();
                                 shiftDown = e.isShiftDown();
-                                for (ActiveEvent event : keyboardEventListener) {
-                                    event.dispatch();
+                                synchronized(keyboardEventListener) {
+                                    for (ActiveEvent event : keyboardEventListener) {
+                                        event.dispatch();
+                                    }
                                 }
                             }
                         }
@@ -227,13 +229,17 @@ public abstract class AbstractTool {
     private boolean active = false;
     public final void activate() {
         active = true;
-        keyboardEventListener.add(keyEvent);
+        synchronized(keyboardEventListener) {
+            keyboardEventListener.add(keyEvent);
+        }
         replayHover();
         onActivate();
     }
     public final void deactivate() {
         active = false;
-        keyboardEventListener.remove(keyEvent);
+        synchronized(keyboardEventListener) {
+            keyboardEventListener.remove(keyEvent);
+        }
         // release the mouse
         if (AbstractTool.lastEvent != null && isMouseDown()) {
             mouseReleased(AbstractTool.lastEvent);
