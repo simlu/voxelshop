@@ -1,10 +1,10 @@
 package com.vitco;
 
-import com.vitco.logic.shortcut.ShortcutManager;
-import com.vitco.util.action.ActionManager;
-import com.vitco.util.action.ComplexActionManager;
-import com.vitco.util.error.ErrorHandler;
-import com.vitco.util.pref.Preferences;
+import com.vitco.layout.content.shortcut.ShortcutManager;
+import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.action.ComplexActionManager;
+import com.vitco.manager.error.ErrorHandler;
+import com.vitco.manager.pref.Preferences;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

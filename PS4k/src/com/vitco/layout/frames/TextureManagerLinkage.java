@@ -1,9 +1,9 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.logic.texture.TextureManagerInterface;
-import com.vitco.util.SaveResourceLoader;
-import com.vitco.util.action.types.StateActionPrototype;
+import com.vitco.layout.content.texture.TextureManagerInterface;
+import com.vitco.manager.action.types.StateActionPrototype;
+import com.vitco.util.misc.SaveResourceLoader;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

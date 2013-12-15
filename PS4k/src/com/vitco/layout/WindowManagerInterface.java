@@ -2,14 +2,14 @@ package com.vitco.layout;
 
 import com.jidesoft.action.DockableBar;
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.engine.data.Data;
+import com.vitco.core.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
+import com.vitco.layout.content.shortcut.ShortcutManagerInterface;
 import com.vitco.layout.frames.FrameLinkagePrototype;
-import com.vitco.logic.shortcut.ShortcutManagerInterface;
-import com.vitco.util.action.ActionManager;
-import com.vitco.util.error.ErrorHandlerInterface;
-import com.vitco.util.lang.LangSelectorInterface;
-import com.vitco.util.pref.PreferencesInterface;
+import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.error.ErrorHandlerInterface;
+import com.vitco.manager.lang.LangSelectorInterface;
+import com.vitco.manager.pref.PreferencesInterface;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

@@ -1,7 +1,7 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandMenuBar;
-import com.vitco.util.action.ComplexActionManager;
+import com.vitco.manager.action.ComplexActionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;

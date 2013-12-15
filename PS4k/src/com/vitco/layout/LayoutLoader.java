@@ -1,7 +1,7 @@
 package com.vitco.layout;
 
 import com.jidesoft.plaf.LookAndFeelFactory;
-import com.vitco.util.SaveResourceLoader;
+import com.vitco.util.misc.SaveResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

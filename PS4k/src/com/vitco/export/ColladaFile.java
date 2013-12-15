@@ -3,9 +3,9 @@ package com.vitco.export;
 import com.vitco.export.container.PlaneMaterial;
 import com.vitco.export.container.UVPoint;
 import com.vitco.export.container.Vertex;
-import com.vitco.res.VitcoSettings;
-import com.vitco.util.DateTools;
-import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.manager.error.ErrorHandlerInterface;
+import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.DateTools;
 import com.vitco.util.xml.XmlFile;
 
 import javax.imageio.ImageIO;

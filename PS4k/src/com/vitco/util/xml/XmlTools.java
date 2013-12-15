@@ -1,6 +1,6 @@
 package com.vitco.util.xml;
 
-import com.vitco.util.error.ErrorHandlerInterface;
+import com.vitco.manager.error.ErrorHandlerInterface;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;

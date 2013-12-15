@@ -1,8 +1,8 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandMenuBar;
-import com.vitco.logic.menu.MenuLogicInterface;
-import com.vitco.util.menu.MenuGeneratorInterface;
+import com.vitco.layout.content.menu.MenuLogicInterface;
+import com.vitco.manager.menu.MenuGeneratorInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;

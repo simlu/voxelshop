@@ -1,13 +1,13 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.util.ColorTools;
-import com.vitco.util.SaveResourceLoader;
-import com.vitco.util.action.types.StateActionPrototype;
-import com.vitco.util.colors.HSBPanelSliderChooser;
-import com.vitco.util.colors.basics.ColorChangeListener;
-import com.vitco.util.error.ErrorHandlerInterface;
-import com.vitco.util.pref.PrefChangeListener;
+import com.vitco.layout.content.colorchooser.HSBPanelSliderChooser;
+import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
+import com.vitco.manager.action.types.StateActionPrototype;
+import com.vitco.manager.error.ErrorHandlerInterface;
+import com.vitco.manager.pref.PrefChangeListener;
+import com.vitco.util.misc.ColorTools;
+import com.vitco.util.misc.SaveResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;

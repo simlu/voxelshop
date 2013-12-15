@@ -1,9 +1,9 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.util.action.ActionManager;
-import com.vitco.util.lang.LangSelectorInterface;
-import com.vitco.util.pref.PreferencesInterface;
+import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.lang.LangSelectorInterface;
+import com.vitco.manager.pref.PreferencesInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;

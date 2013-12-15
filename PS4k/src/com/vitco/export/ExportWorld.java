@@ -1,8 +1,8 @@
 package com.vitco.export;
 
-import com.vitco.engine.data.container.Voxel;
-import com.vitco.util.SharedImageFactory;
-import com.vitco.util.triangulate.Grid2Tri;
+import com.vitco.core.data.container.Voxel;
+import com.vitco.low.triangulate.Grid2Tri;
+import com.vitco.util.graphic.SharedImageFactory;
 import org.jaitools.imageutils.ImageUtils;
 
 import javax.media.jai.TiledImage;
