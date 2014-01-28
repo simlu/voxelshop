@@ -1,6 +1,6 @@
 package com.vitco.core.data.container;
 
-import com.vitco.low.hull.CubeIndexer;
+import com.vitco.low.CubeIndexer;
 
 import java.awt.*;
 import java.io.IOException;

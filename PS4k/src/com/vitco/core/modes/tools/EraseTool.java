@@ -34,6 +34,9 @@ public class EraseTool extends AbstractVoxelTool {
     @Override
     public void press(MouseEvent e) {
         int[] highlighted = data.getHighlightedVoxel();
+
+        setActiveCenter(highlighted);
+
         // mouse3 ~ erase only same layer
         Voxel voxel = data.searchVoxel(highlighted, isMouse3Down());
 
@@ -53,7 +56,7 @@ public class EraseTool extends AbstractVoxelTool {
     public void drag(MouseEvent e) {
         int[] voxelPos;
         // simple hit test
-        voxelPos = getVoxelSimple(e.getPoint());
+        voxelPos = getVoxelUsePlanePrev(e.getPoint());
         // handle remove
         if (voxelPos != null) {
             Voxel voxel = data.searchVoxel(voxelPos, isMouse3Down());

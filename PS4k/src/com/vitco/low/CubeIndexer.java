@@ -1,4 +1,4 @@
-package com.vitco.low.hull;
+package com.vitco.low;
 
 import com.vitco.util.misc.IntegerTools;
 
@@ -15,7 +15,7 @@ public class CubeIndexer {
     public static final int widthwidth = width * width;
 
     // needs to be dividable by width ^ 2 and smaller than Integer.MIN_VALUE
-    private static final int min = - 2145280000;
+    public static final int min = - 2145280000;
     private static final int minOffset = radius + min/widthwidth;
 
     // compute the 1d representation for the position (x right, y up, z into background)

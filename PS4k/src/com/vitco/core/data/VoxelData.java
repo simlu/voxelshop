@@ -5,7 +5,7 @@ import com.vitco.core.data.container.VoxelLayer;
 import com.vitco.core.data.history.HistoryChangeListener;
 import com.vitco.core.data.history.HistoryManager;
 import com.vitco.core.data.history.VoxelActionIntent;
-import com.vitco.low.hull.CubeIndexer;
+import com.vitco.low.CubeIndexer;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.GraphicTools;
 import com.vitco.util.misc.ArrayUtil;

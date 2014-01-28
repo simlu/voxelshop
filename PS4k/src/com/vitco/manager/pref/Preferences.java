@@ -21,6 +21,7 @@ public class Preferences implements PreferencesInterface {
     // listeners
     private final HashMap<String, ArrayList<PrefChangeListener>> listeners = new HashMap<String, ArrayList<PrefChangeListener>>();
 
+    // Note: notification should take place in the order that the listener were added
     @Override
     public void notifyListeners(String key, Object value) {
         synchronized (VitcoSettings.SYNC) {

@@ -1,5 +1,6 @@
 package com.vitco.low.hull;
 
+import com.vitco.low.CubeIndexer;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.TIntHashSet;

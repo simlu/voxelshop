@@ -95,11 +95,11 @@ public class DrawTool extends AbstractVoxelTool {
         int[] voxelPos;
         if (side == -1) {
             if (isMouse3Down()) {
-                // simple hit test
-                voxelPos = getVoxelSimple(e.getPoint());
+                // hit test with prev plane
+                voxelPos = getVoxelUsePlanePrev(e.getPoint());
             } else {
-                // hit test with plane
-                voxelPos = getVoxelUsePlane(e.getPoint());
+                // hit test with next plane
+                voxelPos = getVoxelUsePlaneNext(e.getPoint());
             }
         } else {
             voxelPos = getVoxel(e.getPoint(), !isMouse3Down());

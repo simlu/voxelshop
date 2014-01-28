@@ -19,6 +19,9 @@ public abstract class AbstractVoxelTool extends AbstractBasicTool {
 
     // the plane that was last interfered with
     private int activePlane = 0;
+    public final int getActivePlane() {
+        return activePlane;
+    }
 
     // the side that was last hit by an action
     private int activeSide = 0;
@@ -71,9 +74,15 @@ public abstract class AbstractVoxelTool extends AbstractBasicTool {
     }
 
     // get a voxel for a point and a plane (3D)
-    protected final int[] getVoxelUsePlane(Point p) {
+    protected final int[] getVoxelUsePlaneNext(Point p) {
         SimpleVector dir = container.getDirection(p.x, p.y);
-        return container.voxelForHover3D(dir, activeCenter[activePlane], activePlane);
+        return container.voxelForHover3DNext(dir, activeCenter[activePlane], activePlane);
+    }
+
+    // get a voxel for a point and a plane (3D)
+    protected final int[] getVoxelUsePlanePrev(Point p) {
+        SimpleVector dir = container.getDirection(p.x, p.y);
+        return container.voxelForHover3DPrev(dir, activeCenter[activePlane], activePlane);
     }
 
     // the current center information that is used to determine

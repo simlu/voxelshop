@@ -396,7 +396,7 @@ public abstract class AbstractDrawContainer extends JPanel {
 
             float[] dirArr = dir.toArray();
             for (int[] tuple : new int[][] {new int[]{0,10,-10}, new int[]{1,0,-20}, new int[]{2,10,-10}}) {
-                int[] pos = this.voxelForHover3D(
+                int[] pos = this.voxelForHover3DNext(
                         new SimpleVector(dir), dirArr[tuple[0]] > 0 ? tuple[1] : tuple[2], tuple[0]
                 );
                 if (pos != null) {
@@ -413,22 +413,33 @@ public abstract class AbstractDrawContainer extends JPanel {
         return voxelPos;
     }
 
-    // get voxel position for point, side and plane
-    public final int[] voxelForHover3D(SimpleVector dir, int plane, int side) {
+    // get voxel position for point, side and plane (helper)
+    private int[] voxelForHover3D(SimpleVector dir, int plane, int side, boolean next) {
         float[] dirArr = dir.toArray();
         if (Math.abs(dirArr[side]) > 0.05) { // angle big enough
+            float offset = (dirArr[side] > 0 ? +0.5f : -0.5f) * (next ? 1 : -1);
             float[] camArr = camera.getPosition().toArray();
             // calculate position
-            float t = ((plane + (dirArr[side] > 0 ? +0.5f : -0.5f)) * VitcoSettings.VOXEL_SIZE - camArr[side]) / dirArr[side];
+            float t = ((plane + offset) * VitcoSettings.VOXEL_SIZE - camArr[side]) / dirArr[side];
             dir.scalarMul(t);
             SimpleVector pos = camera.getPosition();
             pos.add(dir);
             pos.scalarMul(1/VitcoSettings.VOXEL_SIZE);
             float[] posArray = pos.toArray();
-            posArray[side] += (dirArr[side] > 0 ? -0.5f : 0.5f);
+            posArray[side] -= offset;
             return new int[]{Math.round(posArray[0]),Math.round(posArray[1]),Math.round(posArray[2])};
         }
         return null;
+    }
+
+    // get voxel position for point, side and plane (using the next plane for hit test)
+    public final int[] voxelForHover3DNext(SimpleVector dir, int plane, int side) {
+        return voxelForHover3D(dir, plane, side, true);
+    }
+
+    // get voxel position for point, side and plane (use the previous plane as hit test)
+    public final int[] voxelForHover3DPrev(SimpleVector dir, int plane, int side) {
+        return voxelForHover3D(dir, plane, side, false);
     }
 
     // get voxel position for hover (fast in 2D)

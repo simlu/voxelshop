@@ -25,5 +25,6 @@ public interface PreferencesInterface {
 
     void addPrefChangeListener(String key, PrefChangeListener pcl);
 
+    // Note: notification should take place in the order that the listener were added
     void notifyListeners(String key, Object value);
 }

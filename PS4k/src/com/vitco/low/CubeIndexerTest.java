@@ -1,4 +1,4 @@
-package com.vitco.low.hull;
+package com.vitco.low;
 
 import org.junit.Test;
 

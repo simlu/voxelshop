@@ -1,5 +1,6 @@
 package com.vitco.core.data.container;
 
+import com.vitco.core.container.HackedObjectInputStream;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.util.misc.AutoFileCloser;
 
@@ -83,7 +84,7 @@ public final class DataContainer implements Serializable {
                         // declare variables for the readers and "watch" them
                         InputStream inputStream = autoClose(new FileInputStream( file ));
                         InputStream buffer = autoClose(new BufferedInputStream( inputStream ));
-                        ObjectInputStream input = autoClose(new ObjectInputStream ( buffer ));
+                        HackedObjectInputStream input = autoClose(new HackedObjectInputStream( buffer ));
 
                         if (input.available() > 0 && input.readUTF().equals("**VSD2013**")) {
                             while (input.available() > 0) {

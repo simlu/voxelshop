@@ -4,6 +4,10 @@
                tool-tip="toggle_light_menubar_tooltip"
                checkable="true"
                action="toggle_light_mode"/>
+    <icon-item src="resource/img/bars/option_bar/quality.png"
+               tool-tip="toggle_render_quality_tooltip"
+               checkable="true"
+               action="toggle_render_quality"/>
     <icon-item src="resource/img/bars/option_bar/grid.png"
                tool-tip="toggle_grid_menubar_tooltip"
                checkable="true"

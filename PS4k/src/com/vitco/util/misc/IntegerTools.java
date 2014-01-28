@@ -43,4 +43,11 @@ public final class IntegerTools {
         else
             return n <= 0 ? n % d : d + 1 + (n - 1) % d;
     }
+
+    // alternative signum
+    public static int sign(int i) {
+        if (i == 0) return 0;
+        if (i >> 31 != 0) return -1;
+        return +1;
+    }
 }

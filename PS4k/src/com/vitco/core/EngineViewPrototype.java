@@ -1,6 +1,7 @@
 package com.vitco.core;
 
 import com.threed.jpct.Config;
+import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Logger;
 import com.threed.jpct.SimpleVector;
 import com.vitco.Main;
@@ -10,14 +11,17 @@ import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.AbstractCWorld;
 import com.vitco.core.world.CWorld;
 import com.vitco.layout.content.ViewPrototype;
+import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.pref.PrefChangeListener;
+import com.vitco.settings.VitcoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -57,6 +61,9 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     // the container that we draw on (instance)
     protected final DrawContainer container;
+
+    // true if high resolution rendering active
+    private static boolean highQualityActive = false;
 
     // ==============================
     // updating of world with voxels
@@ -187,8 +194,68 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         }
     }
 
+    // true if the action was executed
+    private static boolean initialized = false;
+
     @PostConstruct
     public final void startup() {
+
+        // handle quality changes
+        // ------------------------
+        // only execute once
+        if (!initialized) {
+            initialized = true;
+
+            // load/initialize the render quality setting
+            if (preferences.contains("high_quality_active")) {
+                highQualityActive = preferences.loadBoolean("high_quality_active");
+            } else {
+                preferences.storeBoolean("high_quality_active", highQualityActive);
+            }
+
+            // change variables accordingly (this is added first and hence always "notified" first)
+            preferences.addPrefChangeListener("high_quality_active", new PrefChangeListener() {
+                @Override
+                public void onPrefChange(Object o) {
+                    // set the variables accordingly
+                    if (highQualityActive) {
+                        VitcoSettings.SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
+                        VitcoSettings.SAMPLING_MODE_MULTIPLICAND = 2;
+                        VitcoSettings.SAMPLING_MODE_DIVIDEND = 0.5f;
+                    } else {
+                        VitcoSettings.SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_NORMAL;
+                        VitcoSettings.SAMPLING_MODE_MULTIPLICAND = 1;
+                        VitcoSettings.SAMPLING_MODE_DIVIDEND = 1;
+                    }
+                }
+            });
+
+            // register button change
+            actionManager.registerAction("toggle_render_quality", new StateActionPrototype() {
+                @Override
+                public void action(ActionEvent actionEvent) {
+                    // toggle and store
+                    highQualityActive = !highQualityActive;
+                    preferences.storeBoolean("high_quality_active", highQualityActive);
+                }
+
+                @Override
+                public boolean getStatus() {
+                    return highQualityActive;
+                }
+            });
+
+        }
+
+        // force rebuilding and repainting of this container when the quality changes
+        preferences.addPrefChangeListener("high_quality_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                container.refreshBuffer();
+                forceRepaint();
+            }
+        });
+
         // initialize the container
         // ---------------------------
         // register bg color change

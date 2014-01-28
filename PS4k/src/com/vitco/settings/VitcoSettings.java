@@ -17,9 +17,9 @@ public final class VitcoSettings {
     // object that all data access is synced to
     public static final Object SYNC = new Object();
 
-    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_NORMAL;
-    public static final int SAMPLING_MODE_MULTIPLICAND = 1;
-    public static final int SAMPLING_MODE_DIVIDEND = 1;
+    public static int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_NORMAL;
+    public static int SAMPLING_MODE_MULTIPLICAND = 1;
+    public static float SAMPLING_MODE_DIVIDEND = 1;
 
 //    // Alternative (slower but better quality):
 //    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
@@ -36,7 +36,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
     // version id
-    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.3.14)";
+    public static final String VERSION_ID = "VoxelShop - Alpha Version (V1.3.15)";
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);

@@ -47,7 +47,7 @@
 
     <!-- holds general preferenes -->
     <bean id="Preferences" class="com.vitco.manager.pref.Preferences" init-method="load">
-        <property name="storageFile" value="settings/pref.ser"/>
+        <property name="storageFile" value="settings/pref-002.ser"/>
         <property name="errorHandler" ref="ErrorHandler"/>
     </bean>
 
