@@ -516,7 +516,7 @@ public abstract class AbstractDrawContainer extends JPanel {
     public final SimpleVector get3DPoint(MouseEvent e, SimpleVector refPoint) {
         SimpleVector result;
         if (voxelSnap) {
-            SimpleVector dir = getDirection(e.getX(), e.getY());
+            //SimpleVector dir = getDirection(e.getX(), e.getY());
             int[] pos = voxelForHover3D(e.getPoint(), false, false);
             if (pos != null) {
                 result = new SimpleVector(

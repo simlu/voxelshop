@@ -37,13 +37,42 @@ public class VoxelManager {
                 IntegerTools.ifloordiv2(pos[1] + VitcoSettings.TRI_GRID_OFFSET, VitcoSettings.TRI_GRID_SIZE));
     }
 
+    // helper to get bordering areas for a point (if there are any)
+    public static HashSet<Point> getInvalidAreaIds(int[] pos) {
+        HashSet<Point> result = new HashSet<Point>();
+
+        result.add(getAreaId(pos));
+
+        result.add(getAreaId(new int[]{pos[0] + 1, pos[1]}));
+        result.add(getAreaId(new int[]{pos[0], pos[1] + 1}));
+        result.add(getAreaId(new int[]{pos[0] - 1, pos[1]}));
+        result.add(getAreaId(new int[]{pos[0], pos[1] - 1}));
+        result.add(getAreaId(new int[]{pos[0] + 1, pos[1] - 1}));
+        result.add(getAreaId(new int[]{pos[0] - 1, pos[1] + 1}));
+        result.add(getAreaId(new int[]{pos[0] - 1, pos[1] - 1}));
+        result.add(getAreaId(new int[]{pos[0] + 1, pos[1] + 1}));
+
+        return result;
+    }
+
     // static convert 3D to 2D
-    public static int[] convert(Voxel voxel, int axis) {
+    public static int[] convert3D2D(Voxel voxel, int axis) {
         int[] result;
         switch (axis) {
             case 0: result = new int[] {voxel.y, voxel.z}; break;
             case 1: result = new int[] {voxel.x, voxel.z}; break;
             default: result = new int[] {voxel.x, voxel.y}; break;
+        }
+        return result;
+    }
+
+    // static convert 2D to 3D
+    public static int[] convert2D3D(int x, int y, int filler, int axis) {
+        int[] result;
+        switch (axis) {
+            case 0: result = new int[] {filler, x, y}; break;
+            case 1: result = new int[] {x, filler, y}; break;
+            default: result = new int[] {x, y, filler}; break;
         }
         return result;
     }
@@ -121,11 +150,14 @@ public class VoxelManager {
     public final boolean addFace(Integer orientation, Voxel voxel) {
         // determine the area id
         int axis = orientation/2;
-        int[] pos2D = convert(voxel, axis);
+        int[] pos2D = convert3D2D(voxel, axis);
         int plane = getPlane(voxel, axis);
         Point areaId = getAreaId(pos2D);
         // invalidate
-        invalidate(orientation, plane, areaId);
+        for (Point toInvalidate : getInvalidAreaIds(pos2D)) {
+            // todo: for the neighbouring areas a refresh of the texture would be sufficient
+            invalidate(orientation, plane, toInvalidate);
+        }
         // get the correct plane list for the orientation
         HashMap<Integer, HashMap<Point, HashMap<String, Voxel>>> planeList = orientationList.get(orientation);
         // get the correct area list for this plane
@@ -154,11 +186,13 @@ public class VoxelManager {
     public final boolean removeFace(Integer orientation, Voxel voxel) {
         // determine the area id
         int axis = orientation/2;
-        int[] pos2D = convert(voxel, axis);
+        int[] pos2D = convert3D2D(voxel, axis);
         int plane = getPlane(voxel, axis);
         Point areaId = getAreaId(pos2D);
         // invalidate
-        invalidate(orientation, plane, areaId);
+        for (Point toInvalidate : getInvalidAreaIds(pos2D)) {
+            invalidate(orientation, plane, toInvalidate);
+        }
         // get the correct plane list for the orientation
         HashMap<Integer, HashMap<Point, HashMap<String, Voxel>>> planeList = orientationList.get(orientation);
         // get the correct area list for this plane

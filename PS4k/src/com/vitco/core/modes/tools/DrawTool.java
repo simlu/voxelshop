@@ -70,7 +70,7 @@ public class DrawTool extends AbstractVoxelTool {
             // perform action
             if (voxel == null) {
                 // place voxel
-                if (isMouse1Down()) {
+                if (!isMouse3Down()) {
                     if (isLayerVisible()) {
                         data.addVoxel(ColorTools.hsbToColor(getCurrentColor()), texture, highlighted);
                     }
@@ -107,7 +107,7 @@ public class DrawTool extends AbstractVoxelTool {
         if (voxelPos != null) {
             Voxel voxel = data.searchVoxel(voxelPos, false);
             if (voxel == null) {
-                if (isMouse1Down()) {
+                if (!isMouse3Down()) {
                     if (isLayerVisible()) {
                         data.addVoxel(ColorTools.hsbToColor(getCurrentColor()), texture, voxelPos);
                     }

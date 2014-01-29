@@ -14,6 +14,8 @@ public interface HullFinderInterface<T> {
 
     boolean contains(short[] pos);
 
+    boolean containsBorder(short[] pos, int orientation);
+
     // add an object to the hull finder
     public void update(short[] pos, T object);
 

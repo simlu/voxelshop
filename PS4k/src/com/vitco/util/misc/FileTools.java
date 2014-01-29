@@ -1,5 +1,6 @@
 package com.vitco.util.misc;
 
+import com.vitco.core.container.HackedObjectInputStream;
 import com.vitco.manager.error.ErrorHandlerInterface;
 
 import java.io.*;
@@ -65,7 +66,7 @@ public class FileTools {
                     @Override protected void doWork() throws Throwable {
                         InputStream inputStream = autoClose(new FileInputStream( file ));
                         InputStream buffer = autoClose(new BufferedInputStream( inputStream ));
-                        ObjectInput input = autoClose(new ObjectInputStream ( buffer ));
+                        ObjectInput input = autoClose(new HackedObjectInputStream( buffer ));
                         result[0] = input.readObject();
                     }
                 };

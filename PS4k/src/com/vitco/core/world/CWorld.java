@@ -147,7 +147,7 @@ public class CWorld extends AbstractCWorld {
                     int min2 = 0;
                     int max2 = 0;
                     for (Voxel face : faceList) {
-                        int[] pos2D = VoxelManager.convert(face, axis);
+                        int[] pos2D = VoxelManager.convert3D2D(face, axis);
                         if (first) {
                             min1 = pos2D[0];
                             max1 = pos2D[0];
@@ -168,15 +168,15 @@ public class CWorld extends AbstractCWorld {
                     // build image to compute triangle overlay
                     TiledImage src = SharedImageFactory.getTiledImage(w, h);
                     for (Voxel face : faceList) {
-                        int[] pos2D = VoxelManager.convert(face, axis);
+                        int[] pos2D = VoxelManager.convert3D2D(face, axis);
                         src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 1);
                     }
                     // triangulate the image
                     ArrayList<DelaunayTriangle> tris = Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
                     // reset image
                     for (Voxel face : faceList) {
-                        // todo optimize
-                        int[] pos2D = VoxelManager.convert(face, axis);
+                        // todo optimize (use previous values)
+                        int[] pos2D = VoxelManager.convert3D2D(face, axis);
                         src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 0);
                     }
                     // --------------
@@ -186,7 +186,7 @@ public class CWorld extends AbstractCWorld {
                             tris, faceList,
                             min1, min2, w, h, orientation, axis,
                             outdatedPlane, outdatedArea, simpleMode, side, culling,
-                            hasBorder
+                            hasBorder, hullManager
                     );
                     // remove old version of this side (if exists)
                     Integer oldId = plane2WorldId.get(areaKey);

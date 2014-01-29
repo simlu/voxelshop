@@ -6,6 +6,7 @@ import com.threed.jpct.SimpleVector;
 import com.threed.jpct.TextureInfo;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.WorldManager;
+import com.vitco.low.hull.HullManager;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.GraphicTools;
 import com.vitco.util.graphic.SharedImageFactory;
@@ -113,11 +114,27 @@ public class BorderObject3D extends Object3D {
         return outsideDirection;
     }
 
+    // helper to draw pixel interpolation where necessary (so black outline is only visible when appropriate)
+    private void interpolatePixel(int[] pos2D, Voxel face, int axis, HullManager hullManager,
+                             int orientation, boolean containsTexture, Graphics2D g2,
+                             int x, int y, BufferedImage textureImage, int offsetx, int offsety) {
+        int[] pos = VoxelManager.convert2D3D(pos2D[0] + offsetx, pos2D[1] + offsety, face.getPosAsInt()[axis], axis);
+        short[] posS = new short[] {(short) pos[0], (short) pos[1], (short) pos[2]};
+        if (hullManager.containsBorder(posS, orientation)) {
+            if (containsTexture) {
+                g2.setColor(face.getColor());
+                g2.fillRect((x + 1 + offsetx)*32, (y + 1 + offsety)*32, 32, 32);
+            } else {
+                textureImage.setRGB(x + 1 + offsetx, y + 1 + offsety, face.getColor().getRGB());
+            }
+        }
+    }
+
     // generates a texture
     // the seen points are stored in the seen hashmap
     private BufferedImage getTexture(int minx, int miny,
                                      Collection<Voxel> faceList, HashSet<String> seenTrianglePoints,
-                                     int orientation, int axis) {
+                                     int orientation, int axis, HullManager<Voxel> hullManager, int w, int h) {
         // create black image
         BufferedImage textureImage = SharedImageFactory.getBufferedImage(textureSize, textureSize);
         Graphics2D g2 = (Graphics2D) textureImage.getGraphics();
@@ -130,7 +147,7 @@ public class BorderObject3D extends Object3D {
 
         // load colors into image, pixel by pixel
         for (Voxel face : faceList) {
-            int[] pos2D = VoxelManager.convert(face, axis);
+            int[] pos2D = VoxelManager.convert3D2D(face, axis);
             int x = pos2D[0] - minx;
             int y = pos2D[1] - miny;
             int[] texture = face.getTexture();
@@ -214,6 +231,49 @@ public class BorderObject3D extends Object3D {
                 // set the pixel
                 textureImage.setRGB(x + 1, y + 1, face.getColor().getRGB());
             }
+
+            if (!isTexture) {
+                // ========================
+
+                // check if this is edge pixel
+                if (x == 0 && y == 0) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, -1, -1);
+                }
+                if (x == w - 1 && y == h - 1) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, 1, 1);
+                }
+                if (x == 0 && y == h - 1) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, -1, 1);
+                }
+                if (x == w - 1 && y == 0) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, 1, -1);
+                }
+
+                if (x == 0) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, -1, 0);
+                }
+                if (x == w - 1) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, 1, 0);
+                }
+
+                if (y == 0) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, 0, -1);
+                }
+                if (y == h - 1) {
+                    interpolatePixel(pos2D, face, axis, hullManager, orientation,
+                            containsTexture, g2, x, y, textureImage, 0, 1);
+                }
+
+                // =======================
+            }
+
             // store in the seen list
             seenTrianglePoints.add(x + "_" + y);
         }
@@ -267,7 +327,7 @@ public class BorderObject3D extends Object3D {
     // generate triangles and use adjustable edge interpolation
     private void generateAdvanced(ArrayList<DelaunayTriangle> triangleList, Collection<Voxel> faceList,
                                   int minx, int miny, int w, int h, Integer orientation, Integer axis,
-                                  Integer plane, Point areaId, int side) {
+                                  Integer plane, Point areaId, int side, HullManager<Voxel> hullManager) {
 
         canHaveBorder = side == -1;
 
@@ -277,7 +337,7 @@ public class BorderObject3D extends Object3D {
         // contains seen pixel
         HashSet<String> seenTrianglePoints = new HashSet<String>();
         // generate the texture and store the seen points
-        BufferedImage image = getTexture(minx, miny, faceList, seenTrianglePoints, orientation, axis);
+        BufferedImage image = getTexture(minx, miny, faceList, seenTrianglePoints, orientation, axis, hullManager, w, h);
         // load the texture
         WorldManager.loadEfficientTexture(textureKey, image, false);
 
@@ -403,7 +463,7 @@ public class BorderObject3D extends Object3D {
     public BorderObject3D(ArrayList<DelaunayTriangle> tris, Collection<Voxel> faceList,
                           int minx, int miny, int w, int h, Integer orientation, Integer axis,
                           Integer plane, Point areaId, boolean simpleMode, int side,
-                          boolean culling, boolean hasBorder) {
+                          boolean culling, boolean hasBorder, HullManager<Voxel> hullManager) {
         // construct this object 3D with correct triangle count
         super(tris.size());
 
@@ -417,7 +477,7 @@ public class BorderObject3D extends Object3D {
         } else {
             // generate triangles and use adjustable edge interpolation
             generateAdvanced(tris, faceList, minx, miny, w, h, orientation, axis,
-                    plane, areaId, side);
+                    plane, areaId, side, hullManager);
         }
 
         // set the correct culling

@@ -70,6 +70,11 @@ public class HullManager<T> implements HullFinderInterface<T> {
     }
 
     @Override
+    public final boolean containsBorder(short[] pos, int orientation) {
+        return border[orientation].contains(CubeIndexer.getId(pos));
+    }
+
+    @Override
     public final void update(short[] pos, T object) {
         int id = CubeIndexer.getId(pos);
         // store the object

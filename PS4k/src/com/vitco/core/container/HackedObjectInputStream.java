@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  * Temporary fix for loading old files.
+ *
+ * todo: Remove when new format is ready
  */
 public class HackedObjectInputStream extends ObjectInputStream {
 
@@ -23,6 +25,7 @@ public class HackedObjectInputStream extends ObjectInputStream {
             MIGRATION_MAP.put("com.vitco.engine.data.container.Voxel", com.vitco.core.data.container.Voxel.class);
             MIGRATION_MAP.put("com.vitco.engine.data.container.ExtendedVector", com.vitco.core.data.container.ExtendedVector.class);
             MIGRATION_MAP.put("com.vitco.engine.data.container.ExtendedLine", com.vitco.core.data.container.ExtendedLine.class);
+            MIGRATION_MAP.put("com.vitco.engine.data.container.DataContainer", com.vitco.core.data.container.DataContainer.class);
         }
 
         /**

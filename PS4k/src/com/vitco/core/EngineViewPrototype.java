@@ -63,7 +63,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     protected final DrawContainer container;
 
     // true if high resolution rendering active
-    private static boolean highQualityActive = false;
+    private static boolean highQualityActive = true;
 
     // ==============================
     // updating of world with voxels

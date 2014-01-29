@@ -553,6 +553,48 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             if (drawOverlay) { // overlay part 1
                 drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
             }
+//            // draw depth outline (software "shader")
+//            // idea: http://coding-experiments.blogspot.de/2010/06/edge-detection.html
+//            int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
+//            Graphics2D gr2 = (Graphics2D) buffer.getGraphics();
+//            gr2.setStroke(new BasicStroke(1f));
+//            gr2.setColor(Color.BLACK);
+//            int[] zBuffer = buffer.getZBuffer(); //required hacked framebuffer
+//            for (int c = w*2; c < zBuffer.length - w*2; c++) {
+//
+//                int x = zBuffer[c] + Integer.MAX_VALUE;
+//                if (x != 0) {
+//                    int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
+//                    int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
+//                    int x1 = zBuffer[c-2] + Integer.MAX_VALUE;
+//                    int x7 = zBuffer[c+2] + Integer.MAX_VALUE;
+//                    int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
+//                    int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
+//                    int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
+//                    int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
+//
+//                    int val = (Math.abs(x1 - x7) > 100000 ? 1 : 0) +
+//                            (Math.abs(x5 - x3) > 100000 ? 1 : 0) +
+//                            (Math.abs(x0 - x8) > 100000 ? 1 : 0) +
+//                            (Math.abs(x2 - x6) > 100000 ? 1 : 0);
+//
+//                    if (val == 2 || val == 3) {
+//                        gr2.drawRect((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, 0, 0);
+//                    } else {
+//                        int xP = x + 50;
+//                        int xM = x - 50;
+//
+//                        int s = ((x1 > xP && x7 > xP) || (x1 < xM && x7 < xM) ? 1 : 0) +
+//                                ((x5 > xP && x3 > xP) || (x5 < xM && x3 < xM) ? 1 : 0) +
+//                                ((x2 > xP && x6 > xP) || (x2 < xM && x6 < xM) ? 1 : 0) +
+//                                ((x0 > xP && x8 > xP) || (x0 < xM && x8 < xM) ? 1 : 0);
+//
+//                        if (s == 2 || s == 3) {
+//                            gr2.drawRect((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, 0, 0);
+//                        }
+//                    }
+//                }
+//            }
         }
         Graphics2D gr = (Graphics2D) toDraw.getGraphics();
 
