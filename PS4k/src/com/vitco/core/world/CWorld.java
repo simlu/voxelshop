@@ -55,7 +55,7 @@ public class CWorld extends AbstractCWorld {
 
     // manages the voxels that are in this world, allows for easy detection
     // of changed areas (combined faces of neighbouring voxels)
-    private final VoxelManager voxelManager = new VoxelManager();
+    private final VoxelManager voxelManager = new VoxelManager(hullManager, side);
 
     // add or update a voxel
     @Override
@@ -120,94 +120,104 @@ public class CWorld extends AbstractCWorld {
     private boolean handleOrientedPlane(int orientation) {
         int axis = orientation/2;
         // processed entries are cleaned here in this function (!)
-        HashMap<Integer, HashSet<Point>> outdatedPlanes = voxelManager.getInvalidPlanes(orientation);
+        HashMap<Integer, HashMap<Point, Boolean>> outdatedPlanes = voxelManager.getInvalidPlanes(orientation);
 
         int progressCounter = 0;
 
-        for (Iterator<Map.Entry<Integer, HashSet<Point>>> planeIterator = outdatedPlanes.entrySet().iterator(); planeIterator.hasNext() && progressCounter < maxAreaDraw;) {
-            Map.Entry<Integer, HashSet<Point>> entry = planeIterator.next();
+        for (Iterator<Map.Entry<Integer, HashMap<Point, Boolean>>> planeIterator = outdatedPlanes.entrySet().iterator(); planeIterator.hasNext() && progressCounter < maxAreaDraw;) {
+            Map.Entry<Integer, HashMap<Point, Boolean>> entry = planeIterator.next();
             Integer outdatedPlane = entry.getKey();
-            HashSet<Point> outdatedAreas = entry.getValue();
+            HashMap<Point, Boolean> outdatedAreas = entry.getValue();
 
             // loop over all outdated areas
-            for (Iterator<Point> areaIterator = outdatedAreas.iterator(); areaIterator.hasNext() && progressCounter < maxAreaDraw; progressCounter++) {
+            for (Iterator<Point> areaIterator = outdatedAreas.keySet().iterator(); areaIterator.hasNext() && progressCounter < maxAreaDraw; progressCounter++) {
                 Point outdatedArea = areaIterator.next();
+                Boolean fullRefresh = outdatedAreas.get(outdatedArea);
                 // id for this particular area
                 String areaKey = orientation + "_" + outdatedPlane + "_" + outdatedArea.x + "_" + outdatedArea.y;
 
-                // handle the triangle building
-                Collection<Voxel> faceList = voxelManager.getFaces(orientation, outdatedPlane, outdatedArea);
-                if (faceList != null) {
-                    // this should never happen as the faceManager deletes unused faceLists
-                    assert !faceList.isEmpty();
-                    // determine size of rect that contains all voxel faces
-                    boolean first = true;
-                    int min1 = 0;
-                    int max1 = 0;
-                    int min2 = 0;
-                    int max2 = 0;
-                    for (Voxel face : faceList) {
-                        int[] pos2D = VoxelManager.convert3D2D(face, axis);
-                        if (first) {
-                            min1 = pos2D[0];
-                            max1 = pos2D[0];
-                            min2 = pos2D[1];
-                            max2 = pos2D[1];
-                            first = false;
-                        } else {
-                            min1 = Math.min(min1,pos2D[0]);
-                            max1 = Math.max(max1, pos2D[0]);
-                            min2 = Math.min(min2,pos2D[1]);
-                            max2 = Math.max(max2, pos2D[1]);
+                if (fullRefresh) { // full refresh (recreate triangulation)
+                    // handle the triangle building
+                    Collection<Voxel> faceList = voxelManager.getFaces(orientation, outdatedPlane, outdatedArea);
+                    if (faceList != null) {
+                        // this should never happen as the faceManager deletes unused faceLists
+                        assert !faceList.isEmpty();
+                        // determine size of rect that contains all voxel faces
+                        boolean first = true;
+                        int min1 = 0;
+                        int max1 = 0;
+                        int min2 = 0;
+                        int max2 = 0;
+                        for (Voxel face : faceList) {
+                            int[] pos2D = VoxelManager.convert3D2D(face, axis);
+                            if (first) {
+                                min1 = pos2D[0];
+                                max1 = pos2D[0];
+                                min2 = pos2D[1];
+                                max2 = pos2D[1];
+                                first = false;
+                            } else {
+                                min1 = Math.min(min1,pos2D[0]);
+                                max1 = Math.max(max1, pos2D[0]);
+                                min2 = Math.min(min2,pos2D[1]);
+                                max2 = Math.max(max2, pos2D[1]);
+                            }
+                        }
+                        int w = max1 - min1 + 1;
+                        int h = max2 - min2 + 1;
+
+                        // --------------
+                        // build image to compute triangle overlay
+                        TiledImage src = SharedImageFactory.getTiledImage(w, h);
+                        for (Voxel face : faceList) {
+                            int[] pos2D = VoxelManager.convert3D2D(face, axis);
+                            src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 1);
+                        }
+                        // triangulate the image
+                        ArrayList<DelaunayTriangle> tris = Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
+                        // reset image
+                        for (Voxel face : faceList) {
+                            // todo optimize (use previous values)
+                            int[] pos2D = VoxelManager.convert3D2D(face, axis);
+                            src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 0);
+                        }
+                        // --------------
+
+                        // build the plane
+                        BorderObject3D box = new BorderObject3D(
+                                tris, faceList,
+                                min1, min2, w, h, orientation, axis,
+                                outdatedPlane, outdatedArea, simpleMode, side, culling,
+                                hasBorder, hullManager
+                        );
+                        // remove old version of this side (if exists)
+                        Integer oldId = plane2WorldId.get(areaKey);
+                        if (oldId != null) {
+                            removeObject(oldId);
+                            worldId2Side.remove(oldId);
+                        }
+                        // add new plane
+                        int newWorldId = addObject(box);
+                        plane2WorldId.put(areaKey, newWorldId);
+                        worldId2Side.put(newWorldId, orientation);
+                    } else {
+                        // remove old version of this side (if exists)
+                        Integer oldId = plane2WorldId.remove(areaKey);
+                        if (oldId != null) {
+                            removeObject(oldId);
+                            worldId2Side.remove(oldId);
+                            // only remove texture in non-wireframe world
+                            if (!simpleMode) {
+                                removeTexture(orientation, outdatedPlane, outdatedArea);
+                            }
                         }
                     }
-                    int w = max1 - min1 + 1;
-                    int h = max2 - min2 + 1;
-
-                    // --------------
-                    // build image to compute triangle overlay
-                    TiledImage src = SharedImageFactory.getTiledImage(w, h);
-                    for (Voxel face : faceList) {
-                        int[] pos2D = VoxelManager.convert3D2D(face, axis);
-                        src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 1);
-                    }
-                    // triangulate the image
-                    ArrayList<DelaunayTriangle> tris = Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
-                    // reset image
-                    for (Voxel face : faceList) {
-                        // todo optimize (use previous values)
-                        int[] pos2D = VoxelManager.convert3D2D(face, axis);
-                        src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 0);
-                    }
-                    // --------------
-
-                    // build the plane
-                    BorderObject3D box = new BorderObject3D(
-                            tris, faceList,
-                            min1, min2, w, h, orientation, axis,
-                            outdatedPlane, outdatedArea, simpleMode, side, culling,
-                            hasBorder, hullManager
-                    );
-                    // remove old version of this side (if exists)
-                    Integer oldId = plane2WorldId.get(areaKey);
-                    if (oldId != null) {
-                        removeObject(oldId);
-                        worldId2Side.remove(oldId);
-                    }
-                    // add new plane
-                    int newWorldId = addObject(box);
-                    plane2WorldId.put(areaKey, newWorldId);
-                    worldId2Side.put(newWorldId, orientation);
                 } else {
-                    // remove old version of this side (if exists)
-                    Integer oldId = plane2WorldId.remove(areaKey);
-                    if (oldId != null) {
-                        removeObject(oldId);
-                        worldId2Side.remove(oldId);
-                        // only remove texture in non-wireframe world
-                        if (!simpleMode) {
-                            removeTexture(orientation, outdatedPlane, outdatedArea);
-                        }
+                    // only do texture refresh (soft)
+                    Integer objId = plane2WorldId.get(areaKey);
+                    if (objId != null) {
+                        BorderObject3D obj = (BorderObject3D) getObject(objId);
+                        obj.refreshTextureInterpolation();
                     }
                 }
                 // this area was processed

@@ -1,6 +1,7 @@
 package com.vitco.core.world.container;
 
 import com.vitco.core.data.container.Voxel;
+import com.vitco.low.hull.HullManager;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.IntegerTools;
 
@@ -8,7 +9,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Manages face data structure.
@@ -20,12 +20,17 @@ import java.util.HashSet;
  */
 public class VoxelManager {
 
+    private final HullManager<Voxel> hullManager;
+    private final int side;
+
     // constructor
-    public VoxelManager() {
+    public VoxelManager(HullManager<Voxel> hullManager, int side) {
+        this.hullManager = hullManager;
+        this.side = side;
         // initialize data structure (all six orientations)
         for (int i = 0; i < 6; i++) {
             orientationList.add(new HashMap<Integer, HashMap<Point, HashMap<String, Voxel>>>());
-            changedAreas.add(new HashMap<Integer, HashSet<Point>>());
+            changedAreas.add(new HashMap<Integer, HashMap<Point, Boolean>>());
         }
     }
 
@@ -37,22 +42,35 @@ public class VoxelManager {
                 IntegerTools.ifloordiv2(pos[1] + VitcoSettings.TRI_GRID_OFFSET, VitcoSettings.TRI_GRID_SIZE));
     }
 
-    // helper to get bordering areas for a point (if there are any)
-    public static HashSet<Point> getInvalidAreaIds(int[] pos) {
-        HashSet<Point> result = new HashSet<Point>();
+    // helper to correctly invalidate area ids
+    public void invalidAreaIds(int[] pos2D, int plane, int axis, int orientation, int[] pos3D) {
+        Point coreAreaId = getAreaId(pos2D);
 
-        result.add(getAreaId(pos));
+        // invalid the area that the changed voxel was in
+        invalidate(orientation, plane, coreAreaId, true);
 
-        result.add(getAreaId(new int[]{pos[0] + 1, pos[1]}));
-        result.add(getAreaId(new int[]{pos[0], pos[1] + 1}));
-        result.add(getAreaId(new int[]{pos[0] - 1, pos[1]}));
-        result.add(getAreaId(new int[]{pos[0], pos[1] - 1}));
-        result.add(getAreaId(new int[]{pos[0] + 1, pos[1] - 1}));
-        result.add(getAreaId(new int[]{pos[0] - 1, pos[1] + 1}));
-        result.add(getAreaId(new int[]{pos[0] - 1, pos[1] - 1}));
-        result.add(getAreaId(new int[]{pos[0] + 1, pos[1] + 1}));
-
-        return result;
+        // only invalidate neighbouring areas if main view
+        if (side == -1) {
+            int[][] toCheck = new int[][] {
+                    new int[] {1, 0},
+                    new int[] {0, 1},
+                    new int[] {-1, 0},
+                    new int[] {0, -1},
+                    new int[] {1, -1},
+                    new int[] {-1, 1},
+                    new int[] {1, 1},
+                    new int[] {-1, -1},
+            };
+            for (int[] dir : toCheck) {
+                Point areaId = getAreaId(new int[]{pos2D[0] + dir[0], pos2D[1] + dir[1]});
+                if (!coreAreaId.equals(areaId)) {
+                    int[] newPos = convert2D3D(pos2D[0] + dir[0], pos2D[1] + dir[1], pos3D[axis], axis);
+                    if (hullManager.containsBorder(new short[] {(short) newPos[0], (short) newPos[1], (short) newPos[2]}, orientation)) {
+                        invalidate(orientation, plane, areaId, false);
+                    }
+                }
+            }
+        }
     }
 
     // static convert 3D to 2D
@@ -98,29 +116,37 @@ public class VoxelManager {
     // area invalidation
 
     // keeps track of the areas that need updating
-    private final ArrayList<HashMap<Integer, HashSet<Point>>> changedAreas = new ArrayList<HashMap<Integer, HashSet<Point>>>();
+    private final ArrayList<HashMap<Integer, HashMap<Point, Boolean>>> changedAreas = new ArrayList<HashMap<Integer, HashMap<Point, Boolean>>>();
 
     // mark an area as changed
-    public final void invalidate(Integer orientation, Integer plane, Point areaId) {
+    public final void invalidate(Integer orientation, Integer plane, Point areaId, boolean fullRefresh) {
         // get the correct plane list for the orientation
-        HashMap<Integer, HashSet<Point>> planeList = changedAreas.get(orientation);
+        HashMap<Integer, HashMap<Point, Boolean>> planeList = changedAreas.get(orientation);
         // get the correct area list for this plane
-        HashSet<Point> areaList = planeList.get(plane);
+        HashMap<Point, Boolean> areaList = planeList.get(plane);
         if (areaList == null) {
-            areaList = new HashSet<Point>();
+            areaList = new HashMap<Point, Boolean>();
             planeList.put(plane, areaList);
         }
-        areaList.add(areaId);
+        // promote refresh state correctly
+        Boolean currentRefresh = areaList.get(areaId);
+        if (currentRefresh == null) {
+            areaList.put(areaId, fullRefresh);
+        } else {
+            if (!currentRefresh && fullRefresh) {
+                areaList.put(areaId, true);
+            }
+        }
     }
 
     // check if an area is marked as changed
     public final boolean isInvalid(Integer orientation, Integer plane, Point areaId) {
         // get the correct plane list for the orientation
-        HashMap<Integer, HashSet<Point>> planeList = changedAreas.get(orientation);
+        HashMap<Integer, HashMap<Point, Boolean>> planeList = changedAreas.get(orientation);
         // get the correct area list for this plane
-        HashSet<Point> areaList = planeList.get(plane);
+        HashMap<Point, Boolean> areaList = planeList.get(plane);
         // check if area is contained
-        return areaList != null && areaList.contains(areaId);
+        return areaList != null && areaList.containsKey(areaId);
     }
 
     // get all the invalid areas for a plane
@@ -132,7 +158,7 @@ public class VoxelManager {
     // Note: You can remove areas manually, just make sure empty entries
     // are deleted in both hashmaps
     // Note: An alternative is to call clearInvalidAreas(orientation)
-    public final HashMap<Integer, HashSet<Point>> getInvalidPlanes(Integer orientation) {
+    public final HashMap<Integer, HashMap<Point, Boolean>> getInvalidPlanes(Integer orientation) {
         return changedAreas.get(orientation);
     }
 
@@ -154,10 +180,7 @@ public class VoxelManager {
         int plane = getPlane(voxel, axis);
         Point areaId = getAreaId(pos2D);
         // invalidate
-        for (Point toInvalidate : getInvalidAreaIds(pos2D)) {
-            // todo: for the neighbouring areas a refresh of the texture would be sufficient
-            invalidate(orientation, plane, toInvalidate);
-        }
+        invalidAreaIds(pos2D, plane, axis, orientation, voxel.getPosAsInt());
         // get the correct plane list for the orientation
         HashMap<Integer, HashMap<Point, HashMap<String, Voxel>>> planeList = orientationList.get(orientation);
         // get the correct area list for this plane
@@ -190,9 +213,7 @@ public class VoxelManager {
         int plane = getPlane(voxel, axis);
         Point areaId = getAreaId(pos2D);
         // invalidate
-        for (Point toInvalidate : getInvalidAreaIds(pos2D)) {
-            invalidate(orientation, plane, toInvalidate);
-        }
+        invalidAreaIds(pos2D, plane, axis, orientation, voxel.getPosAsInt());
         // get the correct plane list for the orientation
         HashMap<Integer, HashMap<Point, HashMap<String, Voxel>>> planeList = orientationList.get(orientation);
         // get the correct area list for this plane
