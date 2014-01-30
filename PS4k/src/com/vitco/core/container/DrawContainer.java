@@ -166,6 +166,39 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                     drawDashLine(ig, vectors[i + 4], vectors[(i + 1) % 4 + 4], color1, color2);
                     drawDashLine(ig, vectors[i], vectors[i + 4], color1, color2);
                 }
+
+                // draw size text
+                ig = (Graphics2D) ig.create();
+                String str1 = String.valueOf(((int)(range[2] * 2)));
+                String str2 = String.valueOf(((int)(range[1] * 2)));
+                String str3 = String.valueOf(((int)(range[0] * 2)));
+
+                ig.setFont(ig.getFont().deriveFont(18f).deriveFont(Font.BOLD));
+
+                float len1 = (float) ig.getFontMetrics().getStringBounds(str1, ig).getWidth();
+                float len2 = (float) ig.getFontMetrics().getStringBounds(str2 + ", " + str1, ig).getWidth();
+                float len3 = (float) ig.getFontMetrics().getStringBounds(str3 + ", " + str2 + ", " + str1, ig).getWidth();
+
+                ig.setColor(Color.BLACK);
+                ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 - 1);
+                ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 - 1);
+                ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 + 1);
+                ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 + 1);
+                ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 - 1);
+                ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 - 1);
+                ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 + 1);
+                ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 + 1);
+                ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 - 1);
+                ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 - 1);
+                ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 + 1);
+                ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 + 1);
+                ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Z);
+                ig.drawString(str1, this.getWidth() - len1 - 14, 28);
+                ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Y);
+                ig.drawString(str2, this.getWidth() - len2 - 14, 28);
+                ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_X);
+                ig.drawString(str3, this.getWidth() - len3 - 14, 28);
+
             }
         }
         return valid;
