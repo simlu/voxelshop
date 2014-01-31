@@ -37,6 +37,11 @@ public class CWorld extends AbstractCWorld {
         // jvm will convert this to native code
         // => so there is no lag later on
         Poly2Tri.warmup();
+        // warmup, part 2
+        TiledImage src = SharedImageFactory.getTiledImage(1, 1);
+        src.setSample(0, 0, 0, 1);
+        Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
+        src.setSample(0, 0, 0, 0);
         // initialize the shared images (for conversion into polygon)
         for (int w = 1; w < VitcoSettings.TRI_GRID_SIZE + 1; w++) {
             for (int h = 1; h < VitcoSettings.TRI_GRID_SIZE + 1; h++) {
