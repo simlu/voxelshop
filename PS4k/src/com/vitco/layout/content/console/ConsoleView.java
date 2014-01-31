@@ -2,12 +2,15 @@ package com.vitco.layout.content.console;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.vitco.core.data.Data;
+import com.vitco.core.data.container.Voxel;
 import com.vitco.export.ExportWorld;
 import com.vitco.layout.content.ViewPrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
+import com.vitco.manager.thread.LifeTimeThread;
+import com.vitco.manager.thread.ThreadManagerInterface;
 import com.vitco.settings.VitcoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,6 +21,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Displays console content and buttons to user.
@@ -36,6 +40,13 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
     @Autowired(required=true)
     public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
         this.asyncActionManager = asyncActionManager;
+    }
+
+    private ThreadManagerInterface threadManager;
+    // set the action handler
+    @Autowired
+    public final void setThreadManager(ThreadManagerInterface threadManager) {
+        this.threadManager = threadManager;
     }
 
     @Override
@@ -145,6 +156,55 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             }
         });
 
+        // start/stop test mode (rapid adding/removing of voxel)
+        actionManager.registerAction("toggle_rapid_voxel_testing",new AbstractAction() {
+
+            private boolean active = false;
+            private final Random rand = new Random();
+            private LifeTimeThread thread;
+
+            private final int size = 9;
+            private final int perTick = 1;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                active = !active;
+                if (active) {
+                    thread = new LifeTimeThread() {
+                        private void toggle() {
+                            int[] pos = new int[] {rand.nextInt(size) - size/2, rand.nextInt(size) - size/2, rand.nextInt(size) - size/2};
+                            Voxel voxel = data.searchVoxel(pos, false);
+                            if (voxel == null) {
+                                data.addVoxel(new Color(rand.nextInt()), null, pos);
+                            } else {
+                                data.removeVoxel(voxel.id);
+                            }
+                        }
+                        @Override
+                        public void loop() throws InterruptedException {
+                            asyncActionManager.addAsyncAction(new AsyncAction() {
+                                @Override
+                                public void performAction() {
+                                    for (int i = 0; i < perTick; i++) {
+                                        toggle();
+                                    }
+                                }
+                            });
+                            synchronized (this) {
+                                thread.wait(50);
+                            }
+                        }
+                    };
+                    threadManager.manage(thread);
+                    console.addLine("Test activated.");
+                } else {
+                    threadManager.remove(thread);
+                    console.addLine("Test deactivated.");
+                }
+
+            }
+        });
+
         // holds all console actions
         final HashMap<String, String> consoleAction = new HashMap<String, String>();
         // needs to be all lower case
@@ -152,6 +212,8 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/debug exception", "create_error_for_debug");
         consoleAction.put("/study", "study_object_complexity");
         consoleAction.put("/check update", "force_update_check");
+        consoleAction.put("/test voxel", "toggle_rapid_voxel_testing");
+        consoleAction.put("/test camera", "toggle_rapid_camera_testing");
 
         // register all console actions (so debug know that they are used)
         for (String action : consoleAction.values()) {

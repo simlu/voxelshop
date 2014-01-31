@@ -55,9 +55,14 @@ public abstract class DrawContainer extends AbstractDrawContainer {
 
     // set resolution of this container (refresh buffer)
     public final void refreshBuffer() {
-        int w = buffer.getWidth(), h = buffer.getHeight();
-        buffer = null; // so the gc can collect before creation if necessary
-        buffer = new FrameBuffer(w, h, VitcoSettings.SAMPLING_MODE);
+        asyncActionManager.addAsyncAction(new AsyncAction() {
+            @Override
+            public void performAction() {
+                int w = buffer.getWidth(), h = buffer.getHeight();
+                buffer = null; // so the gc can collect before creation if necessary
+                buffer = new FrameBuffer(w, h, VitcoSettings.SAMPLING_MODE);
+            }
+        });
     }
 
     // cleanup this container
@@ -425,8 +430,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     // wrapper
     private void drawAxeHalf(SimpleVector unitVector, boolean invert, Graphics2D ig, Color innerColor, Color outerColor, float size) {
         G2DUtil.drawLine(
-                new SimpleVector(Math.round((invert?-1:1)*unitVector.x*15 + 25), Math.round((invert?-1:1)*unitVector.y*15 + 25), 0),
-                new SimpleVector(Math.round((invert?-1:1)*unitVector.x*3 + 25), Math.round((invert?-1:1)*unitVector.y*3 + 25), 0),
+                new SimpleVector((invert?-1:1)*unitVector.x*15 + 25, (invert?-1:1)*unitVector.y*15 + 25, 0),
+                new SimpleVector((invert?-1:1)*unitVector.x*3 + 25, (invert?-1:1)*unitVector.y*3 + 25, 0),
                 ig,
                 innerColor,
                 outerColor,

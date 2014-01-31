@@ -11,7 +11,10 @@ import com.vitco.core.world.WorldManager;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.pref.PrefChangeListener;
+import com.vitco.manager.thread.LifeTimeThread;
+import com.vitco.manager.thread.ThreadManagerInterface;
 import com.vitco.settings.VitcoSettings;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,11 +22,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.Random;
 
 /**
  * Creates the main view instance and attaches the specific user interaction.
  */
 public class MainView extends EngineInteractionPrototype implements MainViewInterface {
+
+    private ThreadManagerInterface threadManager;
+    // set the action handler
+    @Autowired
+    public final void setThreadManager(ThreadManagerInterface threadManager) {
+        this.threadManager = threadManager;
+    }
 
     protected MainView() {
         super(-1);
@@ -76,6 +87,50 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
         selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
+
+        // start/stop test mode (rapid camera rotation)
+        actionManager.registerAction("toggle_rapid_camera_testing",new AbstractAction() {
+
+            private boolean active = false;
+            private final Random rand = new Random();
+            private LifeTimeThread thread;
+
+            private float dirx = 0f;
+            private float diry = 0f;
+
+            private final float maxSpeed = 1f;
+            private final float speedChange = 0.1f;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                active = !active;
+                if (active) {
+                    thread = new LifeTimeThread() {
+                        @Override
+                        public void loop() throws InterruptedException {
+                            asyncActionManager.addAsyncAction(new AsyncAction() {
+                                @Override
+                                public void performAction() {
+                                    dirx = Math.min(maxSpeed, Math.max(-maxSpeed, dirx + (rand.nextFloat() - 0.5f)*speedChange));
+                                    diry = Math.min(maxSpeed, Math.max(-maxSpeed, diry + (rand.nextFloat() - 0.5f)*speedChange));
+                                    camera.rotate(dirx, diry);
+                                    forceRepaint();
+                                }
+                            });
+                            synchronized (this) {
+                                thread.wait(50);
+                            }
+                        }
+                    };
+                    threadManager.manage(thread);
+                    console.addLine("Test activated.");
+                } else {
+                    threadManager.remove(thread);
+                    console.addLine("Test deactivated.");
+                }
+
+            }
+        });
 
         // lighting
         final Light dark_light = WorldManager.addLight(world, SimpleVector.ORIGIN, -10);

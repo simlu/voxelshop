@@ -247,15 +247,6 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         }
 
-        // force rebuilding and repainting of this container when the quality changes
-        preferences.addPrefChangeListener("high_quality_active", new PrefChangeListener() {
-            @Override
-            public void onPrefChange(Object o) {
-                container.refreshBuffer();
-                forceRepaint();
-            }
-        });
-
         // initialize the container
         // ---------------------------
         // register bg color change
@@ -290,6 +281,16 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // final initialization
         container.init();
+
+        // force rebuilding and repainting of this container when the quality changes
+        // Note: This requires the async action manager to be set (!)
+        preferences.addPrefChangeListener("high_quality_active", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                container.refreshBuffer();
+                forceRepaint();
+            }
+        });
     }
 
     @PreDestroy

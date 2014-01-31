@@ -31,8 +31,10 @@ public class ThreadManager implements ThreadManagerInterface {
     }
 
     // remove a thread from the managed list
+    // (this also stops the execution of this thread)
     @Override
     public synchronized void remove(LifeTimeThread thread) {
+        thread.stopThread();
         threads.remove(thread);
     }
 
