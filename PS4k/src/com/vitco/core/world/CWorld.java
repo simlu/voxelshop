@@ -217,7 +217,7 @@ public class CWorld extends AbstractCWorld {
                             }
                         }
                     }
-                } else {
+                } else if (!simpleMode) {
                     // only do texture refresh (soft)
                     Integer objId = plane2WorldId.get(areaKey);
                     if (objId != null) {

@@ -116,6 +116,7 @@ public class BorderObject3D extends Object3D {
 
     // refresh the texture of this object
     public final void refreshTextureInterpolation() {
+        assert textureObject != null;
         textureObject.refreshTexture(null);
     }
 
