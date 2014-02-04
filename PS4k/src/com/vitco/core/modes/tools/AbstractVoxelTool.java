@@ -87,7 +87,7 @@ public abstract class AbstractVoxelTool extends AbstractBasicTool {
 
     // the current center information that is used to determine
     // which plane should be used for a hit test
-    private int[] activeCenter = new int[] {0,0,0};
+    private final int[] activeCenter = new int[] {0,0,0};
     // setter
     public final void setActiveCenter(int[] activeCenter) {
         this.activeCenter[0] = activeCenter[0];

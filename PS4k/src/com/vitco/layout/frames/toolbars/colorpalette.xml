@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <icon-item src="resource/img/framebars/colorpalette/locked.png"
+               tool-tip="color-palette_lock_caption"
+               checkable="true"
+               action="color-palette_lock"
+               register-button-as-complex-action="color-palette_lock_current-icon"/>
+    <separator/>
+    <icon-item src="resource/img/framebars/colorpalette/import.png"
+               tool-tip="color-palette_import_caption"
+               action="color-palette_import"/>
+    <icon-item src="resource/img/framebars/colorpalette/export.png"
+               tool-tip="color-palette_export_caption"
+               action="color-palette_export"/>
+</head>

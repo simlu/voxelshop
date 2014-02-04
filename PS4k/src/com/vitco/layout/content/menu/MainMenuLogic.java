@@ -3,13 +3,13 @@ package com.vitco.layout.content.menu;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.CFileDialog;
 import com.vitco.util.misc.FileTools;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -25,68 +25,19 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
     // the location of active file (or null if none active)
     final String[] save_location = new String[] {null};
     // the file chooser
-    final JFileChooser fc_vsd = new JFileChooser();
-    // filter to only allow vsd files
-    private static final class VSDFilter extends FileFilter
-    {
-        public boolean accept(File f)
-        {
-            return f.isDirectory() || f.getName().endsWith(".vsd");
-        }
-
-        public String getDescription()
-        {
-            return "PS4k File (*.vsd)";
-        }
-    }
+    final CFileDialog fc_vsd = new CFileDialog();
     // export file chooser
-    final JFileChooser fc_export = new JFileChooser();
+    final CFileDialog fc_export = new CFileDialog();
     // import file chooser
-    final JFileChooser fc_import = new JFileChooser();
-    // filter to only allow import files (png)
-    private static final class GeneralFilter extends FileFilter
-    {
-        private final String[] names;
-        private GeneralFilter(String[] names) {
-            this.names = names;
-        }
-
-        public boolean accept(File f)
-        {
-            if (f.isDirectory()) {
-                return true;
-            }
-            for (String name : names) {
-                if (f.getName().endsWith("." + name.toLowerCase())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public String getDescription()
-        {
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-            for (String name : names) {
-                result.append(!first ? "|" : "").append(name.toUpperCase()).append(" (*.").append(name.toLowerCase()).append(")");
-                first = false;
-            }
-            return result.toString();
-        }
-    }
+    final CFileDialog fc_import = new CFileDialog();
 
     // save file prompt (and overwrite prompt): true iff save was successful
     private boolean handleSaveDialog(Frame frame) {
         boolean result = false;
-        int returnVal = fc_vsd.showSaveDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+        File saveTo = fc_vsd.saveFile(frame);
+        if (saveTo != null) {
             // make sure filename ends with *.vsd
-            String dir = fc_vsd.getSelectedFile().getPath();
-            if(!dir.toLowerCase().endsWith(".vsd")) {
-                dir += ".vsd";
-            }
-            File saveTo = new File(dir);
+            String dir = saveTo.getPath();
             // query if file already exists
             if (!saveTo.exists() ||
                     JOptionPane.showConfirmDialog(frame,
@@ -174,22 +125,13 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
     public void registerLogic(final Frame frame) {
         // initialize the filter
-        FileFilter vsdFilter = new VSDFilter();
-        fc_vsd.addChoosableFileFilter(vsdFilter);
-        fc_vsd.setFileFilter(vsdFilter);
-        fc_vsd.setAcceptAllFileFilterUsed(false);
+        fc_vsd.addFileType("vsd", "PS4k File");
 
-        FileFilter pngFilter = new MainMenuLogic.GeneralFilter(new String[] {"png"});
-        fc_import.addChoosableFileFilter(pngFilter);
-        fc_import.addChoosableFileFilter(new MainMenuLogic.GeneralFilter(new String[] {"jpg"}));
-        fc_import.addChoosableFileFilter(new MainMenuLogic.GeneralFilter(new String[] {"jpeg"}));
-        fc_import.setFileFilter(pngFilter);
-        fc_import.setAcceptAllFileFilterUsed(false);
+        fc_import.addFileType("png");
+        fc_import.addFileType("jpg");
+        fc_import.addFileType("jpeg");
 
-        FileFilter daeFilter = new MainMenuLogic.GeneralFilter(new String[] {"dae"});
-        fc_export.addChoosableFileFilter(daeFilter);
-        fc_export.setFileFilter(daeFilter);
-        fc_export.setAcceptAllFileFilterUsed(false);
+        fc_export.addFileType("dae");
 
         // save file
         actionManager.registerAction("save_file_action", new AbstractAction() {
@@ -204,9 +146,10 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (checkUnsavedChanges(frame)) {
-                    if (fc_vsd.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                        data.loadFromFile(fc_vsd.getSelectedFile());
-                        save_location[0] = fc_vsd.getSelectedFile().getPath(); // remember load location
+                    File toOpen = fc_vsd.openFile(frame);
+                    if (toOpen != null) {
+                        data.loadFromFile(toOpen);
+                        save_location[0] = toOpen.getPath(); // remember load location
                     }
                 }
             }
@@ -217,11 +160,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (checkUnsavedChanges(frame)) {
-                    if (fc_import.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                    File toOpen = fc_import.openFile(frame);
+                    if (toOpen != null) {
                         data.freshStart();
                         save_location[0] = null;
                         try {
-                            BufferedImage img = ImageIO.read(fc_import.getSelectedFile());
+                            BufferedImage img = ImageIO.read(toOpen);
                             importImage(img);
                         } catch (IOException e1) {
                             errorHandler.handle(e1);
@@ -235,34 +179,30 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         actionManager.registerAction("export_file_action", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
-                if (getStatus() && fc_export.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                if (getStatus()) {
+                    File exportTo = fc_export.saveFile(frame);
+                    if (exportTo != null) {
+                        String dir = exportTo.getPath();
+                        // attached texture file
+                        String textureImgDir = FileTools.changeExtension(dir, ".png");
+                        File exportTextureTo = new File(textureImgDir);
+                        // query if file already exists
+                        if ((!exportTo.exists() ||
+                                JOptionPane.showConfirmDialog(frame,
+                                        dir + " " + langSelector.getString("replace_file_query"),
+                                        langSelector.getString("replace_file_query_title"),
+                                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) &&
+                                (!exportTextureTo.exists() ||
+                                        JOptionPane.showConfirmDialog(frame,
+                                                textureImgDir + " " + langSelector.getString("replace_file_query"),
+                                                langSelector.getString("replace_file_query_title"),
+                                                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
 
-                    // make sure filename ends with *.dae
-                    String dir = fc_export.getSelectedFile().getPath();
-                    if(!dir.toLowerCase().endsWith(".dae")) {
-                        dir += ".dae";
-                    }
-                    // dae file
-                    File exportTo = new File(dir);
-                    // attached texture file
-                    String textureImgDir = FileTools.changeExtension(dir, ".png");
-                    File exportTextureTo = new File(textureImgDir);
-                    // query if file already exists
-                    if ((!exportTo.exists() ||
-                            JOptionPane.showConfirmDialog(frame,
-                                    dir + " " + langSelector.getString("replace_file_query"),
-                                    langSelector.getString("replace_file_query_title"),
-                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) &&
-                            (!exportTextureTo.exists() ||
-                                    JOptionPane.showConfirmDialog(frame,
-                                            textureImgDir + " " + langSelector.getString("replace_file_query"),
-                                            langSelector.getString("replace_file_query_title"),
-                                            JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
-
-                        if (data.exportToCollada(exportTo, exportTextureTo)) {
-                            console.addLine(langSelector.getString("export_file_successful"));
-                        } else {
-                            console.addLine(langSelector.getString("export_file_error"));
+                            if (data.exportToCollada(exportTo, exportTextureTo)) {
+                                console.addLine(langSelector.getString("export_file_successful"));
+                            } else {
+                                console.addLine(langSelector.getString("export_file_error"));
+                            }
                         }
                     }
                 }
@@ -361,9 +301,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
     @PreDestroy
     public final void finish() {
         // store folder locations (for open / close / import / export)
-        preferences.storeString("file_open_close_dialog_last_directory", fc_vsd.getCurrentDirectory().getAbsolutePath());
-        preferences.storeString("file_import_dialog_last_directory", fc_import.getCurrentDirectory().getAbsolutePath());
-        preferences.storeString("file_export_dialog_last_directory", fc_export.getCurrentDirectory().getAbsolutePath());
+        preferences.storeString("file_open_close_dialog_last_directory", fc_vsd.getDialogPath());
+        preferences.storeString("file_import_dialog_last_directory", fc_import.getDialogPath());
+        preferences.storeString("file_export_dialog_last_directory", fc_export.getDialogPath());
     }
 
     @PostConstruct
@@ -371,21 +311,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // load folder locations (for open / close / import / export)
         if (preferences.contains("file_open_close_dialog_last_directory")) {
             File file = new File(preferences.loadString("file_open_close_dialog_last_directory"));
-            if (file.isDirectory()) {
-                fc_vsd.setCurrentDirectory(file);
-            }
+            fc_vsd.setDialogPath(file);
         }
         if (preferences.contains("file_import_dialog_last_directory")) {
             File file = new File(preferences.loadString("file_import_dialog_last_directory"));
-            if (file.isDirectory()) {
-                fc_import.setCurrentDirectory(file);
-            }
+            fc_import.setDialogPath(file);
         }
         if (preferences.contains("file_export_dialog_last_directory")) {
             File file = new File(preferences.loadString("file_export_dialog_last_directory"));
-            if (file.isDirectory()) {
-                fc_export.setCurrentDirectory(file);
-            }
+            fc_export.setDialogPath(file);
         }
     }
 }

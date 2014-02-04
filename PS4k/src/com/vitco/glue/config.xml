@@ -243,6 +243,10 @@
                     <key><value>hexPicker</value></key>
                     <bean id="HexPickerLinkage" class="com.vitco.layout.frames.HexPickerLinkage" />
                 </entry>
+                <entry>
+                    <key><value>colorPalette</value></key>
+                    <bean id="ColorPaletteLinkage" class="com.vitco.layout.frames.ColorPaletteLinkage" />
+                </entry>
             </map>
         </property>
     </bean>

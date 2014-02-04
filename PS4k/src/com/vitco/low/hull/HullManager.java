@@ -5,6 +5,7 @@ import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +13,8 @@ import java.util.Set;
  * Efficient way to compute the hull for a group of
  * objects in 3D space (with short values as coordinates)
  */
-public class HullManager<T> implements HullFinderInterface<T> {
+public class HullManager<T> implements HullFinderInterface<T>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     // --------------
 

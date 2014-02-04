@@ -58,7 +58,9 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     127, 27, 32, 10,
                     // up, down, left, right, pgup, pgdown
                     KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
-                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP
+                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP,
+                    // minus
+                    45
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
@@ -73,7 +75,9 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     127, 27, 32, 10,
                     // up, down, left, right, pgup, pgdown
                     KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
-                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP
+                    KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP,
+                    // minus
+                    45
             }));
 
     // global setting for all activatable actions

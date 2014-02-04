@@ -11,6 +11,7 @@ import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.pref.PrefChangeListener;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.CFileDialog;
 import com.vitco.util.misc.SwingAsyncHelper;
 import com.vitco.util.misc.ThumbnailFileChooser;
 import com.vitco.util.misc.WrapLayout;
@@ -20,7 +21,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -131,7 +131,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
     final ThumbnailFileChooser fc_import = new ThumbnailFileChooser(32, 32);
 
     // export texture file chooser
-    final JFileChooser fc_export = new JFileChooser();
+    final CFileDialog fc_export = new CFileDialog();
 
     // handles the textures of the data class object
     @Override
@@ -146,32 +146,17 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
         panel.add(scrollPane, BorderLayout.CENTER);
 
         // add filter
-        FileFilter filter = new FileFilter() {
-            public boolean accept(File f)
-            {
-                return f.isDirectory() || f.getName().endsWith(".png");
-            }
-
-            public String getDescription()
-            {
-                return "PNG (*.png)";
-            }
-        };
-        fc_import.addChoosableFileFilter(filter);
-        fc_import.setAcceptAllFileFilterUsed(false);
-        fc_import.setFileFilter(filter);
-
-        fc_export.addChoosableFileFilter(filter);
-        fc_export.setAcceptAllFileFilterUsed(false);
-        fc_export.setFileFilter(filter);
+        fc_import.addFileType("png");
+        fc_export.addFileType("png");
 
         // create the menu actions
         actionManager.registerAction("texturemg_action_add", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
+                File toOpen = fc_import.openFile(mainFrame);
+                if (toOpen != null) {
                     try {
-                        data.addTexture(ImageIO.read(fc_import.getSelectedFile()));
+                        data.addTexture(ImageIO.read(toOpen));
                     } catch (IOException error) {
                         console.addLine(langSelector.getString("texturemg_general_file_error"));
                     }
@@ -202,15 +187,18 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
             @Override
             public void action(ActionEvent e) {
-                if (getStatus() && fc_import.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        ImageIcon texture = new ImageIcon(ImageIO.read(fc_import.getSelectedFile()));
-                        // make sure we can identify the texture
-                        ImageIcon textureDrawnOnTop = data.getTexture(selectedTexture);
-                        textureDrawnOnTop.getImage().getGraphics().drawImage(texture.getImage(), 0, 0, null);
-                        data.replaceTexture(selectedTexture, textureDrawnOnTop);
-                    } catch (IOException error) {
-                        console.addLine(langSelector.getString("texturemg_general_file_error"));
+                if (getStatus()) {
+                    File toOpen = fc_import.openFile(mainFrame);
+                    if (toOpen != null) {
+                        try {
+                            ImageIcon texture = new ImageIcon(ImageIO.read(toOpen));
+                            // make sure we can identify the texture
+                            ImageIcon textureDrawnOnTop = data.getTexture(selectedTexture);
+                            textureDrawnOnTop.getImage().getGraphics().drawImage(texture.getImage(), 0, 0, null);
+                            data.replaceTexture(selectedTexture, textureDrawnOnTop);
+                        } catch (IOException error) {
+                            console.addLine(langSelector.getString("texturemg_general_file_error"));
+                        }
                     }
                 }
             }
@@ -223,31 +211,28 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
             @Override
             public void action(ActionEvent e) {
-                if (getStatus() && fc_export.showSaveDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
+                if (getStatus()) {
+                    File exportTo = fc_export.saveFile(mainFrame);
+                    if (exportTo != null) {
+                        String dir = exportTo.getPath();
 
-                    // make sure filename ends with *.png
-                    String dir = fc_export.getSelectedFile().getPath();
-                    if(!dir.toLowerCase().endsWith(".png")) {
-                        dir += ".png";
-                    }
-                    File exportTo = new File(dir);
+                        // query if file already exists
+                        if (!exportTo.exists() ||
+                                JOptionPane.showConfirmDialog(mainFrame,
+                                        dir + " " + langSelector.getString("replace_file_query"),
+                                        langSelector.getString("replace_file_query_title"),
+                                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 
-                    // query if file already exists
-                    if (!exportTo.exists() ||
-                            JOptionPane.showConfirmDialog(mainFrame,
-                                    dir + " " + langSelector.getString("replace_file_query"),
-                                    langSelector.getString("replace_file_query_title"),
-                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-
-                        ImageIcon texture = data.getTexture(selectedTexture);
-                        BufferedImage img = new BufferedImage(texture.getIconWidth(),
-                                texture.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-                        img.getGraphics().drawImage(texture.getImage(), 0, 0, null);
-                        try {
-                            ImageIO.write(img, "png", exportTo);
-                            console.addLine(langSelector.getString("texturemg_export_success"));
-                        } catch (IOException e1) {
-                            console.addLine(langSelector.getString("texturemg_export_failed"));
+                            ImageIcon texture = data.getTexture(selectedTexture);
+                            BufferedImage img = new BufferedImage(texture.getIconWidth(),
+                                    texture.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                            img.getGraphics().drawImage(texture.getImage(), 0, 0, null);
+                            try {
+                                ImageIO.write(img, "png", exportTo);
+                                console.addLine(langSelector.getString("texturemg_export_success"));
+                            } catch (IOException e1) {
+                                console.addLine(langSelector.getString("texturemg_export_failed"));
+                            }
                         }
                     }
                 }
@@ -392,23 +377,19 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
     @PreDestroy
     public final void finish() {
-        preferences.storeString("texture_import_dialog_last_directory", fc_import.getCurrentDirectory().getAbsolutePath());
-        preferences.storeString("texture_export_dialog_last_directory", fc_export.getCurrentDirectory().getAbsolutePath());
+        preferences.storeString("texture_import_dialog_last_directory", fc_import.getDialogPath());
+        preferences.storeString("texture_export_dialog_last_directory", fc_export.getDialogPath());
     }
 
     @PostConstruct
     public final void init() {
         if (preferences.contains("texture_import_dialog_last_directory")) {
             File file = new File(preferences.loadString("texture_import_dialog_last_directory"));
-            if (file.isDirectory()) {
-                fc_import.setCurrentDirectory(file);
-            }
+            fc_import.setDialogPath(file);
         }
         if (preferences.contains("texture_export_dialog_last_directory")) {
             File file = new File(preferences.loadString("texture_export_dialog_last_directory"));
-            if (file.isDirectory()) {
-                fc_export.setCurrentDirectory(file);
-            }
+            fc_export.setDialogPath(file);
         }
     }
 }

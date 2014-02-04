@@ -275,9 +275,9 @@ public class BorderObject3D extends Object3D {
     // the id of the texture that is used for this object
     private int textureId = 0;
     // the uv positions of the triangles of this object and the interpolation directions
-    private ArrayList<float[]> uvPositions = new ArrayList<float[]>();
+    private final ArrayList<float[]> uvPositions = new ArrayList<float[]>();
     // the polygon manager of this object
-    private transient PolygonManager polygonManager = this.getPolygonManager();
+    private final transient PolygonManager polygonManager = this.getPolygonManager();
 
     // set the border state of this object (black outline of the edges)
     // IMPORTANT: This only works because we're using the software renderer(!!!)

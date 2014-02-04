@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 // reference:
 // http://stackoverflow.com/questions/4096433/making-jfilechooser-show-image-thumbnails
 
-public class ThumbnailFileChooser extends JFileChooser {
+public class ThumbnailFileChooser extends CFileDialog {
 
     /** All preview icons will be this width and height */
     private final int ICON_SIZE_X;

@@ -8,13 +8,15 @@ import com.vitco.util.graphic.SharedImageFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
 /**
  * Used to generate a texture.
  */
-public class TextureObject {
+public class TextureObject implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final int minx;
     private final int miny;
@@ -24,9 +26,8 @@ public class TextureObject {
     private final HullManager<Voxel> hullManager;
     private final int w;
     private final int h;
-    private int textureSize;
-    private String textureKey;
-    private BufferedImage texture;
+    private final int textureSize;
+    private final String textureKey;
 
     // constructor
     public TextureObject(int minx, int miny, Collection<Voxel> faceList,

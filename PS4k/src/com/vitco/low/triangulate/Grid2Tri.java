@@ -48,7 +48,7 @@ public final class Grid2Tri {
     }
 
     // we need only one context for all conversion (faster)
-    private static TriangulationContext tcx = Poly2Tri.createContext(TriangulationAlgorithm.DTSweep);
+    private final static TriangulationContext tcx = Poly2Tri.createContext(TriangulationAlgorithm.DTSweep);
 
     // interpolation value (to avoid duplicate values as poly2tri can't handle those)
     private final static float interp = 0.000001f;

@@ -6,6 +6,7 @@ import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.IntegerTools;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,7 +19,8 @@ import java.util.HashMap;
  *
  * Note: Areas are automatically invalidated when the corresponding faces are changed
  */
-public class VoxelManager {
+public class VoxelManager implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final HullManager<Voxel> hullManager;
     private final int side;

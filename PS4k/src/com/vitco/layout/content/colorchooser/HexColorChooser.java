@@ -4,6 +4,7 @@ import com.vitco.layout.content.colorchooser.basic.ColorChooserPrototype;
 import com.vitco.layout.content.colorchooser.basic.Settings;
 import com.vitco.layout.content.colorchooser.components.HexBox;
 import com.vitco.layout.content.colorchooser.components.TextChangeListener;
+import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.ColorTools;
 
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class HexColorChooser extends ColorChooserPrototype {
         add(label, BorderLayout.WEST);
 
         // style this window and the components
-        setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR, 1));
         setBackground(Settings.BG_COLOR);
 
         Font font = input.getFont();

@@ -135,9 +135,10 @@ public class CWorld extends AbstractCWorld {
             HashMap<Point, Boolean> outdatedAreas = entry.getValue();
 
             // loop over all outdated areas
-            for (Iterator<Point> areaIterator = outdatedAreas.keySet().iterator(); areaIterator.hasNext() && progressCounter < maxAreaDraw; progressCounter++) {
-                Point outdatedArea = areaIterator.next();
-                Boolean fullRefresh = outdatedAreas.get(outdatedArea);
+            for (Iterator<Map.Entry<Point,Boolean>> areaIterator = outdatedAreas.entrySet().iterator(); areaIterator.hasNext() && progressCounter < maxAreaDraw; progressCounter++) {
+                Map.Entry<Point,Boolean> outdatedAreaEntry = areaIterator.next();
+                Point outdatedArea = outdatedAreaEntry.getKey();
+                Boolean fullRefresh = outdatedAreaEntry.getValue();
                 // id for this particular area
                 String areaKey = orientation + "_" + outdatedPlane + "_" + outdatedArea.x + "_" + outdatedArea.y;
 
