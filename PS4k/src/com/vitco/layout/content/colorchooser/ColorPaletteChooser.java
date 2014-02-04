@@ -163,29 +163,40 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
 
     // ---------------------
     // helper - select a color by position
-    private void select(int x, int y) {
+    private boolean select(int x, int y) {
         Point newSelected = new Point(x, y);
         Color color = colors.get(newSelected);
-        if (color != null) {
+        boolean containsEntry = color != null;
+        if (containsEntry) {
             notifyListeners(ColorTools.colorToHSB(color));
             if (!selected.equals(newSelected)) {
                 selected = newSelected;
                 panel.repaint();
             }
         }
+        return containsEntry;
+    }
+    // helper - to select neighbour
+    private void selectNeighbour(int x, int y) {
+        int i = 1;
+        boolean containsEntry;
+        do {
+            containsEntry = select(selected.x + i*x, selected.y + i*y);
+            i++;
+        } while (!containsEntry && i < 50);
     }
     // select relative to currently selected
     public void left() {
-        select(selected.x - 1, selected.y);
+        selectNeighbour(-1, 0);
     }
     public void right() {
-        select(selected.x + 1, selected.y);
+        selectNeighbour(1, 0);
     }
     public void up() {
-        select(selected.x, selected.y - 1);
+        selectNeighbour(0, -1);
     }
     public void down() {
-        select(selected.x, selected.y + 1);
+        selectNeighbour(0, 1);
     }
     // -------------------------
 

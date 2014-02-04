@@ -10,15 +10,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3775d788-1cb3-4d79-83c9-f6bf480db621" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/icons/frames/colorpalette.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/framebars/colorpalette/export.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/framebars/colorpalette/import.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/framebars/colorpalette/locked.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resource/img/framebars/colorpalette/unlocked.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/misc/CFileDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorPaletteLinkage.java" />
+    <list default="true" id="3775d788-1cb3-4d79-83c9-f6bf480db621" name="Default" comment="- added color palette window&#10;- some minor fixes&#10;- centralized file loader logic&#10;">
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\async\AsyncAction.class" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\async\AsyncActionManager$1.class" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\async\AsyncActionManager.class" afterPath="" />
@@ -411,7 +403,6 @@
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\util\thread\ThreadManager$1.class" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\util\thread\ThreadManager.class" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\util\thread\ThreadManagerInterface.class" afterPath="" />
-      <change type="MOVED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\logic\mainview\toolbar.xml" afterPath="$PROJECT_DIR$/src/com/vitco/layout/frames/toolbars/colorpalette.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/bars/BarLinkagePrototype.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/bars/BarLinkagePrototype.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/export/ColladaFile$1.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/export/ColladaFile$1.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/export/ColladaFile$2.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/export/ColladaFile$2.class" />
@@ -470,30 +461,13 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/xml/XmlTools.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/xml/XmlTools.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_jar/lib/jpct.jar" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_jar/lib/jpct.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/lib/jpct.jar" afterPath="$PROJECT_DIR$/out/artifacts/webdata/lib/jpct.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/core/modes/tools/AbstractVoxelTool.java" afterPath="$PROJECT_DIR$/src/com/vitco/core/modes/tools/AbstractVoxelTool.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/core/world/container/BorderObject3D.java" afterPath="$PROJECT_DIR$/src/com/vitco/core/world/container/BorderObject3D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/core/world/CWorld.java" afterPath="$PROJECT_DIR$/src/com/vitco/core/world/CWorld.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/low/triangulate/Grid2Tri.java" afterPath="$PROJECT_DIR$/src/com/vitco/low/triangulate/Grid2Tri.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/HexColorChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/HexColorChooser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" afterPath="$PROJECT_DIR$/resource/bundle/LangBundle.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/Readme.txt" afterPath="$PROJECT_DIR$/out/artifacts/Readme.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/content/shortcut/ShortcutManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/content/shortcut/ShortcutManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/content/texture/TextureManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/content/texture/TextureManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/core/world/container/TextureObject.java" afterPath="$PROJECT_DIR$/src/com/vitco/core/world/container/TextureObject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/misc/ThumbnailFileChooser.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/misc/ThumbnailFileChooser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resource/layout/TopLayout.ilayout" afterPath="$PROJECT_DIR$/resource/layout/TopLayout.ilayout" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java" afterPath="$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/core/world/container/VoxelManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/core/world/container/VoxelManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/config.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/src/com/vitco/glue/config.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/getdown.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/getdown.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/bars/main_menu.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/layout/bars/main_menu.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/bars/main_menu.xml" afterPath="$PROJECT_DIR$/src/com/vitco/layout/bars/main_menu.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/shortcuts.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/shortcuts.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml" afterPath="$PROJECT_DIR$/src/com/vitco/glue/shortcuts.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PS3k 2.0.iws" />
@@ -564,13 +538,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ColorPaletteLinkage.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/frames/ColorPaletteLinkage.java">
+      <file leaf-file-name="ColorPaletteChooser.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="179" column="77" selection-start="7126" selection-end="7126" vertical-scroll-proportion="0.33280507" vertical-offset="2238" max-vertical-offset="3995">
+            <state line="185" column="18" selection-start="6825" selection-end="6825" vertical-scroll-proportion="0.57070196" vertical-offset="2448" max-vertical-offset="4318">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#6838#6852#0" expanded="true" />
+                <element signature="e#926#940#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -636,7 +610,6 @@
         <option value="$PROJECT_DIR$/src/com/vitco/util/misc/ThumbnailFileChooser.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/misc/CFileDialog.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/layout/content/texture/TextureManager.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/low/triangulate/Grid2Tri.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/world/container/BorderObject3D.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/modes/tools/AbstractVoxelTool.java" />
@@ -646,6 +619,7 @@
         <option value="$PROJECT_DIR$/src/com/vitco/core/world/container/TextureObject.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/layout/frames/ColorPaletteLinkage.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java" />
       </list>
     </option>
   </component>
@@ -1484,7 +1458,11 @@
       <created>1391448972213</created>
       <updated>1391448972213</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="- added color palette window&#10;- some minor fixes&#10;- centralized file loader logic">
+      <created>1391548271257</created>
+      <updated>1391548271257</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -1516,7 +1494,7 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32473445" sideWeight="0.64309764" order="1" side_tool="false" content_ui="tabs" x="466" y="150" width="433" height="438" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34886026" sideWeight="0.48772678" order="2" side_tool="false" content_ui="tabs" x="419" y="-639" width="1044" height="553" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34886026" sideWeight="0.48772678" order="2" side_tool="false" content_ui="tabs" x="419" y="-639" width="1044" height="553" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3875124" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4667988" sideWeight="0.5169492" order="9" side_tool="true" content_ui="tabs" />
@@ -1560,7 +1538,6 @@
       <TodoPanelSettings />
     </option>
     <option name="SHOW_FILE_HISTORY_DETAILS" value="false" />
-    <MESSAGE value="- added flood fill" />
     <MESSAGE value="- made flood fill a separate tool&#10;- prettified message for shortcuts clashing when not in debug mode" />
     <MESSAGE value="- added recolor functionality to flood fill tool" />
     <MESSAGE value="- improved texture and color repaint (doesn't re-add the voxel anymore)&#10;- fixed &quot;black flashing rectangles&quot; on startup&#10;- color changer right click is not &quot;color picker&quot;&#10;- some minor fixes" />
@@ -1585,7 +1562,8 @@
     <MESSAGE value="- new jpct version&#10;- sync fixes&#10;- added camera and voxel test modes&#10;- minor fixes/optimization" />
     <MESSAGE value="- fixed lag when drawing first voxel after startup (warmup)" />
     <MESSAGE value="- bug fix: voxel selection update shouldn't trigger texture refresh of neighbouring plane areas (areaID)" />
-    <option name="LAST_COMMIT_MESSAGE" value="- bug fix: voxel selection update shouldn't trigger texture refresh of neighbouring plane areas (areaID)" />
+    <MESSAGE value="- added color palette window&#10;- some minor fixes&#10;- centralized file loader logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="- added color palette window&#10;- some minor fixes&#10;- centralized file loader logic" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1879,22 +1857,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="53" selection-start="2971" selection-end="2971" vertical-scroll-proportion="0.0" vertical-offset="799" max-vertical-offset="4267">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#926#940#0" expanded="true" />
-            <element signature="e#1107#2657#0" expanded="true" />
-            <element signature="e#2650#2651#0" expanded="true" />
-            <element signature="e#3608#4547#0" expanded="true" />
-            <element signature="e#4536#4537#0" expanded="true" />
-            <element signature="e#4924#4925#0" expanded="true" />
-            <element signature="e#4960#4961#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/low/engine/Engine.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="62" column="18" selection-start="1976" selection-end="1976" vertical-scroll-proportion="0.0" vertical-offset="678" max-vertical-offset="1326">
@@ -1951,7 +1913,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="0" selection-start="1147" selection-end="1147" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4964">
           <folding>
-            <element signature="e#1177#1178#0" expanded="true" />
+            <element signature="e#1177#1178#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2020,10 +1982,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="16" column="52" selection-start="514" selection-end="514" vertical-scroll-proportion="0.15564598" vertical-offset="0" max-vertical-offset="5491">
           <folding>
-            <element signature="e#889#919#0" expanded="true" />
-            <element signature="e#1198#1228#0" expanded="true" />
-            <element signature="e#1539#1569#0" expanded="true" />
-            <element signature="e#1855#1885#0" expanded="true" />
+            <element signature="e#889#919#0" expanded="false" />
+            <element signature="e#1198#1228#0" expanded="false" />
+            <element signature="e#1539#1569#0" expanded="false" />
+            <element signature="e#1855#1885#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2037,10 +1999,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/frames/ColorPaletteLinkage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="77" selection-start="7126" selection-end="7126" vertical-scroll-proportion="0.33280507" vertical-offset="2238" max-vertical-offset="3995">
+        <state line="180" column="77" selection-start="7181" selection-end="7181" vertical-scroll-proportion="1.6259905" vertical-offset="1439" max-vertical-offset="4012">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#6838#6852#0" expanded="true" />
+            <element signature="e#6893#6907#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/content/colorchooser/ColorPaletteChooser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="185" column="18" selection-start="6825" selection-end="6825" vertical-scroll-proportion="0.57070196" vertical-offset="2448" max-vertical-offset="4318">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#926#940#0" expanded="true" />
           </folding>
         </state>
       </provider>
