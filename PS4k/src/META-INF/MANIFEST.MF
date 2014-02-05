@@ -13,4 +13,3 @@ Class-Path: ./lib/commons-logging-1.1.1.jar ./lib/jide-action.jar ./li
  T.jar ./lib/slf4j-api-1.6.5.jar ./lib/slf4j-log4j12-1.6.5.jar ./lib/t
  rove-3.0.3.jar ./lib/algs4-package.jar ./lib/stdlib-package.jar
 Main-Class: com.vitco.Main
-

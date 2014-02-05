@@ -111,7 +111,7 @@ public class EraseTool extends AbstractVoxelTool {
     @Override
     protected void shiftRelease(MouseEvent e) {
         // erase this area
-        if (lastVoxelPos != null) {
+        if (lastVoxelPos != null && initialVoxelPos != null) {
             ArrayList<Integer> listRem = new ArrayList<Integer>();
             for (int x = Math.min(initialVoxelPos[0], lastVoxelPos[0]),
                          maxx = Math.max(initialVoxelPos[0], lastVoxelPos[0]); x <= maxx; x++ ) {

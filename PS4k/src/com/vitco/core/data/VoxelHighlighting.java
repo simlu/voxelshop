@@ -49,9 +49,13 @@ public class VoxelHighlighting extends VoxelData implements VoxelHighlightingInt
     @Override
     public final void setOutlineBox(String key, int[][] rect) {
         synchronized (VitcoSettings.SYNC) {
-            if (rect == null) {
+            if (rect == null || rect[0] == null || rect[1] == null) {
                 boxOutlines.remove(key);
             } else {
+                assert rect.length == 3;
+                assert rect[0].length == 3;
+                assert rect[1].length == 3;
+                assert rect[2].length == 2;
                 boxOutlines.put(key, rect);
             }
             // convert to array

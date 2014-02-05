@@ -168,7 +168,7 @@ public class DrawTool extends AbstractVoxelTool {
     @Override
     protected void shiftRelease(MouseEvent e) {
         // fill/erase this area
-        if (lastVoxelPos != null) {
+        if (lastVoxelPos != null && initialVoxelPos != null) {
             int selectedLayer = data.getSelectedLayer();
             Color color = ColorTools.hsbToColor(getCurrentColor());
             ArrayList<Voxel> listAdd = new ArrayList<Voxel>();

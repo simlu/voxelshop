@@ -103,7 +103,7 @@ public class PickerTool extends AbstractVoxelTool {
     @Override
     protected void shiftRelease(MouseEvent e) {
         // use the voxels to select the new color
-        if (lastVoxelPos != null) {
+        if (lastVoxelPos != null && initialVoxelPos != null) {
             int r = 0, g = 0, b = 0, count = 0;
             HashSet<Integer> colors = new HashSet<Integer>();
             for (int x = Math.min(initialVoxelPos[0], lastVoxelPos[0]),

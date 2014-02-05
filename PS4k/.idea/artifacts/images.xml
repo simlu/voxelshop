@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="images">
+    <output-path>$PROJECT_DIR$/out/artifacts/PS4k_jar</output-path>
+    <root id="archive" name="images.jar">
+      <element id="directory" name="images">
+        <element id="dir-copy" path="$PROJECT_DIR$/images" />
+      </element>
+    </root>
+  </artifact>
+</component>

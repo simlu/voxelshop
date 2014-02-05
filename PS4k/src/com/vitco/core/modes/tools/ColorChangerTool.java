@@ -142,7 +142,7 @@ public class ColorChangerTool extends AbstractVoxelTool {
     @Override
     protected void shiftRelease(MouseEvent e) {
         // use the voxels to select the new color
-        if (lastVoxelPos != null) {
+        if (lastVoxelPos != null && initialVoxelPos != null) {
             ArrayList<Integer> list = new ArrayList<Integer>();
             for (int x = Math.min(initialVoxelPos[0], lastVoxelPos[0]),
                          maxx = Math.max(initialVoxelPos[0], lastVoxelPos[0]); x <= maxx; x++ ) {

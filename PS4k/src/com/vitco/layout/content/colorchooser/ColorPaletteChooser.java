@@ -7,8 +7,11 @@ import com.vitco.util.misc.ColorTools;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,36 +32,61 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
     // true iff this color palette is locked
     private boolean locked = true;
 
+    // buffer image
+    private BufferedImage buffer;
+    private boolean bufferOutdated = true;
+
+    private void outdate() {
+        bufferOutdated = true;
+    }
+
     // the panel that actually shows the colors
     private final JPanel panel = new JPanel() {
         // called on repaint
+        @Override
         public void paint(Graphics g) {
             super.paintComponents(g);
-            Graphics2D g2 = (Graphics2D) g;
-            // refresh the background
-            g2.setColor(Settings.BG_COLOR);
-            g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-            // draw the outline
-            g2.setColor(new Color(200, 200, 200));
-            for (Point p : colors.keySet()) {
-                g2.drawRect(p.x*BOX_SIZE - 1, p.y*BOX_SIZE - 1, BOX_SIZE + 1, BOX_SIZE + 1);
+            // refresh the buffer if required
+            if (bufferOutdated) {
+                buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+
+                Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+
+                // refresh the background
+                g2.setColor(Settings.BG_COLOR);
+                g2.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+                // draw the outline
+                g2.setColor(new Color(200, 200, 200));
+                for (Point p : colors.keySet()) {
+                    g2.drawRect(p.x*BOX_SIZE - 1, p.y*BOX_SIZE - 1, BOX_SIZE + 1, BOX_SIZE + 1);
+                }
+
+                // draw the colors
+                for (Map.Entry<Point, Color> col : colors.entrySet()) {
+                    g2.setColor(col.getValue());
+                    Point p = col.getKey();
+                    g2.fillRect(p.x*BOX_SIZE, p.y*BOX_SIZE, BOX_SIZE, BOX_SIZE);
+                }
+
+                bufferOutdated = false;
             }
 
-            // draw the colors
+            // draw the buffer
+            g.drawImage(buffer, 0, 0, null);
+
+            // highlight all fields that contain the selected color
             for (Map.Entry<Point, Color> col : colors.entrySet()) {
-                g2.setColor(col.getValue());
-                Point p = col.getKey();
-                g2.fillRect(p.x*BOX_SIZE, p.y*BOX_SIZE, BOX_SIZE, BOX_SIZE);
-                // highlight all fields that contain the selected color
                 if (col.getValue().equals(color)) {
+                    Point p = col.getKey();
                     // highlight the selected field differently
                     if (selected.equals(p)) { // selected field
-                        g2.setColor(ColorTools.perceivedBrightness(color) > 127 ? Color.BLACK : Color.WHITE);
+                        g.setColor(ColorTools.perceivedBrightness(color) > 127 ? Color.BLACK : Color.WHITE);
                     } else { // not selected field that contains the selected color
-                        g2.setColor(ColorTools.perceivedBrightness(color) > 127 ? new Color(50, 50, 50) : new Color(200, 200, 200));
+                        g.setColor(ColorTools.perceivedBrightness(color) > 127 ? new Color(50, 50, 50) : new Color(200, 200, 200));
                     }
-                    g2.drawRect(p.x*BOX_SIZE, p.y*BOX_SIZE, BOX_SIZE - 1, BOX_SIZE - 1);
+                    g.drawRect(p.x*BOX_SIZE, p.y*BOX_SIZE, BOX_SIZE - 1, BOX_SIZE - 1);
                 }
             }
         }
@@ -76,6 +104,7 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
 //                    + col.getValue().getGreen() + ", "
 //                    + col.getValue().getBlue() + "));");
         }
+        outdate();
         forceSelect(color);
         panel.repaint();
     }
@@ -100,18 +129,31 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
                 if (e.isControlDown() && !locked) {
                     if (e.getButton() == MouseEvent.BUTTON3) {
                         // remove color on right click
-                        colors.remove(p);
+                        if (colors.remove(p) != null) {
+                            outdate();
+                        }
                     } else {
                         // set color on left click
-                        colors.put(p, color);
+                        if (!color.equals(colors.put(p, color))) {
+                            outdate();
+                        }
                     }
                     // refresh the current selection
                     forceSelect(color);
                     panel.repaint();
                 } else {
                     // select the color
-                    select(p.x, p.y);
+                    select(p);
                 }
+            }
+        });
+
+        // the buffer is outdated when component is re-sized
+        panel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                outdate();
             }
         });
 
@@ -163,8 +205,7 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
 
     // ---------------------
     // helper - select a color by position
-    private boolean select(int x, int y) {
-        Point newSelected = new Point(x, y);
+    private boolean select(Point newSelected) {
         Color color = colors.get(newSelected);
         boolean containsEntry = color != null;
         if (containsEntry) {
@@ -180,8 +221,10 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
     private void selectNeighbour(int x, int y) {
         int i = 1;
         boolean containsEntry;
+        Point p = new Point();
         do {
-            containsEntry = select(selected.x + i*x, selected.y + i*y);
+            p.setLocation(selected.x + i*x, selected.y + i*y);
+            containsEntry = select(p);
             i++;
         } while (!containsEntry && i < 50);
     }
