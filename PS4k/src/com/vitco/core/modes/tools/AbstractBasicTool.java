@@ -56,7 +56,9 @@ public abstract class AbstractBasicTool extends AbstractTool {
 
     @Override
     protected final void onDeactivate() {
-        softCleanUp();
+        if (container.isActive()) {
+            softCleanUp();
+        }
     }
 
     @Override

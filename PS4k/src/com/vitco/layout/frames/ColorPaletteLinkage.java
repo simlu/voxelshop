@@ -200,23 +200,30 @@ public class ColorPaletteLinkage extends FrameLinkagePrototype {
                 dialog.setTitle(langSelector.getString("color-palette_export-file_title"));
                 File file = dialog.saveFile(mainFrame);
                 if (file != null) {
-                    HashMap<Point, Color> colors = colorPaletteChooser.getColors();
-                    int xMax = 0, yMax = 0;
-                    for (Point p : colors.keySet()) {
-                        xMax = Math.max(xMax, p.x + 1);
-                        yMax = Math.max(yMax, p.y + 1);
-                    }
-                    if (xMax > 0 && yMax > 0) {
-                        BufferedImage img = new BufferedImage(xMax, yMax, BufferedImage.TYPE_INT_ARGB);
-                        for (Map.Entry<Point, Color> entry : colors.entrySet()) {
-                            img.setRGB(entry.getKey().x, entry.getKey().y, entry.getValue().getRGB());
+                    String dir = file.getPath();
+                    if (!file.exists() ||
+                            JOptionPane.showConfirmDialog(mainFrame,
+                                    dir + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                        HashMap<Point, Color> colors = colorPaletteChooser.getColors();
+                        int xMax = 0, yMax = 0;
+                        for (Point p : colors.keySet()) {
+                            xMax = Math.max(xMax, p.x + 1);
+                            yMax = Math.max(yMax, p.y + 1);
                         }
-                        try {
-                            if (ImageIO.write(img, "png", file)) {
-                                console.addLine("Color Palette exported successfully.");
+                        if (xMax > 0 && yMax > 0) {
+                            BufferedImage img = new BufferedImage(xMax, yMax, BufferedImage.TYPE_INT_ARGB);
+                            for (Map.Entry<Point, Color> entry : colors.entrySet()) {
+                                img.setRGB(entry.getKey().x, entry.getKey().y, entry.getValue().getRGB());
                             }
-                        } catch (IOException e1) {
-                            errorHandler.handle(e1);
+                            try {
+                                if (ImageIO.write(img, "png", file)) {
+                                    console.addLine("Color Palette exported successfully.");
+                                }
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
                         }
                     }
                 }

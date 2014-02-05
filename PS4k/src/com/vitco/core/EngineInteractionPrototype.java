@@ -157,6 +157,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             @Override
             public void onAnimationDataChanged() {
+                container.refresh2DIndex();
                 container.skipNextWorldRender(); // no need to re-render scene
                 forceRepaint();
             }
@@ -178,6 +179,7 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             @Override
             public void onVoxelHighlightingChanged() {
+                container.updateHighlightedVoxel();
                 container.skipNextWorldRender();
                 forceRepaint();
             }
@@ -199,12 +201,14 @@ public abstract class EngineInteractionPrototype extends EngineViewPrototype {
 
             @Override
             public void onOutlineBoxesChanged() {
+                container.updateOutlineBoxes();
                 container.skipNextWorldRender();
                 forceRepaint();
             }
 
             @Override
             public void onSelectionRectChanged() {
+                container.updateSelectedRect();
                 container.skipNextWorldRender();
                 forceRepaint();
             }

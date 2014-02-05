@@ -9,7 +9,6 @@ import com.vitco.core.CameraChangeListener;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.ExtendedVector;
 import com.vitco.core.data.container.Voxel;
-import com.vitco.core.data.notification.DataChangeAdapter;
 import com.vitco.core.world.AbstractCWorld;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.settings.VitcoSettings;
@@ -45,36 +44,26 @@ public abstract class AbstractDrawContainer extends JPanel {
     protected Data data;
     public final void setData(final Data data) {
         this.data = data;
+    }
 
-        // what to do when data changes
-        DataChangeAdapter dca = new DataChangeAdapter() {
+    // -----------------
 
-            @Override
-            public void onAnimationDataChanged() {
-                refresh2DIndex();
-            }
-
-            @Override
-            public void onVoxelHighlightingChanged() {
-                highlighted = data.getHighlightedVoxel();
-                highlightedFloat = highlighted == null ? null : new float[] {
-                        highlighted[0], highlighted[1], highlighted[2]
-                };
-            }
-
-            @Override
-            public void onOutlineBoxesChanged() {
-                outlineBoxed = data.getOutlineBoxes();
-            }
-
-            @Override
-            public void onSelectionRectChanged() {
-                selectedRect = data.getSelectionRect();
-            }
-
+    // called to update the highlighted voxel (internal)
+    public final void updateHighlightedVoxel() {
+        highlighted = data.getHighlightedVoxel();
+        highlightedFloat = highlighted == null ? null : new float[] {
+                highlighted[0], highlighted[1], highlighted[2]
         };
-        data.addDataChangeListener(dca);
+    }
 
+    // called to update the outline boxes (internal)
+    public final void updateOutlineBoxes() {
+        outlineBoxed = data.getOutlineBoxes();
+    }
+
+    // called to update the selected rect (internal)
+    public final void updateSelectedRect() {
+        selectedRect = data.getSelectionRect();
     }
 
     // ################################
@@ -99,7 +88,7 @@ public abstract class AbstractDrawContainer extends JPanel {
         setActiveContainer(this);
     }
     public final void deactivate() {
-        setActiveContainer(this);
+        setActiveContainer(null);
     }
     public final boolean isActive() {
         return activeContainer == this;
