@@ -64,7 +64,7 @@ public abstract class AbstractBasicTool extends AbstractTool {
     @Override
     protected final void mousePressed(MouseEvent e) {
         // control is used for camera
-        if (!isCtrlDown()) {
+        if (!isAltDown() && !isCtrlDown()) {
             wasDrag = false;
             if (isShiftDown()) {
                 shiftClick(e);
@@ -132,7 +132,7 @@ public abstract class AbstractBasicTool extends AbstractTool {
 
     @Override
     protected final void mouseMoved(MouseEvent e) {
-        if (!isCtrlDown()) {
+        if (!isAltDown() && !isCtrlDown()) {
             if (isShiftDown()) {
                 shiftMove(e);
             } else {

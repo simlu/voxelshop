@@ -36,7 +36,7 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
     private BufferedImage buffer;
     private boolean bufferOutdated = true;
 
-    private void outdate() {
+    private void invalidateBuffer() {
         bufferOutdated = true;
     }
 
@@ -104,7 +104,7 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
 //                    + col.getValue().getGreen() + ", "
 //                    + col.getValue().getBlue() + "));");
         }
-        outdate();
+        invalidateBuffer();
         forceSelect(color);
         panel.repaint();
     }
@@ -130,12 +130,12 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
                     if (e.getButton() == MouseEvent.BUTTON3) {
                         // remove color on right click
                         if (colors.remove(p) != null) {
-                            outdate();
+                            invalidateBuffer();
                         }
                     } else {
                         // set color on left click
                         if (!color.equals(colors.put(p, color))) {
-                            outdate();
+                            invalidateBuffer();
                         }
                     }
                     // refresh the current selection
@@ -153,7 +153,7 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
             @Override
             public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
-                outdate();
+                invalidateBuffer();
             }
         });
 

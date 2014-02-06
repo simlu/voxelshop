@@ -129,7 +129,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
             }
-            return false; // might need further action
+            // might need further action (but disable if alt key)
+            return e.getKeyCode() == 18;
         }
     };
 
