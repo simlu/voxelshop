@@ -44,6 +44,22 @@ public abstract class ColorSliderPrototype extends JSlider {
         }
     }
 
+    // allow to set a specific fixed height
+    private Integer height = null;
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    // return the set height (setHeight(...))
+    @Override
+    public int getHeight() {
+        if (height == null) {
+            return super.getHeight();
+        } else {
+            return height;
+        }
+    }
+
     // draw the background
     protected abstract void drawBackground(Graphics2D g, SliderUI sliderUI);
 

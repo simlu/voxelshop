@@ -208,7 +208,13 @@ public class SliderColorChooser extends ColorChooserPrototype {
             }
 
             // construct the layout
-            setLayout(new GridBagLayout());
+            GridBagLayout gbl = new GridBagLayout();
+            // define that only the slider streches
+            gbl.columnWeights = new double[]{0.0f, 1.0f, 0.0f};
+            // set outside border (left right)
+            setBorder(BorderFactory.createEmptyBorder(0, 18, 0, 18));
+
+            setLayout(gbl);
             setBackground(Settings.BG_COLOR);
             final GridBagConstraints c = new GridBagConstraints();
             c.insets = new Insets(3,3,3,3);
@@ -228,7 +234,9 @@ public class SliderColorChooser extends ColorChooserPrototype {
             c.gridx = 1;
             c.gridy = 0;
             for (ColorSliderPrototype slider : sliders) {
-                slider.setPreferredSize(new Dimension(150, 20));
+                //slider.setPreferredSize(new Dimension(150, 20));
+                slider.setPreferredSize(new Dimension(50, 20));
+                slider.setHeight(20);
                 add(slider, c);
                 c.gridy++;
             }

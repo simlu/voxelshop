@@ -119,7 +119,7 @@ public class NumberBox extends JTextField {
 
     // constructor
     public NumberBox(int min, int max, int current) {
-        super(String.valueOf(current), 4);
+        super(String.valueOf(current), String.valueOf(max).length());
         MIN = min;
         MAX = max;
         setForeground(Settings.TEXTAREA_TEXT_COLOR);
