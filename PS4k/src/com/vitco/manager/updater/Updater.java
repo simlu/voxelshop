@@ -14,12 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 
 /**
- * Handles update notification of the program
+ * Handles
+ *
+ * - update notification of the program
+ * - updating of the updater
+ *
+ * Note: The updated updater only takes effect for the next start.
  */
 public class Updater {
 
@@ -98,6 +102,16 @@ public class Updater {
             String absolutePath = appJar.getAbsolutePath();
             String filePath = absolutePath.
                     substring(0, absolutePath.lastIndexOf(File.separator) + 1);
+
+            // ---------
+            // check if the updater has updated
+            upgradeGetdown(
+                    new File(filePath + "getdown-client-old.jar"),
+                    new File(filePath + "getdown-client.jar"),
+                    new File(filePath + "getdown-client-new.jar")
+            );
+            // ---------
+
             File digestFile = new File(filePath + "digest.txt");
             if (digestFile.exists()) {
                 String localUpdaterInfo = FileTools.readFileAsString(digestFile, errorHandler);
@@ -119,5 +133,70 @@ public class Updater {
 
         // initialize the update checker
         threadManager.manage(updaterThread);
+    }
+
+    /**
+     * Copies the contents of the supplied input stream to the supplied output stream.
+     */
+    public static <T extends OutputStream> T copy (InputStream in, T out) throws IOException {
+        byte[] buffer = new byte[4096];
+        for (int read; (read = in.read(buffer)) > 0; ) {
+            out.write(buffer, 0, read);
+        }
+        return out;
+    }
+
+    /**
+     * Upgrades Getdown by moving an installation managed copy of the Getdown jar file over the
+     * non-managed copy (which would be used to run Getdown itself).
+     *
+     * <p> If the upgrade fails for a variety of reasons, there's not much else one
+     * can do other than try again next time around.
+     */
+    public void upgradeGetdown (File oldgd, File curgd, File newgd) {
+        // we assume getdown's jar file size changes with every upgrade, this is not guaranteed,
+        // but in reality it will, and it allows us to avoid pointlessly upgrading getdown every
+        // time the client is updated which is unnecessarily flirting with danger
+        if (!newgd.exists() || newgd.length() == curgd.length()) {
+            return;
+        }
+
+        // clear out any old getdown
+        if (oldgd.exists()) {
+            if (!oldgd.delete()) {
+                console.addLine("Error: Failed to remove old file version (1).");
+            }
+        }
+
+        // now try updating using renames
+        if (!curgd.exists() || curgd.renameTo(oldgd)) {
+            if (newgd.renameTo(curgd)) {
+                if (oldgd.exists()) {
+                    if (!oldgd.delete()) {
+                        console.addLine("Error: Failed to remove old file version (2).");
+                    }
+                }
+                try {
+                    // copy the moved file back to getdown-dop-new.jar so that we don't end up
+                    // downloading another copy next time
+                    copy(new FileInputStream(curgd), new FileOutputStream(newgd));
+                } catch (IOException e) {
+                    errorHandler.handle(e);
+                }
+                return;
+            }
+
+            // try to unfuck ourselves
+            if (!oldgd.renameTo(curgd)) {
+                console.addLine("Error: Failed to revert renaming.");
+            }
+        }
+
+        // that didn't work, let's try copying it
+        try {
+            copy(new FileInputStream(newgd), new FileOutputStream(curgd));
+        } catch (IOException ioe) {
+            errorHandler.handle(ioe);
+        }
     }
 }
