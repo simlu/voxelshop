@@ -1,6 +1,7 @@
 package com.vitco.layout.content.console;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.threed.jpct.TextureManager;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.ExportWorld;
@@ -20,6 +21,7 @@ import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -214,6 +216,25 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/check update", "force_update_check");
         consoleAction.put("/test voxel", "toggle_rapid_voxel_testing");
         consoleAction.put("/test camera", "toggle_rapid_camera_testing");
+        consoleAction.put("/debug texture", "texture_debug_information");
+
+        // display the currently loaded textures
+        actionManager.registerAction("texture_debug_information", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        TextureManager manager = TextureManager.getInstance();
+                        console.addLine("Loaded Texture Information (" + manager.getTextureCount() + ")");
+                        int i = 0;
+                        for (Enumeration names = manager.getNames(); names.hasMoreElements(); i++) {
+                            console.addLine(i + ": " + names.nextElement().toString());
+                        }
+                    }
+                });
+            }
+        });
 
         // register all console actions (so debug know that they are used)
         for (String action : consoleAction.values()) {

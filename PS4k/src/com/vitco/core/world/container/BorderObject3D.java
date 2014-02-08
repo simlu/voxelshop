@@ -23,7 +23,7 @@ public class BorderObject3D extends Object3D {
     private static final long serialVersionUID = 1L;
 
     // create corresponding texture identifier for this object
-    public static String getTextureId(int orientation, int plane, Point areaId, int side) {
+    private static String getTextureId(int orientation, int plane, Point areaId, int side) {
         return orientation + "_" + plane + "_" + areaId.x + "_" + areaId.y + "_" + side;
     }
 
@@ -118,6 +118,12 @@ public class BorderObject3D extends Object3D {
     public final void refreshTextureInterpolation() {
         assert textureObject != null;
         textureObject.refreshTexture(null);
+    }
+
+    // called when this object is no longer needed
+    public final void freeTexture() {
+        assert textureObject != null;
+        textureObject.destroy();
     }
 
     // generate final interpolated points (to prevent see-through)

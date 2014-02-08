@@ -61,6 +61,11 @@ public class TextureObject implements Serializable {
         }
     }
 
+    // called when this instance is no longer needed
+    public final void destroy() {
+        WorldManager.removeEfficientTexture(textureKey);
+    }
+
     // generates a texture
     // the seen points are stored in the seen hashmap
     public final void refreshTexture(HashSet<String> seenTrianglePoints) {

@@ -75,6 +75,9 @@ public class CWorld extends AbstractCWorld {
         voxelManager.clear();
         // remove world objects
         for (Integer objId : worldId2Side.keySet()) {
+            if (!simpleMode) {
+                ((BorderObject3D) getObject(objId)).freeTexture();
+            }
             this.removeObject(objId);
         }
         worldId2Side.clear();
@@ -94,13 +97,6 @@ public class CWorld extends AbstractCWorld {
     }
 
     // ====================================
-
-    // remove a texture
-    private boolean removeTexture(int orientation, int plane, Point areaId) {
-        return WorldManager.removeEfficientTexture(
-                BorderObject3D.getTextureId(orientation, plane, areaId, side)
-        );
-    }
 
     // used to retrieve which world objects belong to which side (0-5, i.e. direction)
     private final HashMap<Integer, Integer> worldId2Side = new HashMap<Integer, Integer>();
@@ -210,12 +206,13 @@ public class CWorld extends AbstractCWorld {
                         // remove old version of this side (if exists)
                         Integer oldId = plane2WorldId.remove(areaKey);
                         if (oldId != null) {
-                            removeObject(oldId);
-                            worldId2Side.remove(oldId);
                             // only remove texture in non-wireframe world
                             if (!simpleMode) {
-                                removeTexture(orientation, outdatedPlane, outdatedArea);
+                                ((BorderObject3D) getObject(oldId)).freeTexture();
                             }
+                            // remove other information
+                            removeObject(oldId);
+                            worldId2Side.remove(oldId);
                         }
                     }
                 } else if (!simpleMode) {
