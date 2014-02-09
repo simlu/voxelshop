@@ -5,7 +5,6 @@ import com.threed.jpct.PolygonManager;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.TextureInfo;
 import com.vitco.core.data.container.Voxel;
-import com.vitco.core.world.WorldManager;
 import com.vitco.low.hull.HullManager;
 import com.vitco.settings.VitcoSettings;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
@@ -22,18 +21,10 @@ import java.util.HashSet;
 public class BorderObject3D extends Object3D {
     private static final long serialVersionUID = 1L;
 
-    // create corresponding texture identifier for this object
-    private static String getTextureId(int orientation, int plane, Point areaId, int side) {
-        return orientation + "_" + plane + "_" + areaId.x + "_" + areaId.y + "_" + side;
-    }
-
     // generate the appropriate texture size
     // (makes sure that the dimension is a power of two)
-    private static int getTextureSize(int w, int h) {
-        return (int)Math.pow(2, Math.ceil(Math.max(
-                Math.log(w + 2)/Math.log(2),
-                Math.log(h + 2)/Math.log(2)
-        )));
+    private static int getTextureSize(int s) {
+        return (int)Math.pow(2, Math.ceil(Math.log(s + 2)/Math.log(2)));
     }
 
     // get the rounded points of a triangle as an int array
@@ -117,7 +108,7 @@ public class BorderObject3D extends Object3D {
     // refresh the texture of this object
     public final void refreshTextureInterpolation() {
         assert textureObject != null;
-        textureObject.refreshTexture(null);
+        textureObject.refreshTexture(null, this);
     }
 
     // called when this object is no longer needed
@@ -173,26 +164,28 @@ public class BorderObject3D extends Object3D {
     // generate triangles and use adjustable edge interpolation
     private void generateAdvanced(ArrayList<DelaunayTriangle> triangleList, Collection<Voxel> faceList,
                                   int minx, int miny, int w, int h, Integer orientation, Integer axis,
-                                  Integer plane, Point areaId, int side, HullManager<Voxel> hullManager) {
+                                  Integer plane, int side, HullManager<Voxel> hullManager) {
 
         canHaveBorder = side == -1;
 
-        textureSize = getTextureSize(w, h);
-        String textureKey = getTextureId(orientation, plane, areaId, side);
+        textureSizeX = getTextureSize(w);
+        textureSizeY = getTextureSize(h);
+
+        // todo: mirror textures if w > h to reduce used memory (!)
 
         // contains seen pixel
         HashSet<String> seenTrianglePoints = new HashSet<String>();
         // generate textureObject
         textureObject = new TextureObject(
                 minx, miny, faceList, orientation,
-                axis, hullManager, w, h, textureSize, textureKey
+                axis, hullManager, w, h, textureSizeX, textureSizeY
         );
 
         // generate the texture (and remember seen triangle points)
-        textureObject.refreshTexture(seenTrianglePoints);
+        textureObject.refreshTexture(seenTrianglePoints, this);
 
-        // get the texture id
-        textureId = WorldManager.getTextureId(textureKey);
+        // the texture id
+        int textureId = textureObject.getTextureId();
 
         // compute values for inversion
         int sx0 = 0;
@@ -227,14 +220,15 @@ public class BorderObject3D extends Object3D {
             // add the triangle to this object
             this.addTriangle(
                     interpTrianglePoints[sx0],
-                    (roundedTrianglePoints[x0] + outside_direction[x0]*textureInterpolation + 1)/textureSize,
-                    (roundedTrianglePoints[y0] + outside_direction[y0]*textureInterpolation + 1)/textureSize,
+                    (roundedTrianglePoints[x0] + outside_direction[x0]*textureInterpolation + 1)/textureSizeX,
+                    (roundedTrianglePoints[y0] + outside_direction[y0]*textureInterpolation + 1)/textureSizeY,
                     interpTrianglePoints[sx1],
-                    (roundedTrianglePoints[x1] + outside_direction[x1]*textureInterpolation + 1)/textureSize,
-                    (roundedTrianglePoints[y1] + outside_direction[y1]*textureInterpolation + 1)/textureSize,
+                    (roundedTrianglePoints[x1] + outside_direction[x1]*textureInterpolation + 1)/textureSizeX,
+                    (roundedTrianglePoints[y1] + outside_direction[y1]*textureInterpolation + 1)/textureSizeY,
                     interpTrianglePoints[2],
-                    (roundedTrianglePoints[4] + outside_direction[4]*textureInterpolation + 1)/textureSize,
-                    (roundedTrianglePoints[5] + outside_direction[5]*textureInterpolation + 1)/textureSize
+                    (roundedTrianglePoints[4] + outside_direction[4]*textureInterpolation + 1)/textureSizeX,
+                    (roundedTrianglePoints[5] + outside_direction[5]*textureInterpolation + 1)/textureSizeY,
+                    textureId
             );
 
             if (canHaveBorder) {
@@ -250,9 +244,8 @@ public class BorderObject3D extends Object3D {
             }
         }
 
-        // set the texture
+        // set the additional color
         this.setAdditionalColor(Color.WHITE);
-        this.setTexture(textureKey);
 
     }
 
@@ -277,9 +270,8 @@ public class BorderObject3D extends Object3D {
     private boolean hasBorder = true;
     // contains the textureSize for the object and textureSize/32 for objects
     // that contain images in their textures
-    private int textureSize = 0;
-    // the id of the texture that is used for this object
-    private int textureId = 0;
+    private int textureSizeX = 0;
+    private int textureSizeY = 0;
     // the uv positions of the triangles of this object and the interpolation directions
     private final ArrayList<float[]> uvPositions = new ArrayList<float[]>();
     // the polygon manager of this object
@@ -293,15 +285,16 @@ public class BorderObject3D extends Object3D {
             float textureInterpolation = hasBorder
                     ? VitcoSettings.BORDER_INSET_VALUE
                     : -VitcoSettings.TEXTURE_INTERPOLATION_VALUE;
+            int textureId = textureObject.getTextureId();
             for (int i = 0, size = uvPositions.size(); i < size; i++) {
                 float[] uvInfo = uvPositions.get(i);
                 polygonManager.setPolygonTexture(i, new TextureInfo(textureId,
-                        (uvInfo[0] + uvInfo[1]*textureInterpolation)/textureSize,
-                        (uvInfo[2] + uvInfo[3]*textureInterpolation)/textureSize,
-                        (uvInfo[4] + uvInfo[5]*textureInterpolation)/textureSize,
-                        (uvInfo[6] + uvInfo[7]*textureInterpolation)/textureSize,
-                        (uvInfo[8] + uvInfo[9]*textureInterpolation)/textureSize,
-                        (uvInfo[10] + uvInfo[11]*textureInterpolation)/textureSize
+                        (uvInfo[0] + uvInfo[1]*textureInterpolation)/textureSizeX,
+                        (uvInfo[2] + uvInfo[3]*textureInterpolation)/textureSizeY,
+                        (uvInfo[4] + uvInfo[5]*textureInterpolation)/textureSizeX,
+                        (uvInfo[6] + uvInfo[7]*textureInterpolation)/textureSizeY,
+                        (uvInfo[8] + uvInfo[9]*textureInterpolation)/textureSizeX,
+                        (uvInfo[10] + uvInfo[11]*textureInterpolation)/textureSizeY
                 ));
             }
         }
@@ -312,7 +305,7 @@ public class BorderObject3D extends Object3D {
     // constructor
     public BorderObject3D(ArrayList<DelaunayTriangle> tris, Collection<Voxel> faceList,
                           int minx, int miny, int w, int h, Integer orientation, Integer axis,
-                          Integer plane, Point areaId, boolean simpleMode, int side,
+                          Integer plane, boolean simpleMode, int side,
                           boolean culling, boolean hasBorder, HullManager<Voxel> hullManager) {
         // construct this object 3D with correct triangle count
         super(tris.size());
@@ -327,7 +320,7 @@ public class BorderObject3D extends Object3D {
         } else {
             // generate triangles and use adjustable edge interpolation
             generateAdvanced(tris, faceList, minx, miny, w, h, orientation, axis,
-                    plane, areaId, side, hullManager);
+                    plane, side, hullManager);
         }
 
         // set the correct culling

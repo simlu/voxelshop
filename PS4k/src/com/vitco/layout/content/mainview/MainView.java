@@ -85,7 +85,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
     public final JPanel build() {
 
         // make sure we can see into the distance
-        world.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
+        world.setClippingPlanes(Config.nearPlane, VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT * 2);
         selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
 
         // start/stop test mode (rapid camera rotation)

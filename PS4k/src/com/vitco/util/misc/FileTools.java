@@ -4,8 +4,6 @@ import com.vitco.core.container.HackedObjectInputStream;
 import com.vitco.manager.error.ErrorHandlerInterface;
 
 import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 /**
@@ -39,20 +37,6 @@ public class FileTools {
                     errorHandler.handle(e);
                 }
             }
-        }
-        return result;
-    }
-
-    public static String md5Hash(String str, ErrorHandlerInterface errorHandler) {
-        String result = "";
-        try {
-            byte[] bytesOfMessage = str.getBytes("UTF-8");
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            result = new String(md.digest(bytesOfMessage), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            errorHandler.handle(e);
-        } catch (NoSuchAlgorithmException e) {
-            errorHandler.handle(e);
         }
         return result;
     }

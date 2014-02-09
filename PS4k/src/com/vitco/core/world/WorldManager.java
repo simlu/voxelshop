@@ -129,6 +129,9 @@ public final class WorldManager {
             textureManager.replaceTexture(name, texture);
         } else {
             textureManager.addTexture(name, texture);
+            // the replace call is needed to prevent a strange bug where the loaded texture
+            // is displayed as white (todo: research further)
+            textureManager.replaceTexture(name, texture);
         }
     }
 
@@ -206,7 +209,6 @@ public final class WorldManager {
                 new SaveResourceLoader("resource/tex/bounding_box_256.png").asImage(),
                 false
         );
-        WorldManager.getTextureId("__grid__");
 
         // create object (container)
         Object3D box=new Object3D(12);

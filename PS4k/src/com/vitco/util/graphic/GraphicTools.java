@@ -1,16 +1,32 @@
 package com.vitco.util.graphic;
 
+import com.vitco.util.misc.ConversionTools;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 
 /**
  * Some basic functionality for graphics/images.
  */
 public class GraphicTools {
+
+    // returns the hash for a BufferedImage
+    public static String getHash(BufferedImage image) {
+        DataBuffer buffer = image.getRaster().getDataBuffer();
+        int type = image.getRaster().getDataBuffer().getDataType();
+        byte[] bytes = new byte[0];
+        switch (type) {
+            case DataBuffer.TYPE_BYTE:
+                bytes = ((DataBufferByte)buffer).getData();
+                break;
+            case DataBuffer.TYPE_INT:
+                bytes = ConversionTools.int2byte(((DataBufferInt)buffer).getData());
+                break;
+        }
+        return DigestUtils.md5Hex(bytes);
+    }
 
     // create a deep copy of a bufferedImage (fast)
     public static BufferedImage deepCopy(BufferedImage bi) {

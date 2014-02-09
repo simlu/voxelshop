@@ -9,18 +9,12 @@ import com.vitco.low.CubeIndexer;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.GraphicTools;
 import com.vitco.util.misc.ArrayUtil;
-import com.vitco.util.misc.HexTools;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -2538,26 +2532,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         synchronized (VitcoSettings.SYNC) {
             if (dataContainer.textures.containsKey(textureId)) {
                 if (dataContainer.textures.get(textureId).getDescription() == null) {
-                    // todo: move this to util class
                     ImageIcon img = dataContainer.textures.get(textureId);
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
                     BufferedImage bi = new BufferedImage(
                             img.getIconWidth(),img.getIconHeight(),BufferedImage.TYPE_INT_RGB);
-                    Graphics2D g2 = bi.createGraphics();
-                    g2.drawImage(img.getImage(),0,0,null);
-                    try {
-                        ImageIO.write(bi, "png", os);
-                        MessageDigest md = MessageDigest.getInstance("MD5");
-                        md.update(os.toByteArray());
-                        byte[] hash = md.digest();
-                        dataContainer.textures.get(textureId).setDescription(HexTools.byteToHex(hash));
-                        // todo: need error handler to handle these exceptions
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace(); // should never happen
-                    } catch (IOException e) {
-                        e.printStackTrace(); // should also never happen
-                    }
-
+                    bi.createGraphics().drawImage(img.getImage(),0,0,null);
+                    dataContainer.textures.get(textureId).setDescription(GraphicTools.getHash(bi));
                 }
                 return dataContainer.textures.get(textureId).getDescription();
             } else {

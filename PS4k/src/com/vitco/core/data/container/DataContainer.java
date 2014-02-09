@@ -22,7 +22,7 @@ public final class DataContainer implements Serializable {
     // todo make this final again once legacy support is removed
     public HashMap<Integer, ImageIcon> textures;
     // the selected texture
-    public int selectedTexture;
+    public int selectedTexture = -1;
 
     // ###################### DATA (Voxel)
     // holds all layers (layers map to voxel ids)

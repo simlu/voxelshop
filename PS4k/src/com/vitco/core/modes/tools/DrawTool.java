@@ -184,6 +184,12 @@ public class DrawTool extends AbstractVoxelTool {
                         if (mouse3Down && voxel != null) {
                             listRem.add(voxel.id);
                         } else if (!mouse3Down && voxel == null) {
+                            // get the current texture
+                            int selectedTexture = data.getSelectedTexture();
+                            int[] texture = selectedTexture == -1 ? null : new int[] {
+                                    selectedTexture, selectedTexture, selectedTexture,
+                                    selectedTexture, selectedTexture, selectedTexture
+                            };
                             listAdd.add(new Voxel(0, pos, color, false, texture, selectedLayer));
                         }
                     }

@@ -78,6 +78,7 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
 
     @Override
     public final void update(short[] pos, T object) {
+        //System.out.println("U " + pos[0] + "," + pos[1] + "," + pos[2]);
         int id = CubeIndexer.getId(pos);
         // store the object
         if (id2obj.put(id, object) != null) {
@@ -86,7 +87,7 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
             for (int i = 0; i < 6; i++) {
                 if (border[i].contains(id)) {
                     // this does not use the buffer, because the side was not actually
-                    // added this run and we want to allow for an potential remove (!)
+                    // added this run and we want to allow for a potential remove (!)
                     borderAdded[i].put(id, obj);
                 }
             }
@@ -101,6 +102,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[0].remove(idOff);
                 if (null == borderBufferAdded[0].remove(idOff)) {
                     borderRemoved[0].put(idOff, id2obj.get(idOff));
+                } else {
+                    borderAdded[0].remove(idOff);
                 }
             } else {
                 border[1].add(id);
@@ -114,6 +117,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[1].remove(idOff);
                 if (null == borderBufferAdded[1].remove(idOff)) {
                     borderRemoved[1].put(idOff, id2obj.get(idOff));
+                } else {
+                    borderAdded[1].remove(idOff);
                 }
             } else {
                 border[0].add(id);
@@ -128,6 +133,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[2].remove(idOff);
                 if (null == borderBufferAdded[2].remove(idOff)) {
                     borderRemoved[2].put(idOff, id2obj.get(idOff));
+                } else {
+                    borderAdded[2].remove(idOff);
                 }
             } else {
                 border[3].add(id);
@@ -141,6 +148,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[3].remove(idOff);
                 if (null == borderBufferAdded[3].remove(idOff)) {
                     borderRemoved[3].put(idOff, id2obj.get(idOff));
+                } else {
+                    borderAdded[3].remove(idOff);
                 }
             } else {
                 border[2].add(id);
@@ -155,6 +164,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[4].remove(idOff);
                 if (null == borderBufferAdded[4].remove(idOff)) {
                     borderRemoved[4].put(idOff, id2obj.get(idOff));
+                } else {
+                    borderAdded[4].remove(idOff);
                 }
             } else {
                 border[5].add(id);
@@ -168,6 +179,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[5].remove(idOff);
                 if (null == borderBufferAdded[5].remove(idOff)) {
                     borderRemoved[5].put(idOff, id2obj.get(idOff));
+                } else {
+                    borderAdded[5].remove(idOff);
                 }
             } else {
                 border[4].add(id);
@@ -180,6 +193,7 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
 
     @Override
     public final boolean clearPosition(short[] pos) {
+        //System.out.println("C " + pos[0] + "," + pos[1] + "," + pos[2]);
         int id = CubeIndexer.getId(pos);
         // remove the object (the actual removal needs to be done
         // last, because we still need the reference to the object
@@ -200,6 +214,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[1].remove(id);
                 if (null == borderBufferRemoved[1].remove(id)) {
                     borderRemoved[1].put(id, obj);
+                } else {
+                    borderAdded[1].remove(id);
                 }
             }
             // check borders
@@ -214,6 +230,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[0].remove(id);
                 if (null == borderBufferRemoved[0].remove(id)) {
                     borderRemoved[0].put(id, obj);
+                } else {
+                    borderAdded[0].remove(id);
                 }
             }
 
@@ -229,6 +247,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[3].remove(id);
                 if (null == borderBufferRemoved[3].remove(id)) {
                     borderRemoved[3].put(id, obj);
+                } else {
+                    borderAdded[3].remove(id);
                 }
             }
             // check borders
@@ -243,6 +263,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[2].remove(id);
                 if (null == borderBufferRemoved[2].remove(id)) {
                     borderRemoved[2].put(id, obj);
+                } else {
+                    borderAdded[2].remove(id);
                 }
             }
 
@@ -258,6 +280,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[5].remove(id);
                 if (null == borderBufferRemoved[5].remove(id)) {
                     borderRemoved[5].put(id, obj);
+                } else {
+                    borderAdded[5].remove(id);
                 }
             }
             // check borders
@@ -272,6 +296,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 border[4].remove(id);
                 if (null == borderBufferRemoved[4].remove(id)) {
                     borderRemoved[4].put(id, obj);
+                } else {
+                    borderAdded[4].remove(id);
                 }
             }
             // remove the object

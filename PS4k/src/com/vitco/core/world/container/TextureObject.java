@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -26,13 +27,18 @@ public class TextureObject implements Serializable {
     private final HullManager<Voxel> hullManager;
     private final int w;
     private final int h;
-    private final int textureSize;
-    private final String textureKey;
+    private final int textureSizeX;
+    private final int textureSizeY;
+    private int textureId;
+    private String textureName = null;
+
+    // counts how often the textures are used
+    private static final HashMap<String, Integer> textureCount = new HashMap<String, Integer>();
 
     // constructor
     public TextureObject(int minx, int miny, Collection<Voxel> faceList,
                          Integer orientation, Integer axis, HullManager<Voxel> hullManager,
-                         int w, int h, int textureSize, String textureKey) {
+                         int w, int h, int textureSizeX, int textureSizeY) {
         this.minx = minx;
         this.miny = miny;
         this.faceList = faceList;
@@ -41,8 +47,12 @@ public class TextureObject implements Serializable {
         this.hullManager = hullManager;
         this.w = w;
         this.h = h;
-        this.textureSize = textureSize;
-        this.textureKey = textureKey;
+        this.textureSizeX = textureSizeX;
+        this.textureSizeY = textureSizeY;
+    }
+
+    public int getTextureId() {
+        return textureId;
     }
 
     // helper to draw pixel interpolation where necessary (so black outline is only visible when appropriate)
@@ -63,17 +73,28 @@ public class TextureObject implements Serializable {
 
     // called when this instance is no longer needed
     public final void destroy() {
-        WorldManager.removeEfficientTexture(textureKey);
+        setCurrentTextureUnused();
+    }
+
+    // sets the current texture unused
+    private void setCurrentTextureUnused() {
+        int count = textureCount.get(textureName);
+        if (count == 1) {
+            WorldManager.removeEfficientTexture(textureName);
+            textureCount.remove(textureName);
+        } else {
+            textureCount.put(textureName, count - 1);
+        }
     }
 
     // generates a texture
     // the seen points are stored in the seen hashmap
-    public final void refreshTexture(HashSet<String> seenTrianglePoints) {
+    public final void refreshTexture(HashSet<String> seenTrianglePoints, BorderObject3D obj) {
         // create black image
-        BufferedImage textureImage = SharedImageFactory.getBufferedImage(textureSize, textureSize);
+        BufferedImage textureImage = SharedImageFactory.getBufferedImage(textureSizeX, textureSizeY);
         Graphics2D g2 = (Graphics2D) textureImage.getGraphics();
         g2.setColor(Color.BLACK);
-        g2.fillRect(0,0,textureSize,textureSize);
+        g2.fillRect(0, 0, textureSizeX, textureSizeY);
 
         boolean containsTexture = false;
 
@@ -89,9 +110,10 @@ public class TextureObject implements Serializable {
             if (!containsTexture && isTexture) {
                 containsTexture = true; // this is now a texture that contains images (!)
                 // resize image
-                int textureSizeEnlarged = textureSize * 32;
-                BufferedImage largeTextureImage = SharedImageFactory.getBufferedImage(textureSizeEnlarged, textureSizeEnlarged);
-                largeTextureImage.getGraphics().drawImage(textureImage, 0, 0, textureSizeEnlarged, textureSizeEnlarged, null);
+                int textureSizeEnlargedX = textureSizeX * 32;
+                int textureSizeEnlargedY = textureSizeY * 32;
+                BufferedImage largeTextureImage = SharedImageFactory.getBufferedImage(textureSizeEnlargedX, textureSizeEnlargedY);
+                largeTextureImage.getGraphics().drawImage(textureImage, 0, 0, textureSizeEnlargedX, textureSizeEnlargedY, null);
                 textureImage = largeTextureImage;
                 g2 = (Graphics2D) textureImage.getGraphics();
             }
@@ -214,8 +236,30 @@ public class TextureObject implements Serializable {
             }
         }
 
-        // load the texture
-        WorldManager.loadEfficientTexture(textureKey, textureImage, false);
+        // get the hash of the texture as texture key
+        String textureNameNew = GraphicTools.getHash(textureImage);
+
+        if (!textureNameNew.equals(textureName)) {
+
+            // update count and load if necessary
+            Integer count = textureCount.get(textureNameNew);
+            if (count == null) {
+                count = 0;
+                // load the texture
+                WorldManager.loadEfficientTexture(textureNameNew, textureImage, false);
+            }
+            textureCount.put(textureNameNew, count + 1);
+            // get the id for this texture
+            textureId = WorldManager.getTextureId(textureNameNew);
+            // update the texture of the object
+            obj.setTexture(textureNameNew);
+            // remove existing (old) texture information
+            if (textureName != null) {
+                setCurrentTextureUnused();
+            }
+            // assign the new texture name
+            textureName = textureNameNew;
+        }
 
     }
 }

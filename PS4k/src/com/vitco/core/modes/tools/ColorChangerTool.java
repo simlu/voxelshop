@@ -162,7 +162,7 @@ public class ColorChangerTool extends AbstractVoxelTool {
             Integer[] voxels = new Integer[list.size()];
             list.toArray(voxels);
             // update color / texture
-            selectedTexture = data.getSelectedTexture();
+            int selectedTexture = data.getSelectedTexture();
             if (selectedTexture != -1) {
                 data.massSetTexture(voxels, selectedTexture);
             } else {

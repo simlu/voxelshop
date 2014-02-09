@@ -189,13 +189,22 @@ public class CWorld extends AbstractCWorld {
                         BorderObject3D box = new BorderObject3D(
                                 tris, faceList,
                                 min1, min2, w, h, orientation, axis,
-                                outdatedPlane, outdatedArea, simpleMode, side, culling,
+                                outdatedPlane, simpleMode, side, culling,
                                 hasBorder, hullManager
                         );
                         // remove old version of this side (if exists)
                         Integer oldId = plane2WorldId.get(areaKey);
                         if (oldId != null) {
-                            removeObject(oldId);
+                            // only remove texture in non-wireframe world
+                            if (!simpleMode) {
+                                BorderObject3D obj = (BorderObject3D) getObject(oldId);
+                                // remove other information
+                                removeObject(oldId);
+                                obj.freeTexture();
+                            } else {
+                                // remove other information
+                                removeObject(oldId);
+                            }
                             worldId2Side.remove(oldId);
                         }
                         // add new plane
@@ -208,10 +217,14 @@ public class CWorld extends AbstractCWorld {
                         if (oldId != null) {
                             // only remove texture in non-wireframe world
                             if (!simpleMode) {
-                                ((BorderObject3D) getObject(oldId)).freeTexture();
+                                BorderObject3D obj = (BorderObject3D) getObject(oldId);
+                                // remove other information
+                                removeObject(oldId);
+                                obj.freeTexture();
+                            } else {
+                                // remove other information
+                                removeObject(oldId);
                             }
-                            // remove other information
-                            removeObject(oldId);
                             worldId2Side.remove(oldId);
                         }
                     }
@@ -219,8 +232,7 @@ public class CWorld extends AbstractCWorld {
                     // only do texture refresh (soft)
                     Integer objId = plane2WorldId.get(areaKey);
                     if (objId != null) {
-                        BorderObject3D obj = (BorderObject3D) getObject(objId);
-                        obj.refreshTextureInterpolation();
+                        ((BorderObject3D) getObject(objId)).refreshTextureInterpolation();
                     }
                 }
                 // this area was processed

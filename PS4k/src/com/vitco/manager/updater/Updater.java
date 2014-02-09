@@ -9,6 +9,7 @@ import com.vitco.manager.thread.ThreadManagerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.FileTools;
 import com.vitco.util.misc.UrlUtil;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -79,7 +80,7 @@ public class Updater {
                 String updaterInfo = UrlUtil.readUrl(VitcoSettings.PROGRAM_UPDATER_URL, errorHandler);
                 if (updaterInfo != null && !updaterInfo.equals("")) {
                     //console.addLine("===" + updaterInfo + "===");
-                    String newDigest = FileTools.md5Hash(updaterInfo, errorHandler);
+                    String newDigest = DigestUtils.md5Hex(updaterInfo);
                     if (digest != null) {
                         if (!digest.equals(newDigest) && !newDigest.equals("")) {
                             notify = true;
@@ -115,7 +116,7 @@ public class Updater {
             File digestFile = new File(filePath + "digest.txt");
             if (digestFile.exists()) {
                 String localUpdaterInfo = FileTools.readFileAsString(digestFile, errorHandler);
-                digest = FileTools.md5Hash(localUpdaterInfo, errorHandler);
+                digest = DigestUtils.md5Hex(localUpdaterInfo);
                 //console.addLine("===" + localUpdaterInfo + "===");
             }
         } catch (UnsupportedEncodingException e) {
