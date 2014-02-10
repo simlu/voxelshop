@@ -5,8 +5,11 @@ import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.error.ErrorHandler;
 import com.vitco.manager.pref.Preferences;
+import com.vitco.settings.VitcoSettings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.awt.*;
 
 /**
  * Initially executed class
@@ -22,6 +25,22 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+        // display version number on splash screen
+        final SplashScreen splash = SplashScreen.getSplashScreen();
+        if (splash != null) {
+            Graphics2D g = splash.createGraphics();
+            if (g != null) {
+                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+                Font font = new Font("Verdana", Font.BOLD, 7);
+                g.setFont(font);
+                //g.setFont(g.getFont().deriveFont(9f));
+                g.setColor(new Color(127, 157, 184));
+                g.drawString("V" + VitcoSettings.VERSION_ID, 10, 15);
+                splash.update();
+            }
+        }
+
         // the JIDE license
         com.jidesoft.utils.Lm.verifyLicense("Pixelated Games", "PS4K", "__JIDE_PASSWORD__");
 

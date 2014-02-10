@@ -7,6 +7,8 @@ import org.junit.Test;
  */
 public class HullManagerTest {
 
+    // todo create "big random" test case
+
     // helper - get point for one direction
     private static short[] get(int val, int direction) {
         switch (direction) {

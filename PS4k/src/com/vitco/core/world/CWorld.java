@@ -49,10 +49,26 @@ public class CWorld extends AbstractCWorld {
             }
         }
         // initialize the buffered images (for textures)
-        for (int e = 2; e < 9; e++) { // from 4 (=2^2) to 512 (=2^9)
-            int d = (int)Math.pow(2, e);
-            SharedImageFactory.getBufferedImage(d, d);
+        for (int e1 = 2; e1 <= 4; e1++) { // from 4 (=2^2) to 16 (=2^4)
+            int d1 = (int)Math.pow(2, e1);
+            for (int e2 = 2; e2 <= 4; e2++) { // from 4 (=2^2) to 16 (=2^4)
+                int d2 = (int)Math.pow(2, e2);
+                SharedImageFactory.getBufferedImage(d1, d2);
+            }
         }
+        for (int e1 = 7; e1 <= 9; e1++) { // from 128 (=2^7) to 512 (=2^9)
+            int d1 = (int)Math.pow(2, e1);
+            for (int e2 = 7; e2 <= 9; e2++) { // from 128 (=2^7) to 512 (=2^9)
+                int d2 = (int)Math.pow(2, e2);
+                SharedImageFactory.getBufferedImage(d1, d2);
+            }
+        }
+
+//        // initialize the buffered images (for textures)
+//        for (int e = 2; e <= 9; e++) { // from 4 (=2^2) to 512 (=2^9)
+//            int d = (int)Math.pow(2, e);
+//            SharedImageFactory.getBufferedImage(d, d);
+//        }
     }
 
     // manages the voxel "hull" (allows for easy querying of hull changes)
@@ -61,6 +77,9 @@ public class CWorld extends AbstractCWorld {
     // manages the voxels that are in this world, allows for easy detection
     // of changed areas (combined faces of neighbouring voxels)
     private final VoxelManager voxelManager = new VoxelManager(hullManager, side);
+    // true if the world needs a clear (this flag is necessary to do the
+    // clearing in sync with the rendering)
+    private boolean worldNeedsClear = false;
 
     // add or update a voxel
     @Override
@@ -71,17 +90,11 @@ public class CWorld extends AbstractCWorld {
     // erase the entire content of this world
     @Override
     public void clear() {
+        // the hull manager needs to be cleared here (since it is not in sync
+        // with the rendering thread)
         hullManager.clear();
-        voxelManager.clear();
-        // remove world objects
-        for (Integer objId : worldId2Side.keySet()) {
-            if (!simpleMode) {
-                ((BorderObject3D) getObject(objId)).freeTexture();
-            }
-            this.removeObject(objId);
-        }
-        worldId2Side.clear();
-        plane2WorldId.clear();
+        // this flag is necessary to do the clearing in sync with the rendering
+        worldNeedsClear = true;
     }
 
     // clear field by position
@@ -252,6 +265,28 @@ public class CWorld extends AbstractCWorld {
     public boolean refreshWorld() {
         // if this counter is six, the world is ready
         int ready = 0;
+
+        // clear the voxel manager if necessary (needs to be done in sync!)
+        if (worldNeedsClear) {
+            worldNeedsClear = false;
+            // clear the voxel manager
+            voxelManager.clear();
+            // remove world objects
+            for (Integer objId : worldId2Side.keySet()) {
+                // only remove texture in non-wireframe world
+                if (!simpleMode) {
+                    BorderObject3D obj = (BorderObject3D) getObject(objId);
+                    // remove other information
+                    removeObject(objId);
+                    obj.freeTexture();
+                } else {
+                    // remove other information
+                    removeObject(objId);
+                }
+            }
+            worldId2Side.clear();
+            plane2WorldId.clear();
+        }
 
         // handle the updating
         if (side == -1) {

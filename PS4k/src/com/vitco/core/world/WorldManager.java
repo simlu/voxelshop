@@ -129,9 +129,6 @@ public final class WorldManager {
             textureManager.replaceTexture(name, texture);
         } else {
             textureManager.addTexture(name, texture);
-            // the replace call is needed to prevent a strange bug where the loaded texture
-            // is displayed as white (todo: research further)
-            textureManager.replaceTexture(name, texture);
         }
     }
 
