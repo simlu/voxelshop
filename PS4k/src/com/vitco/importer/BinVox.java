@@ -1,11 +1,9 @@
 package com.vitco.importer;
 
-import com.vitco.util.file.SaveDataInputStream;
+import com.vitco.util.file.FileIn;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-
 
 public class BinVox {
     private byte[] voxels;
@@ -17,13 +15,13 @@ public class BinVox {
     private double scale; // scale as written in file
     private int version; // version as written in file
     private long voxelCount; // how many voxels are in this file
-
-    // used to read the data
-    private final SaveDataInputStream inputStream;
+    private boolean hasLoaded; // true if the file was loaded correctly
 
     // constructor
     public BinVox(File file) throws IOException {
-        inputStream = new SaveDataInputStream(new FileInputStream(file));
+        FileIn inputStream = new FileIn(file);
+        hasLoaded = read(inputStream);
+        inputStream.finish();
     }
 
     // ----------
@@ -73,12 +71,16 @@ public class BinVox {
         return new int[] {sx, sy, sz};
     }
 
+    public boolean hasLoaded() {
+        return hasLoaded;
+    }
+
     // -----------------------
 
     // read the file, returns true if everything went ok
-    public boolean read() throws IOException {
+    private boolean read(FileIn inputStream) throws IOException {
         // header
-        String line = inputStream.readLineSave();
+        String line = inputStream.readLine();
         if (!line.startsWith("#binvox")) { // not a bin vox format
             return false;
         }
@@ -87,7 +89,7 @@ public class BinVox {
         String version_string = line.substring(8);
         version = Integer.parseInt(version_string);
 
-        line = inputStream.readLineSave();
+        line = inputStream.readLine();
 
         while (null != line) {
 
@@ -181,7 +183,7 @@ public class BinVox {
                 }
             }
 
-            line = inputStream.readLineSave();
+            line = inputStream.readLine();
 
         }
 

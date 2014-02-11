@@ -180,7 +180,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // import .binvox files
                             try {
                                 BinVox binVox = new BinVox(toOpen);
-                                if (binVox.read()) {
+                                if (binVox.hasLoaded()) {
                                     int[] l = binVox.getMin();
                                     int[] c = binVox.getCenter();
                                     byte[] vox = binVox.getVoxels();
