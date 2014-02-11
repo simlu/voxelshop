@@ -337,10 +337,15 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        if (e.getClickCount() == 1) { // select layer
-                            data.selectLayerSoft(layer);
-                        } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
-                            data.setVisible(layer, !data.getLayerVisible(layer));
+//                        if (e.getClickCount() == 1) { // select layer
+//                            data.selectLayerSoft(layer);
+//                        } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
+//                            data.setVisible(layer, !data.getLayerVisible(layer));
+//                        }
+                        if (col == 0) {
+                            data.selectLayerSoft(layer); // select layer
+                        } else {
+                            data.setVisible(layer, !data.getLayerVisible(layer)); // toggle visibility
                         }
                         // cancel editing if we are editing
                         if (e.getClickCount() == 1 && table.isEditing()) {

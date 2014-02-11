@@ -7,7 +7,7 @@ import com.vitco.export.ColladaFile;
 import com.vitco.low.hull.HullManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
-import com.vitco.util.misc.FileTools;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.SaveResourceLoader;
 import com.vitco.util.xml.XmlTools;
 import org.springframework.beans.factory.annotation.Autowired;

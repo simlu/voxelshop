@@ -7,7 +7,7 @@ import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.thread.LifeTimeThread;
 import com.vitco.manager.thread.ThreadManagerInterface;
 import com.vitco.settings.VitcoSettings;
-import com.vitco.util.misc.FileTools;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.UrlUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;

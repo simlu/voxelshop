@@ -1,7 +1,8 @@
-package com.vitco.util.misc;
+package com.vitco.util.file;
 
 import com.vitco.core.container.HackedObjectInputStream;
 import com.vitco.manager.error.ErrorHandlerInterface;
+import com.vitco.util.misc.AutoFileCloser;
 
 import java.io.*;
 import java.util.HashMap;

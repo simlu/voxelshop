@@ -11,8 +11,8 @@ import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.menu.MenuGeneratorInterface;
 import com.vitco.manager.pref.PrefChangeListener;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.CFileDialog;
-import com.vitco.util.misc.FileTools;
 import com.vitco.util.misc.SaveResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 

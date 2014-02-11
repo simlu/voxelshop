@@ -2,8 +2,8 @@ package com.vitco.manager.pref;
 
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.AutoFileCloser;
-import com.vitco.util.misc.FileTools;
 
 import java.io.*;
 import java.util.ArrayList;

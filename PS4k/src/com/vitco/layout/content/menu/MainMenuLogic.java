@@ -1,10 +1,11 @@
 package com.vitco.layout.content.menu;
 
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
+import com.vitco.importer.BinVox;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.CFileDialog;
-import com.vitco.util.misc.FileTools;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -130,6 +131,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("png");
         fc_import.addFileType("jpg");
         fc_import.addFileType("jpeg");
+        fc_import.addFileType("binvox");
 
         fc_export.addFileType("dae");
 
@@ -162,13 +164,49 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 if (checkUnsavedChanges(frame)) {
                     File toOpen = fc_import.openFile(frame);
                     if (toOpen != null) {
-                        data.freshStart();
-                        save_location[0] = null;
-                        try {
-                            BufferedImage img = ImageIO.read(toOpen);
-                            importImage(img);
-                        } catch (IOException e1) {
-                            errorHandler.handle(e1);
+                        String ext = fc_import.getCurrentExt();
+                        if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext)) {
+                            // -----------------
+                            // import image data
+                            data.selectLayer(data.createLayer("Import"));
+                            try {
+                                BufferedImage img = ImageIO.read(toOpen);
+                                importImage(img);
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
+                        } else if ("binvox".equals(ext)) {
+                            // ----------------
+                            // import .binvox files
+                            try {
+                                BinVox binVox = new BinVox(toOpen);
+                                if (binVox.read()) {
+                                    int[] l = binVox.getMin();
+                                    int[] c = binVox.getCenter();
+                                    byte[] vox = binVox.getVoxels();
+                                    int[] s = binVox.getSize();
+                                    data.selectLayer(data.createLayer("Import"));
+                                    Color col = new Color(158, 194, 88);
+                                    for (int x = 0; x < s[0]; x++) {
+                                        for (int y = 0; y < s[1]; y++) {
+                                            for (int z = 0; z < s[2]; z++) {
+                                                if (vox[x + y*s[0] + z*s[0]*s[1]] == 1) {
+                                                    data.addVoxelDirect(col, new int[] {y - c[1], -x + l[0], z - c[2]});
+                                                }
+                                            }
+                                        }
+                                    }
+                                    // force a refresh of the data (redraw)
+                                    data.setVisible(data.getSelectedLayer(), false);
+                                    data.setVisible(data.getSelectedLayer(), true);
+                                    data.clearHistoryV();
+                                    data.resetHasChanged();
+                                }
+                            } catch (FileNotFoundException e1) {
+                                errorHandler.handle(e1);
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
                         }
                     }
                 }

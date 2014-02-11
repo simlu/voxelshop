@@ -7,7 +7,7 @@ import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
-import com.vitco.util.misc.FileTools;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.SaveResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
