@@ -1,6 +1,8 @@
 package com.vitco.layout.content.menu;
 
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
+import com.sun.imageio.plugins.gif.GIFImageReader;
+import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.importer.BinVox;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
@@ -10,6 +12,7 @@ import com.vitco.util.misc.CFileDialog;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -116,11 +119,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 }
             }
         }
-        // force a refresh of the data (redraw)
-        data.setVisible(data.getSelectedLayer(), false);
-        data.setVisible(data.getSelectedLayer(), true);
-        data.clearHistoryV();
-        data.resetHasChanged();
     }
     // ======================================
 
@@ -131,6 +129,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("png");
         fc_import.addFileType("jpg");
         fc_import.addFileType("jpeg");
+        fc_import.addFileType("gif");
         fc_import.addFileType("binvox");
 
         fc_export.addFileType("dae");
@@ -175,6 +174,37 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             } catch (IOException e1) {
                                 errorHandler.handle(e1);
                             }
+                            // force a refresh of the data (redraw)
+                            data.setVisible(data.getSelectedLayer(), false);
+                            data.setVisible(data.getSelectedLayer(), true);
+                            data.clearHistoryV();
+                        } else if ("gif".equals(ext)) {
+                            // ----------------
+                            // import gif image data
+                            try {
+                                ImageReader ir = new GIFImageReader(new GIFImageReaderSpi());
+                                ir.setInput(ImageIO.createImageInputStream(toOpen));
+                                int count = ir.getNumImages(true);
+                                if (count > 1) {
+                                    for (int i = 0; i < count; i++) {
+                                        int layerId = data.createLayer("Frame" + i);
+                                        data.selectLayer(layerId);
+                                        if (i < count - 1) {
+                                            data.setVisible(layerId, false);
+                                        }
+                                        importImage(ir.read(i));
+                                    }
+                                } else {
+                                    data.selectLayer(data.createLayer("Import"));
+                                    importImage(ir.read(0));
+                                }
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
+                            // force a refresh of the data (redraw)
+                            data.setVisible(data.getSelectedLayer(), false);
+                            data.setVisible(data.getSelectedLayer(), true);
+                            data.clearHistoryV();
                         } else if ("binvox".equals(ext)) {
                             // ----------------
                             // import .binvox files
@@ -200,7 +230,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     data.setVisible(data.getSelectedLayer(), false);
                                     data.setVisible(data.getSelectedLayer(), true);
                                     data.clearHistoryV();
-                                    data.resetHasChanged();
                                 }
                             } catch (FileNotFoundException e1) {
                                 errorHandler.handle(e1);

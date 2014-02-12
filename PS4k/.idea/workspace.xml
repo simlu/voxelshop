@@ -11,8 +11,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3775d788-1cb3-4d79-83c9-f6bf480db621" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/file/FileIn.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/vitco/util/file/FileOut.java" />
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\artifacts\PS4k_jar\settings\current.layout" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\artifacts\webdata\getdown-1.2.jar" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\flux\Dropbox\java\VoxelShop\PS4k\out\production\PS4k\com\vitco\async\AsyncAction.class" afterPath="" />
@@ -468,10 +466,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/xml/XmlTools.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/xml/XmlTools.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_jar/lib/jpct.jar" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_jar/lib/jpct.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/lib/jpct.jar" afterPath="$PROJECT_DIR$/out/artifacts/webdata/lib/jpct.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/importer/BinVox.java" afterPath="$PROJECT_DIR$/src/com/vitco/importer/BinVox.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java" afterPath="$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/Readme.txt" afterPath="$PROJECT_DIR$/out/artifacts/Readme.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/util/file/SaveDataInputStream.java" afterPath="$PROJECT_DIR$/src/com/vitco/util/file/SaveDataInputStream.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/config.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/digest.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/getdown.txt" afterPath="$PROJECT_DIR$/out/artifacts/webdata/getdown.txt" />
@@ -547,7 +543,27 @@
     <favorites_list name="PS4k" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="MainMenuLogic.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="182" column="73" selection-start="7685" selection-end="7685" vertical-scroll-proportion="0.7822991" vertical-offset="2189" max-vertical-offset="6579">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#6375#11183#0" expanded="true" />
+                <element signature="e#11172#11173#0" expanded="true" />
+                <element signature="e#13884#14161#0" expanded="true" />
+                <element signature="e#14150#14151#0" expanded="true" />
+                <element signature="e#14515#14516#0" expanded="true" />
+                <element signature="e#14562#14563#0" expanded="true" />
+                <element signature="e#14742#16548#0" expanded="true" />
+                <element signature="e#16537#16538#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -613,10 +629,10 @@
         <option value="$PROJECT_DIR$/src/com/vitco/layout/content/layer/LayerView.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/file/FileTools.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/file/SaveDataInputStream.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/file/FileOut.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/file/FileIn.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/importer/BinVox.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java" />
       </list>
     </option>
   </component>
@@ -1564,7 +1580,11 @@
       <created>1392159537844</created>
       <updated>1392159537844</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="- centralized file loading and saving logic (so all importer and exporter can use it)">
+      <created>1392162540328</created>
+      <updated>1392162540328</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -1589,7 +1609,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="2064" height="1138" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3270565" sideWeight="0.49468893" order="7" side_tool="false" content_ui="tabs" />
@@ -1610,7 +1630,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32801822" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="JProfiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21308225" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24626121" sideWeight="0.7033639" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24626121" sideWeight="0.7033639" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29435083" sideWeight="0.48305085" order="1" side_tool="false" content_ui="tabs" x="139" y="-689" width="987" height="621" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="-140" y="-932" width="1096" height="840" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3262519" sideWeight="0.64309764" order="3" side_tool="false" content_ui="tabs" />
@@ -1640,7 +1660,6 @@
       <TodoPanelSettings />
     </option>
     <option name="SHOW_FILE_HISTORY_DETAILS" value="false" />
-    <MESSAGE value="- fixed &quot;do you want to save?&quot; query appearing when loaded project was not changed&#10;- fixed potential synchronization problem (multi threading problem)&#10;- fixed &quot;snap to voxel&quot; not working (animation mode)&#10;- fixed bug were rotated/flipped textures (images projected onto voxel faces) were displayed incorrectly&#10;- fixed bug were selection was not refreshing when changing between animation and voxel mode&#10;- fixed bug were textures were not rotated in the correct direction when exporting to COLLADA&#10;- increased max zoom distance for main and side view" />
     <MESSAGE value="- significant code optimization and memory reduction&#10;- saved files are now smaller&#10;- collada exporter is now a little bit faster&#10;- selection of huge objects is now faster (more optimization is still planned)&#10;- loading of projects is now faster&#10;- removed lots of unnecessary code" />
     <MESSAGE value="- changed rotation method for buffered image (better memory efficiency)" />
     <MESSAGE value="- fixed a bug that resulted in stuck faces inside of geometry&#10;- separated the test for the CubeIndexer" />
@@ -1665,7 +1684,8 @@
     <MESSAGE value="- minor optimization&#10;- centralized hash computation for BufferedImage&#10;- fixed bug where unknown texture id was used for drawing after closing a texture project&#10;- textures can now be non-quadratic&#10;- textures are now only loaded if an equivalent texture doesn't exist&#10;- added command to show how many textures are loaded and the size they occupy in memory&#10;- fixed a bug where voxel sides could get stuck when using several layers" />
     <MESSAGE value="- possible texture images are now pre-buffered again (some where missing b/c didn't consider non-square)&#10;- fixed a bug where the CWorld.clear() wasn't synchronizing correctly and could cause concurrent modification error in rare cases&#10;- added a new jpct version that fixed a bug that caused objects not to display available textures&#10;- added version number to splash screen&#10;- separated title string from version number" />
     <MESSAGE value="- added binvox importer&#10;- changed how layer visibility changing works&#10;- added &quot;all files&quot; (std selected) when opening files (so all files with appropriate endings are displayed)" />
-    <option name="LAST_COMMIT_MESSAGE" value="- added binvox importer&#10;- changed how layer visibility changing works&#10;- added &quot;all files&quot; (std selected) when opening files (so all files with appropriate endings are displayed)" />
+    <MESSAGE value="- centralized file loading and saving logic (so all importer and exporter can use it)" />
+    <option name="LAST_COMMIT_MESSAGE" value="- centralized file loading and saving logic (so all importer and exporter can use it)" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1851,13 +1871,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/core/data/VoxelData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2227" column="21" selection-start="80241" selection-end="80241" vertical-scroll-proportion="0.33265513" vertical-offset="37175" max-vertical-offset="44897">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_45/src.zip!/javax/swing/filechooser/FileFilter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="43" column="27" selection-start="1448" selection-end="1448" vertical-scroll-proportion="0.6571719" vertical-offset="0" max-vertical-offset="983">
@@ -1925,12 +1938,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="339" column="0" selection-start="13028" selection-end="13393" vertical-scroll-proportion="0.46185997" vertical-offset="4743" max-vertical-offset="7208">
           <folding>
-            <element signature="e#12450#13949#0" expanded="true" />
-            <element signature="e#12928#13923#0" expanded="true" />
-            <element signature="e#13904#13905#0" expanded="true" />
-            <element signature="e#13938#13939#0" expanded="true" />
-            <element signature="e#14891#15134#0" expanded="true" />
-            <element signature="e#15123#15124#0" expanded="true" />
+            <element signature="e#12450#13949#0" expanded="false" />
+            <element signature="e#12928#13923#0" expanded="false" />
+            <element signature="e#13904#13905#0" expanded="false" />
+            <element signature="e#13938#13939#0" expanded="false" />
+            <element signature="e#14891#15134#0" expanded="false" />
+            <element signature="e#15123#15124#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1939,7 +1952,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="7" selection-start="51" selection-end="51" vertical-scroll-proportion="0.034587994" vertical-offset="0" max-vertical-offset="12784">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1966,7 +1979,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="7" selection-start="43" selection-end="43" vertical-scroll-proportion="0.034587994" vertical-offset="0" max-vertical-offset="3332">
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2059,11 +2072,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/core/data/VoxelData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2289" column="25" selection-start="82489" selection-end="82489" vertical-scroll-proportion="0.33265513" vertical-offset="38229" max-vertical-offset="44897">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="7" selection-start="47" selection-end="47" vertical-scroll-proportion="-3.2339776" vertical-offset="3213" max-vertical-offset="5899">
+        <state line="182" column="73" selection-start="7685" selection-end="7685" vertical-scroll-proportion="0.7822991" vertical-offset="2189" max-vertical-offset="6579">
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#6375#11183#0" expanded="true" />
+            <element signature="e#11172#11173#0" expanded="true" />
+            <element signature="e#13884#14161#0" expanded="true" />
+            <element signature="e#14150#14151#0" expanded="true" />
+            <element signature="e#14515#14516#0" expanded="true" />
+            <element signature="e#14562#14563#0" expanded="true" />
+            <element signature="e#14742#16548#0" expanded="true" />
+            <element signature="e#16537#16538#0" expanded="true" />
           </folding>
         </state>
       </provider>
