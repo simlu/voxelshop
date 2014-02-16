@@ -3,7 +3,10 @@ package com.vitco.layout.content.menu;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
-import com.vitco.importer.BinVox;
+import com.vitco.importer.AbstractImporter;
+import com.vitco.importer.BinVoxImporter;
+import com.vitco.importer.Kv6Importer;
+import com.vitco.importer.KvxImporter;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
@@ -131,6 +134,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("jpeg");
         fc_import.addFileType("gif");
         fc_import.addFileType("binvox");
+        fc_import.addFileType("kv6");
+        fc_import.addFileType("kvx");
 
         fc_export.addFileType("dae");
 
@@ -180,7 +185,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             data.clearHistoryV();
                         } else if ("gif".equals(ext)) {
                             // ----------------
-                            // import gif image data
+                            // import gif image data (including frame animation)
                             try {
                                 ImageReader ir = new GIFImageReader(new GIFImageReaderSpi());
                                 ir.setInput(ImageIO.createImageInputStream(toOpen));
@@ -209,22 +214,61 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .binvox files
                             try {
-                                BinVox binVox = new BinVox(toOpen);
-                                if (binVox.hasLoaded()) {
-                                    int[] l = binVox.getMin();
-                                    int[] c = binVox.getCenter();
-                                    byte[] vox = binVox.getVoxels();
-                                    int[] s = binVox.getSize();
+                                AbstractImporter importer = new BinVoxImporter(toOpen);
+                                if (importer.hasLoaded()) {
                                     data.selectLayer(data.createLayer("Import"));
-                                    Color col = new Color(158, 194, 88);
-                                    for (int x = 0; x < s[0]; x++) {
-                                        for (int y = 0; y < s[1]; y++) {
-                                            for (int z = 0; z < s[2]; z++) {
-                                                if (vox[x + y*s[0] + z*s[0]*s[1]] == 1) {
-                                                    data.addVoxelDirect(col, new int[] {y - c[1], -x + l[0], z - c[2]});
-                                                }
-                                            }
-                                        }
+                                    int[] center = importer.getCenter();
+                                    int[] lowest = importer.getLowest();
+                                    for (int[] vox : importer.getVoxel()) {
+                                        data.addVoxelDirect(
+                                                new Color(vox[3]),
+                                                new int[] {vox[1] - center[1], -vox[0] + lowest[0], vox[2] - center[2]});
+                                    }
+                                    // force a refresh of the data (redraw)
+                                    data.setVisible(data.getSelectedLayer(), false);
+                                    data.setVisible(data.getSelectedLayer(), true);
+                                    data.clearHistoryV();
+                                }
+                            } catch (FileNotFoundException e1) {
+                                errorHandler.handle(e1);
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
+                        } else if ("kv6".equals(ext)) {
+                            // ----------------
+                            // import .kv6 files
+                            try {
+                                AbstractImporter importer = new Kv6Importer(toOpen);
+                                if (importer.hasLoaded()) {
+                                    data.selectLayer(data.createLayer("Import"));
+                                    for (int[] vox : importer.getVoxel()) {
+                                        data.addVoxelDirect(
+                                                new Color(vox[3]),
+                                                new int[] {vox[0], vox[2], -vox[1]}
+                                        );
+                                    }
+                                    // force a refresh of the data (redraw)
+                                    data.setVisible(data.getSelectedLayer(), false);
+                                    data.setVisible(data.getSelectedLayer(), true);
+                                    data.clearHistoryV();
+                                }
+                            } catch (FileNotFoundException e1) {
+                                errorHandler.handle(e1);
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
+                        }  else if ("kvx".equals(ext)) {
+                            // ----------------
+                            // import .kvx files
+                            try {
+                                AbstractImporter importer = new KvxImporter(toOpen);
+                                if (importer.hasLoaded()) {
+                                    data.selectLayer(data.createLayer("Import"));
+                                    for (int[] vox : importer.getVoxel()) {
+                                        data.addVoxelDirect(
+                                                new Color(vox[3]),
+                                                new int[] {vox[0], vox[2], -vox[1]}
+                                        );
                                     }
                                     // force a refresh of the data (redraw)
                                     data.setVisible(data.getSelectedLayer(), false);

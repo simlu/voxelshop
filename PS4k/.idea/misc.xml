@@ -27,10 +27,5 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
-  <component name="com.sixrr.metrics.MetricsReloaded">
-    <option name="selectedProfile" value="Lines of code metrics" />
-    <option name="autoscroll" value="false" />
-    <option name="showOnlyWarnings" value="false" />
-  </component>
 </project>
 
