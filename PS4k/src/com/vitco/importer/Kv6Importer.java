@@ -74,6 +74,7 @@ public class Kv6Importer extends AbstractImporter {
         // read the xyoffset
         int lastZ = 0;
         int c = 0;
+        int invisibleVoxel = 0;
         for (int x = 0; x < sx; x++) {
             for (int y = 0; y < sy; y++) {
                 int xyoff = fileIn.readShortRevUnsigned();
@@ -81,7 +82,11 @@ public class Kv6Importer extends AbstractImporter {
                 for (int newC = c + xyoff; c < newC; c++) {
                     int[] vox = voxel.remove(0); // alternative "voxel.get(c)"
                     addVoxel(x - cx, y - cy, vox[0] - cz, vox[1]);
-
+                    // some files don't count invisible voxel, so we need to track them
+                    // for the sanity check
+                    if (vox[2] == 0) {
+                        invisibleVoxel++;
+                    }
                     // fill in voxels "in between"
                     BigInteger bigInteger = BigInteger.valueOf(vox[2]);
                     if (!bigInteger.testBit(4)) {
@@ -96,7 +101,6 @@ public class Kv6Importer extends AbstractImporter {
             }
         }
 
-        // sanity check
-        return sumxoffset == sumxyoffset;
+        return sumxoffset == sumxyoffset || sumxoffset == (sumxyoffset - invisibleVoxel);
     }
 }

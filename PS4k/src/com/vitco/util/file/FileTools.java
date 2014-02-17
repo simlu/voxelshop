@@ -12,6 +12,16 @@ import java.util.HashMap;
  */
 public class FileTools {
 
+    // find all files with a particular ending in folder
+    public static File[] findFiles(String dirName, final String ext){
+        File dir = new File(dirName);
+        return dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith("." + ext);
+            }
+        });
+    }
+
     // remove extension from file and return name
     public static String removeExtension(File f) {
         // if it's a directory, don't remove the extension
