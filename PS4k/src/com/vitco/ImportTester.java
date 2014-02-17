@@ -1,6 +1,7 @@
 package com.vitco;
 
-import com.vitco.importer.KvxImporter;
+import com.vitco.importer.AbstractImporter;
+import com.vitco.importer.QbImporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.io.IOException;
  */
 public class ImportTester {
     public static void main(String[] args) throws IOException {
-        KvxImporter kvx = new KvxImporter(new File("pawn.kvx"));
+        AbstractImporter kvx = new QbImporter(new File("nerds.qb"), "nerds");
         if (kvx.hasLoaded()) {
             System.out.println("Loading finished.");
         }

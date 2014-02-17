@@ -38,8 +38,8 @@ public class BinVoxImporter extends AbstractImporter {
     }
 
     // constructor
-    public BinVoxImporter(File file) throws IOException {
-        super(file);
+    public BinVoxImporter(File file, String name) throws IOException {
+        super(file, name);
     }
 
     // read file - returns true if file has loaded correctly

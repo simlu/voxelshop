@@ -52,12 +52,12 @@ public class FileIn  {
         return in.readDouble();
     }
 
-    public String readString(int length) throws IOException {
-        StringBuilder result = new StringBuilder();
+    public String readASCIIString(int length) throws IOException {
+        byte[] bytes = new byte[length];
         for (int i = 0; i < length; i++) {
-            result.append(in.readChar());
+            bytes[i] = in.readByte();
         }
-        return result.toString();
+        return new String(bytes, "ASCII");
     }
 
     public long readLong() throws IOException {
@@ -91,5 +91,13 @@ public class FileIn  {
     // finalize
     public void finish() throws IOException {
         in.close();
+    }
+
+    public int readIntRevUnsigned() throws IOException {
+        return readIntRev() & 0xffffff;
+    }
+
+    public int readIntUnsigned() throws IOException {
+        return readInt() & 0xffffff;
     }
 }

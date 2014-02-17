@@ -14,8 +14,9 @@ import java.util.ArrayList;
  */
 public class Kv6Importer extends AbstractImporter {
 
-    public Kv6Importer(File file) throws IOException {
-        super(file);
+    // constructor
+    public Kv6Importer(File file, String name) throws IOException {
+        super(file, name);
     }
 
     // ---------

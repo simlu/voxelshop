@@ -3,10 +3,7 @@ package com.vitco.layout.content.menu;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
-import com.vitco.importer.AbstractImporter;
-import com.vitco.importer.BinVoxImporter;
-import com.vitco.importer.Kv6Importer;
-import com.vitco.importer.KvxImporter;
+import com.vitco.importer.*;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
@@ -136,6 +133,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("binvox");
         fc_import.addFileType("kv6");
         fc_import.addFileType("kvx");
+        fc_import.addFileType("qb");
 
         fc_export.addFileType("dae");
 
@@ -172,7 +170,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext)) {
                             // -----------------
                             // import image data
-                            data.selectLayer(data.createLayer("Import"));
+                            data.selectLayer(data.createLayer(FileTools.removeExtension(toOpen)));
                             try {
                                 BufferedImage img = ImageIO.read(toOpen);
                                 importImage(img);
@@ -200,7 +198,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                         importImage(ir.read(i));
                                     }
                                 } else {
-                                    data.selectLayer(data.createLayer("Import"));
+                                    data.selectLayer(data.createLayer(FileTools.removeExtension(toOpen)));
                                     importImage(ir.read(0));
                                 }
                             } catch (IOException e1) {
@@ -214,15 +212,18 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .binvox files
                             try {
-                                AbstractImporter importer = new BinVoxImporter(toOpen);
+                                AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.removeExtension(toOpen));
                                 if (importer.hasLoaded()) {
-                                    data.selectLayer(data.createLayer("Import"));
                                     int[] center = importer.getCenter();
                                     int[] lowest = importer.getLowest();
-                                    for (int[] vox : importer.getVoxel()) {
-                                        data.addVoxelDirect(
-                                                new Color(vox[3]),
-                                                new int[] {vox[1] - center[1], -vox[0] + lowest[0], vox[2] - center[2]});
+                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
+                                        data.selectLayer(data.createLayer(layer.name));
+                                        for (int[] vox; layer.hasNext();) {
+                                            vox = layer.next();
+                                            data.addVoxelDirect(
+                                                    new Color(vox[3]),
+                                                    new int[] {vox[1] - center[1], -vox[0] + lowest[0], vox[2] - center[2]});
+                                        }
                                     }
                                     // force a refresh of the data (redraw)
                                     data.setVisible(data.getSelectedLayer(), false);
@@ -238,14 +239,17 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .kv6 files
                             try {
-                                AbstractImporter importer = new Kv6Importer(toOpen);
+                                AbstractImporter importer = new Kv6Importer(toOpen, FileTools.removeExtension(toOpen));
                                 if (importer.hasLoaded()) {
-                                    data.selectLayer(data.createLayer("Import"));
-                                    for (int[] vox : importer.getVoxel()) {
-                                        data.addVoxelDirect(
-                                                new Color(vox[3]),
-                                                new int[] {vox[0], vox[2], -vox[1]}
-                                        );
+                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
+                                        data.selectLayer(data.createLayer(layer.name));
+                                        for (int[] vox; layer.hasNext();) {
+                                            vox = layer.next();
+                                            data.addVoxelDirect(
+                                                    new Color(vox[3]),
+                                                    new int[] {vox[0], vox[2], -vox[1]}
+                                            );
+                                        }
                                     }
                                     // force a refresh of the data (redraw)
                                     data.setVisible(data.getSelectedLayer(), false);
@@ -257,18 +261,47 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             } catch (IOException e1) {
                                 errorHandler.handle(e1);
                             }
-                        }  else if ("kvx".equals(ext)) {
+                        } else if ("kvx".equals(ext)) {
                             // ----------------
                             // import .kvx files
                             try {
-                                AbstractImporter importer = new KvxImporter(toOpen);
+                                AbstractImporter importer = new KvxImporter(toOpen, FileTools.removeExtension(toOpen));
                                 if (importer.hasLoaded()) {
-                                    data.selectLayer(data.createLayer("Import"));
-                                    for (int[] vox : importer.getVoxel()) {
-                                        data.addVoxelDirect(
-                                                new Color(vox[3]),
-                                                new int[] {vox[0], vox[2], -vox[1]}
-                                        );
+                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
+                                        data.selectLayer(data.createLayer(layer.name));
+                                        for (int[] vox; layer.hasNext();) {
+                                            vox = layer.next();
+                                            data.addVoxelDirect(
+                                                    new Color(vox[3]),
+                                                    new int[] {vox[0], vox[2], -vox[1]}
+                                            );
+                                        }
+                                    }
+                                    // force a refresh of the data (redraw)
+                                    data.setVisible(data.getSelectedLayer(), false);
+                                    data.setVisible(data.getSelectedLayer(), true);
+                                    data.clearHistoryV();
+                                }
+                            } catch (FileNotFoundException e1) {
+                                errorHandler.handle(e1);
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
+                        } else if ("qb".equals(ext)) {
+                            // ----------------
+                            // import .qb files
+                            try {
+                                AbstractImporter importer = new QbImporter(toOpen, FileTools.removeExtension(toOpen));
+                                if (importer.hasLoaded()) {
+                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
+                                        data.selectLayer(data.createLayer(layer.name));
+                                        for (int[] vox; layer.hasNext();) {
+                                            vox = layer.next();
+                                            data.addVoxelDirect(
+                                                    new Color(vox[3]),
+                                                    new int[] {vox[0], -vox[1], vox[2]}
+                                            );
+                                        }
                                     }
                                     // force a refresh of the data (redraw)
                                     data.setVisible(data.getSelectedLayer(), false);

@@ -12,6 +12,23 @@ import java.util.HashMap;
  */
 public class FileTools {
 
+    // remove extension from file and return name
+    public static String removeExtension(File f) {
+        // if it's a directory, don't remove the extension
+        if (f.isDirectory()) return f.getName();
+        String name = f.getName();
+        // if it is a hidden file
+        if (name.startsWith(".")) {
+            // if there is no extension, do not remove one...
+            if (name.lastIndexOf('.') == name.indexOf('.')) return name;
+        }
+        // if there is no extension, don't do anything
+        if (!name.contains(".")) return name;
+        // Otherwise, remove the last 'extension type thing'
+        return name.substring(0, name.lastIndexOf('.'));
+    }
+
+    // reads the content of a file as string
     public static String readFileAsString(File file, ErrorHandlerInterface errorHandler){
         String result = "";
         BufferedReader br = null;

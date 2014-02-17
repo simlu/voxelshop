@@ -12,8 +12,9 @@ import java.math.BigInteger;
  * Kvx importer
  */
 public class KvxImporter extends AbstractImporter {
-    public KvxImporter(File file) throws IOException {
-        super(file);
+    // constructor
+    public KvxImporter(File file, String name) throws IOException {
+        super(file, name);
     }
 
     @Override
