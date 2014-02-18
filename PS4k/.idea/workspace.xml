@@ -6,6 +6,8 @@
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
       <artifact name="PS4k:jar" />
+      <artifact name="images" />
+      <artifact name="lib" />
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
@@ -465,7 +467,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/xml/XmlTools.class" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/util/xml/XmlTools.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/PS4k_jar/lib/jpct.jar" afterPath="$PROJECT_DIR$/out/artifacts/PS4k_jar/lib/jpct.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/webdata/lib/jpct.jar" afterPath="$PROJECT_DIR$/out/artifacts/webdata/lib/jpct.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java" afterPath="$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/importer/KvxImporter.java" afterPath="$PROJECT_DIR$/src/com/vitco/importer/KvxImporter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/Readme.txt" afterPath="$PROJECT_DIR$/out/artifacts/Readme.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java" afterPath="$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/config.xml" afterPath="$PROJECT_DIR$/out/production/PS4k/com/vitco/glue/config.xml" />
@@ -544,51 +546,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="HullManager.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java">
+      <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="80" column="0" selection-start="2874" selection-end="2874" vertical-scroll-proportion="0.0" vertical-offset="3009" max-vertical-offset="6103">
-              <folding>
-                <element signature="e#889#919#0" expanded="true" />
-                <element signature="e#1198#1228#0" expanded="true" />
-                <element signature="e#1539#1569#0" expanded="true" />
-                <element signature="e#1855#1885#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AbstractVoxelTool.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/core/modes/tools/AbstractVoxelTool.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="46" selection-start="120" selection-end="120" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2091">
+            <state line="88" column="19" selection-start="3338" selection-end="3338" vertical-scroll-proportion="0.0" vertical-offset="445" max-vertical-offset="1428">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VitcoSettings.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="KvxImporter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/vitco/importer/KvxImporter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="80" column="81" selection-start="2573" selection-end="2573" vertical-scroll-proportion="0.0" vertical-offset="777" max-vertical-offset="2108">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VitcoSettings.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="51" selection-start="1388" selection-end="1388" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2975">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="EraseTool.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/core/modes/tools/EraseTool.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="0" selection-start="1249" selection-end="1249" vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="2669">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DrawTool.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/vitco/core/modes/tools/DrawTool.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="42" selection-start="2956" selection-end="2956" vertical-scroll-proportion="0.38046795" vertical-offset="1326" max-vertical-offset="3944">
+            <state line="42" column="61" selection-start="1595" selection-end="1595" vertical-scroll-proportion="0.31129196" vertical-offset="289" max-vertical-offset="2975">
               <folding />
             </state>
           </provider>
@@ -628,7 +607,6 @@
         <option value="$PROJECT_DIR$/src/com/vitco/util/graphic/SharedImageFactory.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/graphic/GraphicTools.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/container/AbstractDrawContainer.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/Main.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/world/container/VoxelManager.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/world/container/BorderObject3D.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/world/container/TextureObject.java" />
@@ -648,7 +626,6 @@
         <option value="$PROJECT_DIR$/src/com/vitco/importer/BinVox.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/importer/Kv6.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/importer/BinVoxImporter.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/importer/KvxImporter.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/layout/content/menu/MainMenuLogic.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/importer/QbImporter.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/util/file/FileIn.java" />
@@ -659,11 +636,13 @@
         <option value="$PROJECT_DIR$/src/com/vitco/importer/ImporterTest.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/low/hull/HullManagerTest.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/world/CWorld.java" />
-        <option value="$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/modes/tools/EraseTool.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/modes/tools/DrawTool.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/core/modes/tools/AbstractVoxelTool.java" />
         <option value="$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/Main.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/importer/KvxImporter.java" />
+        <option value="$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java" />
       </list>
     </option>
   </component>
@@ -714,7 +693,7 @@
     </ignored-problems>
   </component>
   <component name="ProjectView">
-    <navigator currentView="Scope" currentSubView="Changed Files" proportions="" version="1" splitterProportion="0.5">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -867,10 +846,6 @@
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="settings">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT USER_OBJECT="Root">
@@ -889,7 +864,7 @@
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="low/hull">
+            <PATH_ELEMENT USER_OBJECT="settings">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -997,6 +972,60 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="settings" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vitco" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="importer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PS4k" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="misc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1623,7 +1652,11 @@
       <created>1392679392058</created>
       <updated>1392679392058</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="- fixed bug where voxel side did contain the wrong voxel -&gt; this caused a problem with multiple layers and overlapping voxel">
+      <created>1392745555044</created>
+      <updated>1392745555044</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -1670,8 +1703,8 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32801822" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="JProfiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21308225" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25569358" sideWeight="0.7033639" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4451158" sideWeight="0.4826284" order="1" side_tool="false" content_ui="tabs" x="139" y="-689" width="987" height="621" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2552343" sideWeight="0.7033639" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44499505" sideWeight="0.4826284" order="1" side_tool="false" content_ui="tabs" x="139" y="-689" width="987" height="621" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3262519" sideWeight="0.64309764" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" x="-140" y="-932" width="1096" height="840" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998326" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -1732,7 +1765,6 @@
       <TodoPanelSettings />
     </option>
     <option name="SHOW_FILE_HISTORY_DETAILS" value="false" />
-    <MESSAGE value="- heavy restructuring of the file/folder names in the project (this will break the pref.ser)" />
     <MESSAGE value="- restructuring (package renaming)&#10;- started working on new core for storing voxels&#10;- toggle for low/high rendering quality&#10;- delete now stays in plane when dragging (draw right click and erase tool)" />
     <MESSAGE value="- some synchronization fixes&#10;-" />
     <MESSAGE value="- software edge detection experiments&#10;- fixed old format to file loading&#10;- fixed mouse1 and mouse3 pressed at the same time issue in draw mode&#10;- removed 9x9 grid lines (except for textures)&#10;- high quality defaults to true" />
@@ -1757,7 +1789,8 @@
     <MESSAGE value="- centralized all voxel format file importer&#10;- added importer for *.kv6&#10;- added importer for *.kvx&#10;" />
     <MESSAGE value="- added importer for *.qb&#10;- import layer name now uses the file name" />
     <MESSAGE value="- fixed checking/loading problem with (old?) kv6 files&#10;- added tests for easily checking import of many files for supported import formats" />
-    <option name="LAST_COMMIT_MESSAGE" value="- fixed checking/loading problem with (old?) kv6 files&#10;- added tests for easily checking import of many files for supported import formats" />
+    <MESSAGE value="- fixed bug where voxel side did contain the wrong voxel -&gt; this caused a problem with multiple layers and overlapping voxel" />
+    <option name="LAST_COMMIT_MESSAGE" value="- fixed bug where voxel side did contain the wrong voxel -&gt; this caused a problem with multiple layers and overlapping voxel" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1785,17 +1818,6 @@
     <option name="showOnlyWarnings" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="13" selection-start="521" selection-end="521" vertical-scroll-proportion="0.29399797" vertical-offset="0" max-vertical-offset="1615">
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#2862#3336#0" expanded="false" />
-            <element signature="e#3325#3326#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/layout/WindowManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="40" column="13" selection-start="1386" selection-end="1386" vertical-scroll-proportion="-0.7436419" vertical-offset="918" max-vertical-offset="3995" />
@@ -1930,7 +1952,9 @@
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_45/src.zip!/java/lang/String.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="591" column="11" selection-start="21532" selection-end="21532" vertical-scroll-proportion="0.95523906" vertical-offset="8836" max-vertical-offset="50864" />
+        <state line="591" column="11" selection-start="21532" selection-end="21532" vertical-scroll-proportion="0.95523906" vertical-offset="8836" max-vertical-offset="50864">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.6.0_45/src.zip!/java/nio/ByteBuffer.java">
@@ -1962,13 +1986,6 @@
     <entry file="file://$PROJECT_DIR$/src/com/vitco/importer/BinVoxImporter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="13" selection-start="180" selection-end="180" vertical-scroll-proportion="0.06917599" vertical-offset="0" max-vertical-offset="2346">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/importer/KvxImporter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="233" selection-end="233" vertical-scroll-proportion="0.12105799" vertical-offset="0" max-vertical-offset="2108">
           <folding />
         </state>
       </provider>
@@ -2076,25 +2093,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="0" selection-start="2874" selection-end="2874" vertical-scroll-proportion="0.0" vertical-offset="3009" max-vertical-offset="6103">
-          <folding>
-            <element signature="e#889#919#0" expanded="true" />
-            <element signature="e#1198#1228#0" expanded="true" />
-            <element signature="e#1539#1569#0" expanded="true" />
-            <element signature="e#1855#1885#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="51" selection-start="1388" selection-end="1388" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2975">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/core/modes/tools/AbstractVoxelTool.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="46" selection-start="120" selection-end="120" vertical-scroll-proportion="0.0" vertical-offset="612" max-vertical-offset="2091">
@@ -2111,7 +2109,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/vitco/core/modes/tools/DrawTool.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="42" selection-start="2956" selection-end="2956" vertical-scroll-proportion="0.38046795" vertical-offset="1326" max-vertical-offset="3944">
+        <state line="106" column="42" selection-start="2956" selection-end="2956" vertical-scroll-proportion="1.7293998" vertical-offset="0" max-vertical-offset="3944">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/low/hull/HullManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="21" selection-start="515" selection-end="515" vertical-scroll-proportion="0.17293999" vertical-offset="0" max-vertical-offset="6103">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="19" selection-start="3338" selection-end="3338" vertical-scroll-proportion="0.0" vertical-offset="445" max-vertical-offset="1428">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/importer/KvxImporter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="81" selection-start="2573" selection-end="2573" vertical-scroll-proportion="0.0" vertical-offset="777" max-vertical-offset="2108">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/vitco/settings/VitcoSettings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="61" selection-start="1595" selection-end="1595" vertical-scroll-proportion="0.31129196" vertical-offset="289" max-vertical-offset="2975">
           <folding />
         </state>
       </provider>
