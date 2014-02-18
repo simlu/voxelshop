@@ -90,6 +90,16 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                     // added this run and we want to allow for a potential remove (!)
                     borderAdded[i].put(id, obj);
                 }
+                // also update the buffers
+                if (borderBufferAdded[i].containsKey(id)) {
+                    borderBufferAdded[i].put(id, obj);
+                }
+                if (borderBufferRemoved[i].containsKey(id)) {
+                    borderBufferRemoved[i].put(id, obj);
+                }
+                if (borderRemoved[i].containsKey(id)) {
+                    borderRemoved[i].put(id, obj);
+                }
             }
 
         } else {
