@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Importer contract for (all?) voxel formats
@@ -30,15 +31,13 @@ public abstract class AbstractImporter {
             this.name = name;
         }
 
-//        // for sanity testing
-//        private final HashSet<String> known = new HashSet<String>();
+        // for sanity testing
+        private final HashSet<String> known = new HashSet<String>();
 
         private void addVoxel(int x, int y, int z, int color) {
             voxel.add(new int[]{x,y,z,color});
-//            // for sanity testing
-//            if (!known.add(x+"_"+y+"_"+z)) {
-//                System.out.println("Error");
-//            }
+            // for sanity testing
+            assert known.add(x+"_"+y+"_"+z);
         }
 
         // ----
@@ -124,8 +123,13 @@ public abstract class AbstractImporter {
     private long cx = 0;
     private long cy = 0;
     private long cz = 0;
-    public final int[] getCenter() {
+    public final int[] getWeightedCenter() {
         return new int[] {(int) (cx/voxelCount), (int) (cy/voxelCount), (int) (cz/voxelCount)};
+    }
+
+    // the the center (determined by the boundaries)
+    public final int[] getCenter() {
+        return new int[] {Math.round(lx + (hx-lx)/2.0f), Math.round(ly + (hy-ly)/2.0f), Math.round(lz + (hz-lz)/2.0f)};
     }
 
     // --------------

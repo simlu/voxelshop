@@ -134,6 +134,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("kv6");
         fc_import.addFileType("kvx");
         fc_import.addFileType("qb");
+        fc_import.addFileType("vox");
 
         fc_export.addFileType("dae");
 
@@ -167,6 +168,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                     File toOpen = fc_import.openFile(frame);
                     if (toOpen != null) {
                         String ext = fc_import.getCurrentExt();
+                        // todo: rework import so that history can stay (!)
+                        //data.freshStart();
+                        //data.deleteLayer(data.getSelectedLayer());
                         if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext)) {
                             // -----------------
                             // import image data
@@ -177,10 +181,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             } catch (IOException e1) {
                                 errorHandler.handle(e1);
                             }
-                            // force a refresh of the data (redraw)
-                            data.setVisible(data.getSelectedLayer(), false);
-                            data.setVisible(data.getSelectedLayer(), true);
-                            data.clearHistoryV();
                         } else if ("gif".equals(ext)) {
                             // ----------------
                             // import gif image data (including frame animation)
@@ -204,17 +204,13 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             } catch (IOException e1) {
                                 errorHandler.handle(e1);
                             }
-                            // force a refresh of the data (redraw)
-                            data.setVisible(data.getSelectedLayer(), false);
-                            data.setVisible(data.getSelectedLayer(), true);
-                            data.clearHistoryV();
                         } else if ("binvox".equals(ext)) {
                             // ----------------
                             // import .binvox files
                             try {
                                 AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.removeExtension(toOpen));
                                 if (importer.hasLoaded()) {
-                                    int[] center = importer.getCenter();
+                                    int[] center = importer.getWeightedCenter();
                                     int[] lowest = importer.getLowest();
                                     for (AbstractImporter.Layer layer : importer.getVoxel()) {
                                         data.selectLayer(data.createLayer(layer.name));
@@ -225,10 +221,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                                     new int[] {vox[1] - center[1], -vox[0] + lowest[0], vox[2] - center[2]});
                                         }
                                     }
-                                    // force a refresh of the data (redraw)
-                                    data.setVisible(data.getSelectedLayer(), false);
-                                    data.setVisible(data.getSelectedLayer(), true);
-                                    data.clearHistoryV();
                                 }
                             } catch (FileNotFoundException e1) {
                                 errorHandler.handle(e1);
@@ -251,10 +243,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                             );
                                         }
                                     }
-                                    // force a refresh of the data (redraw)
-                                    data.setVisible(data.getSelectedLayer(), false);
-                                    data.setVisible(data.getSelectedLayer(), true);
-                                    data.clearHistoryV();
                                 }
                             } catch (FileNotFoundException e1) {
                                 errorHandler.handle(e1);
@@ -277,10 +265,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                             );
                                         }
                                     }
-                                    // force a refresh of the data (redraw)
-                                    data.setVisible(data.getSelectedLayer(), false);
-                                    data.setVisible(data.getSelectedLayer(), true);
-                                    data.clearHistoryV();
                                 }
                             } catch (FileNotFoundException e1) {
                                 errorHandler.handle(e1);
@@ -303,10 +287,30 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                             );
                                         }
                                     }
-                                    // force a refresh of the data (redraw)
-                                    data.setVisible(data.getSelectedLayer(), false);
-                                    data.setVisible(data.getSelectedLayer(), true);
-                                    data.clearHistoryV();
+                                }
+                            } catch (FileNotFoundException e1) {
+                                errorHandler.handle(e1);
+                            } catch (IOException e1) {
+                                errorHandler.handle(e1);
+                            }
+                        } else if ("vox".equals(ext)) {
+                            // ----------------
+                            // import .vox files
+                            try {
+                                AbstractImporter importer = new VoxImporter(toOpen, FileTools.removeExtension(toOpen));
+                                if (importer.hasLoaded()) {
+                                    int[] center = importer.getWeightedCenter();
+                                    int[] lowest = importer.getLowest();
+                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
+                                        data.selectLayer(data.createLayer(layer.name));
+                                        for (int[] vox; layer.hasNext();) {
+                                            vox = layer.next();
+                                            data.addVoxelDirect(
+                                                    new Color(vox[3]),
+                                                    new int[] {-vox[0] + center[0], -vox[2] + lowest[2], vox[1] - center[1]}
+                                            );
+                                        }
+                                    }
                                 }
                             } catch (FileNotFoundException e1) {
                                 errorHandler.handle(e1);
@@ -314,6 +318,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 errorHandler.handle(e1);
                             }
                         }
+
+                        // force a refresh of the data (redraw)
+                        data.setVisible(data.getSelectedLayer(), false);
+                        data.setVisible(data.getSelectedLayer(), true);
+                        data.clearHistoryV();
                     }
                 }
             }

@@ -54,8 +54,8 @@ public class FileIn  {
 
     public String readASCIIString(int length) throws IOException {
         byte[] bytes = new byte[length];
-        for (int i = 0; i < length; i++) {
-            bytes[i] = in.readByte();
+        if (length != in.read(bytes)) {
+            return null;
         }
         return new String(bytes, "ASCII");
     }
@@ -99,5 +99,13 @@ public class FileIn  {
 
     public int readIntUnsigned() throws IOException {
         return readInt() & 0xffffff;
+    }
+
+    public long readLongRev() throws IOException {
+        return Long.reverseBytes(readLong());
+    }
+
+    public boolean skipBytes(int mainContentSize) throws IOException {
+        return mainContentSize == in.skip(mainContentSize);
     }
 }

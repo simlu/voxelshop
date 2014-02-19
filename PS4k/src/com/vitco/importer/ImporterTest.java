@@ -32,18 +32,19 @@ public class ImporterTest {
 
     @Test
     public void testAllImporter() throws Exception {
+        doTest("C:\\Users\\flux\\Desktop\\vox", "vox", VoxImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\binvox", "binvox", BinVoxImporter.class);
-        doTest("C:\\Users\\flux\\Desktop\\kv6", "kv6", Kv6Importer.class);
         doTest("C:\\Users\\flux\\Desktop\\kvx", "kvx", KvxImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\qb", "qb", QbImporter.class);
+        doTest("C:\\Users\\flux\\Desktop\\kv6", "kv6", Kv6Importer.class);
     }
 
     @Test
     public void testNewImporter() throws Exception {
-//        AbstractImporter kvx = new Kv6Importer(new File("cac.kv6"), "Import");
-//        if (kvx.hasLoaded()) {
-//            System.out.println("Loading finished.");
-//        }
+        AbstractImporter importer = new Kv6Importer(new File("C:\\Users\\flux\\Desktop\\kv6\\prefab_sniper_tower.kv6"), "Import");
+        if (importer.hasLoaded()) {
+            System.out.println("Loading finished.");
+        }
     }
 
 }

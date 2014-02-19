@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Kv6 importer
@@ -72,24 +74,35 @@ public class Kv6Importer extends AbstractImporter {
             sumxoffset += xoff;
         }
         // read the xyoffset
-        int lastZ = 0;
+        Integer lastZ = null;
         int c = 0;
         int invisibleVoxel = 0;
+        ArrayList<int[]> addedVoxelList = new ArrayList<int[]>();
         for (int x = 0; x < sx; x++) {
             for (int y = 0; y < sy; y++) {
                 int xyoff = fileIn.readShortRevUnsigned();
                 sumxyoffset += xyoff;
+                // create list first, order it and then check which voxel are missing (testing)
                 for (int newC = c + xyoff; c < newC; c++) {
                     int[] vox = voxel.remove(0); // alternative "voxel.get(c)"
+                    addedVoxelList.add(vox);
                     addVoxel(x - cx, y - cy, vox[0] - cz, vox[1]);
                     // some files don't count invisible voxel, so we need to track them
                     // for the sanity check
                     if (vox[2] == 0) {
                         invisibleVoxel++;
                     }
+                }
+                Collections.sort(addedVoxelList, new Comparator<int[]>() {
+                    @Override
+                    public int compare(int[] o1, int[] o2) {
+                        return (int)Math.signum(o1[0] - o2[0]);
+                    }
+                });
+                for (int[] vox : addedVoxelList) {
                     // fill in voxels "in between"
                     BigInteger bigInteger = BigInteger.valueOf(vox[2]);
-                    if (!bigInteger.testBit(4)) {
+                    if (lastZ != null && !bigInteger.testBit(4)) {
                         for (int i = lastZ + 1; i < vox[0]; i++) {
                             addVoxel(x - cx, y - cy, i - cz, vox[1]);
                         }
@@ -98,6 +111,8 @@ public class Kv6Importer extends AbstractImporter {
                         lastZ = vox[0];
                     }
                 }
+                lastZ = null;
+                addedVoxelList.clear();
             }
         }
 
