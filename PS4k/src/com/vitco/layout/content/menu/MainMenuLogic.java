@@ -126,15 +126,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // initialize the filter
         fc_vsd.addFileType("vsd", "PS4k File");
 
-        fc_import.addFileType("png");
-        fc_import.addFileType("jpg");
-        fc_import.addFileType("jpeg");
-        fc_import.addFileType("gif");
+        fc_import.addFileType(new String[] {"png", "jpg", "jpeg", "bmp"}, "Image");
+        fc_import.addFileType("gif", "Animated Image");
         fc_import.addFileType("binvox");
         fc_import.addFileType("kv6");
         fc_import.addFileType("kvx");
-        fc_import.addFileType("qb");
-        fc_import.addFileType("vox");
+        fc_import.addFileType("qb", "Qubicle Binary");
+        fc_import.addFileType("vox", "Voxlap Engine File");
+        fc_import.addFileType("vox", "MagicaVoxel File");
+        fc_import.addFileType("vox", "Vox Game File");
 
         fc_export.addFileType("dae");
 
@@ -171,7 +171,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         // todo: rework import so that history can stay (!)
                         //data.freshStart();
                         //data.deleteLayer(data.getSelectedLayer());
-                        if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext)) {
+                        if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext) || "bmp".equals(ext)) {
                             // -----------------
                             // import image data
                             data.selectLayer(data.createLayer(FileTools.removeExtension(toOpen)));

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class CFileDialog extends JFileChooser {
 
     // list of files
-    private final ArrayList<GeneralFilter> accepted = new ArrayList<GeneralFilter>();
+    private final ArrayList<ExtensionFileFilter> accepted = new ArrayList<ExtensionFileFilter>();
 
     // constructor
     public CFileDialog() {
@@ -30,6 +30,15 @@ public class CFileDialog extends JFileChooser {
     // add a file type
     public void addFileType(String ext, String name) {
         accepted.add(new GeneralFilter(ext.toLowerCase(), name));
+    }
+
+    // add a file type
+    public void addFileType(String[] exts, String name) {
+        ArrayList<ExtensionFileFilter> filterList = new ArrayList<ExtensionFileFilter>();
+        for (String ext : exts) {
+            filterList.add(new GeneralFilter(ext, ext.toUpperCase()));
+        }
+        accepted.add(new CumulativeGeneralFilter(filterList, name));
     }
 
     // select an existing file
@@ -84,7 +93,7 @@ public class CFileDialog extends JFileChooser {
         resetChoosableFileFilters();
         // create general file chooser that holds all file types
         if (!accepted.isEmpty()) {
-            for (GeneralFilter filter : accepted) {
+            for (ExtensionFileFilter filter : accepted) {
                 addChoosableFileFilter(filter);
             }
             if (allowAllFiles) {
@@ -115,23 +124,43 @@ public class CFileDialog extends JFileChooser {
 
     // helper - filter class for multiple endings
     private final class CumulativeGeneralFilter extends ExtensionFileFilter {
-        private final ArrayList<String> exts = new ArrayList<String>();
+        private final ArrayList<ExtensionFileFilter> filters;
 
-        private CumulativeGeneralFilter(ArrayList<GeneralFilter> filters) {
-            for (GeneralFilter filter : filters) {
-                exts.add(filter.getExt());
+        private String desc = "All Files (*.*)";
+
+        // constructor
+        private CumulativeGeneralFilter(ArrayList<ExtensionFileFilter> filters) {
+            this.filters = filters;
+        }
+
+        // constructor
+        public CumulativeGeneralFilter(ArrayList<ExtensionFileFilter> filters, String name) {
+            this(filters);
+            // generate new name
+            boolean first = true;
+            StringBuilder builder = new StringBuilder();
+            builder.append(name).append(" (");
+            for (ExtensionFileFilter filter : filters) {
+                builder.append(first ? "" : ", ").append("*.").append(filter.getExt());
+                first = false;
             }
+            builder.append(")");
+            this.desc = builder.toString();
         }
 
         @Override
         public final String getExt() {
-            String extension = "";
-            String fileName = getSelectedFile().getName();
-            int i = fileName.lastIndexOf('.');
-            if (i > 0) {
-                extension = fileName.substring(i+1);
+            File selectedFile = getSelectedFile();
+            if (selectedFile != null) {
+                String extension = "";
+                String fileName = selectedFile.getName();
+                int i = fileName.lastIndexOf('.');
+                if (i > 0) {
+                    extension = fileName.substring(i+1);
+                }
+                return extension;
             }
-            return extension;
+            return null;
         }
 
         @Override
@@ -140,9 +169,8 @@ public class CFileDialog extends JFileChooser {
             if (f.isDirectory()) {
                 return true;
             } else {
-                String name = f.getName();
-                for (String ext : exts) {
-                    if (name.endsWith("." + ext)) {
+                for (ExtensionFileFilter filter : filters) {
+                    if (filter.accept(f)) {
                         return true;
                     }
                 }
@@ -152,7 +180,7 @@ public class CFileDialog extends JFileChooser {
 
         @Override
         public String getDescription() {
-            return "All Files (*.*)";
+            return desc;
         }
     }
 
