@@ -1,11 +1,11 @@
 package com.vitco.importer;
 
 import com.vitco.util.file.FileIn;
+import com.vitco.util.file.RandomAccessFileIn;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.math.BigInteger;
 
 /**
@@ -18,7 +18,7 @@ public class KvxImporter extends AbstractImporter {
     }
 
     @Override
-    protected boolean read(FileIn fileIn, RandomAccessFile raf) throws IOException {
+    protected boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException {
         fileIn.readIntRev(); //int numbytes = fileIn.readIntRev();
 
         // read the dimensions
@@ -76,9 +76,9 @@ public class KvxImporter extends AbstractImporter {
         raf.seek(raf.length() - 768);
         int[] colPalette = new int[256];
         for (int i = 0; i < 256; i++) {
-            int r = Math.min(255,Math.max(0,Math.round((raf.read() * 255)/63f)));
-            int g = Math.min(255,Math.max(0,Math.round((raf.read() * 255)/63f)));
-            int b = Math.min(255,Math.max(0,Math.round((raf.read() * 255)/63f)));
+            int r = Math.min(255, Math.max(0, Math.round((raf.read() * 255) / 63f)));
+            int g = Math.min(255, Math.max(0, Math.round((raf.read() * 255) / 63f)));
+            int b = Math.min(255, Math.max(0, Math.round((raf.read() * 255) / 63f)));
             colPalette[i] = new Color(r, g, b).getRGB();
         }
 

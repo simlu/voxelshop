@@ -20,6 +20,7 @@ public class SaveDataInputStream extends DataInputStream {
         super(in);
     }
 
+    // returns null if eof is reached
     public String readLineSave() throws IOException {
 
         // todo: is this save? - readLine() is not, why?
@@ -31,8 +32,9 @@ public class SaveDataInputStream extends DataInputStream {
             c1 = in.read();
             switch (c1) {
                 case '\n':
-                case -1:
                     break loop;
+                case -1:
+                    return null;
                 case '\r':
                     c2 = in.read();
                     if (c2 != '\n' && c2 != -1) {

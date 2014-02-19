@@ -1,11 +1,12 @@
 package com.vitco.importer;
 
 import com.vitco.util.file.FileIn;
+import com.vitco.util.file.RandomAccessFileIn;
+import com.vitco.util.misc.NumberTools;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class VoxImporter extends AbstractImporter {
 
     // read file - returns true if file has loaded correctly
     @Override
-    protected boolean read(FileIn fileIn, RandomAccessFile raf) throws IOException {
+    protected boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException {
 
         // check magic number
         byte[] check = new byte[4];
@@ -51,17 +52,108 @@ public class VoxImporter extends AbstractImporter {
         String checkSum = new String(check, "ASCII");
         if (!checkSum.equals("VOX ")) {
 
+            // this might be the voxel format from the voxlap engine (slab6)
+            raf.seek(0);
+            int sx = Integer.reverseBytes(raf.readInt());
+            int sy = Integer.reverseBytes(raf.readInt());
+            int sz = Integer.reverseBytes(raf.readInt());
+
+            if (sx > 512 || sy > 512 || sz > 512 || sx <= 0 || sy <= 0 || sz <= 0) {
+
+                // =====================
+                // vox-game.com format (voxel and config file)
+                // =====================
+
+                String[] line = fileIn.readLine().split(" ");
+                if (line.length == 3) {
+                    sx = NumberTools.parseInt(line[0], 0);
+                    sy = NumberTools.parseInt(line[1], 0);
+                    sz = NumberTools.parseInt(line[2], 0);
+                } else if (line.length == 2) {
+                    // check if this is a config file
+                    if (line[0].equals("skeletonScale:")) {
+                        float scale = NumberTools.parseFloat(line[1], 1);
+                        // sanity check
+                        if (!fileIn.readLine().equals("")) {
+                            return false;
+                        }
+                        // read
+                        String scaleLine;
+                        float offx = 0, offy = 0, offz = 0;
+                        while ((scaleLine = fileIn.readLine()) != null) {
+                            if (scaleLine.length() > 8 && scaleLine.contains("Scale: ")) {
+                                // extract name
+                                String name = scaleLine.substring(0, scaleLine.indexOf(" ") - 6);
+                                // extract offsets
+                                String[] strOffx = fileIn.readLine().split(" ");
+                                if (strOffx.length == 2) {
+                                    offx = NumberTools.parseFloat(strOffx[1], 0)/(10 * scale);
+                                }
+                                String[] strOffy = fileIn.readLine().split(" ");
+                                if (strOffy.length == 2) {
+                                    offy = NumberTools.parseFloat(strOffy[1], 0)/(0.13f * scale);
+                                }
+                                String[] strOffz = fileIn.readLine().split(" ");
+                                if (strOffz.length == 2) {
+                                    offz = NumberTools.parseFloat(strOffz[1], 0)/(0.05f * scale);
+                                }
+                                //System.out.println(offx + " " + offy + " " + offz);
+                                // read the file and import voxel
+                                if (name.equals("feet")) {
+                                    name = "foot";
+                                } else if (name.equals("hands")) {
+                                    name = "hand";
+                                }
+                                File partFile = new File(fileIn.getInternalFile().getParent() + "\\" + name + ".vox");
+                                if (partFile.exists()) {
+                                    VoxImporter voxImporter = new VoxImporter(partFile, name);
+                                    if (voxImporter.hasLoaded()) {
+                                        for (Layer layer : voxImporter.getVoxel()) {
+                                            addLayer(layer.name);
+                                            for (int[] vox; layer.hasNext();) {
+                                                vox = layer.next();
+                                                addVoxel(vox[0] + Math.round(offx), vox[1] + Math.round(offz), vox[2] + Math.round(offy), vox[3]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                // sanity check
+                if (sx > 512 || sy > 512 || sz > 512 || sx <= 0 || sy <= 0 || sz <= 0) {
+                    return false;
+                }
+                // check that this line is empty
+                if (!fileIn.readLine().equals("")) {
+                    return false;
+                }
+                // read to next space
+                for (int y = 0; y < sy; y++) {
+                    for (int x = 0; x < sx; x++) {
+                        for (int z = 0; z < sz; z++) {
+
+                            int visible = NumberTools.parseInt(fileIn.readSpaceString(), 0);
+                            int r = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
+                            int g = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
+                            int b = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
+                            if (visible == 1) {
+                                addVoxel(x,z,y, new Color(r,g,b).getRGB());
+                            }
+                        }
+                    }
+                }
+                return true;
+            } else {
+                // read over integer values
+                fileIn.skipBytes(12);
+            }
+
             // =====================
             // VOXLAP ENGINE *.vox FORMAT
             // =====================
-
-            // this might be the voxel format from the voxlap engine (slab6)
-            int sx = fileIn.readIntRev();
-            int sy = fileIn.readIntRev();
-            int sz = fileIn.readIntRev();
-            if (sx > 512 || sy > 512 || sz > 512) {
-                return false;
-            }
 
             // Read the color palette (always at the end of the file)
             raf.seek(raf.length() - 768);
@@ -89,7 +181,7 @@ public class VoxImporter extends AbstractImporter {
             return true;
         } else {
             // skip over chechsum
-            fileIn.readInt();
+            fileIn.skipBytes(4);
         }
 
         // =====================

@@ -1,10 +1,10 @@
 package com.vitco.importer;
 
 import com.vitco.util.file.FileIn;
+import com.vitco.util.file.RandomAccessFileIn;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -139,12 +139,12 @@ public abstract class AbstractImporter {
         activeLayer = new Layer(layerName);
         layerList.add(activeLayer);
         FileIn fileIn = new FileIn(file);
-        RandomAccessFile raf = new RandomAccessFile(file, "r");
+        RandomAccessFileIn raf = new RandomAccessFileIn(file, "r");
         hasLoaded = read(fileIn, raf);
         raf.close();
         fileIn.finish();
     }
 
     // read file - returns true if file has loaded correctly
-    protected abstract boolean read(FileIn fileIn, RandomAccessFile raf) throws IOException;
+    protected abstract boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException;
 }

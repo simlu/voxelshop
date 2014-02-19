@@ -1,11 +1,11 @@
 package com.vitco.importer;
 
 import com.vitco.util.file.FileIn;
+import com.vitco.util.file.RandomAccessFileIn;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class Kv6Importer extends AbstractImporter {
     // ---------
 
     @Override
-    protected boolean read(FileIn fileIn, RandomAccessFile raf) throws IOException {
+    protected boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException {
         // check that this is a valid file (header correct)
         if (fileIn.readIntRev() != 0x6c78764b) {
             return false;
@@ -86,6 +86,7 @@ public class Kv6Importer extends AbstractImporter {
                 for (int newC = c + xyoff; c < newC; c++) {
                     int[] vox = voxel.remove(0); // alternative "voxel.get(c)"
                     addedVoxelList.add(vox);
+//                    System.out.println("A:" + x + " " + y + " " + vox[0]);
                     addVoxel(x - cx, y - cy, vox[0] - cz, vox[1]);
                     // some files don't count invisible voxel, so we need to track them
                     // for the sanity check
@@ -104,11 +105,14 @@ public class Kv6Importer extends AbstractImporter {
                     BigInteger bigInteger = BigInteger.valueOf(vox[2]);
                     if (lastZ != null && !bigInteger.testBit(4)) {
                         for (int i = lastZ + 1; i < vox[0]; i++) {
+//                            System.out.println("E:" + x + " " + y + " " + i);
                             addVoxel(x - cx, y - cy, i - cz, vox[1]);
                         }
                     }
                     if (!bigInteger.testBit(5)) {
                         lastZ = vox[0];
+                    } else {
+                        lastZ = null;
                     }
                 }
                 lastZ = null;

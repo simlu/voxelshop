@@ -1,11 +1,11 @@
 package com.vitco.importer;
 
 import com.vitco.util.file.FileIn;
+import com.vitco.util.file.RandomAccessFileIn;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 public class BinVoxImporter extends AbstractImporter {
 
@@ -44,7 +44,7 @@ public class BinVoxImporter extends AbstractImporter {
 
     // read file - returns true if file has loaded correctly
     @Override
-    protected boolean read(FileIn fileIn, RandomAccessFile raf) throws IOException {
+    protected boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException {
         // header
         String line = fileIn.readLine();
         if (!line.startsWith("#binvox")) { // not a bin vox format

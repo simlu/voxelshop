@@ -1,11 +1,11 @@
 package com.vitco.importer;
 
 import com.vitco.util.file.FileIn;
+import com.vitco.util.file.RandomAccessFileIn;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 
 /**
@@ -22,7 +22,7 @@ public class QbImporter extends AbstractImporter {
     private static final int NEXTSLICEFLAG = 6;
 
     @Override
-    protected boolean read(FileIn fileIn, RandomAccessFile raf) throws IOException {
+    protected boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException {
         fileIn.readIntRevUnsigned(); //int version = fileIn.readIntRevUnsigned();
         //System.out.println("version: " + version);
         int colorFormat = fileIn.readIntRevUnsigned();

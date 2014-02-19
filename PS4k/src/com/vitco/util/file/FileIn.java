@@ -12,9 +12,15 @@ public class FileIn  {
 
     private final SaveDataInputStream in;
 
+    private final File file;
+    public final File getInternalFile() {
+        return file;
+    }
+
     // constructor
     public FileIn(File file) throws FileNotFoundException {
         in = new SaveDataInputStream(new FileInputStream(file));
+        this.file = file;
     }
 
     // constructor
@@ -58,6 +64,18 @@ public class FileIn  {
             return null;
         }
         return new String(bytes, "ASCII");
+    }
+
+    // read space terminated string
+    public String readSpaceString() throws java.io.IOException {
+        String rtn = "";
+        int ch;
+        do {
+            ch = in.read();
+            if (ch != 32 && ch != -1)
+                rtn += (char)ch;
+        } while (ch != 32 && ch != -1);
+        return ch != -1 ? rtn : null;
     }
 
     public long readLong() throws IOException {
