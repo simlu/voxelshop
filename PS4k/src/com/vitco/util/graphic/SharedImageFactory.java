@@ -10,12 +10,14 @@ import java.util.HashMap;
  * Provides static access to images by size. The images are shares and the process
  * that uses them is responsible for cleaning them up when they are no longer needed.
  *
- * Note: The TiledImages are filled with zeros and expected to be restored to that state.
+ * Note: The shared TiledImages are filled with zeros and expected to be restored to that state.
  *
- * Note: The BufferedImages are not expected to have any filling.
+ * Note: The shared BufferedImages are not expected to have any filling.
  */
 public class SharedImageFactory {
 
+    // ===============
+    // todo: remove
     // prevent instantiation
     private SharedImageFactory() {}
 
@@ -37,6 +39,7 @@ public class SharedImageFactory {
     public static boolean isTiledImageAllocated(int w, int h) {
         return tiledImageBuffer.containsKey(w + "_" + h);
     }
+    // ===============
 
     // holds all the shared images
     private final static HashMap<String, BufferedImage> bufferedImageBuffer = new HashMap<String, BufferedImage>();

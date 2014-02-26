@@ -15,7 +15,7 @@
         <entry key="property.analysisEffortLevel" value="default" />
         <entry key="property.analyzeAfterCompile" value="false" />
         <entry key="property.annotationGutterIconEnabled" value="true" />
-        <entry key="property.annotationSuppressWarningsClass" value="edu.umd.cs.findbugs.annotations.SuppressWarnings" />
+        <entry key="property.annotationSuppressWarningsClass" value="edu.umd.cs.findbugs.annotations.SuppressFBWarnings" />
         <entry key="property.annotationTextRangeMarkupEnabled" value="true" />
         <entry key="property.exportAsHtml" value="true" />
         <entry key="property.exportAsXml" value="true" />
@@ -46,6 +46,7 @@
         <entry key="CheckCalls" value="false" />
         <entry key="CheckExpectedWarnings" value="false" />
         <entry key="CheckImmutableAnnotation" value="true" />
+        <entry key="CheckRelaxingNullnessAnnotation" value="true" />
         <entry key="CheckTypeQualifiers" value="true" />
         <entry key="CloneIdiom" value="true" />
         <entry key="ComparatorIdiom" value="true" />

@@ -1,11 +1,10 @@
 package com.vitco.export;
 
 import com.vitco.core.data.container.Voxel;
-import com.vitco.low.triangulate.Grid2Tri;
-import com.vitco.util.graphic.SharedImageFactory;
-import org.jaitools.imageutils.ImageUtils;
+import com.vitco.low.triangulate.Grid2TriMono;
+import com.vitco.low.triangulate.Grid2TriNaiveGreedy;
+import com.vitco.low.triangulate.Grid2TriPolyFast;
 
-import javax.media.jai.TiledImage;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,11 +71,18 @@ public class ExportWorld {
         }
     }
 
+    // to reference the different algorithms
+    public static final int ALGORITHM_POLY2TRI = 0;
+    public static final int ALGORITHM_GREEDY = 1;
+    public static final int ALGORITHM_MONO = 2;
+    public static final int ALGORITHM_MONO_SAVE = 3;
+
     // build the sides and returns the total and
     // the (minimal possible) reduced number of triangles
-    public int[] analyzeTriCount() {
+    public int[] analyzeTriCount(int algorithmid) {
         int triCount = 0;
         int triCountRaw = 0;
+        long time = 0;
         // for all sides
         for (int i = 0; i < 6; i++) {
             // holds the sides per "slice"
@@ -110,27 +116,49 @@ public class ExportWorld {
                 for (Map.Entry<Integer, ArrayList<Point>> entry : polygons.entrySet()) {
                     int w = max2 - min2 + 1;
                     int h = max3 - min3 + 1;
-                    boolean isAllocated = SharedImageFactory.isTiledImageAllocated(w, h);
-                    TiledImage src;
-                    if (isAllocated) {
-                        src = SharedImageFactory.getTiledImage(w, h);
-                    } else {
-                        src = ImageUtils.createConstantImage(w, h, 0);
-                    }
-                    for (Point point : entry.getValue()) {
-                        src.setSample(point.x - min2, point.y - min3, 0, 1);
-                    }
-                    triCount += Grid2Tri.triangulate(Grid2Tri.doVectorize(src)).size();
-                    // cleanup
-                    if (isAllocated) {
-                        for (Point point : entry.getValue()) {
-                            src.setSample(point.x - min2, point.y - min3, 0, 0);
-                        }
+
+                    switch (algorithmid) {
+                        case 0: // poly2tri (will produce no t-junction problems)
+                            boolean[][] dataPoly2Tri = new boolean[w][h];
+                            for (Point point : entry.getValue()) {
+                                dataPoly2Tri[point.x - min2][point.y - min3] = true;
+                            }
+                            time -= System.currentTimeMillis();
+                            triCount += Grid2TriPolyFast.triangulate(Grid2TriPolyFast.convert(dataPoly2Tri)).size();
+                            time += System.currentTimeMillis();
+                            break;
+                        case 1: // greedy (will produce many t-junction problems)
+                            boolean[][] dataGreedy = new boolean[w][h];
+                            for (Point point : entry.getValue()) {
+                                dataGreedy[point.x - min2][point.y - min3] = true;
+                            }
+                            time -= System.currentTimeMillis();
+                            triCount += Grid2TriNaiveGreedy.triangulate(dataGreedy).size();
+                            time += System.currentTimeMillis();
+                            break;
+                        case 2: // mono  (will produce some t-junction problems)
+                            boolean[][] dataMono = new boolean[w][h];
+                            for (Point point : entry.getValue()) {
+                                dataMono[point.x - min2][point.y - min3] = true;
+                            }
+                            time -= System.currentTimeMillis();
+                            triCount += Grid2TriMono.triangulate(dataMono, false).size();
+                            time += System.currentTimeMillis();
+                            break;
+                        default: // mono (will only produce t-junction problems in 3D)
+                            boolean[][] dataMonoSave = new boolean[w][h];
+                            for (Point point : entry.getValue()) {
+                                dataMonoSave[point.x - min2][point.y - min3] = true;
+                            }
+                            time -= System.currentTimeMillis();
+                            triCount += Grid2TriMono.triangulate(dataMonoSave, true).size();
+                            time += System.currentTimeMillis();
+                            break;
                     }
 
                 }
             }
         }
-        return new int[] {triCount, triCountRaw};
+        return new int[] {triCount, triCountRaw, (int) (time)};
     }
 }

@@ -149,8 +149,14 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
                     public void performAction() {
                         console.addLine("Computing \"Reduced Triangle Count\"...");
                         ExportWorld exportWorld = new ExportWorld(data.getVisibleLayerVoxel());
-                        int[] countInfo = exportWorld.analyzeTriCount();
-                        console.addLine("Reduced Triangle Count: " + countInfo[0] + " (" + countInfo[1] + ")");
+                        int[] countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_GREEDY);
+                        console.addLine("Naive Greedy Meshing: " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
+                        countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_MONO);
+                        console.addLine("Monotone Meshing: " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
+                        countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_MONO_SAVE);
+                        console.addLine("Monotone Meshing (Save in 2D): " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
+                        countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_POLY2TRI);
+                        console.addLine("Poly2Tri Meshing: " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
                     }
                 });
             }

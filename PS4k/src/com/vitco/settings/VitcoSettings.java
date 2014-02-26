@@ -35,7 +35,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
-    public static final String VERSION_ID = "1.3.35";
+    public static final String VERSION_ID = "1.3.37";
     // version id
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
 
@@ -160,9 +160,9 @@ public final class VitcoSettings {
     public static final int MAX_VOXEL_COUNT_PER_LAYER = 20000;
 
     // grid size for triangulation
-    public static final int TRI_GRID_SIZE = 9;
+    public static final int TRI_GRID_SIZE = 13;
     //offset
-    public static final int TRI_GRID_OFFSET = 4;
+    public static final int TRI_GRID_OFFSET = 6;
 
     // the corners of polygon triangulation are shifted into this direction
     // to reduce see through edges

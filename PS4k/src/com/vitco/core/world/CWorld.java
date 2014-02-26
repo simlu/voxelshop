@@ -4,13 +4,12 @@ import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.container.BorderObject3D;
 import com.vitco.core.world.container.VoxelManager;
 import com.vitco.low.hull.HullManager;
-import com.vitco.low.triangulate.Grid2Tri;
+import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.SharedImageFactory;
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
-import javax.media.jai.TiledImage;
 import java.awt.*;
 import java.util.*;
 
@@ -37,17 +36,6 @@ public class CWorld extends AbstractCWorld {
         // jvm will convert this to native code
         // => so there is no lag later on
         Poly2Tri.warmup();
-        // warmup, part 2
-        TiledImage src = SharedImageFactory.getTiledImage(1, 1);
-        src.setSample(0, 0, 0, 1);
-        Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
-        src.setSample(0, 0, 0, 0);
-        // initialize the shared images (for conversion into polygon)
-        for (int w = 1; w < VitcoSettings.TRI_GRID_SIZE + 1; w++) {
-            for (int h = 1; h < VitcoSettings.TRI_GRID_SIZE + 1; h++) {
-                SharedImageFactory.getTiledImage(w, h);
-            }
-        }
         // initialize the buffered images (for textures)
         for (int e1 = 2; e1 <= 4; e1++) { // from 4 (=2^2) to 16 (=2^4)
             int d1 = (int)Math.pow(2, e1);
@@ -63,12 +51,6 @@ public class CWorld extends AbstractCWorld {
                 SharedImageFactory.getBufferedImage(d1, d2);
             }
         }
-
-//        // initialize the buffered images (for textures)
-//        for (int e = 2; e <= 9; e++) { // from 4 (=2^2) to 512 (=2^9)
-//            int d = (int)Math.pow(2, e);
-//            SharedImageFactory.getBufferedImage(d, d);
-//        }
     }
 
     // manages the voxel "hull" (allows for easy querying of hull changes)
@@ -182,21 +164,39 @@ public class CWorld extends AbstractCWorld {
                         int h = max2 - min2 + 1;
 
                         // --------------
-                        // build image to compute triangle overlay
-                        TiledImage src = SharedImageFactory.getTiledImage(w, h);
+                        ArrayList<DelaunayTriangle> tris = new ArrayList<DelaunayTriangle>();
+                        boolean[][] data = new boolean[w][h];
                         for (Voxel face : faceList) {
                             int[] pos2D = VoxelManager.convert3D2D(face, axis);
-                            src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 1);
+                            data[pos2D[0] - min1][pos2D[1] - min2] = true;
+//                            // consider textured faces separately (needed?)
+//                            if (face.getTexture() == null) {
+//                                data[pos2D[0] - min1][pos2D[1] - min2] = true;
+//                            } else {
+//                                int pX = pos2D[0] - min1;
+//                                int pY = pos2D[1] - min2;
+//                                // add the textured faces separately
+//                                tris.add(new DelaunayTriangle(new PolygonPoint(pX, pY), new PolygonPoint(pX + 1, pY), new PolygonPoint(pX, pY + 1)));
+//                                tris.add(new DelaunayTriangle(new PolygonPoint(pX + 1, pY), new PolygonPoint(pX + 1, pY + 1), new PolygonPoint(pX, pY + 1)));
+//                            }
                         }
-                        // triangulate the image
-                        ArrayList<DelaunayTriangle> tris = Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
-                        // reset image
-                        for (Voxel face : faceList) {
-                            // todo optimize (use previous values)
-                            int[] pos2D = VoxelManager.convert3D2D(face, axis);
-                            src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 0);
-                        }
+                        tris.addAll(Grid2TriPolyFast.triangulate(Grid2TriPolyFast.convert(data)));
                         // --------------
+                        // todo: remove
+//                        // build image to compute triangle overlay
+//                        TiledImage src = SharedImageFactory.getTiledImage(w, h);
+//                        for (Voxel face : faceList) {
+//                            int[] pos2D = VoxelManager.convert3D2D(face, axis);
+//                            src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 1);
+//                        }
+//                        // triangulate the image
+//                        ArrayList<DelaunayTriangle> tris = Grid2Tri.triangulate(Grid2Tri.doVectorize(src));
+//                        // reset image
+//                        for (Voxel face : faceList) {
+//                            int[] pos2D = VoxelManager.convert3D2D(face, axis);
+//                            src.setSample(pos2D[0] - min1, pos2D[1] - min2, 0, 0);
+//                        }
+//                        // --------------
 
                         // build the plane
                         BorderObject3D box = new BorderObject3D(
