@@ -67,8 +67,8 @@ public final class Grid2TriPolySlow {
     // where the second 4 is interpolated with the interp value from above
     // Note: The interpolation is done into the "correct" direction to prevent
     // overlap of the areas that are described by the two arraylists
-    protected static ArrayList<PolygonPoint> mergeInterp(
-            ArrayList<PolygonPoint> listA, ArrayList<PolygonPoint> listB, PolygonPoint p) {
+    public static ArrayList<PolygonPoint> mergeInterp(ArrayList<PolygonPoint> listA,
+                                                      ArrayList<PolygonPoint> listB, PolygonPoint p) {
         ArrayList<PolygonPoint> result = new ArrayList<PolygonPoint>();
 
         // true once the point was found in the inner list

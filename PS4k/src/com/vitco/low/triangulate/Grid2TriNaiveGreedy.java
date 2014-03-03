@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Helper class that converts a grid into triangles.
  *
- * Uses the Greedy Meshing approach (highly optimized).
+ * Uses the Naive Greedy Meshing approach (highly optimized).
  *
  * Reference:
  * http://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
@@ -45,15 +45,6 @@ public class Grid2TriNaiveGreedy {
                             bits[i][y] = false;
                         }
                     }
-//                    // expand in x direction (negative)
-//                    for (short i = x; --i > -1;) {
-//                        if (!bits[i][y]) {
-//                            pxN = ++i;
-//                            break;
-//                        } else {
-//                            bits[i][y] = false;
-//                        }
-//                    }
                     pxN = x;
 
                     // expand in y direction (positive)
@@ -79,29 +70,6 @@ public class Grid2TriNaiveGreedy {
                             }
                         }
                     }
-//                    // expand in y direction (negative)
-//                    loop: for (short i = y; --i > -1;) {
-//                        if (!bits[pxP][i] || !bits[pxN][i]) {
-//                            pyN = ++i;
-//                            break;
-//                        } else {
-//                            bits[pxP][i] = false;
-//                            bits[pxN][i] = false;
-//                        }
-//                        for (short j = pxN; ++j < pxP;) {
-//                            if (!bits[j][i]) {
-//                                for (short k = j; --k > pxN;) {
-//                                    bits[k][i] = true;
-//                                }
-//                                bits[pxP][i] = true;
-//                                bits[pxN][i] = true;
-//                                pyN = ++i;
-//                                break loop;
-//                            } else {
-//                                bits[j][i] = false;
-//                            }
-//                        }
-//                    }
 
                     // add the triangles for this rectangle
                     result.add(new DelaunayTriangle(new PolygonPoint(pxN, pyN), new PolygonPoint(pxP + 1, pyN), new PolygonPoint(pxN, pyP + 1)));
@@ -145,15 +113,6 @@ public class Grid2TriNaiveGreedy {
                             bits[i][y] = false;
                         }
                     }
-//                    // expand in x direction (negative)
-//                    for (byte i = x; --i > -1;) {
-//                        if (!bits[i][y]) {
-//                            pxN = ++i;
-//                            break;
-//                        } else {
-//                            bits[i][y] = false;
-//                        }
-//                    }
                     pxN = x;
 
                     // expand in y direction (positive)
@@ -179,29 +138,6 @@ public class Grid2TriNaiveGreedy {
                             }
                         }
                     }
-//                    // expand in y direction (negative)
-//                    loop: for (byte i = y; --i > -1;) {
-//                        if (!bits[pxP][i] || !bits[pxN][i]) {
-//                            pyN = ++i;
-//                            break;
-//                        } else {
-//                            bits[pxP][i] = false;
-//                            bits[pxN][i] = false;
-//                        }
-//                        for (byte j = pxN; ++j < pxP;) {
-//                            if (!bits[j][i]) {
-//                                for (byte k = j; --k > pxN;) {
-//                                    bits[k][i] = true;
-//                                }
-//                                bits[pxP][i] = true;
-//                                bits[pxN][i] = true;
-//                                pyN = ++i;
-//                                break loop;
-//                            } else {
-//                                bits[j][i] = false;
-//                            }
-//                        }
-//                    }
 
                     // add the triangles for this rectangle
                     result.add(new DelaunayTriangle(new PolygonPoint(pxN, pyN), new PolygonPoint(pxP + 1, pyN), new PolygonPoint(pxN, pyP + 1)));

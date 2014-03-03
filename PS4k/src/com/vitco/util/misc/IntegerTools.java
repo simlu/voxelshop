@@ -50,4 +50,11 @@ public final class IntegerTools {
         if (i >> 31 != 0) return -1;
         return +1;
     }
+
+    // =============
+
+    // convert two shorts into an integer id
+    public static int makeInt(short x, short y) {
+        return (x << 16) | (y & 0xFFFF);
+    }
 }

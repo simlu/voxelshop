@@ -1,9 +1,11 @@
 package com.vitco.export;
 
 import com.vitco.core.data.container.Voxel;
+import com.vitco.low.triangulate.Grid2TriGreedyOptimal;
 import com.vitco.low.triangulate.Grid2TriMono;
 import com.vitco.low.triangulate.Grid2TriNaiveGreedy;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
+import com.vitco.low.triangulate.util.Grid2PolyHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -76,6 +78,7 @@ public class ExportWorld {
     public static final int ALGORITHM_GREEDY = 1;
     public static final int ALGORITHM_MONO = 2;
     public static final int ALGORITHM_MONO_SAVE = 3;
+    public static final int ALGORITHM_GREEDY_OPTIMAL = 4;
 
     // build the sides and returns the total and
     // the (minimal possible) reduced number of triangles
@@ -124,7 +127,7 @@ public class ExportWorld {
                                 dataPoly2Tri[point.x - min2][point.y - min3] = true;
                             }
                             time -= System.currentTimeMillis();
-                            triCount += Grid2TriPolyFast.triangulate(Grid2TriPolyFast.convert(dataPoly2Tri)).size();
+                            triCount += Grid2TriPolyFast.triangulate(Grid2PolyHelper.convert(dataPoly2Tri)).size();
                             time += System.currentTimeMillis();
                             break;
                         case 1: // greedy (will produce many t-junction problems)
@@ -145,13 +148,22 @@ public class ExportWorld {
                             triCount += Grid2TriMono.triangulate(dataMono, false).size();
                             time += System.currentTimeMillis();
                             break;
-                        default: // mono (will only produce t-junction problems in 3D)
+                        case 3: // altered mono (will only produce t-junction problems in 3D)
                             boolean[][] dataMonoSave = new boolean[w][h];
                             for (Point point : entry.getValue()) {
                                 dataMonoSave[point.x - min2][point.y - min3] = true;
                             }
                             time -= System.currentTimeMillis();
                             triCount += Grid2TriMono.triangulate(dataMonoSave, true).size();
+                            time += System.currentTimeMillis();
+                            break;
+                        default: // optimal greedy (will produce many t-junction problems)
+                            boolean[][] dataGreedyOpt = new boolean[w][h];
+                            for (Point point : entry.getValue()) {
+                                dataGreedyOpt[point.x - min2][point.y - min3] = true;
+                            }
+                            time -= System.currentTimeMillis();
+                            triCount += Grid2TriGreedyOptimal.triangulate(dataGreedyOpt).size();
                             time += System.currentTimeMillis();
                             break;
                     }

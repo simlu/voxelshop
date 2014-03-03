@@ -1,6 +1,5 @@
 package com.vitco.core.container;
 
-import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Interact2D;
 import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
@@ -215,7 +214,7 @@ public abstract class AbstractDrawContainer extends JPanel {
     }
 
     // container for the data
-    protected FrameBuffer buffer = new FrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
+    protected HackedFrameBuffer buffer = new HackedFrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
 
     // the world-required objects
     protected AbstractCWorld world;

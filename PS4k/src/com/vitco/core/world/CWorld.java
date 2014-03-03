@@ -5,6 +5,7 @@ import com.vitco.core.world.container.BorderObject3D;
 import com.vitco.core.world.container.VoxelManager;
 import com.vitco.low.hull.HullManager;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
+import com.vitco.low.triangulate.util.Grid2PolyHelper;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.SharedImageFactory;
 import org.poly2tri.Poly2Tri;
@@ -180,7 +181,8 @@ public class CWorld extends AbstractCWorld {
 //                                tris.add(new DelaunayTriangle(new PolygonPoint(pX + 1, pY), new PolygonPoint(pX + 1, pY + 1), new PolygonPoint(pX, pY + 1)));
 //                            }
                         }
-                        tris.addAll(Grid2TriPolyFast.triangulate(Grid2TriPolyFast.convert(data)));
+                        tris.addAll(Grid2TriPolyFast.triangulate(Grid2PolyHelper.convert(data)));
+//                        tris.addAll(Grid2TriGreedyOptimal.triangulate(data));
                         // --------------
                         // todo: remove
 //                        // build image to compute triangle overlay

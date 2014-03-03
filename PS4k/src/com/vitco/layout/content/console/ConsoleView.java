@@ -151,6 +151,8 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
                         ExportWorld exportWorld = new ExportWorld(data.getVisibleLayerVoxel());
                         int[] countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_GREEDY);
                         console.addLine("Naive Greedy Meshing: " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
+                        countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_GREEDY_OPTIMAL);
+                        console.addLine("Optimal Greedy Meshing: " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
                         countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_MONO);
                         console.addLine("Monotone Meshing: " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
                         countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_MONO_SAVE);
@@ -221,6 +223,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/test voxel", "toggle_rapid_voxel_testing");
         consoleAction.put("/test camera", "toggle_rapid_camera_testing");
         consoleAction.put("/texture", "texture_debug_information");
+        consoleAction.put("/shader", "toggle_shader_enabled");
 
         // display the currently loaded textures
         actionManager.registerAction("texture_debug_information", new AbstractAction() {

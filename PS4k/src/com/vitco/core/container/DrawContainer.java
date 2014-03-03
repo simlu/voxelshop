@@ -1,6 +1,5 @@
 package com.vitco.core.container;
 
-import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.IRenderer;
 import com.threed.jpct.Matrix;
 import com.threed.jpct.SimpleVector;
@@ -42,7 +41,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                         public void performAction() {
                             cleanup();
                             buffer = null; // so the gc can collect before creation if necessary
-                            buffer = new FrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
+                            buffer = new HackedFrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
                             container.notifyAboutResize(container.getWidth(), container.getHeight());
                             container.doNotSkipNextWorldRender();
                             forceRepaint();
@@ -60,7 +59,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             public void performAction() {
                 int w = buffer.getWidth(), h = buffer.getHeight();
                 buffer = null; // so the gc can collect before creation if necessary
-                buffer = new FrameBuffer(w, h, VitcoSettings.SAMPLING_MODE);
+                buffer = new HackedFrameBuffer(w, h, VitcoSettings.SAMPLING_MODE);
             }
         });
     }
@@ -563,6 +562,12 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         hasResized = true;
     }
 
+    // enable shader for this container
+    private boolean enableShade = false;
+    public void enableShader(boolean state) {
+        enableShade = state;
+    }
+
     // render the content of this container
     public final void render() {
         if (skipNextWorldRender && !doNotSkipNextWorldRender) {
@@ -591,48 +596,97 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             if (drawOverlay) { // overlay part 1
                 drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
             }
-//            // draw depth outline (software "shader")
-//            // idea: http://coding-experiments.blogspot.de/2010/06/edge-detection.html
-//            int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
-//            Graphics2D gr2 = (Graphics2D) buffer.getGraphics();
-//            gr2.setStroke(new BasicStroke(1f));
-//            gr2.setColor(Color.BLACK);
-//            int[] zBuffer = buffer.getZBuffer(); //required hacked framebuffer
-//            for (int c = w*2; c < zBuffer.length - w*2; c++) {
+
+            // draw the shader if enabled
+            if (enableShade) {
+//                // fix t junction problems
+//                int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
+//                Graphics2D gr2 = (Graphics2D) buffer.getGraphics();
+//                gr2.setStroke(new BasicStroke(1f));
+//                gr2.setColor(Color.BLACK);
+//                int[] zBuffer = buffer.getZBuffer(); //required hacked framebuffer
+//                for (int c = w*2; c < zBuffer.length - w*2; c++) {
 //
-//                int x = zBuffer[c] + Integer.MAX_VALUE;
-//                if (x != 0) {
+//                    int x = zBuffer[c] + Integer.MAX_VALUE;
 //                    int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
 //                    int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
-//                    int x1 = zBuffer[c-2] + Integer.MAX_VALUE;
-//                    int x7 = zBuffer[c+2] + Integer.MAX_VALUE;
+//                    int x1 = zBuffer[c-1] + Integer.MAX_VALUE;
+//                    int x7 = zBuffer[c+1] + Integer.MAX_VALUE;
 //                    int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
 //                    int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
 //                    int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
 //                    int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
 //
-//                    int val = (Math.abs(x1 - x7) > 100000 ? 1 : 0) +
-//                            (Math.abs(x5 - x3) > 100000 ? 1 : 0) +
-//                            (Math.abs(x0 - x8) > 100000 ? 1 : 0) +
-//                            (Math.abs(x2 - x6) > 100000 ? 1 : 0);
-//
-//                    if (val == 2 || val == 3) {
-//                        gr2.drawRect((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, 0, 0);
-//                    } else {
-//                        int xP = x + 50;
-//                        int xM = x - 50;
-//
-//                        int s = ((x1 > xP && x7 > xP) || (x1 < xM && x7 < xM) ? 1 : 0) +
-//                                ((x5 > xP && x3 > xP) || (x5 < xM && x3 < xM) ? 1 : 0) +
-//                                ((x2 > xP && x6 > xP) || (x2 < xM && x6 < xM) ? 1 : 0) +
-//                                ((x0 > xP && x8 > xP) || (x0 < xM && x8 < xM) ? 1 : 0);
-//
-//                        if (s == 2 || s == 3) {
-//                            gr2.drawRect((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, 0, 0);
-//                        }
+//                    if (Math.abs(x1 - x7) < 100000 && Math.abs(x1 - x) > 100000) {
+//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, 1, 1, 1, 0);
+//                    } else if (Math.abs(x5 - x3) < 100000 && Math.abs(x5 - x) > 100000) {
+//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, 1, 1, 0, 1);
+//                    } else if (Math.abs(x0 - x8) < 100000 && Math.abs(x0 - x) > 100000) {
+//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND + 1, 1, 1, 1, -1);
+//                    } else if (Math.abs(x2 - x6) < 100000 && Math.abs(x2 - x) > 100000) {
+//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, 1, 1, 1, 1);
 //                    }
 //                }
-//            }
+
+                // draw depth outline (software "shader")
+                // idea: http://coding-experiments.blogspot.de/2010/06/edge-detection.html
+                int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
+                Graphics2D gr2 = (Graphics2D) buffer.getGraphics();
+                gr2.setStroke(new BasicStroke(1f));
+                gr2.setColor(Color.BLACK);
+                int[] zBuffer = buffer.getZBuffer(); //requires hacked framebuffer
+                @SuppressWarnings("MismatchedReadAndWriteOfArray")
+                int[] pixels = buffer.getPixels();
+                float scale = pixels.length/(float)zBuffer.length;
+                for (int c = w*3; c < zBuffer.length - w*3; c++) {
+
+                    int x = zBuffer[c] + Integer.MAX_VALUE;
+                    if (x != 0) {
+                        int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
+                        int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
+                        int x1 = zBuffer[c-1] + Integer.MAX_VALUE;
+                        int x7 = zBuffer[c+1] + Integer.MAX_VALUE;
+                        int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
+                        int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
+                        int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
+                        int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
+
+                        // moved one more outwards
+                        int x5t = zBuffer[c-2*w] + Integer.MAX_VALUE;
+                        int x3t = zBuffer[c+2*w] + Integer.MAX_VALUE;
+                        int x1t = zBuffer[c-2] + Integer.MAX_VALUE;
+                        int x7t = zBuffer[c+2] + Integer.MAX_VALUE;
+                        int x2t = zBuffer[c-2*w - 2] + Integer.MAX_VALUE;
+                        int x8t = zBuffer[c-2*w + 2] + Integer.MAX_VALUE;
+                        int x0t = zBuffer[c+2*w - 2] + Integer.MAX_VALUE;
+                        int x6t = zBuffer[c+2*w + 2] + Integer.MAX_VALUE;
+
+                        int val = (Math.abs(x7 - x7t) < Math.abs(x1 - x7)/10 && Math.abs(x1 - x1t) < Math.abs(x1 - x7)/10 ? 1 : 0) +
+                                (Math.abs(x5 - x5t) < Math.abs(x5 - x3)/10 && Math.abs(x3 - x3t) < Math.abs(x5 - x3)/10 ? 1 : 0) +
+                                (Math.abs(x0 - x0t) < Math.abs(x0 - x8)/10 && Math.abs(x8 - x8t) < Math.abs(x0 - x8)/10 ? 1 : 0) +
+                                (Math.abs(x2 - x2t) < Math.abs(x2 - x6)/10 && Math.abs(x6 - x6t) < Math.abs(x2 - x6)/10 ? 1 : 0);
+
+                        if (val == 2 || val == 3) {
+                            pixels[((int) (c * scale))] = 0;
+                        } else {
+
+                            int xP = x + 100;
+                            int xM = x - 100;
+
+                            int s = ((x1t > xP && x7 > xP) || (x1t < xM && x7t < xM) ? 1 : 0) +
+                                    ((x5t > xP && x3 > xP) || (x5t < xM && x3t < xM) ? 1 : 0) +
+                                    ((x2t > xP && x6 > xP) || (x2t < xM && x6t < xM) ? 1 : 0) +
+                                    ((x0t > xP && x8 > xP) || (x0t < xM && x8t < xM) ? 1 : 0);
+
+                            if (s == 2 || s == 3) {
+                                pixels[((int) (c * scale))] = 0;
+                            }
+                        }
+                    }
+                }
+
+            } // -- end shaders
+
         }
         Graphics2D gr = (Graphics2D) toDraw.getGraphics();
 

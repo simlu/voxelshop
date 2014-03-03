@@ -1,13 +1,10 @@
-package com.vitco.low.triangulate;
+package com.vitco.low.triangulate.util;
 
+import com.vitco.low.triangulate.Grid2TriPolyFast;
+import com.vitco.low.triangulate.Grid2TriPolySlow;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import org.jaitools.imageutils.ImageUtils;
 import org.junit.Test;
-import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import javax.imageio.ImageIO;
 import javax.media.jai.TiledImage;
@@ -16,152 +13,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Random;
 
 /**
- * - Testing Poly2Tri and in particular new conversion "voxel -> polygon" by doing in depth validation of created geometry.
- *
- * - Manual testing internal implementation against the external implementation of "voxel -> polygon".
- *
+ * Test for the Grid2PolyHelper class
  */
-public class TestGrid2TriPolyFast {
-
-    // helper - true if point c is in between point a and b
-    private static boolean inBetween(Point a, Point b, Point c) {
-        return (!a.equals(c) && !b.equals(c)) && // not the same points
-                ((b.x - a.x) * (c.y - a.y) == (c.x - a.x) * (b.y - a.y)) && // on one line
-                ((a.x < c.x == c.x < b.x) && (a.y < c.y == c.y < b.y)); // in between on that line
-    }
-
-    // test the Poly2Tri algorithm with the new algorithm that creates the polygon from
-    // the voxel data and verify created geometry
-    @Test
-    public void testPolyTriangulation() {
-        for (int i = 178; i < 20000; i++) {
-            Random rand = new Random(i);
-            // create image
-            int sizex = rand.nextInt(100)+5;
-            int sizey = rand.nextInt(100)+5;
-            TiledImage src = ImageUtils.createConstantImage(sizex, sizey, 0);
-
-            boolean[][] data = new boolean[sizex][sizey];
-
-            // fill with random data
-            int count = rand.nextInt(sizex * sizey * 2);
-            for (int j = 0; j < count; j++) {
-                int x = rand.nextInt(sizex);
-                int y = rand.nextInt(sizey);
-                src.setSample(x,y , 0, 1);
-                data[x][y] = true;
-            }
-
-//            // save image (for checking)
-//            BufferedImage bufferedImage = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_RGB);
-//            for (int x = 0; x < src.getWidth(); x++) {
-//                for (int y = 0; y < src.getHeight(); y++) {
-//                    bufferedImage.setRGB(x, y, src.getSample(x, y, 0) == 1 ? Color.BLACK.getRGB() : Color.WHITE.getRGB());
-//                }
-//            }
-//            File outputfile = new File("image" + i + ".png");
-//            try {
-//                ImageIO.write(bufferedImage, "png", outputfile);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-
-            // print information
-            System.out.print("Test " + i + " @ " + sizex + " x " + sizey + " :: ");
-            Collection<Polygon> geometry = Grid2TriPolySlow.doVectorize(src);
-            System.out.print(geometry.size());
-            System.out.print(" :: ");
-            ArrayList<DelaunayTriangle> tris = Grid2TriPolyFast.triangulate(Grid2TriPolyFast.convert(data));
-
-            System.out.print(tris.size());
-
-            // check that no points are overlapping
-            HashSet<Point> points = new HashSet<Point>();
-            for (DelaunayTriangle tri : tris) {
-                points.add(new Point((int)Math.round(tri.points[0].getX()),(int)Math.round(tri.points[0].getY())));
-                points.add(new Point((int)Math.round(tri.points[1].getX()),(int)Math.round(tri.points[1].getY())));
-                points.add(new Point((int)Math.round(tri.points[2].getX()),(int)Math.round(tri.points[2].getY())));
-            }
-            for (Point p : points) {
-                for (DelaunayTriangle tri : tris) {
-                    //System.out.println(p.toString() + " " + tri.points[0] + " " + tri.points[1] + " " + tri.points[2]);
-                    assert !inBetween(new Point((int)Math.round(tri.points[0].getX()),(int)Math.round(tri.points[0].getY())),
-                            new Point((int)Math.round(tri.points[1].getX()),(int)Math.round(tri.points[1].getY())), p);
-                    assert !inBetween(new Point((int)Math.round(tri.points[0].getX()),(int)Math.round(tri.points[0].getY())),
-                            new Point((int)Math.round(tri.points[2].getX()),(int)Math.round(tri.points[2].getY())), p);
-                    assert !inBetween(new Point((int)Math.round(tri.points[1].getX()),(int)Math.round(tri.points[1].getY())),
-                            new Point((int)Math.round(tri.points[2].getX()),(int)Math.round(tri.points[2].getY())), p);
-                }
-            }
-
-            // variables
-            GeometryFactory geometryFactory = new GeometryFactory();
-
-            // stores the area sum of all triangles
-            double aTri = 0;
-
-
-            int statusCount = 0;
-            for (DelaunayTriangle tri: tris) {
-                // handle triangle area
-                double area = tri.area();
-                aTri += area;
-                assert area > 0.25;
-
-                // print info
-                if (statusCount%((tris.size()/100)+1) == 0) {
-                    System.out.print(".");
-                }
-                statusCount++;
-
-                // convert into geometry
-                LinearRing ring = new LinearRing(new CoordinateArraySequence(
-                        new Coordinate[]{
-                                new Coordinate(tri.points[0].getX(), tri.points[0].getY()),
-                                new Coordinate(tri.points[1].getX(), tri.points[1].getY()),
-                                new Coordinate(tri.points[2].getX(), tri.points[2].getY()),
-                                new Coordinate(tri.points[0].getX(), tri.points[0].getY())
-                        }
-                ), geometryFactory);
-                Polygon triPoly = new Polygon(ring, new LinearRing[0], geometryFactory);
-                // check that points are different (area exists)
-                assert triPoly.getArea() > 0.25;
-
-                // check containment
-                boolean contain = false;
-                for (Polygon poly : geometry) {
-                    // check for containment
-                    if (poly.intersects(triPoly)) {
-                        if (poly.contains(triPoly) || (poly.intersection(triPoly).getArea() - triPoly.getArea() < 0.00001)) {
-                            contain = true;
-                        }
-                        break;
-                    }
-                }
-                if (!contain) {
-                    System.out.println(triPoly.toString());
-                }
-                assert contain;
-            }
-            // check that areas match
-            double aPoly = 0;
-            for (Polygon poly : geometry) {
-                double area = poly.getArea();
-                aPoly += area;
-                assert area > 0.25;
-            }
-            assert Math.round(aTri) == Math.round(aPoly);
-
-            System.out.println(" :: ");
-        }
-    }
+public class Grid2PolyHelperTest {
 
     // batch run conversion and triangulation and check for any errors
     // in the output (no validation of output is done)
@@ -182,7 +40,7 @@ public class TestGrid2TriPolyFast {
                 data[x][y] = true;
             }
 
-            short[][][] polys = Grid2TriPolyFast.convert(data);
+            short[][][] polys = Grid2PolyHelper.convert(data);
 
             Grid2TriPolyFast.triangulate(polys);
 
@@ -204,7 +62,7 @@ public class TestGrid2TriPolyFast {
         }
 
         // create polygons
-        short[][][] polys = Grid2TriPolyFast.convert(data);
+        short[][][] polys = Grid2PolyHelper.convert(data);
 
         // print data
         int zoom = 40;
@@ -291,7 +149,7 @@ public class TestGrid2TriPolyFast {
         }
 
         // create polygons
-        Collection<Polygon> polys = Grid2TriPolySlow.doVectorize(src);
+        Collection<com.vividsolutions.jts.geom.Polygon> polys = Grid2TriPolySlow.doVectorize(src);
 
         // print data
         int zoom = 40;
@@ -318,7 +176,7 @@ public class TestGrid2TriPolyFast {
                 RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
         Coordinate[] coordinates;
-        for (Polygon poly : polys) {
+        for (com.vividsolutions.jts.geom.Polygon poly : polys) {
             // draw holes outline
             for (int n = 0, size = poly.getNumInteriorRing(); n < size; n++) {
                 coordinates = poly.getInteriorRingN(n).getCoordinates();
@@ -335,7 +193,7 @@ public class TestGrid2TriPolyFast {
                 gr.drawLine((int) (coordinates[i].x * zoom), (int) (coordinates[i].y * zoom), (int) (coordinates[i + 1].x * zoom), (int) (coordinates[i + 1].y * zoom));
             }
         }
-        for (Polygon poly : polys) {
+        for (com.vividsolutions.jts.geom.Polygon poly : polys) {
             // draw holes text
             for (int n = 0, size = poly.getNumInteriorRing(); n < size; n++) {
                 coordinates = poly.getInteriorRingN(n).getCoordinates();
@@ -358,4 +216,5 @@ public class TestGrid2TriPolyFast {
         ImageIO.write(img, "png", new File("out.png"));
 
     }
+
 }

@@ -88,6 +88,23 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         world.setClippingPlanes(Config.nearPlane, VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT * 2);
         selectedVoxelsWorld.setClippingPlanes(Config.nearPlane,VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT*2);
 
+        // toggle shader
+        // enable/disable shader
+        actionManager.registerAction("toggle_shader_enabled", new AbstractAction() {
+            private boolean enabled = false;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enabled = !enabled;
+                container.enableShader(enabled);
+                if (enabled) {
+                    console.addLine("Shader is enabled.");
+                } else {
+                    console.addLine("Shader is disabled.");
+                }
+                forceRepaint();
+            }
+        });
+
         // start/stop test mode (rapid camera rotation)
         actionManager.registerAction("toggle_rapid_camera_testing",new AbstractAction() {
 
