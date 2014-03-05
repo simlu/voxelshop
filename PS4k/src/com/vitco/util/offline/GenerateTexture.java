@@ -39,6 +39,7 @@ public class GenerateTexture {
             g2.drawLine(0, Math.round(i), texSize, Math.round(i));
             g2.drawLine(Math.round(i), 0, Math.round(i), texSize);
         }
+        g2.dispose();
         try {
             ImageIO.write(overlay, "png", new File("resource/tex/bounding_box_" + texSize + ".png"));
         } catch (FileNotFoundException e) {

@@ -226,6 +226,7 @@ public abstract class AbstractTriangulationTest {
                 gr.drawString("(" + (int) Math.round(tri.points[2].getX()) + "," + (int) Math.round(tri.points[2].getY()) + ")", (int) Math.round(tri.points[2].getX() * zoom), (int) Math.round(tri.points[2].getY() * zoom) + 5);
             }
         }
+        gr.dispose();
         ImageIO.write(img, "png", new File(outputFile));
 
         // ----------

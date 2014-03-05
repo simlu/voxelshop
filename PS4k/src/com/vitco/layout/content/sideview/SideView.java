@@ -311,6 +311,7 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
                         ig.setColor(Color.GRAY);
                         ig.setFont(new Font(ig.getFont().getName(), Font.PLAIN, 9));
                         ig.drawString(String.valueOf(o), 4, 16);
+                        ig.dispose();
                         ImageIcon icon = new ImageIcon();
                         icon.setImage(image);
                         button.setIcon(icon);

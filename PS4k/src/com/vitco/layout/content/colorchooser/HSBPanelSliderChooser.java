@@ -46,6 +46,7 @@ public class HSBPanelSliderChooser extends ColorChooserPrototype {
                             (float)sliderUI.getValueForYPosition(y)/ sliderUI.getSlider().getMaximum(), 1, 1}));
                     ig.drawLine(0, y, w - 1, y);
                 }
+                ig.dispose();
             }
 
             // draw the background
@@ -104,6 +105,8 @@ public class HSBPanelSliderChooser extends ColorChooserPrototype {
             ig.setColor(Color.WHITE);
             ig.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
             ig.drawRect(1, 1, sliderWidth - 3, 8);
+
+            ig.dispose();
 
             hueSlider.setThumb(thumbBuffer);
         }

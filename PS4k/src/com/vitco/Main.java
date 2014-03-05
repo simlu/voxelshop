@@ -39,6 +39,7 @@ public class Main {
                 g.drawString("V" + VitcoSettings.VERSION_ID, 10, 15);
                 splash.update();
             }
+            g.dispose();
         }
 
         // the JIDE license

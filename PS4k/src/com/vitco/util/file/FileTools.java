@@ -22,8 +22,8 @@ public class FileTools {
         });
     }
 
-    // remove extension from file and return name
-    public static String removeExtension(File f) {
+    // remove extension from file and return name without extension
+    public static String extractNameWithoutExtension(File f) {
         // if it's a directory, don't remove the extension
         if (f.isDirectory()) return f.getName();
         String name = f.getName();
@@ -36,6 +36,22 @@ public class FileTools {
         if (!name.contains(".")) return name;
         // Otherwise, remove the last 'extension type thing'
         return name.substring(0, name.lastIndexOf('.'));
+    }
+
+    // remove extension from file and return file path without extension
+    public static String removeExtension(File f) {
+        // if it's a directory, don't remove the extension
+        if (f.isDirectory()) return f.getAbsolutePath();
+        String name = f.getName();
+        // if it is a hidden file
+        if (name.startsWith(".")) {
+            // if there is no extension, do not remove one...
+            if (name.lastIndexOf('.') == name.indexOf('.')) return f.getAbsolutePath();
+        }
+        // if there is no extension, don't do anything
+        if (!name.contains(".")) return f.getAbsolutePath();
+        // Otherwise, remove the last 'extension type thing'
+        return f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf('.'));
     }
 
     // reads the content of a file as string

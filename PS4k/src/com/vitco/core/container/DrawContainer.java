@@ -1,8 +1,6 @@
 package com.vitco.core.container;
 
-import com.threed.jpct.IRenderer;
-import com.threed.jpct.Matrix;
-import com.threed.jpct.SimpleVector;
+import com.threed.jpct.*;
 import com.vitco.core.data.container.ExtendedVector;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.settings.VitcoSettings;
@@ -100,6 +98,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         ig.setColor(color);
         ig.drawLine(Math.round(start.x), Math.round(start.y),
                 Math.round(stop.x), Math.round(stop.y));
+        ig.dispose();
     }
 
     private static final Stroke drawingStroke1 =
@@ -119,6 +118,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         ig.setColor(color2);
         ig.drawLine(Math.round(start.x), Math.round(start.y),
                 Math.round(stop.x), Math.round(stop.y));
+        ig.dispose();
     }
 
     // helper
@@ -202,7 +202,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                 ig.drawString(str2, this.getWidth() - len2 - 14, 28);
                 ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_X);
                 ig.drawString(str3, this.getWidth() - len3 - 14, 28);
-
+                ig.dispose();
             }
         }
         return valid;
@@ -545,6 +545,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         Graphics gr = toDraw.getGraphics();
         gr.setColor(bgColor);
         gr.fillRect(0, 0, width, height);
+        gr.dispose();
         // the overlay
         overlayBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         // draw the lines
@@ -566,6 +567,232 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     private boolean enableShade = false;
     public void enableShader(boolean state) {
         enableShade = state;
+    }
+
+    // expose the z buffer of this container
+    public final int[] getZBuffer() {
+        return buffer.getZBuffer();
+    }
+
+    // exposes the pixel array
+    public final int[] getPixels() {
+        return buffer.getPixels();
+    }
+
+    // get the image currently rendered in high quality
+    public BufferedImage getImage() {
+//        Config.useFramebufferWithAlpha = true;
+//        FrameBuffer fb = new FrameBuffer(getWidth(), getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
+//        Config.useFramebufferWithAlpha = false;
+//        fb.clear(new Color(0,0,0,0));
+//        world.renderScene(fb);
+//        world.draw(fb);
+//        Config.blendAlphaIfOversampling = true;
+//        fb.update();
+//        Config.blendAlphaIfOversampling = false;
+//        BufferedImage result = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+//        fb.display(result.getGraphics());
+        Config.useFramebufferWithAlpha = true;
+        HackedFrameBuffer fb = new HackedFrameBuffer(getWidth()*2, getHeight()*2, FrameBuffer.SAMPLINGMODE_NORMAL);
+        Config.useFramebufferWithAlpha = false;
+        fb.clear(new Color(0, 0, 0, 0));
+        world.renderScene(fb);
+        world.draw(fb);
+        fb.update();
+
+        int w = fb.getWidth() * 2;
+        int[] zBuffer = fb.getZBuffer(); //requires hacked framebuffer
+        int[] pixels = fb.getPixels();
+
+        // fix t-junction anomalies
+        for (int c = w + 1; c < zBuffer.length - w - 1; c++) {
+
+            int x = zBuffer[c] + Integer.MAX_VALUE;
+            int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
+            int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
+            int x1 = zBuffer[c-1] + Integer.MAX_VALUE;
+            int x7 = zBuffer[c+1] + Integer.MAX_VALUE;
+            int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
+            int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
+            int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
+            int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
+
+            if (Math.abs(x1 - x7) < 100000 && Math.abs(x1 - x) > 100000) {
+                pixels[c] = pixels[c-1];
+            } else if (Math.abs(x5 - x3) < 100000 && Math.abs(x5 - x) > 100000) {
+                pixels[c] = pixels[c-w];
+            } else if (Math.abs(x0 - x8) < 100000 && Math.abs(x0 - x) > 100000) {
+                pixels[c] = pixels[c+w-1];
+            } else if (Math.abs(x2 - x6) < 100000 && Math.abs(x2 - x) > 100000) {
+                pixels[c] = pixels[c-w-1];
+            }
+        }
+
+        BufferedImage largeResult = new BufferedImage(fb.getWidth(), fb.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        fb.display(largeResult.getGraphics());
+
+        // resize
+        BufferedImage result = new BufferedImage(largeResult.getWidth()/2, largeResult.getHeight()/2, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = result.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.drawImage(largeResult, 0, 0, largeResult.getWidth()/2, largeResult.getHeight()/2, null);
+        g2d.dispose();
+
+        return result;
+    }
+
+    // get the image currently rendered in high quality
+    public BufferedImage getDepthImage() {
+        HackedFrameBuffer fb = new HackedFrameBuffer(getWidth(), getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
+        fb.clear();
+        world.renderScene(fb);
+        world.draw(fb);
+        fb.update();
+        BufferedImage largeResult = new BufferedImage(fb.getWidth()*2, fb.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
+
+        int w = fb.getWidth() * 2;
+        int[] zBuffer = fb.getZBuffer(); //requires hacked framebuffer
+
+        // compute mean
+        int count = 0;
+        long mean = 0;
+        for (int aZBuffer : zBuffer) {
+            if (aZBuffer != -2147483647) {
+                mean += aZBuffer;
+                count++;
+            }
+        }
+        mean /= count;
+
+        // compute std deviation
+        long sum = 0;
+        for (int aZBuffer : zBuffer) {
+            if (aZBuffer != -2147483647) {
+                sum += Math.pow(aZBuffer - mean, 2);
+            }
+        }
+        double stdDev = Math.sqrt(sum/count);
+
+        // compute min and max for non outliers
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        for (int aZBuffer : zBuffer) {
+            if (Math.abs(aZBuffer - mean) < 4*stdDev) {
+                min = Math.min(min, aZBuffer);
+                max = Math.max(max, aZBuffer);
+            }
+        }
+        int range = max - min;
+
+        // fix t-junction anomalies
+        for (int c = w + 1; c < zBuffer.length - w - 1; c++) {
+
+            int x = zBuffer[c] + Integer.MAX_VALUE;
+            int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
+            int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
+            int x1 = zBuffer[c-1] + Integer.MAX_VALUE;
+            int x7 = zBuffer[c+1] + Integer.MAX_VALUE;
+            int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
+            int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
+            int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
+            int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
+
+            if (Math.abs(x1 - x7) < 100000 && Math.abs(x1 - x) > 100000) {
+                zBuffer[c] = zBuffer[c-1];
+            } else if (Math.abs(x5 - x3) < 100000 && Math.abs(x5 - x) > 100000) {
+                zBuffer[c] = zBuffer[c-w];
+            } else if (Math.abs(x0 - x8) < 100000 && Math.abs(x0 - x) > 100000) {
+                zBuffer[c] = zBuffer[c+w-1];
+            } else if (Math.abs(x2 - x6) < 100000 && Math.abs(x2 - x) > 100000) {
+                zBuffer[c] = zBuffer[c-w-1];
+            }
+        }
+
+        // compute values
+        for (int c = 0; c < zBuffer.length; c++) {
+            if (zBuffer[c] != -2147483647) {
+                int val = (int) Math.min(255,Math.max(0,
+                        ((zBuffer[c] - min) ) / (range/255f)
+                ));
+                //if (c%w < largeResult.getWidth() && c/w < largeResult.getHeight())
+                largeResult.setRGB((c % w), (c / w), new Color(val, val, val, 255).getRGB());
+            }
+        }
+
+        // resize
+        BufferedImage result = new BufferedImage(largeResult.getWidth()/2, largeResult.getHeight()/2, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = result.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.drawImage(largeResult, 0, 0, largeResult.getWidth()/2, largeResult.getHeight()/2, null);
+        g2d.dispose();
+
+        return result;
+    }
+
+    // draw shader
+    private void drawShader() {
+        // draw depth outline (software "shader")
+        // idea: http://coding-experiments.blogspot.de/2010/06/edge-detection.html
+        int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
+        int factor = w * VitcoSettings.SAMPLING_MODE_MULTIPLICAND*VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
+        int[] zBuffer = buffer.getZBuffer(); //requires hacked framebuffer
+        @SuppressWarnings("MismatchedReadAndWriteOfArray")
+        int[] pixels = buffer.getPixels();
+        for (int c = w*2 + 2; c < zBuffer.length - w*2 - 2; c++) {
+
+            int x = zBuffer[c] + Integer.MAX_VALUE;
+            if (x != 0) {
+                int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
+                int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
+                int x1 = zBuffer[c-1] + Integer.MAX_VALUE;
+                int x7 = zBuffer[c+1] + Integer.MAX_VALUE;
+                int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
+                int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
+                int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
+                int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
+
+                // move one more outwards
+                int x5t = zBuffer[c-2*w] + Integer.MAX_VALUE;
+                int x3t = zBuffer[c+2*w] + Integer.MAX_VALUE;
+                int x1t = zBuffer[c-2] + Integer.MAX_VALUE;
+                int x7t = zBuffer[c+2] + Integer.MAX_VALUE;
+                int x2t = zBuffer[c-2*w - 2] + Integer.MAX_VALUE;
+                int x8t = zBuffer[c-2*w + 2] + Integer.MAX_VALUE;
+                int x0t = zBuffer[c+2*w - 2] + Integer.MAX_VALUE;
+                int x6t = zBuffer[c+2*w + 2] + Integer.MAX_VALUE;
+
+                int p1 = Math.abs(x1 - x7)/10;
+                int p2 = Math.abs(x5 - x3)/10;
+                int p3 = Math.abs(x0 - x8)/10;
+                int p4 = Math.abs(x2 - x6)/10;
+                int val = (Math.abs(x7 - x7t) < p1 && Math.abs(x1 - x1t) < p1 ? 1 : 0) +
+                        (Math.abs(x5 - x5t) < p2 && Math.abs(x3 - x3t) < p2 ? 1 : 0) +
+                        (Math.abs(x0 - x0t) < p3 && Math.abs(x8 - x8t) < p3 ? 1 : 0) +
+                        (Math.abs(x2 - x2t) < p4 && Math.abs(x6 - x6t) < p4 ? 1 : 0);
+
+                if (val == 2 || val == 3) {
+                    pixels[(c/factor)*w + (c/VitcoSettings.SAMPLING_MODE_MULTIPLICAND)%w] = 0;
+                    c+= VitcoSettings.SAMPLING_MODE_MULTIPLICAND -1;
+                } else {
+
+                    int xP = x + 100;
+                    int xM = x - 100;
+
+                    int s = ((x1t > xP && x7 > xP) || (x1t < xM && x7t < xM) ? 1 : 0) +
+                            ((x5t > xP && x3 > xP) || (x5t < xM && x3t < xM) ? 1 : 0) +
+                            ((x2t > xP && x6 > xP) || (x2t < xM && x6t < xM) ? 1 : 0) +
+                            ((x0t > xP && x8 > xP) || (x0t < xM && x8t < xM) ? 1 : 0);
+
+                    if (s == 2 || s == 3) {
+                        pixels[(c/factor)*w + (c/VitcoSettings.SAMPLING_MODE_MULTIPLICAND)%w] = 0;
+                        c+= VitcoSettings.SAMPLING_MODE_MULTIPLICAND -1;
+                    }
+                }
+            }
+        }
     }
 
     // render the content of this container
@@ -596,97 +823,10 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             if (drawOverlay) { // overlay part 1
                 drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
             }
-
             // draw the shader if enabled
             if (enableShade) {
-//                // fix t junction problems
-//                int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
-//                Graphics2D gr2 = (Graphics2D) buffer.getGraphics();
-//                gr2.setStroke(new BasicStroke(1f));
-//                gr2.setColor(Color.BLACK);
-//                int[] zBuffer = buffer.getZBuffer(); //required hacked framebuffer
-//                for (int c = w*2; c < zBuffer.length - w*2; c++) {
-//
-//                    int x = zBuffer[c] + Integer.MAX_VALUE;
-//                    int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
-//                    int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
-//                    int x1 = zBuffer[c-1] + Integer.MAX_VALUE;
-//                    int x7 = zBuffer[c+1] + Integer.MAX_VALUE;
-//                    int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
-//                    int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
-//                    int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
-//                    int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
-//
-//                    if (Math.abs(x1 - x7) < 100000 && Math.abs(x1 - x) > 100000) {
-//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, 1, 1, 1, 0);
-//                    } else if (Math.abs(x5 - x3) < 100000 && Math.abs(x5 - x) > 100000) {
-//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, 1, 1, 0, 1);
-//                    } else if (Math.abs(x0 - x8) < 100000 && Math.abs(x0 - x) > 100000) {
-//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND + 1, 1, 1, 1, -1);
-//                    } else if (Math.abs(x2 - x6) < 100000 && Math.abs(x2 - x) > 100000) {
-//                        gr2.copyArea((c % w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, (c / w) / VitcoSettings.SAMPLING_MODE_MULTIPLICAND - 1, 1, 1, 1, 1);
-//                    }
-//                }
-
-                // draw depth outline (software "shader")
-                // idea: http://coding-experiments.blogspot.de/2010/06/edge-detection.html
-                int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
-                Graphics2D gr2 = (Graphics2D) buffer.getGraphics();
-                gr2.setStroke(new BasicStroke(1f));
-                gr2.setColor(Color.BLACK);
-                int[] zBuffer = buffer.getZBuffer(); //requires hacked framebuffer
-                @SuppressWarnings("MismatchedReadAndWriteOfArray")
-                int[] pixels = buffer.getPixels();
-                float scale = pixels.length/(float)zBuffer.length;
-                for (int c = w*3; c < zBuffer.length - w*3; c++) {
-
-                    int x = zBuffer[c] + Integer.MAX_VALUE;
-                    if (x != 0) {
-                        int x5 = zBuffer[c-w] + Integer.MAX_VALUE;
-                        int x3 = zBuffer[c+w] + Integer.MAX_VALUE;
-                        int x1 = zBuffer[c-1] + Integer.MAX_VALUE;
-                        int x7 = zBuffer[c+1] + Integer.MAX_VALUE;
-                        int x2 = zBuffer[c-w - 1] + Integer.MAX_VALUE;
-                        int x8 = zBuffer[c-w + 1] + Integer.MAX_VALUE;
-                        int x0 = zBuffer[c+w - 1] + Integer.MAX_VALUE;
-                        int x6 = zBuffer[c+w + 1] + Integer.MAX_VALUE;
-
-                        // moved one more outwards
-                        int x5t = zBuffer[c-2*w] + Integer.MAX_VALUE;
-                        int x3t = zBuffer[c+2*w] + Integer.MAX_VALUE;
-                        int x1t = zBuffer[c-2] + Integer.MAX_VALUE;
-                        int x7t = zBuffer[c+2] + Integer.MAX_VALUE;
-                        int x2t = zBuffer[c-2*w - 2] + Integer.MAX_VALUE;
-                        int x8t = zBuffer[c-2*w + 2] + Integer.MAX_VALUE;
-                        int x0t = zBuffer[c+2*w - 2] + Integer.MAX_VALUE;
-                        int x6t = zBuffer[c+2*w + 2] + Integer.MAX_VALUE;
-
-                        int val = (Math.abs(x7 - x7t) < Math.abs(x1 - x7)/10 && Math.abs(x1 - x1t) < Math.abs(x1 - x7)/10 ? 1 : 0) +
-                                (Math.abs(x5 - x5t) < Math.abs(x5 - x3)/10 && Math.abs(x3 - x3t) < Math.abs(x5 - x3)/10 ? 1 : 0) +
-                                (Math.abs(x0 - x0t) < Math.abs(x0 - x8)/10 && Math.abs(x8 - x8t) < Math.abs(x0 - x8)/10 ? 1 : 0) +
-                                (Math.abs(x2 - x2t) < Math.abs(x2 - x6)/10 && Math.abs(x6 - x6t) < Math.abs(x2 - x6)/10 ? 1 : 0);
-
-                        if (val == 2 || val == 3) {
-                            pixels[((int) (c * scale))] = 0;
-                        } else {
-
-                            int xP = x + 100;
-                            int xM = x - 100;
-
-                            int s = ((x1t > xP && x7 > xP) || (x1t < xM && x7t < xM) ? 1 : 0) +
-                                    ((x5t > xP && x3 > xP) || (x5t < xM && x3t < xM) ? 1 : 0) +
-                                    ((x2t > xP && x6 > xP) || (x2t < xM && x6t < xM) ? 1 : 0) +
-                                    ((x0t > xP && x8 > xP) || (x0t < xM && x8t < xM) ? 1 : 0);
-
-                            if (s == 2 || s == 3) {
-                                pixels[((int) (c * scale))] = 0;
-                            }
-                        }
-                    }
-                }
-
-            } // -- end shaders
-
+                drawShader();
+            }
         }
         Graphics2D gr = (Graphics2D) toDraw.getGraphics();
 
@@ -702,6 +842,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         if (drawOverlay && drawVoxelOverlay) {
             drawVoxelOverlay(gr);
         }
+        gr.dispose();
 
 //        // debug
 //        if (Main.isDebugMode()) {

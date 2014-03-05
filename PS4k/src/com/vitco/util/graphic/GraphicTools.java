@@ -44,9 +44,7 @@ public class GraphicTools {
         int h = img.getHeight(null);
 
         BufferedImage tmp = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = (Graphics2D) tmp.getGraphics();
-        g2d.drawImage(img, 0, 0, null);
-        g2d.dispose();
+        tmp.getGraphics().drawImage(img, 0, 0, null);
 
         AffineTransform affineTransform;
 

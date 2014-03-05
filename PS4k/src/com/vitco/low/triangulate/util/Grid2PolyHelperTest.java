@@ -120,6 +120,7 @@ public class Grid2PolyHelperTest {
                 gr.drawString(String.valueOf(i/2+1), poly[0][i] * zoom + 5, poly[0][i+1] * zoom + 5);
             }
         }
+        gr.dispose();
 
         ImageIO.write(img, "png", new File("out.png"));
 
@@ -212,6 +213,7 @@ public class Grid2PolyHelperTest {
                 gr.drawString(String.valueOf(i+1), (int) (coordinates[i].x * zoom) + 5, (int) (coordinates[i].y * zoom) + 5);
             }
         }
+        gr.dispose();
 
         ImageIO.write(img, "png", new File("out.png"));
 

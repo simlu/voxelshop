@@ -4,10 +4,12 @@ import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.importer.*;
+import com.vitco.layout.content.mainview.MainView;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.CFileDialog;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -23,6 +25,13 @@ import java.io.*;
  * Handles the main menu logic.
  */
 public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterface {
+
+    // var & setter
+    protected MainView mainView;
+    @Autowired(required=true)
+    public final void setMainView(MainView mainView) {
+        this.mainView = mainView;
+    }
 
     // util for save/load/new file
     // ======================================
@@ -126,18 +135,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // initialize the filter
         fc_vsd.addFileType("vsd", "PS4k File");
 
-        fc_import.addFileType(new String[] {"png", "jpg", "jpeg", "bmp"}, "Image");
-        fc_import.addFileType("gif", "Animated Image");
-        fc_import.addFileType("binvox");
-        fc_import.addFileType("kv6");
-        fc_import.addFileType("kvx");
-        fc_import.addFileType("qb", "Qubicle Binary");
-        fc_import.addFileType("vox", "Voxlap Engine File");
-        fc_import.addFileType("vox", "MagicaVoxel File");
-        fc_import.addFileType("vox", "Vox Game File");
-
-        fc_export.addFileType("dae");
-
         // save file
         actionManager.registerAction("save_file_action", new AbstractAction() {
             @Override
@@ -160,6 +157,16 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             }
         });
 
+        fc_import.addFileType(new String[] {"png", "jpg", "jpeg", "bmp"}, "Image");
+        fc_import.addFileType("gif", "Animated Image");
+        fc_import.addFileType("binvox");
+        fc_import.addFileType("kv6");
+        fc_import.addFileType("kvx");
+        fc_import.addFileType("qb", "Qubicle Binary");
+        fc_import.addFileType("vox", "Voxlap Engine File");
+        fc_import.addFileType("vox", "MagicaVoxel File");
+        fc_import.addFileType("vox", "Vox Game File");
+
         // import file
         actionManager.registerAction("import_file_action", new AbstractAction() {
             @Override
@@ -174,7 +181,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext) || "bmp".equals(ext)) {
                             // -----------------
                             // import image data
-                            data.selectLayer(data.createLayer(FileTools.removeExtension(toOpen)));
+                            data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
                             try {
                                 BufferedImage img = ImageIO.read(toOpen);
                                 importImage(img);
@@ -198,7 +205,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                         importImage(ir.read(i));
                                     }
                                 } else {
-                                    data.selectLayer(data.createLayer(FileTools.removeExtension(toOpen)));
+                                    data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
                                     importImage(ir.read(0));
                                 }
                             } catch (IOException e1) {
@@ -208,7 +215,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .binvox files
                             try {
-                                AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.removeExtension(toOpen));
+                                AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
                                 if (importer.hasLoaded()) {
                                     int[] center = importer.getWeightedCenter();
                                     int[] lowest = importer.getLowest();
@@ -231,7 +238,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .kv6 files
                             try {
-                                AbstractImporter importer = new Kv6Importer(toOpen, FileTools.removeExtension(toOpen));
+                                AbstractImporter importer = new Kv6Importer(toOpen, FileTools.extractNameWithoutExtension(toOpen));
                                 if (importer.hasLoaded()) {
                                     for (AbstractImporter.Layer layer : importer.getVoxel()) {
                                         data.selectLayer(data.createLayer(layer.name));
@@ -253,7 +260,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .kvx files
                             try {
-                                AbstractImporter importer = new KvxImporter(toOpen, FileTools.removeExtension(toOpen));
+                                AbstractImporter importer = new KvxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
                                 if (importer.hasLoaded()) {
                                     for (AbstractImporter.Layer layer : importer.getVoxel()) {
                                         data.selectLayer(data.createLayer(layer.name));
@@ -275,7 +282,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .qb files
                             try {
-                                AbstractImporter importer = new QbImporter(toOpen, FileTools.removeExtension(toOpen));
+                                AbstractImporter importer = new QbImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
                                 if (importer.hasLoaded()) {
                                     for (AbstractImporter.Layer layer : importer.getVoxel()) {
                                         data.selectLayer(data.createLayer(layer.name));
@@ -297,7 +304,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----------------
                             // import .vox files
                             try {
-                                AbstractImporter importer = new VoxImporter(toOpen, FileTools.removeExtension(toOpen));
+                                AbstractImporter importer = new VoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
                                 if (importer.hasLoaded()) {
                                     int[] center = importer.getWeightedCenter();
                                     int[] lowest = importer.getLowest();
@@ -328,36 +335,72 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             }
         });
 
+        fc_export.addFileType("dae", "COLLADA");
+        fc_export.addFileType("png", "Image and Depth Map");
+
         // export file
         actionManager.registerAction("export_file_action", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
+
                     File exportTo = fc_export.saveFile(frame);
-                    if (exportTo != null) {
+                    String type = fc_export.getCurrentExt();
+                    if (type != null && exportTo != null) {
                         String dir = exportTo.getPath();
-                        // attached texture file
-                        String textureImgDir = FileTools.changeExtension(dir, ".png");
-                        File exportTextureTo = new File(textureImgDir);
                         // query if file already exists
                         if ((!exportTo.exists() ||
                                 JOptionPane.showConfirmDialog(frame,
                                         dir + " " + langSelector.getString("replace_file_query"),
                                         langSelector.getString("replace_file_query_title"),
-                                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) &&
-                                (!exportTextureTo.exists() ||
+                                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
+
+                            if (type.equals("dae")) {
+                                // -----------
+                                // export collada (we need texture!)
+                                String textureImgDir = FileTools.changeExtension(dir, ".png");
+                                File exportTextureTo = new File(textureImgDir);
+                                // query if texture file already exists
+                                if ((!exportTextureTo.exists() ||
+                                                JOptionPane.showConfirmDialog(frame,
+                                                        textureImgDir + " " + langSelector.getString("replace_file_query"),
+                                                        langSelector.getString("replace_file_query_title"),
+                                                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
+                                    if (data.exportToCollada(exportTo, exportTextureTo)) {
+                                        console.addLine(langSelector.getString("export_file_successful"));
+                                    } else {
+                                        console.addLine(langSelector.getString("export_file_error"));
+                                    }
+                                }
+                            } else if (type.equals("png")) {
+                                // -----------
+                                // export image and depth map
+                                BufferedImage image = mainView.getImage();
+                                try {
+                                    ImageIO.write(image,"png",exportTo);
+                                } catch (IOException e) {
+                                    errorHandler.handle(e);
+                                }
+                                // check if we want to overwrite the depth map
+                                File exportDepthMapTo = new File(FileTools.removeExtension(exportTo) + "_depth.png");
+                                if ((!exportDepthMapTo.exists() ||
                                         JOptionPane.showConfirmDialog(frame,
-                                                textureImgDir + " " + langSelector.getString("replace_file_query"),
+                                                exportDepthMapTo.getPath() + " " + langSelector.getString("replace_file_query"),
                                                 langSelector.getString("replace_file_query_title"),
                                                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
+                                    BufferedImage depth = mainView.getDepthImage();
+                                    try {
+                                        ImageIO.write(depth,"png",exportDepthMapTo);
+                                    } catch (IOException e) {
+                                        errorHandler.handle(e);
+                                    }
+                                }
 
-                            if (data.exportToCollada(exportTo, exportTextureTo)) {
-                                console.addLine(langSelector.getString("export_file_successful"));
-                            } else {
-                                console.addLine(langSelector.getString("export_file_error"));
                             }
                         }
                     }
+
+
                 }
             }
 

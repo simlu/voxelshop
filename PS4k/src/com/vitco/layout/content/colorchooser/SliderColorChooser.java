@@ -75,6 +75,7 @@ public class SliderColorChooser extends ColorChooserPrototype {
                 ig.fillRect(1, 1, w - 2, h - 11);
                 ig.setColor(Settings.SLIDER_BORDER_COLOR);
                 ig.drawRect(0, 0, w - 1, h - 10);
+                ig.dispose();
             }
 
             // draw the background
@@ -115,6 +116,7 @@ public class SliderColorChooser extends ColorChooserPrototype {
                 }
                 ig.setColor(Settings.SLIDER_BORDER_COLOR);
                 ig.drawRect(0, 0, w - 1, h - 10);
+                ig.dispose();
             }
 
             // draw the background

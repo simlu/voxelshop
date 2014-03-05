@@ -107,6 +107,7 @@ public abstract class ColorSliderPrototype extends JSlider {
                 ig.setStroke(new BasicStroke(0.7f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
                 ig.drawPolygon(new int[]{0, size * 2, size * 2, size, 0}, new int[]{size * 2, size * 2, size, 0, size}, 5);
             }
+            ig.dispose();
         }
         // ===============
 

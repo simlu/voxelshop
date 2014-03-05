@@ -70,6 +70,8 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
                     g2.fillRect(p.x*BOX_SIZE, p.y*BOX_SIZE, BOX_SIZE, BOX_SIZE);
                 }
 
+                g2.dispose();
+
                 bufferOutdated = false;
             }
 

@@ -115,6 +115,7 @@ public class TextureObject implements Serializable {
                 BufferedImage largeTextureImage = SharedImageFactory.getBufferedImage(textureSizeEnlargedX, textureSizeEnlargedY);
                 largeTextureImage.getGraphics().drawImage(textureImage, 0, 0, textureSizeEnlargedX, textureSizeEnlargedY, null);
                 textureImage = largeTextureImage;
+                g2.dispose();
                 g2 = (Graphics2D) textureImage.getGraphics();
             }
             if (containsTexture) {
@@ -235,6 +236,7 @@ public class TextureObject implements Serializable {
                 seenTrianglePoints.add(x + "_" + y);
             }
         }
+        g2.dispose();
 
         // get the hash of the texture as texture key
         String textureNameNew = GraphicTools.getHash(textureImage);

@@ -103,6 +103,7 @@ public final class SatBrightPanelChooser extends ColorChooserPrototype {
                         false)
                 );
                 g.fillRect(0,0,image.getWidth(),image.getHeight());
+                g.dispose();
             }
             // update the previous color
             prevCurrentColor = currentColor.clone();

@@ -24,6 +24,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Rendering functionality of this World (data + overlay). Uses a DrawContainer.
@@ -64,6 +65,34 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
     // true if high resolution rendering active
     private static boolean highQualityActive = true;
+
+    // ===============================
+    // Access underlying container
+    // ===============================
+
+    // access to the underlying z buffer
+    public final int[] getZBuffer() {
+        return container.getZBuffer();
+    }
+    // access to the underlying pixels
+    public final int[] getPixels() {
+        return container.getPixels();
+    }
+    // access to the container dimensions
+    public final int getHeight() {
+        return container.getHeight();
+    }
+    public final int getWidth() {
+        return container.getWidth();
+    }
+    // get the image rendered in container in high quality
+    public BufferedImage getImage() {
+        return container.getImage();
+    }
+    // get the depth image
+    public BufferedImage getDepthImage() {
+        return container.getDepthImage();
+    }
 
     // ==============================
     // updating of world with voxels

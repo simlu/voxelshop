@@ -96,6 +96,7 @@ public class ToolBarLogic extends MenuLogicPrototype implements MenuLogicInterfa
                         ig.fillRect(1,1,22,22);
                         ig.setColor(Color.BLACK);
                         ig.drawRect(0,0,23,23);
+                        ig.dispose();
                         // create and set the icon
                         ImageIcon icon = new ImageIcon();
                         icon.setImage(image);
