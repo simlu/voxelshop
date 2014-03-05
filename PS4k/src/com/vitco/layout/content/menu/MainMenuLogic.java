@@ -98,7 +98,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         }
         return result;
     }
-    // import a file
+
+    // import an image file
     private void importImage(BufferedImage img) {
         int width = img.getWidth();
         int height = img.getHeight();
@@ -125,6 +126,32 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                         " " + langSelector.getString("import_voxel_limit_reached_post"));
                     }
                     voxelCount++;
+                }
+            }
+        }
+    }
+
+    // import helper for voxel file
+    private void importVoxelData(AbstractImporter importer, boolean shiftToCenter) {
+        if (importer.hasLoaded()) {
+            if (shiftToCenter) {
+                int[] center = importer.getWeightedCenter();
+                int[] highest = importer.getHighest();
+                for (AbstractImporter.Layer layer : importer.getVoxel()) {
+                    data.selectLayer(data.createLayer(layer.name));
+                    for (int[] vox; layer.hasNext();) {
+                        vox = layer.next();
+                        data.addVoxelDirect(new Color(vox[3]),
+                                new int[] {vox[0] - center[0], vox[1] - highest[1], vox[2] - center[2]});
+                    }
+                }
+            } else {
+                for (AbstractImporter.Layer layer : importer.getVoxel()) {
+                    data.selectLayer(data.createLayer(layer.name));
+                    for (int[] vox; layer.hasNext();) {
+                        vox = layer.next();
+                        data.addVoxelDirect(new Color(vox[3]),new int[] {vox[0], vox[1], vox[2]});
+                    }
                 }
             }
         }
@@ -166,6 +193,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("vox", "Voxlap Engine File");
         fc_import.addFileType("vox", "MagicaVoxel File");
         fc_import.addFileType("vox", "Vox Game File");
+        fc_import.addFileType("rawvox", "Raw Voxel Format");
 
         // import file
         actionManager.registerAction("import_file_action", new AbstractAction() {
@@ -178,20 +206,16 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         // todo: rework import so that history can stay (!)
                         //data.freshStart();
                         //data.deleteLayer(data.getSelectedLayer());
-                        if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext) || "bmp".equals(ext)) {
-                            // -----------------
-                            // import image data
-                            data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
-                            try {
+                        try {
+                            if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext) || "bmp".equals(ext)) {
+                                // -----------------
+                                // import image data
+                                data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
                                 BufferedImage img = ImageIO.read(toOpen);
                                 importImage(img);
-                            } catch (IOException e1) {
-                                errorHandler.handle(e1);
-                            }
-                        } else if ("gif".equals(ext)) {
-                            // ----------------
-                            // import gif image data (including frame animation)
-                            try {
+                            } else if ("gif".equals(ext)) {
+                                // ----------------
+                                // import gif image data (including frame animation)
                                 ImageReader ir = new GIFImageReader(new GIFImageReaderSpi());
                                 ir.setInput(ImageIO.createImageInputStream(toOpen));
                                 int count = ir.getNumImages(true);
@@ -208,122 +232,39 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
                                     importImage(ir.read(0));
                                 }
-                            } catch (IOException e1) {
-                                errorHandler.handle(e1);
-                            }
-                        } else if ("binvox".equals(ext)) {
-                            // ----------------
-                            // import .binvox files
-                            try {
+                            } else if ("binvox".equals(ext)) {
+                                // ----------------
+                                // import .binvox files
                                 AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                if (importer.hasLoaded()) {
-                                    int[] center = importer.getWeightedCenter();
-                                    int[] lowest = importer.getLowest();
-                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                                        data.selectLayer(data.createLayer(layer.name));
-                                        for (int[] vox; layer.hasNext();) {
-                                            vox = layer.next();
-                                            data.addVoxelDirect(
-                                                    new Color(vox[3]),
-                                                    new int[] {vox[1] - center[1], -vox[0] + lowest[0], vox[2] - center[2]});
-                                        }
-                                    }
-                                }
-                            } catch (FileNotFoundException e1) {
-                                errorHandler.handle(e1);
-                            } catch (IOException e1) {
-                                errorHandler.handle(e1);
-                            }
-                        } else if ("kv6".equals(ext)) {
-                            // ----------------
-                            // import .kv6 files
-                            try {
+                                importVoxelData(importer, true);
+                            } else if ("kv6".equals(ext)) {
+                                // ----------------
+                                // import .kv6 files
                                 AbstractImporter importer = new Kv6Importer(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                if (importer.hasLoaded()) {
-                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                                        data.selectLayer(data.createLayer(layer.name));
-                                        for (int[] vox; layer.hasNext();) {
-                                            vox = layer.next();
-                                            data.addVoxelDirect(
-                                                    new Color(vox[3]),
-                                                    new int[] {vox[0], vox[2], -vox[1]}
-                                            );
-                                        }
-                                    }
-                                }
-                            } catch (FileNotFoundException e1) {
-                                errorHandler.handle(e1);
-                            } catch (IOException e1) {
-                                errorHandler.handle(e1);
-                            }
-                        } else if ("kvx".equals(ext)) {
-                            // ----------------
-                            // import .kvx files
-                            try {
+                                importVoxelData(importer, false);
+                            } else if ("kvx".equals(ext)) {
+                                // ----------------
+                                // import .kvx files
                                 AbstractImporter importer = new KvxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                if (importer.hasLoaded()) {
-                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                                        data.selectLayer(data.createLayer(layer.name));
-                                        for (int[] vox; layer.hasNext();) {
-                                            vox = layer.next();
-                                            data.addVoxelDirect(
-                                                    new Color(vox[3]),
-                                                    new int[] {vox[0], vox[2], -vox[1]}
-                                            );
-                                        }
-                                    }
-                                }
-                            } catch (FileNotFoundException e1) {
-                                errorHandler.handle(e1);
-                            } catch (IOException e1) {
-                                errorHandler.handle(e1);
-                            }
-                        } else if ("qb".equals(ext)) {
-                            // ----------------
-                            // import .qb files
-                            try {
+                                importVoxelData(importer, false);
+                            } else if ("qb".equals(ext)) {
+                                // ----------------
+                                // import .qb files
                                 AbstractImporter importer = new QbImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                if (importer.hasLoaded()) {
-                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                                        data.selectLayer(data.createLayer(layer.name));
-                                        for (int[] vox; layer.hasNext();) {
-                                            vox = layer.next();
-                                            data.addVoxelDirect(
-                                                    new Color(vox[3]),
-                                                    new int[] {vox[0], -vox[1], vox[2]}
-                                            );
-                                        }
-                                    }
-                                }
-                            } catch (FileNotFoundException e1) {
-                                errorHandler.handle(e1);
-                            } catch (IOException e1) {
-                                errorHandler.handle(e1);
-                            }
-                        } else if ("vox".equals(ext)) {
-                            // ----------------
-                            // import .vox files
-                            try {
+                                importVoxelData(importer, false);
+                            } else if ("vox".equals(ext)) {
+                                // ----------------
+                                // import .vox files
                                 AbstractImporter importer = new VoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                if (importer.hasLoaded()) {
-                                    int[] center = importer.getWeightedCenter();
-                                    int[] lowest = importer.getLowest();
-                                    for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                                        data.selectLayer(data.createLayer(layer.name));
-                                        for (int[] vox; layer.hasNext();) {
-                                            vox = layer.next();
-                                            data.addVoxelDirect(
-                                                    new Color(vox[3]),
-                                                    new int[] {-vox[0] + center[0], -vox[2] + lowest[2], vox[1] - center[1]}
-                                            );
-                                        }
-                                    }
-                                }
-                            } catch (FileNotFoundException e1) {
-                                errorHandler.handle(e1);
-                            } catch (IOException e1) {
-                                errorHandler.handle(e1);
+                                importVoxelData(importer, true);
+                            } else if ("rawvox".equals(ext)) {
+                                // ----------------
+                                // import .rawvox files
+                                AbstractImporter importer = new RawVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                importVoxelData(importer, true);
                             }
+                        } catch (IOException e1) {
+                            errorHandler.handle(e1);
                         }
 
                         // force a refresh of the data (redraw)

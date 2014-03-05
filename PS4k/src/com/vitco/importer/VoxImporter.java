@@ -112,7 +112,8 @@ public class VoxImporter extends AbstractImporter {
                                             addLayer(layer.name);
                                             for (int[] vox; layer.hasNext();) {
                                                 vox = layer.next();
-                                                addVoxel(vox[0] + Math.round(offx), vox[1] + Math.round(offz), vox[2] + Math.round(offy), vox[3]);
+                                                // no need to rotate this (already rotated)
+                                                addVoxel(vox[0] - Math.round(offx), vox[1] - Math.round(offy), vox[2] + Math.round(offz), vox[3]);
                                             }
                                         }
                                     }
@@ -134,13 +135,12 @@ public class VoxImporter extends AbstractImporter {
                 for (int y = 0; y < sy; y++) {
                     for (int x = 0; x < sx; x++) {
                         for (int z = 0; z < sz; z++) {
-
                             int visible = NumberTools.parseInt(fileIn.readSpaceString(), 0);
                             int r = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
                             int g = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
                             int b = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
                             if (visible == 1) {
-                                addVoxel(x,z,y, new Color(r,g,b).getRGB());
+                                addVoxel(-x,-y,z, new Color(r,g,b).getRGB());
                             }
                         }
                     }
@@ -172,7 +172,7 @@ public class VoxImporter extends AbstractImporter {
                         int paletteEntry = fileIn.readByteUnsigned();
                         if (paletteEntry != 255) {
                             //noinspection SuspiciousNameCombination
-                            addVoxel(-y, x, -z, colPalette[paletteEntry]);
+                            addVoxel(y, z, x, colPalette[paletteEntry]);
                         }
                     }
                 }
@@ -253,7 +253,7 @@ public class VoxImporter extends AbstractImporter {
         for (Integer voxel : voxels) {
             buf.position(0);
             buf.putInt(voxel);
-            addVoxel(buf.get(0) & 0xFF, buf.get(1) & 0xFF, buf.get(2) & 0xFF, palette[(buf.get(3) & 0xFF) - 1]);
+            addVoxel(-(buf.get(0) & 0xFF), -(buf.get(2) & 0xFF), buf.get(1) & 0xFF, palette[(buf.get(3) & 0xFF) - 1]);
         }
 
         return true;

@@ -87,7 +87,7 @@ public class Kv6Importer extends AbstractImporter {
                     int[] vox = voxel.remove(0); // alternative "voxel.get(c)"
                     addedVoxelList.add(vox);
 //                    System.out.println("A:" + x + " " + y + " " + vox[0]);
-                    addVoxel(x - cx, y - cy, vox[0] - cz, vox[1]);
+                    addVoxel(x - cx, vox[0] - cz, -y + cy, vox[1]);
                     // some files don't count invisible voxel, so we need to track them
                     // for the sanity check
                     if (vox[2] == 0) {
@@ -106,7 +106,7 @@ public class Kv6Importer extends AbstractImporter {
                     if (lastZ != null && !bigInteger.testBit(4)) {
                         for (int i = lastZ + 1; i < vox[0]; i++) {
 //                            System.out.println("E:" + x + " " + y + " " + i);
-                            addVoxel(x - cx, y - cy, i - cz, vox[1]);
+                            addVoxel(x - cx, i - cz, -y + cy, vox[1]);
                         }
                     }
                     if (!bigInteger.testBit(5)) {

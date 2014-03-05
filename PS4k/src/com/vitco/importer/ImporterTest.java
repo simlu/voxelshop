@@ -32,6 +32,7 @@ public class ImporterTest {
 
     @Test
     public void testAllImporter() throws Exception {
+        doTest("C:\\Users\\flux\\Desktop\\rawvox", "rawvox", RawVoxImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\vox", "vox", VoxImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\binvox", "binvox", BinVoxImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\kvx", "kvx", KvxImporter.class);
@@ -41,7 +42,7 @@ public class ImporterTest {
 
     @Test
     public void testNewImporter() throws Exception {
-        AbstractImporter importer = new Kv6Importer(new File("C:\\Users\\flux\\Desktop\\kv6\\prefab_sniper_tower.kv6"), "Import");
+        AbstractImporter importer = new RawVoxImporter(new File("C:\\Users\\flux\\Desktop\\rawvox\\nerds.rawvox"), "Import");
         if (importer.hasLoaded()) {
             System.out.println("Loading finished.");
         }

@@ -7,6 +7,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * BinVox importer
+ */
 public class BinVoxImporter extends AbstractImporter {
 
     // the voxel color is not defined in the format, so
@@ -14,13 +17,13 @@ public class BinVoxImporter extends AbstractImporter {
     private static final int voxelRGB = new Color(158, 194, 88).getRGB();
 
     // the size of the block that contains the voxel as written in file
-    private int sx, sy, sz = 0;
+    private int sx = 0, sy = 0, sz = 0;
     public final double[] getSize() {
         return new double[] {sx, sy, sz};
     }
 
     // the translation that is written in file
-    private double tx, ty, tz = 0;
+    private double tx = 0, ty = 0, tz = 0;
     public final double[] getTranslation() {
         return new double[] {tx, ty, tz};
     }
@@ -87,7 +90,8 @@ public class BinVoxImporter extends AbstractImporter {
                             int x = i % sx;
                             int y = (i / sx) % sz;
                             int z = (i / (sx * sy));
-                            addVoxel(x, y, z, voxelRGB);
+                            //noinspection SuspiciousNameCombination
+                            addVoxel(y, -x, z, voxelRGB);
                         }
                     }
                     index = end_index;

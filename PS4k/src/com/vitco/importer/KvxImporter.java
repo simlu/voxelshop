@@ -99,7 +99,7 @@ public class KvxImporter extends AbstractImporter {
                     for (int i = 0; i < zlen; i++) {
                         // read color->voxel mapping and add
                         lastCol = colPalette[fileIn.readByteUnsigned()];
-                        addVoxel(x - cx, y - cy, zpos + i - cz, lastCol);
+                        addVoxel(x - cx, zpos + i - cz, -y + cy, lastCol);
                     }
                     start += zlen + 3;
 
@@ -107,7 +107,7 @@ public class KvxImporter extends AbstractImporter {
                     BigInteger bigInteger = BigInteger.valueOf(visfaces);
                     if (!bigInteger.testBit(4)) {
                         for (int i = lastZ + 1; i < zpos; i++) {
-                            addVoxel(x - cx, y - cy, i - cz, lastCol);
+                            addVoxel(x - cx, i - cz, -y + cy, lastCol);
                         }
                     }
                     if (!bigInteger.testBit(5)) {

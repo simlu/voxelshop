@@ -70,9 +70,9 @@ public class QbImporter extends AbstractImporter {
                             if (a != 0) { // if voxel is not invisible (this should work correctly in all cases)
                                 int rgb = colorFormat == 0 ? new Color(c1,c2,c3).getRGB() : new Color(c3, c2, c1).getRGB();
                                 if (zAxisOrientation == 1) {
-                                    addVoxel(x + cx, y + cy, z + cz, rgb);
+                                    addVoxel(x + cx, -y - cy, z + cz, rgb);
                                 } else {
-                                    addVoxel(z + cz, y + cy, x + cx, rgb);
+                                    addVoxel(z + cz, -y - cy, x + cx, rgb);
                                 }
                             }
                         }
@@ -107,9 +107,9 @@ public class QbImporter extends AbstractImporter {
                                 if (a != 0) { // if voxel is not invisible
                                     int rgb = colorFormat == 0 ? new Color(c1,c2,c3).getRGB() : new Color(c3, c2, c1).getRGB();
                                     if (zAxisOrientation == 1) {
-                                        addVoxel(x + cx, y + cy, z + cz, rgb);
+                                        addVoxel(x + cx, -y - cy, z + cz, rgb);
                                     } else {
-                                        addVoxel(z + cz, y + cy, x + cx, rgb);
+                                        addVoxel(z + cz, -y - cy, x + cx, rgb);
                                     }
                                 }
                             }
@@ -126,9 +126,9 @@ public class QbImporter extends AbstractImporter {
                             if (a != 0) { // if voxel is not invisible
                                 int rgb = colorFormat == 0 ? new Color(c1,c2,c3).getRGB() : new Color(c3, c2, c1).getRGB();
                                 if (zAxisOrientation == 1) {
-                                    addVoxel(x + cx, y + cy, z + cz, rgb);
+                                    addVoxel(x + cx, -y - cy, z + cz, rgb);
                                 } else {
-                                    addVoxel(z + cz, y + cy, x + cx, rgb);
+                                    addVoxel(z + cz, -y - cy, x + cx, rgb);
                                 }
                             }
                         }
