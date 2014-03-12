@@ -35,7 +35,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
-    public static final String VERSION_ID = "1.3.42";
+    public static final String VERSION_ID = "1.3.50";
     // version id
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
 
@@ -122,7 +122,7 @@ public final class VitcoSettings {
     public static final Color DEFAULT_BORDER_COLOR_LIGHT = new Color(130, 135, 144);
 
     // layer
-    public static final Color VISIBLE_LAYER_BG = new Color(85, 85, 85);
+    public static final Color VISIBLE_LAYER_BG = new Color(95, 95, 95);
     public static final Color HIDDEN_LAYER_BG = new Color(120, 85, 85);
     public static final Color VISIBLE_SELECTED_LAYER_BG = new Color(56, 77, 115);
     public static final Color HIDDEN_SELECTED_LAYER_BG = new Color(127, 48, 43);
@@ -136,6 +136,10 @@ public final class VitcoSettings {
             BorderFactory.createEmptyBorder(0, 10, 0, 0);
     public static final Border DEFAULT_CELL_BORDER_EDIT =
             BorderFactory.createEmptyBorder(DEFAULT_TABLE_INCREASE / 2, 10, 0, 0);
+    public static final Color TABLE_HEADER_BG_COLOR = new Color(191, 219, 255, 200);
+    public static final Color TABLE_HEADER_COLOR = new Color(0, 0, 0);
+    public static final Color DEFAULT_CELL_COLOR = new Color(95, 95, 95);
+    public static final Color DEFAULT_SCROLL_PANE_BG_COLOR = new Color(203, 225, 254);
 
     // general config
     public static final float VOXEL_SIZE = 10f;
@@ -172,5 +176,9 @@ public final class VitcoSettings {
     public static final float TEXTURE_INTERPOLATION_VALUE = 0.004f;
     // interpolation to show black outline (moves textures towards the outside)
     public static final float BORDER_INSET_VALUE = 0.04f;
+
+    // help screen settings
+    public static final Color HELP_OVERLAY_DEFAULT_COLOR = Color.ORANGE;
+    public static final Color HELP_OVERLAY_HIGHLIGHT_COLOR = new Color(184, 31, 0);
 
 }

@@ -38,8 +38,8 @@ public class Main {
                 g.setColor(new Color(127, 157, 184));
                 g.drawString("V" + VitcoSettings.VERSION_ID, 10, 15);
                 splash.update();
+                g.dispose();
             }
-            g.dispose();
         }
 
         // the JIDE license

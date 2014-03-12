@@ -7,6 +7,7 @@ import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.content.shortcut.ShortcutManagerInterface;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
@@ -36,6 +37,8 @@ public interface WindowManagerInterface {
     void setErrorHandler(ErrorHandlerInterface errorHandler);
     // set the action manager
     void setActionManager(ActionManager actionManager);
+    // set the complex action handler
+    void setComplexActionManager(ComplexActionManager complexActionManager);
     // set pref
     void setPreferences(PreferencesInterface preferences);
     // set data container

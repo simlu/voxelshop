@@ -1,6 +1,7 @@
 package com.vitco.layout.content.colorchooser;
 
 import com.jidesoft.swing.JideTabbedPane;
+import com.vitco.layout.content.JCustomScrollPane;
 import com.vitco.layout.content.colorchooser.basic.ColorChooserPrototype;
 import com.vitco.layout.content.colorchooser.basic.Settings;
 import com.vitco.layout.content.colorchooser.components.*;
@@ -515,19 +516,19 @@ public class SliderColorChooser extends ColorChooserPrototype {
         setLayout(new BorderLayout());
 
         // add the tabs
-        JScrollPane RGBscrollPane = new JScrollPane(rgbTab);
-        RGBscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        RGBscrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        JCustomScrollPane RGBscrollPane = new JCustomScrollPane(rgbTab);
+        RGBscrollPane.setHorizontalScrollBarPolicy(JCustomScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        RGBscrollPane.setVerticalScrollBarPolicy(JCustomScrollPane.VERTICAL_SCROLLBAR_NEVER);
         tabbedPane.addTab("RGB", RGBscrollPane);
 
-        JScrollPane HSBscrollPane = new JScrollPane(hsbTab);
-        HSBscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        HSBscrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        JCustomScrollPane HSBscrollPane = new JCustomScrollPane(hsbTab);
+        HSBscrollPane.setHorizontalScrollBarPolicy(JCustomScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        HSBscrollPane.setVerticalScrollBarPolicy(JCustomScrollPane.VERTICAL_SCROLLBAR_NEVER);
         tabbedPane.addTab("HSB", HSBscrollPane);
 
-        JScrollPane CMYKscrollPane = new JScrollPane(cmykTab);
-        CMYKscrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        CMYKscrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        JCustomScrollPane CMYKscrollPane = new JCustomScrollPane(cmykTab);
+        CMYKscrollPane.setHorizontalScrollBarPolicy(JCustomScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        CMYKscrollPane.setVerticalScrollBarPolicy(JCustomScrollPane.VERTICAL_SCROLLBAR_NEVER);
         tabbedPane.addTab("CMYK", CMYKscrollPane);
 
         // disable focus for tabs themselves

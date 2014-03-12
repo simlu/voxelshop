@@ -10,7 +10,9 @@ import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.content.shortcut.ShortcutManagerInterface;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
+import com.vitco.manager.help.FrameHelpOverlay;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
 import com.vitco.settings.VitcoSettings;
@@ -91,6 +93,13 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.actionManager = actionManager;
     }
 
+    private ComplexActionManager complexActionManager;
+    // set the complex action handler
+    @Override
+    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
+        this.complexActionManager = complexActionManager;
+    }
+
     // var & setter
     protected LangSelectorInterface langSelector;
     @Override
@@ -98,12 +107,43 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         this.langSelector = langSelector;
     }
 
+    // reference to this instance
+    final JFrame thisFrame = this;
+
     // prepare all frames
     @Override
     public final DockableFrame prepareFrame(final String key) {
         DockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
             frame = frameLinkageMap.get(key).buildFrame(key, thisFrame);
+            // add help overlay (this is only used if this frame is floated!)
+            JRootPane rootPane = frame.getRootPane();
+            final FrameHelpOverlay overlay = new FrameHelpOverlay(rootPane, actionManager, complexActionManager, langSelector);
+            rootPane.setGlassPane(overlay);
+            // add help button
+            final DockableFrame finalFrame = frame;
+            AbstractAction action = new AbstractAction("help", new SaveResourceLoader("resource/img/icons/frame_help_button_icon.png").asIconImage()) {
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    if (finalFrame.isFloated()) {
+                        // for this sub-frame (if floated only)
+                        overlay.setActive(!overlay.isActive());
+                    } else {
+                        // show help for entire window (if docked)
+                        actionManager.performWhenActionIsReady("show_help_overlay", new Runnable() {
+                            @Override
+                            public void run() {
+                                actionManager.getAction("show_help_overlay").actionPerformed(
+                                        new ActionEvent(e.getSource(), e.getID(), e.paramString())
+                                );
+                            }
+                        });
+                    }
+                }
+            };
+            action.putValue(AbstractAction.SHORT_DESCRIPTION, "Help"); // tooltip
+            frame.addAdditionalButtonActions(action);
+            // register the shortcuts for this frame
             shortcutManager.registerFrame(frame);
         } else {
             System.err.println("Error: No linkage class defined for frame \"" + key + "\"");
@@ -111,8 +151,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
 
         return frame;
     }
-
-    final Frame thisFrame = this;
 
     // prepare all bars
     @Override
@@ -248,6 +286,18 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         } catch (IOException e) {
             errorHandler.handle(e); // should not happen
         }
+
+        // register help overlay for entire window
+        JRootPane rootPane = thisFrame.getRootPane();
+        final FrameHelpOverlay overlay = new FrameHelpOverlay(rootPane, actionManager, complexActionManager, langSelector);
+        rootPane.setGlassPane(overlay);
+        actionManager.registerAction("show_help_overlay", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // toggle visibility of the glass "help" pane
+                overlay.setActive(!overlay.isActive());
+            }
+        });
 
         actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
             @Override

@@ -71,7 +71,12 @@ public class MenuGenerator implements MenuGeneratorInterface {
 
     @Override
     public void buildMenuFromXML(JComponent jComponent, String xmlFile) {
-        if (jComponent instanceof CommandMenuBar) { // disable the chevron by default
+        // the menu needs to be focusable. Otherwise some parent will be focused with a delay (when
+        // the menu closes). This can cause components that gained focus while the menu
+        // was opened to lose focus again.
+        jComponent.setFocusable(true);
+        // disable the chevron by default
+        if (jComponent instanceof CommandMenuBar) {
             ((CommandMenuBar)jComponent).setChevronAlwaysVisible(false);
         }
         try {
@@ -100,6 +105,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
             if (name.equals("menu")) {
                 Element e = (Element) node;
                 JideMenu mnu = new JideMenu(langSel.getString(e.getAttribute("caption")));
+                mnu.setName(e.getAttribute("caption")); // set identifier
                 NodeList list = node.getChildNodes();
                 component.add(mnu);
                 int len = list.getLength();

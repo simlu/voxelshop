@@ -3,6 +3,8 @@ package com.vitco.layout.content.layer;
 import com.jidesoft.action.CommandMenuBar;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.notification.DataChangeAdapter;
+import com.vitco.layout.content.JCustomScrollPane;
+import com.vitco.layout.content.JCustomTable;
 import com.vitco.layout.content.ViewPrototype;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.async.AsyncAction;
@@ -126,28 +128,28 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         }
 
         public final void setValueAt(final Object value, final int row, final int col) {
-                    if (!cancelEdit) {
-                        switch (col) {
-                            case 0:
-                                // this needs to be done asynchronously,
-                                // b/c it could trigger a UI refresh
-                                final int layer;
-                                synchronized (thisInstance) {
-                                    layer = layers[row];
-                                }
-                                asyncActionManager.addAsyncAction(new AsyncAction() {
-                                    @Override
-                                    public void performAction() {
-                                        data.renameLayer(layer, (String) value);
-                                    }
-                                });
-                                break;
-                            default: break;
+            if (!cancelEdit) {
+                switch (col) {
+                    case 0:
+                        // this needs to be done asynchronously,
+                        // b/c it could trigger a UI refresh
+                        final int layer;
+                        synchronized (thisInstance) {
+                            layer = layers[row];
                         }
-                        fireTableCellUpdated(row, col);
-                    } else {
-                        cancelEdit = false;
-                    }
+                        asyncActionManager.addAsyncAction(new AsyncAction() {
+                            @Override
+                            public void performAction() {
+                                data.renameLayer(layer, (String) value);
+                            }
+                        });
+                        break;
+                    default: break;
+                }
+                fireTableCellUpdated(row, col);
+            } else {
+                cancelEdit = false;
+            }
 
         }
 
@@ -248,13 +250,12 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         result.setLayout(new BorderLayout());
 
         // create the table
-        final JTable table = new JTable(new LayerTableModel());
+        final JCustomTable table = new JCustomTable(new LayerTableModel());
 
-        // custom row height
-        table.setRowHeight(table.getRowHeight()+VitcoSettings.DEFAULT_TABLE_INCREASE);
         // custom layout for cells
-        table.getColumnModel().getColumn(0).setCellRenderer(new TableRenderer());
-        table.getColumnModel().getColumn(1).setCellRenderer(new TableRenderer());
+        TableRenderer tableRenderer = new TableRenderer();
+        table.getColumnModel().getColumn(0).setCellRenderer(tableRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(tableRenderer);
 
         // update now
         synchronized (thisInstance) {
@@ -329,41 +330,40 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
             public void mousePressed(final MouseEvent e) {
                 JTable aTable = (JTable)e.getSource();
                 final int row = aTable.rowAtPoint(e.getPoint());
-                final int col = aTable.columnAtPoint(e.getPoint());
-                final int layer;
-                synchronized (thisInstance) {
-                    layer = layers[row];
-                }
-                asyncActionManager.addAsyncAction(new AsyncAction() {
-                    @Override
-                    public void performAction() {
-//                        if (e.getClickCount() == 1) { // select layer
-//                            data.selectLayerSoft(layer);
-//                        } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
-//                            data.setVisible(layer, !data.getLayerVisible(layer));
-//                        }
-                        if (col == 0) {
-                            data.selectLayerSoft(layer); // select layer
-                        } else {
-                            data.setVisible(layer, !data.getLayerVisible(layer)); // toggle visibility
-                        }
-                        // cancel editing if we are editing
-                        if (e.getClickCount() == 1 && table.isEditing()) {
-                            finishCellEditing(table);
-                        }
+                if (row > -1) { // verify that a row was clicked
+                    final int col = aTable.columnAtPoint(e.getPoint());
+                    final int layer;
+                    synchronized (thisInstance) {
+                        layer = layers[row];
                     }
-                });
+                    asyncActionManager.addAsyncAction(new AsyncAction() {
+                        @Override
+                        public void performAction() {
+    //                        if (e.getClickCount() == 1) { // select layer
+    //                            data.selectLayerSoft(layer);
+    //                        } else if (col == 1 && e.getClickCount() > 1 && e.getClickCount()%2 == 0) { // toggle visibility
+    //                            data.setVisible(layer, !data.getLayerVisible(layer));
+    //                        }
+                            if (col == 0) {
+                                data.selectLayerSoft(layer); // select layer
+                            } else {
+                                data.setVisible(layer, !data.getLayerVisible(layer)); // toggle visibility
+                            }
+                            // cancel editing if we are editing
+                            if (e.getClickCount() == 1 && table.isEditing()) {
+                                finishCellEditing(table);
+                            }
+                        }
+                    });
+                }
             }
         });
 
         // register editing
         table.getColumnModel().getColumn(0).setCellEditor(cellEditor);
-        // stop editing when table looses focus
-        table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         // container for table
-        JScrollPane pane = new JScrollPane(table);
-        pane.setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR));
+        JCustomScrollPane pane = new JCustomScrollPane(table);
         result.add(pane, BorderLayout.CENTER);
 
         // create the menu bar

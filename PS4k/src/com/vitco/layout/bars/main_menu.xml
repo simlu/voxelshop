@@ -30,4 +30,8 @@
             <item caption="colorPalette_caption" action="colorPalette_state-action_show" checkable="true"/>
         </menu>
     </menu>
+
+    <menu caption="help_btn">
+        <item caption="show_help_overlay_caption" action="show_help_overlay"/>
+    </menu>
 </head>

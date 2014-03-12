@@ -2,6 +2,7 @@ package com.vitco.manager.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -11,8 +12,12 @@ public abstract class ActionManagerPrototype<T> implements ActionManagerInterfac
     // maps strings to action
     private final Map<String, T> map = new HashMap<String, T>();
 
-    // maps action names to threads
+    // maps action names to pending actions (stack)
     private final Map<String, ArrayList<Runnable>> actionQueStack = new HashMap<String, ArrayList<Runnable>>();
+
+    // maps actions to keys
+    // Note: usually this should be a one to one mapping (unless an action is mapped to different keys)
+    private final HashMap<T, HashSet<String>> actionToKeys = new HashMap<T, HashSet<String>>();
 
     @Override
     public final void performWhenActionIsReady(String action, Runnable thread) {
@@ -38,7 +43,15 @@ public abstract class ActionManagerPrototype<T> implements ActionManagerInterfac
             System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ") is already registered!");
         } else {
             map.put(key, action);
-            if (actionQueStack.containsKey(key)) { // run the thread that was waiting for this action
+            // register the key handle for this action
+            HashSet<String> actionKeyHandles = actionToKeys.get(action);
+            if (actionKeyHandles == null) {
+                actionKeyHandles = new HashSet<String>();
+                actionToKeys.put(action, actionKeyHandles);
+            }
+            actionKeyHandles.add(key);
+            // run the Runnables that were waiting for the actions
+            if (actionQueStack.containsKey(key)) {
                 ArrayList<Runnable> value = actionQueStack.get(key);
                 for (Runnable thread : value) {
                     // note: this can create an error if the action is not
@@ -60,6 +73,19 @@ public abstract class ActionManagerPrototype<T> implements ActionManagerInterfac
         } else {
             System.err.println("Error: The action \"" + key + "\" (" + getClassName() + ") is not registered!");
             return null;
+        }
+    }
+
+    // retrieve keys for an action
+    @Override
+    public final String[] getActionKeys(T action) {
+        HashSet<String> actionKeyHandles = actionToKeys.get(action);
+        if (actionKeyHandles != null) {
+            String[] result = new String[actionKeyHandles.size()];
+            actionKeyHandles.toArray(result);
+            return result;
+        } else {
+            return new String[0];
         }
     }
 

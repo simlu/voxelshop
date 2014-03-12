@@ -9,7 +9,10 @@ public interface ActionManagerInterface<T> {
     void registerActionIsUsed(String key);
     // the core methods
     void registerAction(String key, T action);
+    // get action for key
     T getAction(String key);
+    // retrieve keys for an action
+    String[] getActionKeys(T action);
 
     void performWhenActionIsReady(String action, Runnable thread);
 }

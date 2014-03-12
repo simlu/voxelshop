@@ -12,6 +12,7 @@ public interface LangSelectorInterface {
     void setLanguageBundle(String filename);
     void setLanguage(String language);
     void setCountry(String country);
+    boolean containsString(String key);
     String getString(String key);
     void init();
 }

@@ -48,6 +48,10 @@ public final class LangSelector implements LangSelectorInterface {
             System.err.println("Error: There is no keyword \"" + key + "\" defined in the language bundle!");
             return "";
         }
+    }
 
+    @Override
+    public boolean containsString(String key) {
+        return rb.containsKey(key);
     }
 }

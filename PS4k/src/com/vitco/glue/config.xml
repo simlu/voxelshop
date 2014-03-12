@@ -138,6 +138,7 @@
     <bean id="WindowManager" class="com.vitco.layout.WindowManager">
         <property name="langSelector" ref="LangSelector"/>
         <property name="actionManager" ref="ActionManager"/>
+        <property name="complexActionManager" ref="ComplexActionManager"/>
         <property name="preferences" ref="Preferences"/>
         <property name="errorHandler" ref="ErrorHandler"/>
         <property name="data" ref="Data"/>

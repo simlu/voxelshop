@@ -5,6 +5,7 @@ import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
+import com.vitco.manager.help.FrameHelpOverlay;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
 import com.vitco.util.file.FileTools;
@@ -148,7 +149,9 @@ public class ShortcutManager implements ShortcutManagerInterface {
             private void update() {
                 // the current frame or a dockableFrame popup, or an component where we edit
                 if ((activeWindow != frame && !(activeWindow instanceof DialogFloatingContainer))
-                        || (focusOwner instanceof JTextComponent && ((JTextComponent) focusOwner).isEditable())) {
+                        || (focusOwner instanceof JTextComponent && ((JTextComponent) focusOwner).isEditable())
+                        // disable hotkeys if help overlay is showing
+                        || (focusOwner instanceof FrameHelpOverlay)) {
                     deactivateShortcuts();
                 } else {
                     activateShortcuts();

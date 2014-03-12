@@ -1,6 +1,8 @@
 package com.vitco.layout.content.shortcut;
 
 import com.jidesoft.swing.JideTabbedPane;
+import com.vitco.layout.content.JCustomScrollPane;
+import com.vitco.layout.content.JCustomTable;
 import com.vitco.layout.content.ViewPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
@@ -28,7 +30,6 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         this.asyncActionManager = asyncActionManager;
     }
 
-
     // last hover cell
     private int curRow = -1;
     private int curCol = -1;
@@ -45,7 +46,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 setBackground(VitcoSettings.DEFAULT_HOVER_COLOR); // hover effect
                 setToolTipText(langSelector.getString("dbl-clc-to-edit_tooltip"));
             } else {
-                setBackground(VitcoSettings.DEFAULT_BG_COLOR);
+                setBackground(VitcoSettings.DEFAULT_CELL_COLOR);
             }
             setFont(VitcoSettings.TABLE_FONT);
             setBorder(VitcoSettings.DEFAULT_CELL_BORDER); // padding
@@ -125,9 +126,10 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                                     }.start();
                                 }
                             }
-                            e.consume(); // prevent further use of this keystroke
                         }
                     });
+                    // prevent further use of this keystroke (this mustn't be done async)
+                    e.consume();
                 }
 
                 @Override
@@ -153,51 +155,46 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
     // frame key can be null if we handle global shortcuts
     // global flag
     private JTable createTab(String[][] data, String[] columnNames, String frameKey) {
-            // create the default sideview
-            DefaultTableModel model = new DefaultTableModel(data, columnNames);
-            // create table, only allow editing for second column (shortcuts)
-            JTable shortcut_table = new JTable(model) {
-                @Override
-                public boolean isCellEditable(int rowIndex, int colIndex) {
-                    // only allow editing shortcuts
-                    return colIndex == 1;
+        // create the default model for data and column names
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        // create table, only allow editing for second column (shortcuts)
+        JCustomTable shortcut_table = new JCustomTable(model) {
+            @Override
+            public boolean isCellEditable(int rowIndex, int colIndex) {
+                // only allow editing shortcuts
+                return colIndex == 1;
+            }
+        };
+
+        // add hover effect
+        shortcut_table.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                JTable aTable = (JTable)e.getSource();
+                int tRow = aTable.rowAtPoint(e.getPoint());
+                int tCol = aTable.columnAtPoint(e.getPoint());
+                if (curRow != tRow || curCol != tCol) {
+                    curRow = tRow;
+                    curCol = tCol;
+                    aTable.repaint();
                 }
-            };
-            // custom row height
-            shortcut_table.setRowHeight(shortcut_table.getRowHeight()+VitcoSettings.DEFAULT_TABLE_INCREASE);
-            shortcut_table.setCellSelectionEnabled(false); // disable selection in table
-            shortcut_table.setFocusable(false); // disable focus on cells
-            shortcut_table.setBackground(VitcoSettings.DEFAULT_BG_COLOR); // set the default bg color (unnecessary)
-            // add hover effect
-            shortcut_table.addMouseMotionListener(new MouseMotionAdapter() {
-                @Override
-                public void mouseMoved(MouseEvent e) {
-                    JTable aTable = (JTable)e.getSource();
-                    int tRow = aTable.rowAtPoint(e.getPoint());
-                    int tCol = aTable.columnAtPoint(e.getPoint());
-                    if (curRow != tRow || curCol != tCol) {
-                        curRow = tRow;
-                        curCol = tCol;
-                        aTable.repaint();
-                    }
-                }
-            });
-            shortcut_table.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    curRow = -1;
-                    curCol = -1;
-                    ((JTable)e.getSource()).repaint();
-                }
-            });
-            // custom layout for the cells
-            shortcut_table.getColumnModel().getColumn(0).setCellRenderer(new TableRenderer());
-            shortcut_table.getColumnModel().getColumn(1).setCellRenderer(new TableRenderer());
-            // stop editing when table looses focus
-            shortcut_table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-            // create a new custom cell editor for the second column (shortcuts)
-            shortcut_table.getColumnModel().getColumn(1).setCellEditor(new CellEditor(frameKey));
-            return shortcut_table;
+            }
+        });
+        shortcut_table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                curRow = -1;
+                curCol = -1;
+                ((JTable)e.getSource()).repaint();
+            }
+        });
+        // custom layout for the cells
+        TableRenderer tableRenderer = new TableRenderer();
+        shortcut_table.getColumnModel().getColumn(0).setCellRenderer(tableRenderer);
+        shortcut_table.getColumnModel().getColumn(1).setCellRenderer(tableRenderer);
+        // create a new custom cell editor for the second column (shortcuts)
+        shortcut_table.getColumnModel().getColumn(1).setCellEditor(new CellEditor(frameKey));
+        return shortcut_table;
     }
 
     // return a JideTabbedPane that is autonomous and manages shortcuts
@@ -216,10 +213,8 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         //tabbedPane.setTabResizeMode(JideTabbedPane.RESIZE_MODE_FIT);
         // add the global shortcuts
         String[][] globalShortcuts = shortcutManager.getShortcuts(null);
-        tabbedPane.addTab(
-            langSelector.getString("global_shortcuts_caption"),
-            new JScrollPane(createTab(globalShortcuts, columnNames, null))
-        );
+        tabbedPane.addTab(langSelector.getString("global_shortcuts_caption"),
+                new JCustomScrollPane(createTab(globalShortcuts, columnNames, null)));
         // add the frame shortcuts
         String[][] frames = shortcutManager.getFrames();
         for (String[] frame : frames) {
@@ -227,10 +222,8 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             String[][] data = shortcutManager.getShortcuts(frame[0]); // the shortcuts (list)
             if (data.length > 0) { // only create tab if it has shortcuts
                 // add this tab to the tabbedPane
-                tabbedPane.addTab(
-                        frame[1],
-                        new JScrollPane(createTab(data, columnNames, frame[0]))
-                );
+                tabbedPane.addTab(frame[1],
+                        new JCustomScrollPane(createTab(data, columnNames, frame[0])));
             }
         }
         // set tooltips

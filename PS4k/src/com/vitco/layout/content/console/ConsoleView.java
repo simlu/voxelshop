@@ -6,6 +6,7 @@ import com.threed.jpct.TextureManager;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.ExportWorld;
+import com.vitco.layout.content.JCustomScrollPane;
 import com.vitco.layout.content.ViewPrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.manager.action.types.StateActionPrototype;
@@ -67,7 +68,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         textArea.setEditable(false); // hide the caret
         // to be able to handle auto show, auto scroll and
         // tmp disable scroll for this textarea
-        class ScrollPane extends JScrollPane {
+        class ScrollPane extends JCustomScrollPane {
             public boolean autoScroll = true; // true iff auto scrolling is enabled
             public boolean autoShow = true; // true iff auto showing is enabled
             public boolean tempScrollStop = false; // true iff user scrolls (disable auto scroll!)
