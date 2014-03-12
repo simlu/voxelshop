@@ -110,6 +110,9 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     // reference to this instance
     final JFrame thisFrame = this;
 
+    // counts how often the program was started
+    private int start_count = 0;
+
     // prepare all frames
     @Override
     public final DockableFrame prepareFrame(final String key) {
@@ -204,6 +207,8 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
     public final void finish() {
         // store the boundary of the program (current window position)
         preferences.storeObject("program_boundary_rect", this.getBounds());
+        // store the startcount + 1
+        preferences.storeInteger("program_start_count", start_count+1);
     }
 
     @PostConstruct
@@ -298,6 +303,14 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
                 overlay.setActive(!overlay.isActive());
             }
         });
+
+        // display help overlay on first three start
+        if (preferences.contains("program_start_count")) {
+            start_count = preferences.loadInteger("program_start_count");
+        }
+        if (start_count < 3) {
+            overlay.setActive(true);
+        }
 
         actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
             @Override
