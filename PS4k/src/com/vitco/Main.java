@@ -35,7 +35,7 @@ public class Main {
                 Font font = new Font("Verdana", Font.BOLD, 7);
                 g.setFont(font);
                 //g.setFont(g.getFont().deriveFont(9f));
-                g.setColor(new Color(127, 157, 184));
+                g.setColor(VitcoSettings.SPLASH_SCREEN_OVERLAY_TEXT_COLOR);
                 g.drawString("V" + VitcoSettings.VERSION_ID, 10, 15);
                 splash.update();
                 g.dispose();

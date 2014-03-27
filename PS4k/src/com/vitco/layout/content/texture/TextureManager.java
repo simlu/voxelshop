@@ -72,6 +72,9 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
 
         private boolean selected = false;
 
+        // reference to this instance
+        private final TexturePanel thisTexturePanel = this;
+
         private TexturePanel(final Integer textureId) {
             this.textureId = textureId;
             this.setBorder(BorderFactory.createLineBorder(inactiveColor));
@@ -121,7 +124,8 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
             SwingAsyncHelper.handle(new Runnable() {
                 @Override
                 public void run() {
-                    updateUI();
+                    thisTexturePanel.revalidate();
+                    thisTexturePanel.repaint();
                 }
             }, errorHandler);
         }
@@ -335,7 +339,8 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
                 SwingAsyncHelper.handle(new Runnable() {
                     @Override
                     public void run() {
-                        textureWrapperPanel.updateUI();
+                        textureWrapperPanel.validate();
+                        textureWrapperPanel.repaint();
                     }
                 }, errorHandler);
 

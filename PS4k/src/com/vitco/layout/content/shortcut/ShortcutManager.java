@@ -147,7 +147,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
             private Object focusOwner = null;
 
             private void update() {
-                // the current frame or a dockableFrame popup, or an component where we edit
+                // the current frame or a dockableFrame popup, or a component where we edit
                 if ((activeWindow != frame && !(activeWindow instanceof DialogFloatingContainer))
                         || (focusOwner instanceof JTextComponent && ((JTextComponent) focusOwner).isEditable())
                         // disable hotkeys if help overlay is showing

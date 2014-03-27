@@ -108,7 +108,13 @@ public class AsyncActionManager {
                 if (stack.isEmpty()) {
                     synchronized (workerThread) {
                         // sometimes notify is "too early"/fails(?), so we need a timeout here
-                        workerThread.wait(500);
+                        if (idleStack.isEmpty()) {
+                            // no actions waiting, we can be "lazy"
+                            workerThread.wait(500);
+                        } else {
+                            // there are some actions not ready yet, so we should check often
+                            workerThread.wait(50);
+                        }
                     }
                 }
             }

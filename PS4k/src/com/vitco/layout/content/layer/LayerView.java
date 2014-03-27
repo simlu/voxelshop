@@ -169,7 +169,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
         // start editing
         public Component getTableCellEditorComponent(final JTable table, Object value,
                                                      boolean isSelected, final int rowIndex, final int vColIndex) {
-            synchronized (VitcoSettings.SYNC) {
+            synchronized (thisInstance) {
                 component = new SaveTextArea(layerNames[rowIndex]);
             }
             component.setBorder(VitcoSettings.DEFAULT_CELL_BORDER_EDIT); // border
@@ -301,7 +301,8 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
                         SwingAsyncHelper.handle(new Runnable() {
                             @Override
                             public void run() {
-                                table.updateUI();
+                                table.revalidate();
+                                table.repaint();
                             }
                         }, errorHandler);
                     }

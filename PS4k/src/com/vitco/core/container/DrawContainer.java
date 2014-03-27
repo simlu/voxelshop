@@ -673,7 +673,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                 sum += Math.pow(aZBuffer - mean, 2);
             }
         }
-        double stdDev = Math.sqrt(sum/count);
+        double stdDev = Math.sqrt(sum/(double)count);
 
         // compute min and max for non outliers
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;

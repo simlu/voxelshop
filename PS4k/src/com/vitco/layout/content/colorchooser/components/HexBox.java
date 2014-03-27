@@ -78,8 +78,7 @@ public class HexBox extends JTextField {
     // also remembers the current string
     private class AxisJTextFilter extends DocumentFilter {
         @Override
-        public void insertString(DocumentFilter.FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException
-        {
+        public void insertString(DocumentFilter.FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
             text = text.replace("#","");
             StringBuilder sb = new StringBuilder();
             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
@@ -91,8 +90,7 @@ public class HexBox extends JTextField {
         }
 
         @Override
-        public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attr) throws BadLocationException
-        {
+        public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attr) throws BadLocationException {
             text = text.replace("#","");
             StringBuilder sb = new StringBuilder();
             sb.append(fb.getDocument().getText(0, fb.getDocument().getLength()));
@@ -104,8 +102,7 @@ public class HexBox extends JTextField {
         }
 
         @Override
-        public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws BadLocationException
-        {
+        public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws BadLocationException {
             super.remove(fb, offset, length);
             currentString = fb.getDocument().getText(0, fb.getDocument().getLength());
             notifyListeners();
@@ -113,8 +110,7 @@ public class HexBox extends JTextField {
 
         private final Pattern pattern = Pattern.compile("^[A-Fa-f0-9]{0,6}$");
 
-        public boolean invalidContent(String text)
-        {
+        private boolean invalidContent(String text) {
             Matcher matcher = pattern.matcher(text);
             boolean isMatch = matcher.matches();
             return !isMatch;
