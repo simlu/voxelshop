@@ -7,6 +7,7 @@ import com.threed.jpct.TextureInfo;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.low.hull.HullManager;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.ConversionTools;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 import org.poly2tri.triangulation.point.TPoint;
 
@@ -20,12 +21,6 @@ import java.util.HashSet;
  */
 public class BorderObject3D extends Object3D {
     private static final long serialVersionUID = 1L;
-
-    // generate the appropriate texture size
-    // (makes sure that the dimension is a power of two)
-    private static int getTextureSize(int s) {
-        return (int)Math.pow(2, Math.ceil(Math.log(s + 2)/Math.log(2)));
-    }
 
     // get the rounded points of a triangle as an int array
     private static int[] getRoundedPoints(DelaunayTriangle triangle) {
@@ -168,8 +163,8 @@ public class BorderObject3D extends Object3D {
 
         canHaveBorder = side == -1;
 
-        textureSizeX = getTextureSize(w);
-        textureSizeY = getTextureSize(h);
+        textureSizeX = ConversionTools.getTextureSize(w);
+        textureSizeY = ConversionTools.getTextureSize(h);
 
         // todo: mirror textures if w > h to reduce used memory (!)
 
@@ -328,6 +323,14 @@ public class BorderObject3D extends Object3D {
         // enable collision checking (needed for both - simpleMode or not)
         this.setCollisionMode(Object3D.COLLISION_CHECK_OTHERS);
         this.setCollisionOptimization(Object3D.COLLISION_DETECTION_OPTIMIZED);
+
+        // shift to zero if this is a side view (for true orthogonal view)
+        this.calcCenter();
+        this.translate(
+                side == 2 ? -this.getCenter().x : 0,
+                side == 1 ? -this.getCenter().y : 0,
+                side == 0 ? -this.getCenter().z : 0
+        );
 
         // not really needed since we're using textures for everything
         //this.setShadingMode(Object3D.SHADING_FAKED_FLAT);

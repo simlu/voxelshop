@@ -2,6 +2,7 @@ package com.vitco.core.world;
 
 import com.threed.jpct.*;
 import com.threed.jpct.util.Light;
+import com.vitco.settings.DynamicSettings;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.SaveResourceLoader;
 
@@ -159,6 +160,16 @@ public final class WorldManager {
 
     // ---------------------------
 
+    // static constructor
+    static {
+        // load texture for bounding box
+        WorldManager.loadTexture(
+                "__grid__",
+                new SaveResourceLoader("resource/tex/bounding_box_512.png").asImage(),
+                false
+        );
+    }
+
     // add a light-source
     public static Light addLight(World world, SimpleVector position, float strength) {
         Light light = new Light(world);
@@ -198,14 +209,8 @@ public final class WorldManager {
         return plane.getID();
     }
 
-    // add a grid plane
-    public static int addGridPlane(World world) {
-        // load texture
-        WorldManager.loadTexture(
-                "__grid__",
-                new SaveResourceLoader("resource/tex/bounding_box_256.png").asImage(),
-                false
-        );
+    // get the grid plane (the result depends on the current settings!)
+    public static Object3D getGridPlane() {
 
         // create object (container)
         Object3D box=new Object3D(12);
@@ -221,24 +226,38 @@ public final class WorldManager {
         SimpleVector lowerLeftBack = new SimpleVector( -1, 1, 1);
         SimpleVector lowerRightBack = new SimpleVector(1, 1, 1);
 
+        // scale
+        for (SimpleVector vec : new SimpleVector[] {
+                upperLeftFront, upperRightFront, lowerLeftFront, lowerRightFront,
+                upperLeftBack, upperRightBack, lowerLeftBack, lowerRightBack
+        }) {
+            vec.x *= DynamicSettings.VOXEL_PLANE_WORLD_SIZE_X /2;
+            vec.y *= DynamicSettings.VOXEL_PLANE_WORLD_SIZE_Y /2;
+            vec.z *= DynamicSettings.VOXEL_PLANE_WORLD_SIZE_Z /2;
+        }
+
+        float uvX = DynamicSettings.VOXEL_PLANE_SIZE_X/16f;
+        float uvY = DynamicSettings.VOXEL_PLANE_SIZE_Y/16f;
+        float uvZ = DynamicSettings.VOXEL_PLANE_SIZE_Z/16f;
+
         // Front
-        box.addTriangle(upperLeftFront,0,0, lowerLeftFront,0,1, upperRightFront,1,0);
-        box.addTriangle(upperRightFront,1,0, lowerLeftFront,0,1, lowerRightFront,1,1);
+        box.addTriangle(upperLeftFront, uvX, uvY, lowerLeftFront, uvX, 0, upperRightFront, 0, uvY); // xy
+        box.addTriangle(upperRightFront, 0, uvY, lowerLeftFront, uvX, 0, lowerRightFront, 0, 0);
         // Back
-        box.addTriangle(upperLeftBack,0,0, upperRightBack,1,0, lowerLeftBack,0,1);
-        box.addTriangle(upperRightBack,1,0, lowerRightBack,1,1, lowerLeftBack,0,1);
+        box.addTriangle(upperLeftBack, uvX, uvY, upperRightBack, 0, uvY, lowerLeftBack, uvX, 0);
+        box.addTriangle(upperRightBack, 0, uvY, lowerRightBack, 0, 0, lowerLeftBack, uvX, 0);
         // Upper
-        box.addTriangle(upperLeftBack,0,0, upperLeftFront,0,1, upperRightBack,1,0);
-        box.addTriangle(upperRightBack,1,0, upperLeftFront,0,1, upperRightFront,1,1);
+        box.addTriangle(upperLeftBack, uvX, uvZ, upperLeftFront, uvX, 0, upperRightBack, 0, uvZ); // xz
+        box.addTriangle(upperRightBack, 0, uvZ, upperLeftFront, uvX, 0, upperRightFront, 0, 0);
         // Lower
-        box.addTriangle(lowerLeftBack,0,0, lowerRightBack,1,0, lowerLeftFront,0,1);
-        box.addTriangle(lowerRightBack,1,0, lowerRightFront,1,1, lowerLeftFront,0,1);
+        box.addTriangle(lowerLeftBack, uvX, uvZ, lowerRightBack, 0, uvZ, lowerLeftFront, uvX, 0);
+        box.addTriangle(lowerRightBack, 0, uvZ, lowerRightFront, 0, 0, lowerLeftFront, uvX, 0);
         // Left
-        box.addTriangle(upperLeftFront,0,0, upperLeftBack,1,0, lowerLeftFront,0,1);
-        box.addTriangle(upperLeftBack,1,0, lowerLeftBack,1,1, lowerLeftFront,0,1);
+        box.addTriangle(upperLeftBack, uvY, uvZ, lowerLeftBack, 0, uvZ, upperLeftFront, uvY, 0); // yz
+        box.addTriangle(lowerLeftBack, 0, uvZ, lowerLeftFront, 0, 0, upperLeftFront, uvY, 0);
         // Right
-        box.addTriangle(upperRightFront,0,0, lowerRightFront,0,1, upperRightBack,1,0);
-        box.addTriangle(upperRightBack,1,0, lowerRightFront, 0,1, lowerRightBack,1,1);
+        box.addTriangle(upperRightBack, uvY, uvZ, upperRightFront, uvY, 0, lowerRightBack, 0, uvZ);
+        box.addTriangle(lowerRightBack, 0, uvZ, upperRightFront, uvY, 0, lowerRightFront, 0, 0);
 
         // set texture
         box.setAdditionalColor(Color.WHITE);
@@ -246,14 +265,17 @@ public final class WorldManager {
         box.setTexture("__grid__");
 
         // scale and place correctly
-        box.scale(VitcoSettings.VOXEL_GROUND_PLANE_SIZE/2);
-        box.setOrigin(new SimpleVector(0,-VitcoSettings.VOXEL_GROUND_PLANE_SIZE/2 + VitcoSettings.VOXEL_GROUND_DISTANCE, 0));
+        box.setOrigin(new SimpleVector(
+                DynamicSettings.VOXEL_PLANE_SIZE_X%2 == 0 ? -0.5f * VitcoSettings.VOXEL_SIZE : 0,
+                -DynamicSettings.VOXEL_PLANE_WORLD_SIZE_Y /2 + VitcoSettings.VOXEL_GROUND_DISTANCE,
+                DynamicSettings.VOXEL_PLANE_SIZE_Z%2 == 0 ? -0.5f * VitcoSettings.VOXEL_SIZE : 0
+        ));
 
         // make the "inside" visible
         box.invertCulling(true);
 
         box.build();
-        return world.addObject(box);
+        return box;
     }
 
 }

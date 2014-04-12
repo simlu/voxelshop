@@ -1,7 +1,5 @@
 package com.vitco.util.offline;
 
-import com.vitco.settings.VitcoSettings;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -14,8 +12,7 @@ import java.io.IOException;
  */
 public class GenerateTexture {
     public static void main(String[] args) {
-        generateTexture(128, true);
-        generateTexture(256, true);
+        generateTexture(512, true);
     }
 
     public static void generateTexture(int texSize, boolean drawSmallLines) {
@@ -24,22 +21,26 @@ public class GenerateTexture {
         Graphics2D g2 = (Graphics2D) overlay.getGraphics();
         g2.setColor(new Color(0, 0, 0));
         g2.fillRect(0,0,texSize,texSize);
-        float size = (VitcoSettings.VOXEL_SIZE/VitcoSettings.VOXEL_GROUND_PLANE_SIZE)*texSize;
+
+        // draw the "light" lines
         if (drawSmallLines) {
-            g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+            g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
             g2.setColor(new Color(170,170,170));
-            for (float i = 0; i < texSize; i+= size * 1) {
-                g2.drawLine(0, Math.round(i), texSize, Math.round(i));
-                g2.drawLine(Math.round(i), 0, Math.round(i), texSize);
+            for (int i = 0; i <= texSize; i += 32) {
+                g2.drawLine(0, i, texSize, i);
+                g2.drawLine(i, 0, i, texSize);
             }
         }
-        g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+
+        // draw thick lines
+        g2.setStroke(new BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
         g2.setColor(new Color(255,255,255));
-        for (float i = 0; i < texSize; i+= size * 3) {
-            g2.drawLine(0, Math.round(i), texSize, Math.round(i));
-            g2.drawLine(Math.round(i), 0, Math.round(i), texSize);
+        for (int i = 0; i <= texSize; i += 32 * 4) {
+            g2.drawLine(0, i, texSize, i);
+            g2.drawLine(i, 0, i, texSize);
         }
-        g2.dispose();
+
+        // write the texture file
         try {
             ImageIO.write(overlay, "png", new File("resource/tex/bounding_box_" + texSize + ".png"));
         } catch (FileNotFoundException e) {

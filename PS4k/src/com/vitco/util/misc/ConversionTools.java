@@ -16,4 +16,10 @@ public class ConversionTools {
         }
         return outData;
     }
+
+    // generate the appropriate texture size
+    // (makes sure that the dimension is a power of two)
+    public static int getTextureSize(int s) {
+        return (int)Math.pow(2, Math.ceil(Math.log(s + 2)/Math.log(2)));
+    }
 }

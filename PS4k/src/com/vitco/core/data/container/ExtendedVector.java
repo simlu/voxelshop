@@ -23,6 +23,11 @@ public final class ExtendedVector extends SimpleVector implements Serializable {
         this.id = id;
     }
 
+    // clone constructor
+    public ExtendedVector(ExtendedVector extendedVector) {
+        this(extendedVector, extendedVector.id);
+    }
+
     @Override
     public boolean equals(Object obj) {
         boolean result = false;

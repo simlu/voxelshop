@@ -1,6 +1,5 @@
 package com.vitco.settings;
 
-import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.SimpleVector;
 import com.vitco.core.data.container.VOXELMODE;
 
@@ -10,21 +9,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Hold all used colors. Aids in keeping a consistent color schema.
+ * Hold all used colors and settings. Aids in keeping a consistent color schema.
  */
 public final class VitcoSettings {
 
     // object that all data access is synced to
     public static final Object SYNC = new Object();
-
-    public static int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_NORMAL;
-    public static int SAMPLING_MODE_MULTIPLICAND = 1;
-    public static float SAMPLING_MODE_DIVIDEND = 1;
-
-//    // Alternative (slower but better quality):
-//    public static final int SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
-//    public static final int SAMPLING_MODE_MULTIPLICAND = 2;
-//    public static final float SAMPLING_MODE_DIVIDEND = 0.5f;
 
     // color for the "big bounding box"
     public static final Color BOUNDING_BOX_COLOR = new Color(255, 255, 255, 100);
@@ -35,7 +25,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
-    public static final String VERSION_ID = "1.3.50";
+    public static final String VERSION_ID = "1.3.53";
     // version id
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
 
@@ -141,12 +131,12 @@ public final class VitcoSettings {
     public static final Color DEFAULT_CELL_COLOR = new Color(95, 95, 95);
     public static final Color DEFAULT_SCROLL_PANE_BG_COLOR = new Color(203, 225, 254);
 
-    // general config
+    // general voxel stuff
     public static final float VOXEL_SIZE = 10f;
-    public static final float VOXEL_GROUND_DISTANCE = /*10f*/ 0f * VitcoSettings.VOXEL_SIZE + VitcoSettings.VOXEL_SIZE/2 + 0.1f;
-    public static final float VOXEL_GROUND_PLANE_SIZE = 21 * VitcoSettings.VOXEL_SIZE; // when changing this make sure the edges are ok
-    public static final float VOXEL_GROUND_MAX_RANGE = VitcoSettings.VOXEL_GROUND_PLANE_SIZE/(VitcoSettings.VOXEL_SIZE*2);
+
+    public static final float VOXEL_GROUND_DISTANCE = VitcoSettings.VOXEL_SIZE/2;
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);
+
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
     public static final Color VOXEL_PREVIEW_LINE_COLOR_BRIGHT = new Color(255,255,255,100);
 

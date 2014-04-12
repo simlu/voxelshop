@@ -10,6 +10,7 @@ import com.vitco.core.data.container.ExtendedVector;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.AbstractCWorld;
 import com.vitco.manager.async.AsyncActionManager;
+import com.vitco.settings.DynamicSettings;
 import com.vitco.settings.VitcoSettings;
 
 import javax.swing.*;
@@ -214,7 +215,7 @@ public abstract class AbstractDrawContainer extends JPanel {
     }
 
     // container for the data
-    protected HackedFrameBuffer buffer = new HackedFrameBuffer(100, 100, VitcoSettings.SAMPLING_MODE);
+    protected HackedFrameBuffer buffer = new HackedFrameBuffer(100, 100, DynamicSettings.SAMPLING_MODE);
 
     // the world-required objects
     protected AbstractCWorld world;
@@ -254,19 +255,12 @@ public abstract class AbstractDrawContainer extends JPanel {
     // some static variables
     // ################################
 
-    // how many voxels is the ground plane wide
-    protected final static float size = VitcoSettings.VOXEL_GROUND_PLANE_SIZE / VitcoSettings.VOXEL_SIZE;
-
     // list of all vectors
     private final static SimpleVector[] vectorsStatic = new SimpleVector[] {
-            new SimpleVector( + 0.5, -0.5 + 0.5/size + 0.5,  + 0.5),
-            new SimpleVector( + 0.5, -0.5 + 0.5/size + 0.5,  - 0.5),
-            new SimpleVector( + 0.5, -0.5 + 0.5/size - 0.5,  - 0.5),
-            new SimpleVector( + 0.5, -0.5 + 0.5/size - 0.5,  + 0.5),
-            new SimpleVector( - 0.5, -0.5 + 0.5/size + 0.5,  + 0.5),
-            new SimpleVector( - 0.5, -0.5 + 0.5/size + 0.5,  - 0.5),
-            new SimpleVector( - 0.5, -0.5 + 0.5/size - 0.5,  - 0.5),
-            new SimpleVector( - 0.5, -0.5 + 0.5/size - 0.5,  + 0.5)
+            new SimpleVector(0.5, 0, 0.5), new SimpleVector(0.5, 0, -0.5),
+            new SimpleVector(0.5, -1, -0.5), new SimpleVector(0.5, -1, 0.5),
+            new SimpleVector(-0.5, 0, 0.5), new SimpleVector(-0.5, 0, -0.5),
+            new SimpleVector(-0.5, -1, -0.5), new SimpleVector(-0.5, -1, 0.5)
     };
     public static SimpleVector getVectorsStatic(int i) {
         return new SimpleVector(vectorsStatic[i]);
@@ -281,8 +275,8 @@ public abstract class AbstractDrawContainer extends JPanel {
     // conversion
     public final SimpleVector convert2D3D(int x, int y, SimpleVector referencePoint) {
         SimpleVector result = Interact2D.reproject2D3DWS(camera, buffer,
-                x * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
-                y * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
+                x * DynamicSettings.SAMPLING_MODE_MULTIPLICAND,
+                y * DynamicSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
         result.scalarMul(camera.getPosition().distance(referencePoint));
         result.add(camera.getPosition());
         return result;
@@ -292,7 +286,7 @@ public abstract class AbstractDrawContainer extends JPanel {
     public final SimpleVector convert3D2D(SimpleVector point) {
         SimpleVector result = Interact2D.project3D2D(camera, buffer, point);
         if (result != null) {
-            result.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
+            result.scalarMul(DynamicSettings.SAMPLING_MODE_DIVIDEND);
         }
         return result;
     }
@@ -302,7 +296,7 @@ public abstract class AbstractDrawContainer extends JPanel {
         ExtendedVector result = null;
         SimpleVector point2d = Interact2D.project3D2D(camera, buffer, point);
         if (point2d != null) {
-            point2d.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
+            point2d.scalarMul(DynamicSettings.SAMPLING_MODE_DIVIDEND);
             result = new ExtendedVector(point2d, point.id);
         }
         return result;
@@ -311,8 +305,8 @@ public abstract class AbstractDrawContainer extends JPanel {
     // get direction for a 2D point
     public final SimpleVector getDirection(int x, int y) {
         return Interact2D.reproject2D3DWS(camera, buffer,
-                x * VitcoSettings.SAMPLING_MODE_MULTIPLICAND,
-                y * VitcoSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
+                x * DynamicSettings.SAMPLING_MODE_MULTIPLICAND,
+                y * DynamicSettings.SAMPLING_MODE_MULTIPLICAND).normalize();
     }
 
     // -----------------------------
@@ -336,7 +330,7 @@ public abstract class AbstractDrawContainer extends JPanel {
 
     // holds the voxel side that was last hit by a hover event
     // get active voxel for mouse hover
-    public final int[] voxelForHover3D(Point point, boolean selectNeighbour, boolean useFloor) {
+    public final int[] voxelForHover3D(Point point, boolean selectNeighbour, boolean useBoundingBox) {
         int[] voxelPos = null;
         // check if we hit something
         SimpleVector dir = this.getDirection(point.x, point.y);
@@ -348,18 +342,6 @@ public abstract class AbstractDrawContainer extends JPanel {
             SimpleVector colPoint = camera.getPosition();
             dir.scalarMul((Float)res[0]);
             colPoint.add(dir);
-            //colPoint.sub(obj3D.getOrigin());
-
-//            // find side that it hits
-//            lastActiveSide = 0; // assume it's zero (no need to check)
-//            float dist = colPoint.distance(directionVectors[0]);
-//            for (int i = 1; i < directionVectors.length; i++) {
-//                float tempDist = colPoint.distance(directionVectors[i]);
-//                if (dist > tempDist) {
-//                    dist = tempDist;
-//                    lastActiveSide = i;
-//                }
-//            }
 
             voxelPos = world.getVoxelPos(obj3D.getID(), colPoint.x, colPoint.y, colPoint.z);
             if (voxelPos != null) {
@@ -380,21 +362,27 @@ public abstract class AbstractDrawContainer extends JPanel {
                     }
                 }
             }
-        } else if (useFloor) {
+        } else if (useBoundingBox) {
 
             float[] dirArr = dir.toArray();
-            for (int[] tuple : new int[][] {new int[]{0,10,-10}, new int[]{1,0,-20}, new int[]{2,10,-10}}) {
+            for (int[] tuple : new int[][] {
+                    // the different planes that we need to check
+                    new int[]{0,DynamicSettings.VOXEL_PLANE_RANGE_X_POS - 1, DynamicSettings.VOXEL_PLANE_RANGE_X_NEG + 1},
+                    new int[]{1,0,-DynamicSettings.VOXEL_PLANE_SIZE_Y + 1},
+                    new int[]{2,DynamicSettings.VOXEL_PLANE_RANGE_Z_POS - 1, DynamicSettings.VOXEL_PLANE_RANGE_Z_NEG + 1}}) {
                 int[] pos = this.voxelForHover3DNext(
+                        // select the three planes depending on the camera orientation
                         new SimpleVector(dir), dirArr[tuple[0]] > 0 ? tuple[1] : tuple[2], tuple[0]
                 );
                 if (pos != null) {
-                        if (Math.abs(pos[0]) < VitcoSettings.VOXEL_GROUND_MAX_RANGE &&
-                                Math.abs(pos[2]) < VitcoSettings.VOXEL_GROUND_MAX_RANGE &&
-                                pos[1] <= 0 && pos[1] > -VitcoSettings.VOXEL_GROUND_MAX_RANGE * 2) {
-                            voxelPos = pos;
-                            lastActiveSide = tuple[0] * 2;
-                        }
+                    // check if the result is in the appropriate 2D rectangle
+                    if (pos[0] < DynamicSettings.VOXEL_PLANE_RANGE_X_POS && pos[0] > DynamicSettings.VOXEL_PLANE_RANGE_X_NEG &&
+                            pos[2] < DynamicSettings.VOXEL_PLANE_RANGE_Z_POS && pos[2] > DynamicSettings.VOXEL_PLANE_RANGE_Z_NEG &&
+                            pos[1] < 1 && pos[1] > -DynamicSettings.VOXEL_PLANE_SIZE_Y) {
+                        voxelPos = pos;
+                        lastActiveSide = tuple[0] * 2;
                     }
+                }
             }
 
         }
@@ -536,6 +524,17 @@ public abstract class AbstractDrawContainer extends JPanel {
         if (needToRebuild) {
             points2D.clear();
             for (ExtendedVector point : data.getPoints()) {
+                // translate point to zero plane if in side view (true orthogonal view)
+                point = new ExtendedVector(point);
+                if (side == 2) {
+                    point.x = 0;
+                }
+                if (side == 1) {
+                    point.y = 0;
+                }
+                if (side == 0) {
+                    point.z = 0;
+                }
                 ExtendedVector tmp = convertExt3D2D(point);
                 if (tmp != null) {
                     points2D.add(tmp);

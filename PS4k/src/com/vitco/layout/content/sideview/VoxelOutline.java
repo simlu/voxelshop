@@ -36,8 +36,13 @@ public class VoxelOutline {
     private boolean bufferValid = false;
     private SimpleVector[][] buffer = new SimpleVector[0][];
 
+    // the side that we consider
+    private final int side;
+
     // constructor
     public VoxelOutline(int side) {
+        // store side
+        this.side = side;
         // find the sides to check
         switch (side) {
             case 0:
@@ -102,16 +107,18 @@ public class VoxelOutline {
                 for (int i = 0; i < edges.length; i++) {
                     if (edges[i]) {
                         int a1 = i > 1 ? 0 : 2;
+                        // note:  retrieve the voxel outlines for the sideviews in the zero plane
                         SimpleVector p1 = new SimpleVector(
-                                wrapper.voxel.x + list[i][0]/2f + list[a1][0]/2f,
-                                wrapper.voxel.y + list[i][1]/2f + list[a1][1]/2f,
-                                wrapper.voxel.z + list[i][2]/2f + list[a1][2]/2f
+                                side == 2 ? 0 : wrapper.voxel.x + list[i][0]/2f + list[a1][0]/2f,
+                                side == 1 ? 0 : wrapper.voxel.y + list[i][1]/2f + list[a1][1]/2f,
+                                side == 0 ? 0 : wrapper.voxel.z + list[i][2]/2f + list[a1][2]/2f
                         );
                         p1.scalarMul(VitcoSettings.VOXEL_SIZE);
+                        // note:  retrieve the voxel outlines for the sideviews in the zero plane
                         SimpleVector p2 = new SimpleVector(
-                                wrapper.voxel.x + list[i][0]/2f + list[a1 + 1][0]/2f,
-                                wrapper.voxel.y + list[i][1]/2f + list[a1 + 1][1]/2f,
-                                wrapper.voxel.z + list[i][2]/2f + list[a1 + 1][2]/2f);
+                                side == 2 ? 0 : wrapper.voxel.x + list[i][0]/2f + list[a1 + 1][0]/2f,
+                                side == 1 ? 0 : wrapper.voxel.y + list[i][1]/2f + list[a1 + 1][1]/2f,
+                                side == 0 ? 0 : wrapper.voxel.z + list[i][2]/2f + list[a1 + 1][2]/2f);
                         p2.scalarMul(VitcoSettings.VOXEL_SIZE);
 
                         arraybuffer.add(new SimpleVector[]{p1, p2});

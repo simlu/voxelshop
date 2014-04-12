@@ -270,7 +270,12 @@ public class MenuGenerator implements MenuGeneratorInterface {
                         @Override
                         public void actionFired(boolean b) {
                             if (checkable) {
-                                abstractButton.setSelected(invert ? !stateActionPrototype.isChecked() : stateActionPrototype.isChecked());
+                                if (abstractButton instanceof JideSplitButton) {
+                                    // only select the "upper" button -> otherwise the popup part would not be click-able anymore
+                                    ((JideSplitButton)abstractButton).setButtonSelected(invert ? !stateActionPrototype.isChecked() : stateActionPrototype.isChecked());
+                                } else {
+                                    abstractButton.setSelected(invert ? !stateActionPrototype.isChecked() : stateActionPrototype.isChecked());
+                                }
                             }
                             if (grayable) {
                                 abstractButton.setEnabled(invert ? !stateActionPrototype.isEnabled() : stateActionPrototype.isEnabled());

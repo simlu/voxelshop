@@ -6,11 +6,9 @@ import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.core.EngineInteractionPrototype;
 import com.vitco.core.data.container.Voxel;
-import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.pref.PrefChangeListener;
 import com.vitco.settings.VitcoSettings;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,13 +25,6 @@ import java.util.HashSet;
  * Creates one side view instance (one perspective) and the specific user interaction.
  */
 public class SideView extends EngineInteractionPrototype implements SideViewInterface {
-
-    // var & setter
-    private ComplexActionManager complexActionManager;
-    @Autowired
-    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
-        this.complexActionManager = complexActionManager;
-    }
 
     private final int side;
 
@@ -456,6 +447,19 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
             @Override
             public void onPrefChange(Object o) {
                 wrapper.setBackground((Color) o);
+            }
+        });
+
+        // draw bounding box (to display the 2D outline)
+        preferences.addPrefChangeListener("use_bounding_box", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object o) {
+                boolean useBoundingBox = (Boolean)o;
+                // overlay part
+                container.setDrawBoundingBox(useBoundingBox);
+                // redraw container
+                container.doNotSkipNextWorldRender();
+                forceRepaint();
             }
         });
 

@@ -1,7 +1,6 @@
 package com.vitco.core;
 
 import com.threed.jpct.Config;
-import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Logger;
 import com.threed.jpct.SimpleVector;
 import com.vitco.Main;
@@ -11,11 +10,12 @@ import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.AbstractCWorld;
 import com.vitco.core.world.CWorld;
 import com.vitco.layout.content.ViewPrototype;
+import com.vitco.layout.content.mainview.components.BoundingBoxDimChooser;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.pref.PrefChangeListener;
-import com.vitco.settings.VitcoSettings;
+import com.vitco.settings.DynamicSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -58,7 +58,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
     private static boolean globalMouseDown = false;
 
     // reference
-    final EngineViewPrototype thisInstance = this;
+    private final EngineViewPrototype thisInstance = this;
 
     // the container that we draw on (instance)
     protected final DrawContainer container;
@@ -246,16 +246,7 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             preferences.addPrefChangeListener("high_quality_active", new PrefChangeListener() {
                 @Override
                 public void onPrefChange(Object o) {
-                    // set the variables accordingly
-                    if (highQualityActive) {
-                        VitcoSettings.SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_OGSS;
-                        VitcoSettings.SAMPLING_MODE_MULTIPLICAND = 2;
-                        VitcoSettings.SAMPLING_MODE_DIVIDEND = 0.5f;
-                    } else {
-                        VitcoSettings.SAMPLING_MODE = FrameBuffer.SAMPLINGMODE_NORMAL;
-                        VitcoSettings.SAMPLING_MODE_MULTIPLICAND = 1;
-                        VitcoSettings.SAMPLING_MODE_DIVIDEND = 1;
-                    }
+                    DynamicSettings.setSamplingMode(highQualityActive);
                 }
             });
 
@@ -271,6 +262,47 @@ public abstract class EngineViewPrototype extends ViewPrototype {
                 @Override
                 public boolean getStatus() {
                     return highQualityActive;
+                }
+            });
+
+            // load the bounding box size (if stored)
+            if (preferences.contains("bounding_box_size")) {
+                int[] bounding_box_size = (int[]) preferences.loadObject("bounding_box_size");
+                DynamicSettings.setPlaneSizeX(bounding_box_size[0]);
+                DynamicSettings.setPlaneSizeY(bounding_box_size[1]);
+                DynamicSettings.setPlaneSizeZ(bounding_box_size[2]);
+            }
+
+            // register component to change bounding box size
+            complexActionManager.registerAction("resize_bounding_box_component",
+                    new BoundingBoxDimChooser(DynamicSettings.VOXEL_PLANE_SIZE_X, DynamicSettings.VOXEL_PLANE_SIZE_Y, DynamicSettings.VOXEL_PLANE_SIZE_Z, langSelector) {
+                private void updateBoundingBox() {
+                    // store size in preferences
+                    preferences.storeObject("bounding_box_size", new int[]{
+                            DynamicSettings.VOXEL_PLANE_SIZE_X,
+                            DynamicSettings.VOXEL_PLANE_SIZE_Y,
+                            DynamicSettings.VOXEL_PLANE_SIZE_Z
+                    });
+                }
+
+                // -- below are change listeners
+
+                @Override
+                public void onXChange(int newVal) {
+                    DynamicSettings.setPlaneSizeX(newVal);
+                    updateBoundingBox();
+                }
+
+                @Override
+                public void onYChange(int newVal) {
+                    DynamicSettings.setPlaneSizeY(newVal);
+                    updateBoundingBox();
+                }
+
+                @Override
+                public void onZChange(int newVal) {
+                    DynamicSettings.setPlaneSizeZ(newVal);
+                    updateBoundingBox();
                 }
             });
 
@@ -317,6 +349,14 @@ public abstract class EngineViewPrototype extends ViewPrototype {
             @Override
             public void onPrefChange(Object o) {
                 container.refreshBuffer();
+                forceRepaint();
+            }
+        });
+
+        // force repainting of this container when the bounding box size changes
+        preferences.addPrefChangeListener("bounding_box_size", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object newValue) {
                 forceRepaint();
             }
         });

@@ -105,9 +105,9 @@ public class NumberBox extends JTextField {
         return Math.min(MAX,Math.max(MIN,value));
     }
 
-    // get value (range 0-255)
+    // get value (range MIN-MAX)
     public final int getValue() {
-        int result = 0;
+        int result = MIN;
         try {
             result = cropValue(Integer.valueOf(currentString));
         } catch (NumberFormatException ignored) {}
@@ -122,6 +122,7 @@ public class NumberBox extends JTextField {
         super(String.valueOf(current), String.valueOf(max).length());
         MIN = min;
         MAX = max;
+        currentString = String.valueOf(current);
         setForeground(Settings.TEXTAREA_TEXT_COLOR);
         setOpaque(true);
         setBackground(Settings.TEXTAREA_BG_COLOR);

@@ -2,6 +2,7 @@ package com.vitco.layout.content.mainview;
 
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Config;
+import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.util.Light;
 import com.vitco.core.CameraChangeListener;
@@ -257,14 +258,31 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
 
         // =============== BOUNDING BOX
         // add the bounding box (texture)
-        final int boundingBox = WorldManager.addGridPlane(world);
+        final Object3D[] boundingBox = {WorldManager.getGridPlane()};
+        final int[] boundingBoxId = {world.addObject(boundingBox[0])};
 
+        // listen to bounding box size changes and change texture object (only in main view)
+        // Note: This doesn't need a repaint since that is done in a more general listener
+        preferences.addPrefChangeListener("bounding_box_size", new PrefChangeListener() {
+            @Override
+            public void onPrefChange(Object newValue) {
+                // generate new bounding box
+                boundingBox[0] = WorldManager.getGridPlane();
+                boundingBox[0].setVisibility(useBoundingBox);
+                // remove old bounding box
+                world.removeObject(boundingBoxId[0]);
+                // add new bounding box
+                boundingBoxId[0] = world.addObject(boundingBox[0]);
+            }
+        });
+
+        // listen to bounding box visibility changes
         preferences.addPrefChangeListener("use_bounding_box", new PrefChangeListener() {
             @Override
             public void onPrefChange(Object o) {
                 useBoundingBox = (Boolean)o;
                 container.setDrawBoundingBox(useBoundingBox); // overlay part
-                world.getObject(boundingBox).setVisibility(useBoundingBox); // texture part
+                boundingBox[0].setVisibility(useBoundingBox); // texture part
                 // redraw container
                 container.doNotSkipNextWorldRender();
                 forceRepaint();

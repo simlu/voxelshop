@@ -3,6 +3,7 @@ package com.vitco.core.container;
 import com.threed.jpct.*;
 import com.vitco.core.data.container.ExtendedVector;
 import com.vitco.manager.async.AsyncAction;
+import com.vitco.settings.DynamicSettings;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.G2DUtil;
 
@@ -39,7 +40,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                         public void performAction() {
                             cleanup();
                             buffer = null; // so the gc can collect before creation if necessary
-                            buffer = new HackedFrameBuffer(container.getWidth(), container.getHeight(), VitcoSettings.SAMPLING_MODE);
+                            buffer = new HackedFrameBuffer(container.getWidth(),
+                                    container.getHeight(), DynamicSettings.SAMPLING_MODE);
                             container.notifyAboutResize(container.getWidth(), container.getHeight());
                             container.doNotSkipNextWorldRender();
                             forceRepaint();
@@ -57,7 +59,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             public void performAction() {
                 int w = buffer.getWidth(), h = buffer.getHeight();
                 buffer = null; // so the gc can collect before creation if necessary
-                buffer = new HackedFrameBuffer(w, h, VitcoSettings.SAMPLING_MODE);
+                buffer = new HackedFrameBuffer(w, h, DynamicSettings.SAMPLING_MODE);
             }
         });
     }
@@ -125,86 +127,154 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     private boolean drawBoxOutline(float[] center, float[] range,
                                 Color color1, Color color2,
                                 Graphics2D ig, boolean useFading) {
-        // define the points of the voxel
-        SimpleVector[] vectors = new SimpleVector[] {
-                new SimpleVector(center[0] + range[0], center[1] + range[1], center[2] + range[2]),
-                new SimpleVector(center[0] + range[0], center[1] + range[1], center[2] - range[2]),
-                new SimpleVector(center[0] + range[0], center[1] - range[1], center[2] - range[2]),
-                new SimpleVector(center[0] + range[0], center[1] - range[1], center[2] + range[2]),
-                new SimpleVector(center[0] - range[0], center[1] + range[1], center[2] + range[2]),
-                new SimpleVector(center[0] - range[0], center[1] + range[1], center[2] - range[2]),
-                new SimpleVector(center[0] - range[0], center[1] - range[1], center[2] - range[2]),
-                new SimpleVector(center[0] - range[0], center[1] - range[1], center[2] + range[2])
-        };
+        // true if the bounding box was drawn successfully
         boolean valid = true;
-        for (int i = 0; i < vectors.length; i++) {
-            // scale and convert the points
-            vectors[i].scalarMul(VitcoSettings.VOXEL_SIZE);
-            vectors[i] = convert3D2D(vectors[i]);
-            // check that valid
-            if (vectors[i] == null) {
-                valid = false;
+        // true if the text should be drawn
+        boolean drawText = false;
+
+        // how the bounding box is drawn depends on the view
+        switch (side) {
+            // draw any boxes for the side views as simple 2D rectangles in the zero layer
+            case 0:case 1:case 2: {
+                SimpleVector[] vectors;
+                if (side == 0) {
+                    vectors = new SimpleVector[]{
+                            new SimpleVector(center[0] + range[0], center[1] + range[1], 0),
+                            new SimpleVector(center[0] + range[0], center[1] - range[1], 0),
+                            new SimpleVector(center[0] - range[0], center[1] - range[1], 0),
+                            new SimpleVector(center[0] - range[0], center[1] + range[1], 0)
+                    };
+                } else if (side == 1) {
+                    vectors = new SimpleVector[]{
+                            new SimpleVector(center[0] + range[0], 0, center[2] - range[2]),
+                            new SimpleVector(center[0] + range[0], 0, center[2] + range[2]),
+                            new SimpleVector(center[0] - range[0], 0, center[2] + range[2]),
+                            new SimpleVector(center[0] - range[0], 0, center[2] - range[2])
+                    };
+                } else {
+                    vectors = new SimpleVector[]{
+                            new SimpleVector(0, center[1] + range[1], center[2] + range[2]),
+                            new SimpleVector(0, center[1] + range[1], center[2] - range[2]),
+                            new SimpleVector(0, center[1] - range[1], center[2] - range[2]),
+                            new SimpleVector(0, center[1] - range[1], center[2] + range[2])
+                    };
+                }
+
+                for (int i = 0; i < vectors.length; i++) {
+                    // scale and convert the points
+                    vectors[i].scalarMul(VitcoSettings.VOXEL_SIZE);
+                    vectors[i] = convert3D2D(vectors[i]);
+                    // check that valid
+                    if (vectors[i] == null) {
+                        valid = false;
+                    }
+                }
+                if (valid) {
+                    // draw the cube
+                    ig.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                    if (useFading) {
+                        drawLine(ig, vectors[0], vectors[1], color1);
+                        drawLine(ig, vectors[1], vectors[2], color1);
+                        drawLine(ig, vectors[2], vectors[3], color1);
+                        drawLine(ig, vectors[3], vectors[0], color1);
+                    } else {
+                        drawDashLine(ig, vectors[0], vectors[1], color1, color2);
+                        drawDashLine(ig, vectors[1], vectors[2], color1, color2);
+                        drawDashLine(ig, vectors[2], vectors[3], color1, color2);
+                        drawDashLine(ig, vectors[3], vectors[0], color1, color2);
+
+                        drawText = true;
+                    }
+                }
+            }
+            // draw any boxes in 3D
+            default: {
+                // define the points of the voxel
+                SimpleVector[] vectors = new SimpleVector[] {
+                        new SimpleVector(center[0] + range[0], center[1] + range[1], center[2] + range[2]),
+                        new SimpleVector(center[0] + range[0], center[1] + range[1], center[2] - range[2]),
+                        new SimpleVector(center[0] + range[0], center[1] - range[1], center[2] - range[2]),
+                        new SimpleVector(center[0] + range[0], center[1] - range[1], center[2] + range[2]),
+                        new SimpleVector(center[0] - range[0], center[1] + range[1], center[2] + range[2]),
+                        new SimpleVector(center[0] - range[0], center[1] + range[1], center[2] - range[2]),
+                        new SimpleVector(center[0] - range[0], center[1] - range[1], center[2] - range[2]),
+                        new SimpleVector(center[0] - range[0], center[1] - range[1], center[2] + range[2])
+                };
+                for (int i = 0; i < vectors.length; i++) {
+                    // scale and convert the points
+                    vectors[i].scalarMul(VitcoSettings.VOXEL_SIZE);
+                    vectors[i] = convert3D2D(vectors[i]);
+                    // check that valid
+                    if (vectors[i] == null) {
+                        valid = false;
+                    }
+                }
+
+                if (valid) {
+                    // calculate the z range
+                    float[] zRange = new float[] {vectors[0].z, vectors[0].z}; // min and max z value
+                    for (int i = 1; i < 8; i ++) {
+                        zRange[0] = Math.min(vectors[i].z, zRange[0]);
+                        zRange[1] = Math.max(vectors[i].z, zRange[1]);
+                    }
+                    float distance = zRange[1] - zRange[0];
+
+                    // draw the cube
+                    ig.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                    if (useFading) {
+                        for (int i = 0; i < 4; i++) {
+                            drawFadingLine(ig, vectors, i, (i + 1) % 4, color1, distance, zRange);
+                            drawFadingLine(ig, vectors, i + 4, (i + 1) % 4 + 4, color1, distance, zRange);
+                            drawFadingLine(ig, vectors, i, i + 4, color1, distance, zRange);
+                        }
+                    } else {
+                        for (int i = 0; i < 4; i++) {
+                            drawDashLine(ig, vectors[i], vectors[(i + 1) % 4], color1, color2);
+                            drawDashLine(ig, vectors[i + 4], vectors[(i + 1) % 4 + 4], color1, color2);
+                            drawDashLine(ig, vectors[i], vectors[i + 4], color1, color2);
+                        }
+
+                        drawText = true;
+                    }
+                }
             }
         }
 
-        if (valid) {
-            // calculate the z range
-            float[] zRange = new float[] {vectors[0].z, vectors[0].z}; // min and max z value
-            for (int i = 1; i < 8; i ++) {
-                zRange[0] = Math.min(vectors[i].z, zRange[0]);
-                zRange[1] = Math.max(vectors[i].z, zRange[1]);
-            }
-            float distance = zRange[1] - zRange[0];
+        if (drawText) {
+            // draw size text
+            ig = (Graphics2D) ig.create();
+            String str1 = String.valueOf(((int) (range[2] * 2)));
+            String str2 = String.valueOf(((int) (range[1] * 2)));
+            String str3 = String.valueOf(((int) (range[0] * 2)));
 
-            // draw the cube
-            ig.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
-            if (useFading) {
-                for (int i = 0; i < 4; i++) {
-                    drawFadingLine(ig, vectors, i, (i + 1) % 4, color1, distance, zRange);
-                    drawFadingLine(ig, vectors, i + 4, (i + 1) % 4 + 4, color1, distance, zRange);
-                    drawFadingLine(ig, vectors, i, i + 4, color1, distance, zRange);
-                }
-            } else {
-                for (int i = 0; i < 4; i++) {
-                    drawDashLine(ig, vectors[i], vectors[(i + 1) % 4], color1, color2);
-                    drawDashLine(ig, vectors[i + 4], vectors[(i + 1) % 4 + 4], color1, color2);
-                    drawDashLine(ig, vectors[i], vectors[i + 4], color1, color2);
-                }
+            ig.setFont(ig.getFont().deriveFont(18f).deriveFont(Font.BOLD));
 
-                // draw size text
-                ig = (Graphics2D) ig.create();
-                String str1 = String.valueOf(((int)(range[2] * 2)));
-                String str2 = String.valueOf(((int)(range[1] * 2)));
-                String str3 = String.valueOf(((int)(range[0] * 2)));
+            float len1 = (float) ig.getFontMetrics().getStringBounds(str1, ig).getWidth();
+            float len2 = (float) ig.getFontMetrics().getStringBounds(str2 + ", " + str1, ig).getWidth();
+            float len3 = (float) ig.getFontMetrics().getStringBounds(str3 + ", " + str2 + ", " + str1, ig).getWidth();
 
-                ig.setFont(ig.getFont().deriveFont(18f).deriveFont(Font.BOLD));
-
-                float len1 = (float) ig.getFontMetrics().getStringBounds(str1, ig).getWidth();
-                float len2 = (float) ig.getFontMetrics().getStringBounds(str2 + ", " + str1, ig).getWidth();
-                float len3 = (float) ig.getFontMetrics().getStringBounds(str3 + ", " + str2 + ", " + str1, ig).getWidth();
-
-                ig.setColor(Color.BLACK);
-                ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 - 1);
-                ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 - 1);
-                ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 + 1);
-                ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 + 1);
-                ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 - 1);
-                ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 - 1);
-                ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 + 1);
-                ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 + 1);
-                ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 - 1);
-                ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 - 1);
-                ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 + 1);
-                ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 + 1);
-                ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Z);
-                ig.drawString(str1, this.getWidth() - len1 - 14, 28);
-                ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Y);
-                ig.drawString(str2, this.getWidth() - len2 - 14, 28);
-                ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_X);
-                ig.drawString(str3, this.getWidth() - len3 - 14, 28);
-                ig.dispose();
-            }
+            ig.setColor(Color.BLACK);
+            ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 - 1);
+            ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 - 1);
+            ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 + 1);
+            ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 + 1);
+            ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 - 1);
+            ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 - 1);
+            ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 + 1);
+            ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 + 1);
+            ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 - 1);
+            ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 - 1);
+            ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 + 1);
+            ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 + 1);
+            ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Z);
+            ig.drawString(str1, this.getWidth() - len1 - 14, 28);
+            ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Y);
+            ig.drawString(str2, this.getWidth() - len2 - 14, 28);
+            ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_X);
+            ig.drawString(str3, this.getWidth() - len3 - 14, 28);
+            ig.dispose();
         }
+
         return valid;
     }
 
@@ -256,10 +326,11 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                     int RANGE = 4;
                     float shift = (previewPlane%2 == 0 ? 0.5f : -0.5f);
                     int plane = previewPlane / 2;
+                    // the "grid" is set to the zero plane for the side views
                     SimpleVector center = new SimpleVector(
-                            voxel[0] + (plane == 2 ? shift : 0),
-                            voxel[1] + (plane == 1 ? shift : 0),
-                            voxel[2] + (plane == 0 ? shift : 0)
+                            side == 2 ? 0 : voxel[0] + (plane == 2 ? shift : 0),
+                            side == 1 ? 0 : voxel[1] + (plane == 1 ? shift : 0),
+                            side == 0 ? 0 : voxel[2] + (plane == 0 ? shift : 0)
                     );
 
                     // calculate the points
@@ -339,11 +410,27 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         ArrayList<ExtendedVector[]> objects = new ArrayList<ExtendedVector[]>();
         // add lines
         for (ExtendedVector[] line : data.getLines()) {
+            // line points are set to zero planes for side views
+            line = line.clone();
+            line[0] = new ExtendedVector(line[0]);
+            line[1] = new ExtendedVector(line[1]);
+            if (side == 2) {
+                line[0].x = 0;
+                line[1].x = 0;
+            }
+            if (side == 1) {
+                line[0].y = 0;
+                line[1].y = 0;
+            }
+            if (side == 0) {
+                line[0].z = 0;
+                line[1].z = 0;
+            }
             ExtendedVector point2da = convertExt3D2D(line[0]);
             ExtendedVector point2db = convertExt3D2D(line[1]);
             if (point2da != null && point2db != null) {
                 ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                mid.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
+                mid.scalarMul(DynamicSettings.SAMPLING_MODE_DIVIDEND);
                 objects.add(new ExtendedVector[] {point2da, point2db, mid});
             }
         }
@@ -351,16 +438,43 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         ExtendedVector[] preview_line = data.getPreviewLine();
         boolean connected = preview_line != null && data.areConnected(preview_line[0].id, preview_line[1].id);
         if (preview_line != null && !connected) {
+            // line points are set to zero planes for side views
+            preview_line = preview_line.clone();
+            preview_line[0] = new ExtendedVector(preview_line[0]);
+            preview_line[1] = new ExtendedVector(preview_line[1]);
+            if (side == 2) {
+                preview_line[0].x = 0;
+                preview_line[1].x = 0;
+            }
+            if (side == 1) {
+                preview_line[0].y = 0;
+                preview_line[1].y = 0;
+            }
+            if (side == 0) {
+                preview_line[0].z = 0;
+                preview_line[1].z = 0;
+            }
             ExtendedVector point2da = convertExt3D2D(preview_line[0]);
             ExtendedVector point2db = convertExt3D2D(preview_line[1]);
             if (point2da != null && point2db != null) {
                 ExtendedVector mid = new ExtendedVector(point2da.calcAdd(point2db), 0);
-                mid.scalarMul(VitcoSettings.SAMPLING_MODE_DIVIDEND);
+                mid.scalarMul(DynamicSettings.SAMPLING_MODE_DIVIDEND);
                 objects.add(new ExtendedVector[] {point2da, point2db, mid});
             }
         }
         // add points
         for (ExtendedVector point : data.getPoints()) {
+            // points are set to zero planes for side views
+            point = new ExtendedVector(point);
+            if (side == 2) {
+                point.x = 0;
+            }
+            if (side == 1) {
+                point.y = 0;
+            }
+            if (side == 0) {
+                point.z = 0;
+            }
             ExtendedVector point2d = convertExt3D2D(point);
             if (point2d != null) {
                 objects.add(new ExtendedVector[] {point2d});
@@ -481,50 +595,121 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             }
         }
         // draw the bounding box
-        if (drawBoundingBox && side == -1) {
-            drawBoundingBox(ig);
+        if (drawBoundingBox) {
+            drawBoundingBox(ig, side);
         }
     }
 
     // draw so that we can also see the outline of the
     // box in the front (where the textured grid is hidden)
-    private void drawBoundingBox(Graphics2D gr) {
+    private void drawBoundingBox(Graphics2D gr, int side) {
 
         // Anti-alias
         gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // get an instance that we can modify
-        SimpleVector[] vectors = new SimpleVector[8];
+        switch (side) {
+            // draw the bounding box for the side views as a simple 2D rectangle in the zero layer
+            case 0: case 1: case 2: {
+                SimpleVector[] vectors;
+                if (side == 0) {
+                    vectors = new SimpleVector[] {
+                            new SimpleVector(DynamicSettings.VOXEL_PLANE_RANGE_X, 0.5f, 0),
+                            new SimpleVector(DynamicSettings.VOXEL_PLANE_RANGE_X, -DynamicSettings.VOXEL_PLANE_SIZE_Y +0.5f, 0),
+                            new SimpleVector(-DynamicSettings.VOXEL_PLANE_RANGE_X, -DynamicSettings.VOXEL_PLANE_SIZE_Y +0.5f, 0),
+                            new SimpleVector(-DynamicSettings.VOXEL_PLANE_RANGE_X, 0.5f, 0)
+                    };
+                } else if (side == 1) {
+                    vectors = new SimpleVector[] {
+                            new SimpleVector(DynamicSettings.VOXEL_PLANE_RANGE_X, 0, -DynamicSettings.VOXEL_PLANE_RANGE_Z),
+                            new SimpleVector(-DynamicSettings.VOXEL_PLANE_RANGE_X, 0, -DynamicSettings.VOXEL_PLANE_RANGE_Z),
+                            new SimpleVector(-DynamicSettings.VOXEL_PLANE_RANGE_X, 0, DynamicSettings.VOXEL_PLANE_RANGE_Z),
+                            new SimpleVector(DynamicSettings.VOXEL_PLANE_RANGE_X, 0, DynamicSettings.VOXEL_PLANE_RANGE_Z)
+                    };
+                } else {
+                    vectors = new SimpleVector[] {
+                            new SimpleVector(0, -DynamicSettings.VOXEL_PLANE_SIZE_Y +0.5f, -DynamicSettings.VOXEL_PLANE_RANGE_Z),
+                            new SimpleVector(0, 0.5f, -DynamicSettings.VOXEL_PLANE_RANGE_Z),
+                            new SimpleVector(0, 0.5f, DynamicSettings.VOXEL_PLANE_RANGE_Z),
+                            new SimpleVector(0, -DynamicSettings.VOXEL_PLANE_SIZE_Y +0.5f, DynamicSettings.VOXEL_PLANE_RANGE_Z)
+                    };
+                }
 
-        boolean valid = true;
-        for (int i = 0; i < vectors.length; i++) {
-            // scale and convert the points
-            vectors[i] = getVectorsStatic(i);
-            vectors[i].scalarMul(VitcoSettings.VOXEL_GROUND_PLANE_SIZE);
-            vectors[i] = convert3D2D(vectors[i]);
-            // check that valid
-            if (vectors[i] == null) {
-                valid = false;
+                boolean valid = true;
+                for (int i = 0; i < vectors.length; i++) {
+                    // scale and convert the points
+                    if (DynamicSettings.VOXEL_PLANE_SIZE_X%2 == 0) {
+                        // necessary if the center voxel is not the true center
+                        vectors[i].x -= 0.5f;
+                    }
+                    if (DynamicSettings.VOXEL_PLANE_SIZE_Z%2 == 0) {
+                        // necessary if the center voxel is not the true center
+                        vectors[i].z -= 0.5f;
+                    }
+                    vectors[i].scalarMul(VitcoSettings.VOXEL_SIZE);
+                    vectors[i] = convert3D2D(vectors[i]);
+                    // check that valid
+                    if (vectors[i] == null) {
+                        valid = false;
+                    }
+                }
+                if (valid) {
+                    // draw the rect
+                    gr.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                    drawLine(gr, vectors[0], vectors[1], VitcoSettings.BOUNDING_BOX_COLOR);
+                    drawLine(gr, vectors[1], vectors[2], VitcoSettings.BOUNDING_BOX_COLOR);
+                    drawLine(gr, vectors[2], vectors[3], VitcoSettings.BOUNDING_BOX_COLOR);
+                    drawLine(gr, vectors[3], vectors[0], VitcoSettings.BOUNDING_BOX_COLOR);
+                }
             }
-        }
+            break;
+            // draw the bounding box in 3D view
+            default: {
+                // get an instance that we can modify
+                SimpleVector[] vectors = new SimpleVector[8];
 
-        if (valid) {
-            // calculate the z range
-            float[] zRange = new float[] {vectors[0].z, vectors[0].z}; // min and max z value
-            for (int i = 1; i < 8; i ++) {
-                zRange[0] = Math.min(vectors[i].z, zRange[0]);
-                zRange[1] = Math.max(vectors[i].z, zRange[1]);
-            }
-            float distance = zRange[1] - zRange[0];
+                boolean valid = true;
+                for (int i = 0; i < vectors.length; i++) {
+                    // scale and convert the points
+                    vectors[i] = getVectorsStatic(i);
+                    vectors[i].y += 0.5f / DynamicSettings.VOXEL_PLANE_SIZE_Y;
+                    vectors[i].x *= DynamicSettings.VOXEL_PLANE_WORLD_SIZE_X;
+                    vectors[i].y *= DynamicSettings.VOXEL_PLANE_WORLD_SIZE_Y;
+                    vectors[i].z *= DynamicSettings.VOXEL_PLANE_WORLD_SIZE_Z;
+                    if (DynamicSettings.VOXEL_PLANE_SIZE_X%2 == 0) {
+                        // necessary if the center voxel is not the true center
+                        vectors[i].x -= 0.5f * VitcoSettings.VOXEL_SIZE;
+                    }
+                    if (DynamicSettings.VOXEL_PLANE_SIZE_Z%2 == 0) {
+                        // necessary if the center voxel is not the true center
+                        vectors[i].z -= 0.5f * VitcoSettings.VOXEL_SIZE;
+                    }
+                    vectors[i] = convert3D2D(vectors[i]);
+                    // check that valid
+                    if (vectors[i] == null) {
+                        valid = false;
+                    }
+                }
 
-            // draw the cube
-            gr.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
-            for (int i = 0; i < 4; i++) {
-                drawFadingLine(gr, vectors, i, (i + 1) % 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
-                drawFadingLine(gr, vectors, i + 4, (i + 1) % 4 + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
-                drawFadingLine(gr, vectors, i, i + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                if (valid) {
+                    // calculate the z range
+                    float[] zRange = new float[]{vectors[0].z, vectors[0].z}; // min and max z value
+                    for (int i = 1; i < 8; i++) {
+                        zRange[0] = Math.min(vectors[i].z, zRange[0]);
+                        zRange[1] = Math.max(vectors[i].z, zRange[1]);
+                    }
+                    float distance = zRange[1] - zRange[0];
+
+                    // draw the cube
+                    gr.setStroke(new BasicStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                    for (int i = 0; i < 4; i++) {
+                        drawFadingLine(gr, vectors, i, (i + 1) % 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                        drawFadingLine(gr, vectors, i + 4, (i + 1) % 4 + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                        drawFadingLine(gr, vectors, i, i + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                    }
+                }
             }
+            break;
         }
     }
 
@@ -580,18 +765,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     }
 
     // get the image currently rendered in high quality
-    public BufferedImage getImage() {
-//        Config.useFramebufferWithAlpha = true;
-//        FrameBuffer fb = new FrameBuffer(getWidth(), getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
-//        Config.useFramebufferWithAlpha = false;
-//        fb.clear(new Color(0,0,0,0));
-//        world.renderScene(fb);
-//        world.draw(fb);
-//        Config.blendAlphaIfOversampling = true;
-//        fb.update();
-//        Config.blendAlphaIfOversampling = false;
-//        BufferedImage result = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-//        fb.display(result.getGraphics());
+    public final BufferedImage getImage() {
         Config.useFramebufferWithAlpha = true;
         HackedFrameBuffer fb = new HackedFrameBuffer(getWidth()*2, getHeight()*2, FrameBuffer.SAMPLINGMODE_NORMAL);
         Config.useFramebufferWithAlpha = false;
@@ -644,7 +818,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     }
 
     // get the image currently rendered in high quality
-    public BufferedImage getDepthImage() {
+    public final BufferedImage getDepthImage() {
         HackedFrameBuffer fb = new HackedFrameBuffer(getWidth(), getHeight(), FrameBuffer.SAMPLINGMODE_OGSS);
         fb.clear();
         world.renderScene(fb);
@@ -736,8 +910,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     private void drawShader() {
         // draw depth outline (software "shader")
         // idea: http://coding-experiments.blogspot.de/2010/06/edge-detection.html
-        int w = buffer.getWidth() * VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
-        int factor = w * VitcoSettings.SAMPLING_MODE_MULTIPLICAND*VitcoSettings.SAMPLING_MODE_MULTIPLICAND;
+        int w = buffer.getWidth() * DynamicSettings.SAMPLING_MODE_MULTIPLICAND;
+        int factor = w * DynamicSettings.SAMPLING_MODE_MULTIPLICAND * DynamicSettings.SAMPLING_MODE_MULTIPLICAND;
         int[] zBuffer = buffer.getZBuffer(); //requires hacked framebuffer
         @SuppressWarnings("MismatchedReadAndWriteOfArray")
         int[] pixels = buffer.getPixels();
@@ -774,8 +948,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                         (Math.abs(x2 - x2t) < p4 && Math.abs(x6 - x6t) < p4 ? 1 : 0);
 
                 if (val == 2 || val == 3) {
-                    pixels[(c/factor)*w + (c/VitcoSettings.SAMPLING_MODE_MULTIPLICAND)%w] = 0;
-                    c+= VitcoSettings.SAMPLING_MODE_MULTIPLICAND -1;
+                    pixels[(c/factor)*w + (c/DynamicSettings.SAMPLING_MODE_MULTIPLICAND)%w] = 0;
+                    c += DynamicSettings.SAMPLING_MODE_MULTIPLICAND -1;
                 } else {
 
                     int xP = x + 100;
@@ -787,8 +961,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                             ((x0t > xP && x8 > xP) || (x0t < xM && x8t < xM) ? 1 : 0);
 
                     if (s == 2 || s == 3) {
-                        pixels[(c/factor)*w + (c/VitcoSettings.SAMPLING_MODE_MULTIPLICAND)%w] = 0;
-                        c+= VitcoSettings.SAMPLING_MODE_MULTIPLICAND -1;
+                        pixels[(c/factor)*w + (c/DynamicSettings.SAMPLING_MODE_MULTIPLICAND)%w] = 0;
+                        c += DynamicSettings.SAMPLING_MODE_MULTIPLICAND -1;
                     }
                 }
             }

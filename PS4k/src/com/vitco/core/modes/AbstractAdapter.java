@@ -32,7 +32,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
 
     // the currently active tool
     private AbstractTool tool = null;
-    private boolean active = false;
+    private boolean adapterActive = false;
     // set a certain tool
     public final void setTool(AbstractTool tool) {
         if (this.tool != null) {
@@ -40,28 +40,27 @@ public abstract class AbstractAdapter extends MouseAdapter {
         }
         if (tool != null) {
             this.tool = tool;
-            this.tool.activate();
-            active = true;
+            if (adapterActive) {
+                this.tool.activate();
+            }
         }
     }
 
-    // basic init
+    // basic init for tools
     public final void activate() {
-        if (active) {
-            this.tool.activate();
-        }
+        this.tool.activate();
+        adapterActive = true;
     }
 
-    // basic destruct
+    // basic destruct for tool
     public final void deactivate() {
-        if (active) {
-            this.tool.deactivate();
-        }
+        this.tool.deactivate();
+        adapterActive = false;
     }
 
     // replay the previous hover event
     public final void replayHover() {
-        if (active && container.isActive()) {
+        if (adapterActive && container.isActive()) {
             tool.replayHover();
         }
     }
@@ -73,7 +72,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
         asyncActionManager.addAsyncAction(new AsyncAction() {
             @Override
             public void performAction() {
-                if (active) {
+                if (adapterActive) {
                     tool.onMousePressed(e);
                 }
             }
@@ -84,7 +83,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
         asyncActionManager.addAsyncAction(new AsyncAction() {
             @Override
             public void performAction() {
-                if (active) {
+                if (adapterActive) {
                     tool.onMouseReleased(e);
                 }
             }
@@ -95,7 +94,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
         asyncActionManager.addAsyncAction(new AsyncAction() {
             @Override
             public void performAction() {
-                if (active) {
+                if (adapterActive) {
                     container.activate();
                     tool.onMouseEntered(e);
                 }
@@ -107,7 +106,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
         asyncActionManager.addAsyncAction(new AsyncAction() {
             @Override
             public void performAction() {
-                if (active) {
+                if (adapterActive) {
                     container.deactivate();
                     tool.onMouseExited(e);
                 }
@@ -119,7 +118,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
         asyncActionManager.addAsyncAction(new AsyncAction() {
             @Override
             public void performAction() {
-                if (active) {
+                if (adapterActive) {
                     tool.onMouseWheelMoved(e);
                 }
             }
@@ -130,7 +129,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
         asyncActionManager.addAsyncAction(new AsyncAction() {
             @Override
             public void performAction() {
-                if (active) {
+                if (adapterActive) {
                     tool.onMouseDragged(e);
                 }
             }
@@ -141,7 +140,7 @@ public abstract class AbstractAdapter extends MouseAdapter {
         asyncActionManager.addAsyncAction(new AsyncAction() {
             @Override
             public void performAction() {
-                if (active) {
+                if (adapterActive) {
                     tool.onMouseMoved(e);
                 }
             }

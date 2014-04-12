@@ -4,6 +4,7 @@ import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.layout.content.shortcut.ShortcutManagerInterface;
 import com.vitco.manager.action.ActionGroupManagerInterface;
 import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.menu.MenuGeneratorInterface;
@@ -20,6 +21,13 @@ public abstract class ViewPrototype {
     @Autowired(required=true)
     public final void setActionManager(ActionManager actionManager) {
         this.actionManager = actionManager;
+    }
+
+    // var & setter
+    protected ComplexActionManager complexActionManager;
+    @Autowired(required=true)
+    public final void setComplexActionManager(ComplexActionManager complexActionManager) {
+        this.complexActionManager = complexActionManager;
     }
 
     // var & setter
