@@ -194,6 +194,10 @@ public class PointTool extends AbstractAnimationTool {
                 }
                 // select new point
                 data.selectPoint(added);
+                // highlight new point
+                data.highlightPoint(added);
+                // consume the mouse event
+                e.consume();
             }
         }
     }

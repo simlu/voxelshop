@@ -489,9 +489,11 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                 } else if (o1.length == 1 && o2.length == 1) { // two points
                     return (int) Math.signum(o1[0].z - o2[0].z);
                 } else if (o1.length == 1 && o2.length == 3) { // point and line
-                    return (int) Math.signum(o1[0].z - o2[2].z);
+                    float diff = o1[0].z - o2[2].z;
+                    return Math.abs(diff) < 0.00000001 ? 1 : (int)Math.signum(diff); // point to front if equal
                 } else if (o1.length == 3 && o2.length == 1) { // line and point
-                    return (int) Math.signum(o1[2].z - o2[0].z);
+                    float diff = o1[2].z - o2[0].z;
+                    return Math.abs(diff) < 0.00000001 ? -1 : (int)Math.signum(diff); // point to front if equal
                 }
                 return 0;
             }

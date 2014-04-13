@@ -71,7 +71,7 @@ public abstract class AbstractBasicTool extends AbstractTool {
             } else {
                 click(e);
             }
-            if (allowDrag()) {
+            if (allowDrag() && !e.isConsumed()) {
                 eventDrag = true;
                 container.enableCamera(false);
                 shiftDown = isShiftDown();
