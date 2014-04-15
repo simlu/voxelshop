@@ -329,7 +329,6 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
             borderAdded[direction].remove(it.next());
         }
 
-
         // generate result
         Set<T> result = new HashSet<T>(borderAdded[direction].valueCollection());
 
@@ -355,6 +354,16 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
         // clear buffer and changes
         borderRemoved[direction].clear();
 
+        return result;
+    }
+
+    @Override
+    public final short[][] getHull(int direction) {
+        short[][] result = new short[border[direction].size()][3]; // allocate with correct size
+        int count = 0;
+        for (TIntIterator it = border[direction].iterator(); it.hasNext();) {
+            result[count++] = CubeIndexer.getPos(it.next());
+        }
         return result;
     }
 }

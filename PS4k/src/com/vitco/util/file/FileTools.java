@@ -92,10 +92,12 @@ public class FileTools {
             try {
                 new AutoFileCloser() {
                     @Override protected void doWork() throws Throwable {
-                        InputStream inputStream = autoClose(new FileInputStream( file ));
-                        InputStream buffer = autoClose(new BufferedInputStream( inputStream ));
-                        ObjectInput input = autoClose(new HackedObjectInputStream( buffer ));
-                        result[0] = input.readObject();
+                        try {
+                            InputStream inputStream = autoClose(new FileInputStream(file));
+                            InputStream buffer = autoClose(new BufferedInputStream(inputStream));
+                            ObjectInput input = autoClose(new HackedObjectInputStream(buffer));
+                            result[0] = input.readObject();
+                        } catch (StreamCorruptedException ignored) {} // caused if the file format is invalid
                     }
                 };
             } catch (RuntimeException e) {

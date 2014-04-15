@@ -2,9 +2,8 @@ package com.vitco.core.data;
 
 import com.vitco.Main;
 import com.vitco.core.data.container.DataContainer;
-import com.vitco.core.data.container.Voxel;
-import com.vitco.export.ColladaFile;
-import com.vitco.low.hull.HullManager;
+import com.vitco.export.ColladaFileExporter;
+import com.vitco.export.ExportDataManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
@@ -118,53 +117,63 @@ public final class Data extends VoxelHighlighting implements DataInterface {
         }
     }
 
+    // todo: move this method somewhere more appropriate (it doesn't belong into the data class!)
     @Override
     public final boolean exportToCollada(File file, File textureFile) {
         synchronized (VitcoSettings.SYNC) {
             boolean result = true;
 
-            ColladaFile colladaExport = new ColladaFile();
-
-            // build the world that we will use for exporting
-            Voxel[] voxels = getVisibleLayerVoxel();
-            HullManager<Voxel> hullManager = new HullManager<Voxel>();
-            for (Voxel voxel : voxels) {
-                hullManager.update(new short[]{(short) voxel.x, (short) voxel.y, (short) voxel.z}, voxel);
-            }
-
-            for (int i = 0; i < 6; i++) {
-                for (Voxel voxel : hullManager.getHullAdditions(i)) {
-                    int[] textureId = voxel.getTexture();
-                    int[] rotation = voxel.getRotation();
-                    boolean[] flip = voxel.getFlip();
-                    colladaExport.addPlane(
-                            voxel.getPosAsInt(),
-                            i,
-                            voxel.getColor(),
-                            textureId == null ? null : textureId[i],
-                            rotation == null ? 0 : rotation[i],
-                            flip != null && flip[i]
-                    );
-                    if (textureId != null) {
-                        colladaExport.registerTexture(textureId[i], this.getTexture(textureId[i]));
-                    }
-                }
-            }
-
-
-            colladaExport.finish(textureFile.getName());
-
+            ExportDataManager exportDataManager = new ExportDataManager(this);
+            ColladaFileExporter colladaFileExporter = new ColladaFileExporter(exportDataManager);
             // write the file
-            if (!colladaExport.writeToFile(file, errorHandler)) {
+            if (!colladaFileExporter.writeToFile(file, errorHandler)) {
                 result = false;
             }
 
-            // write the texture image file (if there is one)
-            if (colladaExport.hasTextureMap()) {
-                colladaExport.writeTextureMap(textureFile, errorHandler);
-            }
+//            // hull manager that exposes hull information
+//            Voxel[] voxels = getVisibleLayerVoxel();
+//            HullManager<Voxel> hullManager = new HullManager<Voxel>();
+//            for (Voxel voxel : voxels) {
+//                hullManager.update(new short[]{(short) voxel.x, (short) voxel.y, (short) voxel.z}, voxel);
+//            }
+//
+//            ColladaFile colladaExport = new ColladaFile();
+//
+//            for (int i = 0; i < 6; i++) {
+//                for (Voxel voxel : hullManager.getHullAdditions(i)) {
+//                    int[] textureId = voxel.getTexture();
+//                    int[] rotation = voxel.getRotation();
+//                    boolean[] flip = voxel.getFlip();
+//                    colladaExport.addPlane(
+//                            voxel.getPosAsInt(),
+//                            i,
+//                            voxel.getColor(),
+//                            textureId == null ? null : textureId[i],
+//                            rotation == null ? 0 : rotation[i],
+//                            flip != null && flip[i]
+//                    );
+//                    if (textureId != null) {
+//                        colladaExport.registerTexture(textureId[i], this.getTexture(textureId[i]));
+//                    }
+//                }
+//            }
+//
+//
+//            colladaExport.finish(textureFile.getName());
+//
+//            // write the file
+//            if (!colladaExport.writeToFile(file, errorHandler)) {
+//                result = false;
+//            }
+//
+//            // write the texture image file (if there is one)
+//            if (colladaExport.hasTextureMap()) {
+//                if (!colladaExport.writeTextureMap(textureFile, errorHandler)) {
+//                    result = false;
+//                }
+//            }
 
-            // only check in debug mode
+            // validation - only check in debug mode
             if (Main.isDebugMode()) {
                 // validate the file
                 if (!XmlTools.validateAgainstXSD(

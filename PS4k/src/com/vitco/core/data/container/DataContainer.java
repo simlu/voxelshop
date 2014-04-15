@@ -81,50 +81,42 @@ public final class DataContainer implements Serializable {
             try {
                 new AutoFileCloser() {
                     @Override protected void doWork() throws Throwable {
-                        // declare variables for the readers and "watch" them
-                        InputStream inputStream = autoClose(new FileInputStream( file ));
-                        InputStream buffer = autoClose(new BufferedInputStream( inputStream ));
-                        HackedObjectInputStream input = autoClose(new HackedObjectInputStream( buffer ));
+                        try {
+                            // declare variables for the readers and "watch" them
+                            InputStream inputStream = autoClose(new FileInputStream( file ));
+                            InputStream buffer = autoClose(new BufferedInputStream( inputStream ));
+                            HackedObjectInputStream input = autoClose(new HackedObjectInputStream( buffer ));
 
-                        if (input.available() > 0 && input.readUTF().equals("**VSD2013**")) {
-                            while (input.available() > 0) {
-                                String token = input.readUTF();
-                                if (token.equals("#textures#")) {
-                                    tmpData.textures = (HashMap<Integer, ImageIcon>) input.readObject();
-                                } else
-                                if (token.equals("#selectedTexture#")) {
-                                    tmpData.selectedTexture = (Integer)input.readObject();
-                                } else
-                                if (token.equals("#selectedLayer#")) {
-                                    tmpData.selectedLayer = (Integer)input.readObject();
-                                } else
-                                if (token.equals("#layers#")) {
-                                    tmpData.layers = (HashMap<Integer, VoxelLayer>) input.readObject();
-                                } else
-                                if (token.equals("#layerOrder#")) {
-                                    tmpData.layerOrder = (ArrayList<Integer>) input.readObject();
-                                } else
-                                if (token.equals("#voxels#")) {
-                                    tmpData.voxels = (HashMap<Integer, Voxel>) input.readObject();
-                                } else
-                                if (token.equals("#points#")) {
-                                    tmpData.points = (HashMap<Integer, ExtendedVector>) input.readObject();
-                                } else
-                                if (token.equals("#lines#")) {
-                                    tmpData.lines = (HashMap<String, ExtendedLine>) input.readObject();
-                                } else
-                                if (token.equals("#pointsToLines#")) {
-                                    tmpData.pointsToLines = (HashMap<Integer, ArrayList<ExtendedLine>>) input.readObject();
-                                } else
-                                if (token.equals("#activeFrame#")) {
-                                    tmpData.activeFrame = (Integer)input.readObject();
-                                } else
-                                if (token.equals("#frames#")) {
-                                    tmpData.frames = (HashMap<Integer, Frame>) input.readObject();
+                            if (input.available() > 0 && input.readUTF().equals("**VSD2013**")) {
+                                while (input.available() > 0) {
+                                    String token = input.readUTF();
+                                    if (token.equals("#textures#")) {
+                                        tmpData.textures = (HashMap<Integer, ImageIcon>) input.readObject();
+                                    } else if (token.equals("#selectedTexture#")) {
+                                        tmpData.selectedTexture = (Integer) input.readObject();
+                                    } else if (token.equals("#selectedLayer#")) {
+                                        tmpData.selectedLayer = (Integer) input.readObject();
+                                    } else if (token.equals("#layers#")) {
+                                        tmpData.layers = (HashMap<Integer, VoxelLayer>) input.readObject();
+                                    } else if (token.equals("#layerOrder#")) {
+                                        tmpData.layerOrder = (ArrayList<Integer>) input.readObject();
+                                    } else if (token.equals("#voxels#")) {
+                                        tmpData.voxels = (HashMap<Integer, Voxel>) input.readObject();
+                                    } else if (token.equals("#points#")) {
+                                        tmpData.points = (HashMap<Integer, ExtendedVector>) input.readObject();
+                                    } else if (token.equals("#lines#")) {
+                                        tmpData.lines = (HashMap<String, ExtendedLine>) input.readObject();
+                                    } else if (token.equals("#pointsToLines#")) {
+                                        tmpData.pointsToLines = (HashMap<Integer, ArrayList<ExtendedLine>>) input.readObject();
+                                    } else if (token.equals("#activeFrame#")) {
+                                        tmpData.activeFrame = (Integer) input.readObject();
+                                    } else if (token.equals("#frames#")) {
+                                        tmpData.frames = (HashMap<Integer, Frame>) input.readObject();
+                                    }
                                 }
+                                tmpData.result = true;
                             }
-                            tmpData.result = true;
-                        }
+                        } catch (StreamCorruptedException ignored) {} // caused if the file format is invalid
                     }
                 };
             } catch (RuntimeException e) {

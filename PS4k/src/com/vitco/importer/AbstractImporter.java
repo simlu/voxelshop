@@ -140,9 +140,12 @@ public abstract class AbstractImporter {
         layerList.add(activeLayer);
         FileIn fileIn = new FileIn(file);
         RandomAccessFileIn raf = new RandomAccessFileIn(file, "r");
-        hasLoaded = read(fileIn, raf);
-        raf.close();
-        fileIn.finish();
+        try {
+            hasLoaded = read(fileIn, raf);
+        } finally {
+            raf.close();
+            fileIn.finish();
+        }
     }
 
     // read file - returns true if file has loaded correctly

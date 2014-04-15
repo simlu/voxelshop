@@ -52,5 +52,10 @@ public class BiMap<KeyType, ValueType>{
     public ValueType get(KeyType key){
         return keyToValueMap.get(key);
     }
+
+    // retrieve the amount of entries
+    public int size() {
+        return keyToValueMap.size();
+    }
 }
 

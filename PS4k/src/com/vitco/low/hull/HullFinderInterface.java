@@ -27,4 +27,7 @@ public interface HullFinderInterface<T> {
 
     // get the hull removals (in direction 0-5)
     Set<T> getHullRemovals(int direction);
+
+    // get the current hull
+    short[][] getHull(int direction);
 }

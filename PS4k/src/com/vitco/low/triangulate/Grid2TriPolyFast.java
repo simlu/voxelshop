@@ -90,9 +90,13 @@ public class Grid2TriPolyFast {
             }
 
             // do the triangulation and add the triangles for this polygon
-            tcx.prepareTriangulation(polyR);
-            Poly2Tri.triangulate(tcx);
-            tcx.clear();
+            // Note: This needs to be synchronized to prevent multiple instances
+            // from accessing the tcx context at once
+            synchronized (tcx) {
+                tcx.prepareTriangulation(polyR);
+                Poly2Tri.triangulate(tcx);
+                tcx.clear();
+            }
             result.addAll(polyR.getTriangles());
 
         }

@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -177,7 +178,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 if (checkUnsavedChanges(frame)) {
                     File toOpen = fc_vsd.openFile(frame);
                     if (toOpen != null) {
-                        data.loadFromFile(toOpen);
+                        if (!data.loadFromFile(toOpen)) {
+                            console.addLine(langSelector.getString("error_on_file_load"));
+                        }
                         save_location[0] = toOpen.getPath(); // remember load location
                     }
                 }
@@ -210,27 +213,36 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext) || "bmp".equals(ext)) {
                                 // -----------------
                                 // import image data
-                                data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
                                 BufferedImage img = ImageIO.read(toOpen);
-                                importImage(img);
+                                if (img != null) {
+                                    data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
+                                    importImage(img);
+                                } else {
+                                    throw new IOException("Failed to load image with ImageIO.read()");
+                                }
                             } else if ("gif".equals(ext)) {
                                 // ----------------
                                 // import gif image data (including frame animation)
-                                ImageReader ir = new GIFImageReader(new GIFImageReaderSpi());
-                                ir.setInput(ImageIO.createImageInputStream(toOpen));
-                                int count = ir.getNumImages(true);
-                                if (count > 1) {
-                                    for (int i = 0; i < count; i++) {
-                                        int layerId = data.createLayer("Frame" + i);
-                                        data.selectLayer(layerId);
-                                        if (i < count - 1) {
-                                            data.setVisible(layerId, false);
+                                ImageInputStream inputStream = ImageIO.createImageInputStream(toOpen);
+                                try {
+                                    ImageReader ir = new GIFImageReader(new GIFImageReaderSpi());
+                                    ir.setInput(inputStream);
+                                    int count = ir.getNumImages(true);
+                                    if (count > 1) {
+                                        for (int i = 0; i < count; i++) {
+                                            int layerId = data.createLayer("Frame" + i);
+                                            data.selectLayer(layerId);
+                                            if (i < count - 1) {
+                                                data.setVisible(layerId, false);
+                                            }
+                                            importImage(ir.read(i));
                                         }
-                                        importImage(ir.read(i));
+                                    } else {
+                                        data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
+                                        importImage(ir.read(0));
                                     }
-                                } else {
-                                    data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
-                                    importImage(ir.read(0));
+                                } finally {
+                                    inputStream.close();
                                 }
                             } else if ("binvox".equals(ext)) {
                                 // ----------------
@@ -264,7 +276,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 importVoxelData(importer, true);
                             }
                         } catch (IOException e1) {
-                            errorHandler.handle(e1);
+                            console.addLine(langSelector.getString("error_on_file_import"));
+                            //errorHandler.handle(e1);
                         }
 
                         // force a refresh of the data (redraw)
@@ -412,14 +425,14 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                     // do not print any thread errors (JFileChooser thread can cause this!)
                     try {
                         PrintStream nullStream = new PrintStream(new OutputStream() {
-                            public void write(int b) throws IOException {
-                            }
+                            @Override
+                            public void write(int b) throws IOException {}
 
-                            public void write(byte b[]) throws IOException {
-                            }
+                            @Override
+                            public void write(@SuppressWarnings("NullableProblems") byte b[]) throws IOException {}
 
-                            public void write(byte b[], int off, int len) throws IOException {
-                            }
+                            @Override
+                            public void write(@SuppressWarnings("NullableProblems") byte b[], int off, int len) throws IOException {}
                         }, true, "utf-8");
                         System.setErr(nullStream);
                         System.setOut(nullStream);
