@@ -2,9 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
-import com.vitco.export.container.TexTriPoint;
-import com.vitco.export.container.TexTriangle;
-import com.vitco.export.container.TexTriangleManager;
+import com.vitco.export.container.*;
 import com.vitco.low.hull.HullManager;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.low.triangulate.util.Grid2PolyHelper;
@@ -32,6 +30,14 @@ public class ExportDataManager {
     // getter for triangle manager
     public final TexTriangleManager getTriangleManager() {
         return triangleManager;
+    }
+
+    // Data Structure that manages the textures
+    private final TriTextureManager textureManager = new TriTextureManager();
+
+    // getter for the texture manager
+    public final TriTextureManager getTextureManager() {
+        return textureManager;
     }
 
     // -------------
@@ -118,13 +124,19 @@ public class ExportDataManager {
 
                     TexTriangle texTri = new TexTriangle(tri, triangleManager);
 
-//                    // compute the texture for this triangle
-//                    TriTexture triTexture = new TriTexture(
-//                            texTri.getUV(0), minA + tri.points[0].getXf(), minB + tri.points[0].getYf(),
-//                            texTri.getUV(1), minA + tri.points[1].getXf(), minB + tri.points[1].getYf(),
-//                            texTri.getUV(2), minA + tri.points[2].getXf(), minB + tri.points[2].getYf(),
-//                            texTri, this.data
-//                    );
+                    // compute the texture for this triangle
+                    TriTexture triTexture = new TriTexture(
+                            texTri.getUV(0), minA + tri.points[0].getXf(), minB + tri.points[0].getYf(),
+                            texTri.getUV(1), minA + tri.points[1].getXf(), minB + tri.points[1].getYf(),
+                            texTri.getUV(2), minA + tri.points[2].getXf(), minB + tri.points[2].getYf(),
+                            texTri, this.data
+                    );
+
+                    // set the texture of this triangle
+                    texTri.setTexture(triTexture);
+
+                    // add to the texture manager
+                    textureManager.addTexture(triTexture);
 
                     // translate to triangle in 3D space
                     for (int p = 0; p < 3; p++) {

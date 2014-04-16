@@ -23,6 +23,21 @@ public class TexTriangle {
         return uvs[point];
     }
 
+    // -----------
+
+    // the texture that this triangle uses
+    private TriTexture texture = null;
+
+    // get the texture of this triangle
+    public final TriTexture getTexture() {
+        return texture;
+    }
+
+    // set the texture of this triangle;
+    public final void setTexture(TriTexture texture) {
+        this.texture = texture;
+    }
+
     // ------------------------
 
     // constructor

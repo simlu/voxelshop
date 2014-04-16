@@ -1,6 +1,7 @@
 package com.vitco.export.container;
 
 import com.vitco.core.data.Data;
+import com.vitco.util.graphic.G2DUtil;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -19,6 +20,10 @@ public class TriTexture {
     // the format is (x, y, color)
     private final HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
 
+    // interpolation value
+    private static final float interp = 0.000001f;
+
+        // constructor
     public TriTexture(
             TexTriUV uv1, float xf1, float yf1,
             TexTriUV uv2, float xf2, float yf2,
@@ -29,5 +34,13 @@ public class TriTexture {
         info.put(uv1, new float[]{xf1, yf1});
         info.put(uv2, new float[]{xf2, yf2});
         info.put(uv3, new float[]{xf3, yf3});
+
+        // compute the voxels that are inside this triangle
+        int[][] points = G2DUtil.getTriangleGridIntersection(
+                (int)(xf1 + 0.5f), (int)(yf1 + 0.5f),
+                (int)(xf2 + 0.5f), (int)(yf2 + 0.5f),
+                (int)(xf3 + 0.5f), (int)(yf3 + 0.5f)
+        );
+
     }
 }
