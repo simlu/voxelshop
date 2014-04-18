@@ -4,14 +4,14 @@ import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.util.graphic.G2DUtil;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 /**
  * Represents a texture that belongs to a triangle.
  */
 public class TriTexture {
-    // id counter (helper)
-    private static int idCounter = 0;
 
     // interpolation value
     private static final float interp = 0.00001f;
@@ -26,23 +26,23 @@ public class TriTexture {
 
     // holds the pixels in this triangle
     // the format is (x, y, color)
-    private final int[][] pixels;
+    private final HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
 
     // size of this texture image
     private final int width;
     private final int height;
 
-    // the unique id of this texture
-    private Integer id = null;
+    // reference to texture manager
+    private final TriTextureManager textureManager;
 
     // ---------------
 
     // -- parent texture (i.e. this texture is part of the parent texture)
     private TriTexture parentTexture = null;
 
-    private final float[] topLeft = new float[2];
-    private final float[] scale = new float[2];
-    private final boolean[] flip = new boolean[2];
+    private final float[] topLeft = new float[] {0,0};
+    private final float[] scale = new float[] {1,1};
+    private boolean flip = false;
     private int rotation = 0;
 
     // false if the uv of this texture is outdated
@@ -52,7 +52,7 @@ public class TriTexture {
 
     // set parent texture for this texture
     // Note: A parent texture is a texture that contains this texture
-    public final void setParentTexture(TriTexture parentTexture, float[] topLeft, float[] scale, boolean[] flip, int rotation) {
+    public final void setParentTexture(TriTexture parentTexture, float[] topLeft, float[] scale, boolean flip, int rotation) {
         this.parentTexture = parentTexture;
         // store the uv translation values for this texture
         if (topLeft != null) {
@@ -63,10 +63,7 @@ public class TriTexture {
             this.scale[0] = scale[0];
             this.scale[1] = scale[1];
         }
-        if (flip != null) {
-            this.flip[0] = flip[0];
-            this.flip[1] = flip[1];
-        }
+        this.flip = flip;
         this.rotation = rotation;
     }
 
@@ -78,10 +75,7 @@ public class TriTexture {
             return parentTexture.getId();
         }
         // else return this id
-        if (id == null) {
-            id = idCounter++;
-        }
-        return id;
+        return textureManager.getId(this);
     }
 
     // retrieve image representation of this texture
@@ -92,7 +86,7 @@ public class TriTexture {
         }
         // else compute the image for this texture
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        for (int[] pixel : pixels) {
+        for (int[] pixel : pixels.values()) {
             result.setRGB(pixel[0], pixel[1], pixel[2]);
         }
         return result;
@@ -175,7 +169,8 @@ public class TriTexture {
             TexTriUV uv2, float xf2, float yf2,
             TexTriUV uv3, float xf3, float yf3,
             int depth,
-            TexTriangle texTri, Data data
+            TexTriangle texTri, Data data,
+            TriTextureManager textureManager
     ) {
         // store variables internally
         uvPoints[0][0] = xf1;
@@ -187,6 +182,9 @@ public class TriTexture {
         texTriUVs[0] = uv1;
         texTriUVs[1] = uv2;
         texTriUVs[2] = uv3;
+
+        // store texture manager reference
+        this.textureManager = textureManager;
 
         // compute the voxels that are inside this triangle
         // (so we're not using any "extra" pixels in the buffered image)
@@ -209,27 +207,124 @@ public class TriTexture {
         }
 
         // compute the image size for this texture image
-        width = maxX - minX + 1;
-        height = maxY - minY + 1;
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
 
         // get orientation
         int axis = texTri.getOrientation()/2;
 
         // fetch colors
-        pixels = new int[points.length][3];
-        for (int i = 0; i < points.length; i++) {
+        for (int[] point : points) {
             // set the position (for this color)
-            pixels[i][0] = points[i][0] - minX;
-            pixels[i][1] = points[i][1] - minY;
+            Point p = new Point(point[0] - minX, point[1] - minY);
             // get the pixel color
             Voxel voxel = data.searchVoxel(new int[] {
-                    axis == 0 ? depth : points[i][0],
-                    axis == 1 ? depth : (axis == 0 ? points[i][0] : points[i][1]),
-                    axis == 2 ? depth : points[i][1],
+                    axis == 0 ? depth : point[0],
+                    axis == 1 ? depth : (axis == 0 ? point[0] : point[1]),
+                    axis == 2 ? depth : point[1],
             }, false);
             assert voxel != null;
-            pixels[i][2] = voxel.getColor().getRGB();
+            // add the pixel
+            pixels.put(p, new int[] {p.x, p.y, voxel.getColor().getRGB()});
         }
 
+        // compress this texture
+        int[] size = compress(width, height);
+
+        // finalize width and height
+        this.width = size[0];
+        this.height = size[1];
+    }
+
+    // helper to compress this image
+    // returns the new width of the image
+    @SuppressWarnings("ConstantConditions")
+    private int[] compress(int width, int height) {
+        // -- check if texture can be downscaled
+        if (width > 1) {
+            for (int d = 1, len = (int) Math.sqrt(width) + 1; d < len; d++) {
+                loop:
+                if (width % d == 0) {
+                    // potential new pixel representation
+                    HashMap<Point, int[]> result = new HashMap<Point, int[]>();
+                    // the step width that would be compressed to one pixel
+                    int stepSize = width / d;
+                    // loop over all steps
+                    for (int x = 0; x < d; x++) {
+                        // loop over height
+                        for (int y = 0; y < height; y++) {
+                            Integer lastColor = null;
+                            // loop over step
+                            for (int i = 0; i < stepSize; i++) {
+                                // compute the current point
+                                Point p = new Point(x * stepSize + i, y);
+                                // obtain the pixel
+                                int[] pixel = pixels.get(p);
+                                if (pixel != null) {
+                                    // check if the pixel color is consistent through this step
+                                    if (lastColor == null) {
+                                        lastColor = pixel[2];
+                                        result.put(new Point(x, y), new int[] {x,y,pixel[2]});
+                                    } else {
+                                        if (lastColor != pixel[2]) {
+                                            break loop;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // loop was successful
+                    pixels.clear();
+                    pixels.putAll(result);
+                    width /= stepSize;
+                    break;
+                }
+            }
+        }
+
+        if (height > 1) {
+            for (int d = 1, len = (int) Math.sqrt(height) + 1; d < len; d++) {
+                loop:
+                if (height % d == 0) {
+                    // potential new pixel representation
+                    HashMap<Point, int[]> result = new HashMap<Point, int[]>();
+                    // the step height that would be compressed to one pixel
+                    int stepSize = height / d;
+                    // loop over all steps
+                    for (int y = 0; y < d; y++) {
+                        // loop over width
+                        for (int x = 0; x < width; x++) {
+                            Integer lastColor = null;
+                            // loop over step
+                            for (int i = 0; i < stepSize; i++) {
+                                // compute the current point
+                                Point p = new Point(x, y * stepSize + i);
+                                // obtain the pixel
+                                int[] pixel = pixels.get(p);
+                                if (pixel != null) {
+                                    // check if the pixel color is consistent through this step
+                                    if (lastColor == null) {
+                                        lastColor = pixel[2];
+                                        result.put(new Point(x, y), new int[] {x,y,pixel[2]});
+                                    } else {
+                                        if (lastColor != pixel[2]) {
+                                            break loop;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // loop was successful
+                    pixels.clear();
+                    pixels.putAll(result);
+                    height /= stepSize;
+                    break;
+                }
+            }
+        }
+
+        return new int[] {width, height};
     }
 }

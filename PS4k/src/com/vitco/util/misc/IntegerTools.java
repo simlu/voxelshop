@@ -1,5 +1,7 @@
 package com.vitco.util.misc;
 
+import java.util.ArrayList;
+
 /**
  * Fast integer tools.
  */
@@ -56,5 +58,35 @@ public final class IntegerTools {
     // convert two shorts into an integer id
     public static int makeInt(short x, short y) {
         return (x << 16) | (y & 0xFFFF);
+    }
+
+    // =============
+
+    // find all factors (not just prime factors) of an integer
+    // Note: this includes one or the number itself (!)
+    public static int[] findFactors(int input) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        int p = 0;
+        for (int i = 1; i < input; i++) {
+            if (input%i == 0) {
+                int other = input/i;
+                if (i < other) {
+                    result.add(p++, i);
+                    result.add(p, other);
+                } else if (i == other) {
+                    result.add(p, i);
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        // convert to array
+        int[] resultArray = new int[result.size()];
+        int i = 0;
+        for (Integer val : result) {
+            resultArray[i++] = val;
+        }
+        return resultArray;
     }
 }

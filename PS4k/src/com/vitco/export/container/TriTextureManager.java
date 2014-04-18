@@ -1,6 +1,8 @@
 package com.vitco.export.container;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -12,6 +14,9 @@ public class TriTextureManager {
 
     // list of unique TriTextures (by id)
     private final HashMap<Integer, TriTexture> uniqueTextures = new HashMap<Integer, TriTexture>();
+
+    // maps textures to their corresponding id
+    private final HashMap<TriTexture, Integer> textureIds = new HashMap<TriTexture, Integer>();
 
     // true if the texture list is outdated
     private boolean outdated = false;
@@ -25,11 +30,34 @@ public class TriTextureManager {
     private void validate() {
         if (outdated) {
             outdated = false;
+            // order by parent/not parent
+            Collections.sort(textures, new Comparator<TriTexture>() {
+                @Override
+                public int compare(TriTexture o1, TriTexture o2) {
+                    // todo: check this is correct
+                    return (o1.getTopTexture() == o1 ? 1 : 0) - (o2.getTopTexture() == o2 ? 1 : 0);
+                }
+            });
+            // regenerate texture id list
+            textureIds.clear();
+            int i = 0;
+            for (TriTexture tex : textures) {
+                textureIds.put(tex, i++);
+            }
+            // ===========================
+            // We need to obtain the id here since it might come from a parent texture.
+            // Hence this must be strictly separated from the id generation above (!)
             uniqueTextures.clear();
             for (TriTexture tex : textures) {
                 uniqueTextures.put(tex.getId(), tex);
             }
         }
+    }
+
+    // retrieve the id for a texture
+    public final int getId(TriTexture triTexture) {
+        validate();
+        return textureIds.get(triTexture);
     }
 
     // #########################
@@ -48,9 +76,9 @@ public class TriTextureManager {
 
     // ########################
 
-    // compress the textures in this manager
-    public final void compress() {
-        // todo compress textures
+    // combine the textures in this manager
+    public final void combine() {
+        // todo combine textures
         // ....
 
         // invalidate

@@ -59,8 +59,8 @@ public class ExportDataManager {
         // extract information
         extract();
 
-        // compress the textures
-        textureManager.compress();
+        // combine the textures
+        textureManager.combine();
 
         // validate uv mappings
         textureManager.validateUVMappings();
@@ -138,7 +138,8 @@ public class ExportDataManager {
                             uvs[1], minA + tri.points[1].getXf(), minB + tri.points[1].getYf(),
                             uvs[2], minA + tri.points[2].getXf(), minB + tri.points[2].getYf(),
                             entries.getKey(),
-                            texTri, this.data
+                            texTri, this.data,
+                            textureManager
                     );
 
                     // set the texture for this triangle
