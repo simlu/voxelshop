@@ -1,12 +1,17 @@
 package com.vitco.export;
 
 import com.vitco.export.container.TexTriangleManager;
+import com.vitco.export.container.TriTexture;
+import com.vitco.export.container.TriTextureManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.DateTools;
 import com.vitco.util.xml.XmlFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Export data to COLLADA file ( with optional settings )
@@ -18,24 +23,27 @@ public class ColladaFileExporter {
     // the xml Collada file that we're building
     private final XmlFile xmlFile = new XmlFile("COLLADA");
 
+    // prefix for the texture files (this should include the file name to prevent
+    // overwriting of textures that belong to different files)
+    private final String texturePrefix;
+
     // constructor
-    public ColladaFileExporter(ExportDataManager exportDataManager) {
+    public ColladaFileExporter(ExportDataManager exportDataManager, String texturePrefix) {
         this.exportDataManager = exportDataManager;
+        this.texturePrefix = texturePrefix;
+        // initialize the xml file
         initXmlFile();
+        // create the object in the scene
+        writeObject();
+        // write the texture information
         writeTextures();
+        // write the mesh + uv of the object (triangles)
         writeCoordinates();
     }
 
-    private void writeTextures() {
-        // write the image to the library
-        xmlFile.resetTopNode("library_images/image[-1]");
-        xmlFile.addAttributes("", new String[]{
-                "id=file1-image",
-                "name=file1-image"
-        });
-        xmlFile.addTextContent("init_from", "tmp.png");
-
-        // create the texture object
+    // create the object in the scene
+    private void writeObject() {
+        // create the object
         xmlFile.resetTopNode("library_visual_scenes/visual_scene/node[-1]");
         xmlFile.addAttributes("", new String[]{
                 "id=PlaneTEX",
@@ -52,14 +60,28 @@ public class ColladaFileExporter {
 
         // add the material to the object
         xmlFile.setTopNode("instance_geometry[-1]");
-        xmlFile.addAttributes("", new String[] {"url=#Plane-tex-mesh"});
-        xmlFile.setTopNode("bind_material/technique_common/instance_material[-1]");
-        xmlFile.addAttributes("", new String[] {
-                "symbol=lambert1-material",
-                "target=#lambert1-material"
+        xmlFile.addAttributes("", new String[]{"url=#Plane-tex-mesh"});
+    }
+
+    // helper to register a texture image
+    private void addTexture(int id) {
+        // write the image to the library
+        xmlFile.resetTopNode("library_images/image[-1]");
+        xmlFile.addAttributes("", new String[]{
+                "id=" + texturePrefix + id + "-image",
+                "name=" + texturePrefix + id + "-image"
+        });
+        xmlFile.addTextContent("init_from",  texturePrefix + id + ".png");
+
+        // create texture reference in object
+        xmlFile.resetTopNode("library_visual_scenes/visual_scene/node/instance_geometry" +
+                "/bind_material/technique_common/instance_material[-1]");
+        xmlFile.addAttributes("", new String[]{
+                "symbol=lambert" + id + "-material",
+                "target=#lambert" + id + "-material"
         });
         // add the uv mapping
-        xmlFile.addAttributes("bind_vertex_input", new String[] {
+        xmlFile.addAttributes("bind_vertex_input", new String[]{
                 "semantic=TEX0",
                 "input_semantic=TEXCOORD",
                 "input_set=0"
@@ -68,29 +90,29 @@ public class ColladaFileExporter {
         // add the material
         xmlFile.resetTopNode("library_materials/material[-1]");
         xmlFile.addAttributes("", new String[]{
-                "id=lambert1-material",
-                "name=lambert1"
+                "id=lambert" + id + "-material",
+                "name=lambert" + id
         });
-        xmlFile.addAttributes("instance_effect", new String[] {
-                "url=#lambert1-fx"
+        xmlFile.addAttributes("instance_effect", new String[]{
+                "url=#lambert" + id + "-fx"
         });
 
         // write the image effect
         xmlFile.resetTopNode("library_effects/effect[-1]");
         xmlFile.addAttributes("", new String[]{
-                "id=lambert1-fx"
+                "id=lambert" + id + "-fx"
         });
         xmlFile.setTopNode("profile_COMMON");
         // ----
         xmlFile.setTopNode("newparam[-1]");
-        xmlFile.addAttributes("", new String[]{"sid=file1-surface"});
+        xmlFile.addAttributes("", new String[]{"sid=" + texturePrefix + id + "-surface"});
         xmlFile.addAttributes("surface", new String[]{"type=2D"});
-        xmlFile.addTextContent("surface/init_from", "file1-image");
+        xmlFile.addTextContent("surface/init_from",  texturePrefix + id + "-image");
         // ----
         xmlFile.goUp();
         xmlFile.setTopNode("newparam[-1]");
-        xmlFile.addAttributes("", new String[]{"sid=file1-sampler"});
-        xmlFile.addTextContent("sampler2D/source", "file1-surface");
+        xmlFile.addAttributes("", new String[]{"sid=" + texturePrefix + id + "-sampler"});
+        xmlFile.addTextContent("sampler2D/source", texturePrefix + id + "-surface");
         // ----
         xmlFile.goUp();
         xmlFile.setTopNode("technique[-1]");
@@ -98,9 +120,19 @@ public class ColladaFileExporter {
         xmlFile.addTextContent("lambert/emission/color", "0 0 0 1");
         xmlFile.addTextContent("lambert/ambient/color", "0 0 0 1");
         xmlFile.addAttributes("lambert/diffuse/texture", new String[]{
-                "texture=file1-sampler",
+                "texture=" + texturePrefix + id + "-sampler",
                 "texcoord=TEX0"
         });
+    }
+
+    // write the different textures
+    private void writeTextures() {
+        // obtain all texture ids
+        int[][] textureIds = exportDataManager.getTriangleManager().getTextureIds();
+        // write texture file names to xml file
+        for (int[] textureId : textureIds) {
+            addTexture(textureId[0]);
+        }
     }
 
     // write the coordinates
@@ -165,26 +197,31 @@ public class ColladaFileExporter {
                 "source=#Plane-tex-mesh-positions"
         });
 
-        // write data
-        xmlFile.setTopNode("polylist[-1]");
-        xmlFile.addAttributes("", new String[] {
-                "material=lambert1-material",
-                "count=" + texTriangleManager.triangleCount()
-        });
-        xmlFile.addAttributes("input[-1]", new String[] {
-                "semantic=VERTEX",
-                "source=#Plane-tex-mesh-vertices",
-                "offset=0"
-        });
-        xmlFile.addAttributes("input[-1]", new String[] {
-                "semantic=TEXCOORD",
-                "source=#Plane-tex-mesh-uvs",
-                "offset=1",
-                "set=0"
-        });
-        xmlFile.addTextContent("vcount", texTriangleManager.getTriangleGrouping());
-        xmlFile.addTextContent("p", texTriangleManager.getTrianglePolygonList());
+        // write one poly list for each texture
+        for (int[] groupId : texTriangleManager.getTextureIds()) {
 
+            // write data
+            xmlFile.resetTopNode("library_geometries/geometry/mesh/polylist[-1]");
+            xmlFile.addAttributes("", new String[]{
+                    "material=lambert" + groupId[0] + "-material",
+                    "count=" + groupId[1]
+            });
+            xmlFile.addAttributes("input[-1]", new String[]{
+                    "semantic=VERTEX",
+                    "source=#Plane-tex-mesh-vertices",
+                    "offset=0"
+            });
+            xmlFile.addAttributes("input[-1]", new String[]{
+                    "semantic=TEXCOORD",
+                    "source=#Plane-tex-mesh-uvs",
+                    "offset=1",
+                    "set=0"
+            });
+            // fill with 3s (each triangle consists of three points)
+            xmlFile.addTextContent("vcount", new String(new char[groupId[1]]).replace("\0", " 3").substring(1));
+            xmlFile.addTextContent("p", texTriangleManager.getTrianglePolygonList(groupId[0]));
+
+        }
     }
 
     // -----------------------
@@ -240,6 +277,25 @@ public class ColladaFileExporter {
     // save this file
     public boolean writeToFile(File file, ErrorHandlerInterface errorHandler) {
         return xmlFile.writeToFile(file, errorHandler);
+    }
+
+    // write texture files
+    public boolean writeTexturesToFolder(File folder, ErrorHandlerInterface errorHandler) {
+        int[][] textureIds = exportDataManager.getTriangleManager().getTextureIds();
+        TriTextureManager triTextureManager = exportDataManager.getTextureManager();
+        try {
+            for (int[] textureId : textureIds) {
+                TriTexture texture = triTextureManager.getTexture(textureId[0]);
+                BufferedImage textureImage = texture.getImage();
+                ImageIO.write(textureImage, "png", new File(
+                        folder + "/" + texturePrefix + textureId[0] + ".png"
+                ));
+            }
+            return true;
+        } catch (IOException e) {
+            errorHandler.handle(e);
+        }
+        return false;
     }
 
 }

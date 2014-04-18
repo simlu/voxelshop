@@ -19,11 +19,19 @@ public class TexTriangle {
     }
 
     // get the uvs of a point
-    public final TexTriUV getUV(int point) {
-        return uvs[point];
+    public final TexTriUV[] getUVs() {
+        return uvs.clone();
     }
 
     // -----------
+
+    // the orientation of this triangle
+    private final int orientation;
+
+    // getter for orientation
+    public final int getOrientation() {
+        return orientation;
+    }
 
     // the texture that this triangle uses
     private TriTexture texture = null;
@@ -41,7 +49,7 @@ public class TexTriangle {
     // ------------------------
 
     // constructor
-    public TexTriangle(DelaunayTriangle tri, TexTriangleManager manager) {
+    public TexTriangle(DelaunayTriangle tri, TexTriangleManager manager, int orientation) {
         for (int i = 0; i < 3; i++) {
             points[i] = new TexTriPoint(
                     tri.points[i].getXf(),
@@ -51,6 +59,7 @@ public class TexTriangle {
             );
             uvs[i] = new TexTriUV(0,0,manager);
         }
+        this.orientation = orientation;
     }
 
     // invert this triangle

@@ -123,10 +123,21 @@ public final class Data extends VoxelHighlighting implements DataInterface {
         synchronized (VitcoSettings.SYNC) {
             boolean result = true;
 
+            // define the prefix for the texture filex
+            String prefix = FileTools.extractNameWithoutExtension(file) + "_texture";
+
+            // create data export objects
             ExportDataManager exportDataManager = new ExportDataManager(this);
-            ColladaFileExporter colladaFileExporter = new ColladaFileExporter(exportDataManager);
-            // write the file
+            ColladaFileExporter colladaFileExporter = new ColladaFileExporter(exportDataManager, prefix);
+
+            // write the dae file
             if (!colladaFileExporter.writeToFile(file, errorHandler)) {
+                result = false;
+            }
+
+            // write the texture files
+            File folder = file.getParentFile();
+            if (!colladaFileExporter.writeTexturesToFolder(folder, errorHandler)) {
                 result = false;
             }
 

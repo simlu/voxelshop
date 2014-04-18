@@ -1,6 +1,8 @@
 package com.vitco.export.container;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Manages the texture triangles and exposes (complex) useful information.
@@ -22,38 +24,48 @@ public class TexTriangleManager {
         return result;
     }
 
-    // return how many triangles are stored in the manager
-    public final int triangleCount() {
-        return triangles.size();
+    // retrieve the different texture ids and their "use count" as (id, count)
+    public final int[][] getTextureIds() {
+        // extract unique ids and count
+        HashMap<Integer, Integer> idList = new HashMap<Integer, Integer>();
+        for (TexTriangle tri : triangles) {
+            int texId = tri.getTexture().getId();
+            Integer count = idList.get(texId);
+            if (count == null) {
+                count = 0;
+            }
+            idList.put(texId, count+1);
+        }
+        // convert to result array
+        int[][] result = new int[idList.size()][2];
+        int i = 0;
+        for (Map.Entry<Integer, Integer> entry : idList.entrySet()) {
+            result[i][0] = entry.getKey();
+            result[i++][1] = entry.getValue();
+        }
+        return result;
     }
 
     // ----------------
 
-    // get the grouping logic for the triangles
-    // (i.e. "3 3 3 ...")
-    public final String getTriangleGrouping() {
-        int size = triangles.size();
-        if (size > 0) {
-            return new String(new char[triangles.size()]).replace("\0", " 3").substring(1);
-        } else {
-            return "";
-        }
-    }
-
     // get the triangle coordinate list
     // (i.e. "[p1_ uv1 p2 uv2 p3 uv3]_tri1 [p1_ uv1 p2 uv2 p3 uv3]_tri2 ...")
-    public final String getTrianglePolygonList() {
+    public final String getTrianglePolygonList(int groupId) {
         StringBuilder stringBuilder = new StringBuilder();
         boolean first = true;
         for (TexTriangle tri : triangles) {
-            if (!first) {
-                stringBuilder.append(" ");
-            } else {
-                first = false;
+            // only consider triangles with the specific texture id
+            if (tri.getTexture().getId() == groupId) {
+                if (!first) {
+                    stringBuilder.append(" ");
+                } else {
+                    first = false;
+                }
+                TexTriUV[] uvs = tri.getUVs();
+                stringBuilder.append(tri.getPoint(0).getId()).append(" ").append(uvs[0].getId()).append(" ");
+                stringBuilder.append(tri.getPoint(1).getId()).append(" ").append(uvs[1].getId()).append(" ");
+                stringBuilder.append(tri.getPoint(2).getId()).append(" ").append(uvs[2].getId());
             }
-            stringBuilder.append(tri.getPoint(0).getId()).append(" ").append(tri.getUV(0).getId()).append(" ");
-            stringBuilder.append(tri.getPoint(1).getId()).append(" ").append(tri.getUV(1).getId()).append(" ");
-            stringBuilder.append(tri.getPoint(2).getId()).append(" ").append(tri.getUV(2).getId());
         }
         return stringBuilder.toString();
     }

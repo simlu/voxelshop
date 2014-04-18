@@ -58,6 +58,12 @@ public class ExportDataManager {
 
         // extract information
         extract();
+
+        // compress the textures
+        textureManager.compress();
+
+        // validate uv mappings
+        textureManager.validateUVMappings();
     }
 
     // extract the necessary information from the hull manager
@@ -122,17 +128,20 @@ public class ExportDataManager {
                 short[][][] polys = Grid2PolyHelper.convert(data);
                 for (DelaunayTriangle tri : Grid2TriPolyFast.triangulate(polys)) {
 
-                    TexTriangle texTri = new TexTriangle(tri, triangleManager);
+                    // create the triangle
+                    TexTriangle texTri = new TexTriangle(tri, triangleManager, i);
 
-                    // compute the texture for this triangle
+                    // create the texture (wrapper) for this triangle
+                    TexTriUV[] uvs = texTri.getUVs();
                     TriTexture triTexture = new TriTexture(
-                            texTri.getUV(0), minA + tri.points[0].getXf(), minB + tri.points[0].getYf(),
-                            texTri.getUV(1), minA + tri.points[1].getXf(), minB + tri.points[1].getYf(),
-                            texTri.getUV(2), minA + tri.points[2].getXf(), minB + tri.points[2].getYf(),
+                            uvs[0], minA + tri.points[0].getXf(), minB + tri.points[0].getYf(),
+                            uvs[1], minA + tri.points[1].getXf(), minB + tri.points[1].getYf(),
+                            uvs[2], minA + tri.points[2].getXf(), minB + tri.points[2].getYf(),
+                            entries.getKey(),
                             texTri, this.data
                     );
 
-                    // set the texture of this triangle
+                    // set the texture for this triangle
                     texTri.setTexture(triTexture);
 
                     // add to the texture manager
@@ -147,7 +156,7 @@ public class ExportDataManager {
                         point.set(id2, minB + coord[1]);
                     }
 
-                    // invert the triangle when necessary
+                    // invert the triangle when necessary (correct back-face culling)
                     if (orientationPositive) {
                         texTri.invert();
                     }
