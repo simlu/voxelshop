@@ -3,6 +3,7 @@ package com.vitco.export.container;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.util.graphic.G2DUtil;
+import com.vitco.util.graphic.ImageComparator;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -35,15 +36,17 @@ public class TriTexture {
     // reference to texture manager
     private final TriTextureManager textureManager;
 
+    // used for pixel comparison
+    private final ImageComparator imageComparator;
+
     // ---------------
 
     // -- parent texture (i.e. this texture is part of the parent texture)
     private TriTexture parentTexture = null;
 
-    private final float[] topLeft = new float[] {0,0};
-    private final float[] scale = new float[] {1,1};
-    private boolean flip = false;
-    private int rotation = 0;
+    // left top corner and orientation of this image in its parent image
+    private final int[] leftTop = new int[] {0,0};
+    private int orientationFlag = 0;
 
     // false if the uv of this texture is outdated
     private TriTexture lastTopTexture = null;
@@ -52,19 +55,18 @@ public class TriTexture {
 
     // set parent texture for this texture
     // Note: A parent texture is a texture that contains this texture
-    public final void setParentTexture(TriTexture parentTexture, float[] topLeft, float[] scale, boolean flip, int rotation) {
+    public final void setParentTexture(TriTexture parentTexture, int[] leftTop, int orientationFlag) {
         this.parentTexture = parentTexture;
-        // store the uv translation values for this texture
-        if (topLeft != null) {
-            this.topLeft[0] = topLeft[0];
-            this.topLeft[1] = topLeft[1];
+        // store the uv translation values for this texture to parent
+        if (leftTop != null) {
+            this.leftTop[0] = leftTop[0];
+            this.leftTop[1] = leftTop[1];
         }
-        if (scale != null) {
-            this.scale[0] = scale[0];
-            this.scale[1] = scale[1];
-        }
-        this.flip = flip;
-        this.rotation = rotation;
+        // Indicates the different orientation changes
+        // 0 - original, 1 - rotated x 1, 2 - rotated x 2, 3 - rotated x 3,
+        // 4 - flipped, 5 - flipped & rotated x 1, 6 - flipped & rotated x 2, 7 - flipped & rotated x 3
+        // Note: Rotation is clockwise
+        this.orientationFlag = orientationFlag;
     }
 
     // get identifier of this texture
@@ -108,35 +110,176 @@ public class TriTexture {
         return lastTopTexture == getTopTexture();
     }
 
+    // return true if this has a parent texture
+    // (otherwise this is a "top" texture)
+    public final boolean hasParent() {
+        return parentTexture != null;
+    }
+
+    // make the passed texture a child (if possible)
+    // return true on success
+    public final boolean makeChild(TriTexture child) {
+        // -- can only make child if it has no parent
+        if (child.hasParent()) {
+            return false;
+        }
+
+        // -- check that we don't create infinite recursion
+        if (this.getTopTexture() == child) {
+            return false;
+        }
+
+        // -- check for containment position
+        int[] pos = imageComparator.getPosition(child.imageComparator, null);
+        if (pos != null) {
+            child.setParentTexture(this,
+                    new int[] {pos[0], pos[1]},
+                    pos[2]);
+            return true;
+        }
+
+        // -- no containment position found
+        return false;
+    }
+
     // ################################
+
+    // helper function - swap x and y values
+    private void swap(double[][] array) {
+        double tmp = array[0][0];
+        array[0][0] = array[0][1];
+        array[0][1] = tmp;
+        tmp = array[1][0];
+        array[1][0] = array[1][1];
+        array[1][1] = tmp;
+        tmp = array[2][0];
+        array[2][0] = array[2][1];
+        array[2][1] = tmp;
+    }
 
     // make sure the uv of this texture is validated
     // against the assigned triangle
+    @SuppressWarnings("SuspiciousNameCombination")
     public final void validateUVMapping() {
         if (!hasValidUV()) {
-            // -- set the uv for the points
             // compute top left point and range
             float minCornerX = Math.min(Math.min(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]);
             float rangeX = Math.max(Math.max(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]) - minCornerX;
             float minCornerY = Math.min(Math.min(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]);
             float rangeY = Math.max(Math.max(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]) - minCornerY;
-            // compute uvs
-            float[][] uvs = new float[][]{
-                    new float[]{(uvPoints[0][0] - minCornerX) / rangeX, 1 - (uvPoints[0][1] - minCornerY) / rangeY},
-                    new float[]{(uvPoints[1][0] - minCornerX) / rangeX, 1 - (uvPoints[1][1] - minCornerY) / rangeY},
-                    new float[]{(uvPoints[2][0] - minCornerX) / rangeX, 1 - (uvPoints[2][1] - minCornerY) / rangeY}
+
+            // compute uvs (not shifted yet)
+            double[][] uvs = new double[][]{
+                    new double[]{(uvPoints[0][0] - minCornerX) / rangeX, (uvPoints[0][1] - minCornerY) / rangeY},
+                    new double[]{(uvPoints[1][0] - minCornerX) / rangeX, (uvPoints[1][1] - minCornerY) / rangeY},
+                    new double[]{(uvPoints[2][0] - minCornerX) / rangeX, (uvPoints[2][1] - minCornerY) / rangeY}
             };
+
+            // compute position and size of top parent
+            TriTexture list = this;
+            int x = 0;
+            int y = 0;
+            double width = this.width;
+            double height = this.height;
+            boolean swapped = false;
+            int tmp;
+            while (list != null) {
+                switch (list.orientationFlag) {
+                    case 0:
+                        // do nothing
+                        break;
+                    case 4:
+                        uvs[0][0] = 1-uvs[0][0];
+                        uvs[1][0] = 1-uvs[1][0];
+                        uvs[2][0] = 1-uvs[2][0];
+                        x = list.width - x - (swapped ? this.height : this.width);
+                        break;
+                    case 2:
+                        uvs[0][0] = 1-uvs[0][0];
+                        uvs[1][0] = 1-uvs[1][0];
+                        uvs[2][0] = 1-uvs[2][0];
+                        uvs[0][1] = 1-uvs[0][1];
+                        uvs[1][1] = 1-uvs[1][1];
+                        uvs[2][1] = 1-uvs[2][1];
+                        x = list.width - x - (swapped ? this.height : this.width);
+                        y = list.height - y - (swapped ? this.width : this.height);
+                        break;
+                    case 6:
+                        uvs[0][1] = 1-uvs[0][1];
+                        uvs[1][1] = 1-uvs[1][1];
+                        uvs[2][1] = 1-uvs[2][1];
+                        y = list.height - y - (swapped ? this.width : this.height);
+                        break;
+
+                    // ==========
+
+                    case 7:
+                        swapped = !swapped;
+                        swap(uvs);
+                        tmp = x;
+                        x = y;
+                        y = tmp;
+                        break;
+                    case 1:
+                        swapped = !swapped;
+                        swap(uvs);
+                        uvs[0][0] = 1-uvs[0][0];
+                        uvs[1][0] = 1-uvs[1][0];
+                        uvs[2][0] = 1-uvs[2][0];
+                        tmp = x;
+                        x = list.height - y - (swapped ? this.height : this.width);
+                        y = tmp;
+                        break;
+                    case 3:
+                        swapped = !swapped;
+                        swap(uvs);
+                        uvs[0][1] = 1-uvs[0][1];
+                        uvs[1][1] = 1-uvs[1][1];
+                        uvs[2][1] = 1-uvs[2][1];
+                        tmp = x;
+                        x = y;
+                        y = list.width - tmp - (swapped ? this.width : this.height);
+                        break;
+                    default: // case 5
+                        swapped = !swapped;
+                        swap(uvs);
+                        uvs[0][0] = 1-uvs[0][0];
+                        uvs[1][0] = 1-uvs[1][0];
+                        uvs[2][0] = 1-uvs[2][0];
+                        uvs[0][1] = 1-uvs[0][1];
+                        uvs[1][1] = 1-uvs[1][1];
+                        uvs[2][1] = 1-uvs[2][1];
+                        tmp = x;
+                        x = list.height - y - (swapped ? this.height : this.width);
+                        y = list.width - tmp - (swapped ? this.width : this.height);
+                        break;
+
+                }
+
+                // alter left top according to this parent
+                x += list.leftTop[0];
+                y += list.leftTop[1];
+
+                // set to top width and height (maximum)
+                width = list.width;
+                height = list.height;
+
+                // get next parent
+                list = list.parentTexture;
+            }
+
+            // -----------
             // -- interpolation
             // compute the center of the uv triangle
-            float[] center = new float[]{
+            double[] center = new double[]{
                     (uvs[0][0] + uvs[1][0] + uvs[2][0]) / 3,
                     (uvs[0][1] + uvs[1][1] + uvs[2][1]) / 3
             };
             // compute the offsets (the direction we need to interpolate in)
-            float[][] offsets = new float[][]{
-                    new float[]{center[0] - uvs[0][0], center[1] - uvs[0][1]},
-                    new float[]{center[0] - uvs[1][0], center[1] - uvs[1][1]},
-                    new float[]{center[0] - uvs[2][0], center[1] - uvs[2][1]}
+            double[][] offsets = new double[][]{
+                    new double[]{center[0] - uvs[0][0], center[1] - uvs[0][1]},
+                    new double[]{center[0] - uvs[1][0], center[1] - uvs[1][1]},
+                    new double[]{center[0] - uvs[2][0], center[1] - uvs[2][1]}
             };
             // normalize these offsets using the minimum
             // Note: The minimum is used to ensure that sides of the uv
@@ -154,11 +297,26 @@ public class TriTexture {
             offsets[1][1] /= dist * height;
             offsets[2][0] /= dist * width;
             offsets[2][1] /= dist * height;
-            // do the actual interpolation and set the uvs
-            texTriUVs[0].set(uvs[0][0] + offsets[0][0] * interp, uvs[0][1] + offsets[0][1] * interp);
-            texTriUVs[1].set(uvs[1][0] + offsets[1][0] * interp, uvs[1][1] + offsets[1][1] * interp);
-            texTriUVs[2].set(uvs[2][0] + offsets[2][0] * interp, uvs[2][1] + offsets[2][1] * interp);
-            // validate (that the uv representation is ok now)
+            // -----------
+
+            // scale, shift and apply interpolation
+            double offsetX = x/width;
+            double offsetY = y/height;
+            double scaleX = (swapped ? this.height : this.width)/width;
+            double scaleY = (swapped ? this.width : this.height)/height;
+            uvs[0][0] = offsetX + uvs[0][0] * scaleX + offsets[0][0] * interp;
+            uvs[1][0] = offsetX + uvs[1][0] * scaleX + offsets[1][0] * interp;
+            uvs[2][0] = offsetX + uvs[2][0] * scaleX + offsets[2][0] * interp;
+            uvs[0][1] = offsetY + uvs[0][1] * scaleY + offsets[0][1] * interp;
+            uvs[1][1] = offsetY + uvs[1][1] * scaleY + offsets[1][1] * interp;
+            uvs[2][1] = offsetY + uvs[2][1] * scaleY + offsets[2][1] * interp;
+
+            // set the uv positions
+            texTriUVs[0].set((float)uvs[0][0], (float)(1 - uvs[0][1]));
+            texTriUVs[1].set((float)uvs[1][0], (float)(1 - uvs[1][1]));
+            texTriUVs[2].set((float)uvs[2][0], (float)(1 - uvs[2][1]));
+
+            // validate - the uv representation is ok now for this top texture
             lastTopTexture = getTopTexture();
         }
     }
@@ -228,18 +386,23 @@ public class TriTexture {
             pixels.put(p, new int[] {p.x, p.y, voxel.getColor().getRGB()});
         }
 
-        // compress this texture
-        int[] size = compress(width, height);
+        // compress this texture (scale if this can be done loss-less)
+        int[] newSize = compress(width, height, pixels);
+
+        // set the image comparator
+        imageComparator = new ImageComparator(pixels.values());
 
         // finalize width and height
-        this.width = size[0];
-        this.height = size[1];
+        this.width = newSize[0];
+        this.height = newSize[1];
     }
+
+    // ===============
 
     // helper to compress this image
     // returns the new width of the image
     @SuppressWarnings("ConstantConditions")
-    private int[] compress(int width, int height) {
+    private static int[] compress(int width, int height, HashMap<Point, int[]> pixels) {
         // -- check if texture can be downscaled
         if (width > 1) {
             for (int d = 1, len = (int) Math.sqrt(width) + 1; d < len; d++) {

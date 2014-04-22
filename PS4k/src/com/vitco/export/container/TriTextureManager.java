@@ -34,8 +34,7 @@ public class TriTextureManager {
             Collections.sort(textures, new Comparator<TriTexture>() {
                 @Override
                 public int compare(TriTexture o1, TriTexture o2) {
-                    // todo: check this is correct
-                    return (o1.getTopTexture() == o1 ? 1 : 0) - (o2.getTopTexture() == o2 ? 1 : 0);
+                    return (o2.getTopTexture() == o2 ? 1 : 0) - (o1.getTopTexture() == o1 ? 1 : 0);
                 }
             });
             // regenerate texture id list
@@ -78,8 +77,29 @@ public class TriTextureManager {
 
     // combine the textures in this manager
     public final void combine() {
-        // todo combine textures
-        // ....
+        // -- find textures that are "inside" other textures
+        // create dummy list that we can delete from
+        ArrayList<TriTexture> textures = new ArrayList<TriTexture>(this.textures);
+        int len = textures.size();
+        for (int i = 0; i < len; i++) {
+            for (int j = i + 1; j < len; j++) {
+                TriTexture tex1 = textures.get(i);
+                TriTexture tex2 = textures.get(j);
+                if (tex1.makeChild(tex2)) {
+                    textures.remove(j);
+                    j--;
+                    len--;
+                } else if (tex2.makeChild(tex1)) {
+                    textures.remove(i);
+                    i--;
+                    len--;
+                    break;
+                }
+            }
+        }
+
+        // -- combine remaining "parent" textures into one image
+        // ...
 
         // invalidate
         invalidate();
