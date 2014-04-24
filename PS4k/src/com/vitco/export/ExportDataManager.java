@@ -134,9 +134,11 @@ public class ExportDataManager {
                     // create the texture (wrapper) for this triangle
                     TexTriUV[] uvs = texTri.getUVs();
                     TriTexture triTexture = new TriTexture(
-                            uvs[0], minA + tri.points[0].getXf(), minB + tri.points[0].getYf(),
-                            uvs[1], minA + tri.points[1].getXf(), minB + tri.points[1].getYf(),
-                            uvs[2], minA + tri.points[2].getXf(), minB + tri.points[2].getYf(),
+                            // Note: The triangulation points might have rounding errors (!)
+                            // So we <need> to round these values (casting to int is not sufficient!)
+                            uvs[0], Math.round(minA + tri.points[0].getXf()), Math.round(minB + tri.points[0].getYf()),
+                            uvs[1], Math.round(minA + tri.points[1].getXf()), Math.round(minB + tri.points[1].getYf()),
+                            uvs[2], Math.round(minA + tri.points[2].getXf()), Math.round(minB + tri.points[2].getYf()),
                             entries.getKey(),
                             texTri, this.data,
                             textureManager

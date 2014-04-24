@@ -52,9 +52,9 @@ public class TexTriangle {
     public TexTriangle(DelaunayTriangle tri, TexTriangleManager manager, int orientation) {
         for (int i = 0; i < 3; i++) {
             points[i] = new TexTriPoint(
-                    tri.points[i].getXf(),
-                    tri.points[i].getYf(),
-                    tri.points[i].getZf(),
+                    Math.round(tri.points[i].getXf()),
+                    Math.round(tri.points[i].getYf()),
+                    Math.round(tri.points[i].getZf()),
                     manager
             );
             uvs[i] = new TexTriUV(0,0,manager);

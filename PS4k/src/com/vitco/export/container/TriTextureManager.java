@@ -135,8 +135,8 @@ public class TriTextureManager {
                 // remove textures
                 textures.remove(mergeToId);
                 textures.remove(0);
-                // add new parent
-                textures.add(parentTexture);
+                // add new parent to front
+                textures.add(0, parentTexture);
                 // register texture
                 this.addTexture(parentTexture);
             }

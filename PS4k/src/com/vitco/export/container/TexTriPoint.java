@@ -83,7 +83,7 @@ public class TexTriPoint extends TexTriCornerInfo {
     @Override
     public final String toString(boolean asInt) {
         if (asInt) {
-            return (int) coords[0] + " " + (int) coords[1] + " " + (int) coords[2];
+            return Math.round(coords[0]) + " " + Math.round(coords[1]) + " " + Math.round(coords[2]);
         } else {
             return coords[0] + " " + coords[1] + " " + coords[2];
         }

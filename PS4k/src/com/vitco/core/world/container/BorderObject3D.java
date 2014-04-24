@@ -24,7 +24,7 @@ public class BorderObject3D extends Object3D {
 
     // get the rounded points of a triangle as an int array
     private static int[] getRoundedPoints(DelaunayTriangle triangle) {
-        // needed since the triangulation can result in non integers
+        // rounding is needed since the triangulation can result in non integers
         return new int[] {
                 Math.round(triangle.points[0].getXf()),
                 Math.round(triangle.points[0].getYf()),
@@ -49,7 +49,7 @@ public class BorderObject3D extends Object3D {
 
     // returns the outside directions for those points that are "outside"
     private static byte[] getOutsideDirections(
-            HashSet<String> seenTrianglePoints, DelaunayTriangle triangle, int[] roundedTrianglePoints) {
+            HashSet<Point> seenTrianglePoints, DelaunayTriangle triangle, int[] roundedTrianglePoints) {
 
         TPoint triangle_center = triangle.centroid();
         boolean[] centerDirection =
@@ -65,19 +65,19 @@ public class BorderObject3D extends Object3D {
             // [o] [] | [] [o] | [] []  | [] []
             //    X   |   X    |   X    |   X
             //  [] [] | [] []  | [o] [] | [] [o]
-            if (!seenTrianglePoints.contains((roundedTrianglePoints[x] - 1) + "_" + (roundedTrianglePoints[y] - 1))) {
+            if (!seenTrianglePoints.contains(new Point((roundedTrianglePoints[x] - 1), (roundedTrianglePoints[y] - 1)))) {
                 outsideDirection[x] -= 1;
                 outsideDirection[y] -= 1;
             }
-            if (!seenTrianglePoints.contains((roundedTrianglePoints[x]) + "_" + (roundedTrianglePoints[y] - 1))) {
+            if (!seenTrianglePoints.contains(new Point((roundedTrianglePoints[x]), (roundedTrianglePoints[y] - 1)))) {
                 outsideDirection[x] += 1;
                 outsideDirection[y] -= 1;
             }
-            if (!seenTrianglePoints.contains((roundedTrianglePoints[x] - 1) + "_" + (roundedTrianglePoints[y]))) {
+            if (!seenTrianglePoints.contains(new Point((roundedTrianglePoints[x] - 1), (roundedTrianglePoints[y])))) {
                 outsideDirection[x] -= 1;
                 outsideDirection[y] += 1;
             }
-            if (!seenTrianglePoints.contains((roundedTrianglePoints[x]) + "_" + (roundedTrianglePoints[y]))) {
+            if (!seenTrianglePoints.contains(new Point((roundedTrianglePoints[x]), (roundedTrianglePoints[y])))) {
                 outsideDirection[x] += 1;
                 outsideDirection[y] += 1;
             }
@@ -169,7 +169,7 @@ public class BorderObject3D extends Object3D {
         // todo: mirror textures if w > h to reduce used memory (!)
 
         // contains seen pixel
-        HashSet<String> seenTrianglePoints = new HashSet<String>();
+        HashSet<Point> seenTrianglePoints = new HashSet<Point>();
         // generate textureObject
         textureObject = new TextureObject(
                 minx, miny, faceList, orientation,

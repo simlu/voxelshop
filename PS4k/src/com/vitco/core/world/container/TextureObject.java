@@ -89,7 +89,7 @@ public class TextureObject implements Serializable {
 
     // generates a texture
     // the seen points are stored in the seen hashmap
-    public final void refreshTexture(HashSet<String> seenTrianglePoints, BorderObject3D obj) {
+    public final void refreshTexture(HashSet<Point> seenTrianglePoints, BorderObject3D obj) {
         // create black image
         BufferedImage textureImage = SharedImageFactory.getBufferedImage(textureSizeX, textureSizeY);
         Graphics2D g2 = (Graphics2D) textureImage.getGraphics();
@@ -121,6 +121,8 @@ public class TextureObject implements Serializable {
             if (containsTexture) {
                 // draw image large
                 if (isTexture) {
+                    // Note: not null is this is checked by the "isTexture" value
+                    //noinspection ConstantConditions
                     Image img = WorldManager.getTile(String.valueOf(texture[orientation]));
                     // this can happen when the tile was already removed,
                     // but the voxel is not updated yet
@@ -233,7 +235,7 @@ public class TextureObject implements Serializable {
 
             // store in the seen list
             if (seenTrianglePoints != null) {
-                seenTrianglePoints.add(x + "_" + y);
+                seenTrianglePoints.add(new Point(x,y));
             }
         }
         g2.dispose();

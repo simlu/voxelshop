@@ -151,7 +151,61 @@ public class ImageComparator {
 
     // find the best "merge" position with orientation
     public static int[] getMergePoint(ImageComparator one, ImageComparator two) {
-        return new int[] {one.width, 0, 0};
+
+        // default result if nothing better is found
+        int[] result = new int[]{one.width, 0, 0};
+        int width = one.width + two.width;
+        int height = Math.max(one.height, two.height);
+        int area = width * height;
+        int pixelOverlap = 0;
+
+        // loop over all "non flipped" start positions
+        for (int x = -two.width; x < one.width; x++) {
+            for (int y = -two.height; y < one.height; y++) {
+                // compute intersection
+                int minX = Math.max(0, x);
+                int minY = Math.max(0, y);
+                int maxX = Math.min(one.width, x + two.width);
+                int maxY = Math.min(one.height, y + two.height);
+                // new width, height and pixel count
+                int widthTmp = Math.max(one.width, x + two.width) - Math.min(0, x);
+                int heightTmp = Math.max(one.height, y + two.height) - Math.min(0, y);
+                int areaTmp = widthTmp * heightTmp;
+                // do some restriction checking
+                if ((area >= areaTmp) &&
+                        (widthTmp < heightTmp * 3 || height == heightTmp) &&
+                        (heightTmp < widthTmp * 3 || width == widthTmp)) {
+                    // check if intersection matches
+                    boolean matched = true;
+                    int pixelOverlapTmp = 0;
+                    loop: for (int i = minX; i < maxX; i++) {
+                        for (int j = minY; j < maxY; j++) {
+                            Integer color1 = one.pixels.get(new Point(i, j));
+                            Integer color2 = two.pixels.get(new Point(i - x, j - y));
+                            if (color1 != null && color2 != null) {
+                                if (color1.equals(color2)) {
+                                    pixelOverlapTmp++;
+                                } else {
+                                    matched = false;
+                                    break loop;
+                                }
+                            }
+                        }
+                    }
+                    if (matched) {
+                        if (area > areaTmp || pixelOverlapTmp > pixelOverlap) {
+                            result = new int[]{x, y, 0};
+                            area = areaTmp;
+                            width = widthTmp;
+                            height = heightTmp;
+                            pixelOverlap = pixelOverlapTmp;
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     // ===========================

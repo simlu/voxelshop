@@ -338,20 +338,6 @@ public class TriTexture {
         // has no corresponding triangle
         this.hasTriangle = false;
 
-        // -----------
-//        this.width = one.width + two.width;
-//        this.height = Math.max(one.height, two.height);
-//
-//        pixels.putAll(one.pixels);
-//        for (int[] pixel : two.pixels.values()) {
-//            int x = pixel[0] + one.width;
-//            int y = pixel[1];
-//            pixels.put(new Point(x,y), new int[]{x,y,pixel[2]});
-//        }
-//
-//        imageComparator = new ImageComparator(pixels.values());
-        // -----------
-
         // obtain merge position and orientation
         int[] mergePos = ImageComparator.getMergePoint(one.imageComparator, two.imageComparator);
 
@@ -388,9 +374,9 @@ public class TriTexture {
 
     // constructor
     public TriTexture(
-            TexTriUV uv1, float xf1, float yf1,
-            TexTriUV uv2, float xf2, float yf2,
-            TexTriUV uv3, float xf3, float yf3,
+            TexTriUV uv1, int xf1, int yf1,
+            TexTriUV uv2, int xf2, int yf2,
+            TexTriUV uv3, int xf3, int yf3,
             int depth,
             TexTriangle texTri, Data data,
             TriTextureManager textureManager
@@ -429,9 +415,7 @@ public class TriTexture {
         // compute the voxels that are inside this triangle
         // (so we're not using any "extra" pixels in the buffered image)
         int[][] points = G2DUtil.getTriangleGridIntersection(
-                (int)(xf1), (int)(yf1),
-                (int)(xf2), (int)(yf2),
-                (int)(xf3), (int)(yf3)
+                xf1, yf1, xf2, yf2, xf3, yf3
         );
 
         // get min/max pixel values (this is different from UV!)

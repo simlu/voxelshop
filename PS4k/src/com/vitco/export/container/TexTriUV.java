@@ -55,7 +55,7 @@ public class TexTriUV extends TexTriCornerInfo {
     @Override
     public final String toString(boolean useInt) {
         if (useInt) {
-            return (int)uv[0] + " " + (int)uv[1];
+            return Math.round(uv[0]) + " " + Math.round(uv[1]);
         } else {
             return uv[0] + " " + uv[1];
         }
