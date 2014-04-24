@@ -4,6 +4,7 @@ import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.util.graphic.G2DUtil;
 import com.vitco.util.graphic.ImageComparator;
+import com.vitco.util.graphic.TextureTools;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -19,11 +20,14 @@ public class TriTexture {
 
     // ---------------
 
+    // true if this texture has a corresponding triangle
+    private final boolean hasTriangle;
+
     // reference to the the uvs
     private final TexTriUV[] texTriUVs = new TexTriUV[3];
 
     // reference to the uv points
-    private final float[][] uvPoints = new float[3][2];
+    private final double[][] uvPoints = new double[3][2];
 
     // holds the pixels in this triangle
     // the format is (x, y, color)
@@ -80,6 +84,16 @@ public class TriTexture {
         return textureManager.getId(this);
     }
 
+    // obtain the pixel count
+    public final int getPixelCount() {
+        return imageComparator.pixelCount;
+    }
+
+    // obtain the jaccard distance
+    public final float jaccard(TriTexture other) {
+        return this.imageComparator.jaccard(other.imageComparator);
+    }
+
     // retrieve image representation of this texture
     public final BufferedImage getImage() {
         // return parent texture image
@@ -107,7 +121,7 @@ public class TriTexture {
     // check if the uv mapping of this texture is valid
     public final boolean hasValidUV() {
         // the uv mapping is likely to have changed when the parent texture changed
-        return lastTopTexture == getTopTexture();
+        return lastTopTexture == getTopTexture() || !hasTriangle;
     }
 
     // return true if this has a parent texture
@@ -162,17 +176,11 @@ public class TriTexture {
     @SuppressWarnings("SuspiciousNameCombination")
     public final void validateUVMapping() {
         if (!hasValidUV()) {
-            // compute top left point and range
-            float minCornerX = Math.min(Math.min(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]);
-            float rangeX = Math.max(Math.max(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]) - minCornerX;
-            float minCornerY = Math.min(Math.min(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]);
-            float rangeY = Math.max(Math.max(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]) - minCornerY;
-
-            // compute uvs (not shifted yet)
+            // compute uvs (not adjusted yet)
             double[][] uvs = new double[][]{
-                    new double[]{(uvPoints[0][0] - minCornerX) / rangeX, (uvPoints[0][1] - minCornerY) / rangeY},
-                    new double[]{(uvPoints[1][0] - minCornerX) / rangeX, (uvPoints[1][1] - minCornerY) / rangeY},
-                    new double[]{(uvPoints[2][0] - minCornerX) / rangeX, (uvPoints[2][1] - minCornerY) / rangeY}
+                    new double[]{uvPoints[0][0], uvPoints[0][1]},
+                    new double[]{uvPoints[1][0], uvPoints[1][1]},
+                    new double[]{uvPoints[2][0], uvPoints[2][1]}
             };
 
             // compute position and size of top parent
@@ -321,6 +329,63 @@ public class TriTexture {
         }
     }
 
+    // alternative constructor
+    public TriTexture(TriTexture one, TriTexture two, TriTextureManager textureManager) {
+        assert !one.hasParent();
+        assert !two.hasParent();
+        // set final variables
+        this.textureManager = textureManager;
+        // has no corresponding triangle
+        this.hasTriangle = false;
+
+        // -----------
+//        this.width = one.width + two.width;
+//        this.height = Math.max(one.height, two.height);
+//
+//        pixels.putAll(one.pixels);
+//        for (int[] pixel : two.pixels.values()) {
+//            int x = pixel[0] + one.width;
+//            int y = pixel[1];
+//            pixels.put(new Point(x,y), new int[]{x,y,pixel[2]});
+//        }
+//
+//        imageComparator = new ImageComparator(pixels.values());
+        // -----------
+
+        // obtain merge position and orientation
+        int[] mergePos = ImageComparator.getMergePoint(one.imageComparator, two.imageComparator);
+
+        // compute pixels
+        int minX = Math.min(0, mergePos[0]);
+        int minY = Math.min(0, mergePos[1]);
+        int maxX = Math.max(0, mergePos[0]);
+        int maxY = Math.max(0, mergePos[1]);
+        for (int[] pixel : one.pixels.values()) {
+            int x = pixel[0] - minX;
+            int y = pixel[1] - minY;
+            pixels.put(new Point(x, y), new int[] {x,y,pixel[2]});
+        }
+        for (int[] pixel : two.pixels.values()) {
+            int x = pixel[0] + maxX;
+            int y = pixel[1] + maxY;
+            pixels.put(new Point(x, y), new int[] {x,y,pixel[2]});
+        }
+        // set the image comparator
+        imageComparator = new ImageComparator(pixels.values());
+
+        // compute new dimensions
+        this.width = Math.max(two.width + maxX, one.width - minX);
+        this.height = Math.max(two.height + maxY, one.height - minY);
+
+        // -----------
+
+        // make children
+        this.makeChild(one);
+        this.makeChild(two);
+        assert one.hasParent();
+        assert two.hasParent();
+    }
+
     // constructor
     public TriTexture(
             TexTriUV uv1, float xf1, float yf1,
@@ -341,6 +406,23 @@ public class TriTexture {
         texTriUVs[1] = uv2;
         texTriUVs[2] = uv3;
 
+        // -- normalize uv points
+        // compute top left point and range
+        double minCornerX = Math.min(Math.min(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]);
+        double rangeX = Math.max(Math.max(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]) - minCornerX;
+        double minCornerY = Math.min(Math.min(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]);
+        double rangeY = Math.max(Math.max(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]) - minCornerY;
+        // compute uvs (not shifted yet)
+        uvPoints[0][0] = (uvPoints[0][0] - minCornerX) / rangeX;
+        uvPoints[1][0] = (uvPoints[1][0] - minCornerX) / rangeX;
+        uvPoints[2][0] = (uvPoints[2][0] - minCornerX) / rangeX;
+        uvPoints[0][1] = (uvPoints[0][1] - minCornerY) / rangeY;
+        uvPoints[1][1] = (uvPoints[1][1] - minCornerY) / rangeY;
+        uvPoints[2][1] = (uvPoints[2][1] - minCornerY) / rangeY;
+
+        // has a corresponding triangle
+        this.hasTriangle = true;
+
         // store texture manager reference
         this.textureManager = textureManager;
 
@@ -352,7 +434,7 @@ public class TriTexture {
                 (int)(xf3), (int)(yf3)
         );
 
-        // get min/max
+        // get min/max pixel values (this is different from UV!)
         int minX = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
         int minY = Integer.MAX_VALUE;
@@ -386,108 +468,207 @@ public class TriTexture {
             pixels.put(p, new int[] {p.x, p.y, voxel.getColor().getRGB()});
         }
 
-        // compress this texture (scale if this can be done loss-less)
-        int[] newSize = compress(width, height, pixels);
+        // compress textures (scale if this can be done loss-less)
+        int[] newSize = compress(width, height, pixels, uvPoints);
+
+        // check for unnecessary pixels and resize if necessary (prune them)
+        // Note: This can only happen after compression changed the image and uvs
+        if (newSize[0] < width || newSize[1] < height) {
+            newSize = prune(newSize[0], newSize[1], pixels, uvPoints);
+        }
 
         // set the image comparator
         imageComparator = new ImageComparator(pixels.values());
+
+        // overwrite uv to prevent unnecessary unique uv coordinates.
+        // Note: this enables better compression for COLLADA
+        if (imageComparator.pixelCount == 1) {
+            uvPoints[0][0] = 0;
+            uvPoints[0][1] = 0;
+            uvPoints[1][0] = 1;
+            uvPoints[1][1] = 0;
+            uvPoints[2][0] = 0;
+            uvPoints[2][1] = 1;
+        }
 
         // finalize width and height
         this.width = newSize[0];
         this.height = newSize[1];
     }
 
-    // ===============
+    // prune unnecessary pixels from this texture (can occur after compression)
+    private static int[] prune(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints) {
+        double[] minUV = new double[] {
+                Math.min(Math.min(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]) * width,
+                Math.min(Math.min(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]) * height
+        };
+        double[] maxUV = new double[] {
+                Math.max(Math.max(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]) * width,
+                Math.max(Math.max(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]) * height
+        };
+        // adjust to close int (cast to float to prevent rounding errors)
+        minUV[0] = Math.floor((float)minUV[0]);
+        minUV[1] = Math.floor((float)minUV[1]);
+        maxUV[0] = Math.ceil((float)maxUV[0]);
+        maxUV[1] = Math.ceil((float)maxUV[1]);
 
-    // helper to compress this image
-    // returns the new width of the image
-    @SuppressWarnings("ConstantConditions")
-    private static int[] compress(int width, int height, HashMap<Point, int[]> pixels) {
-        // -- check if texture can be downscaled
-        if (width > 1) {
-            for (int d = 1, len = (int) Math.sqrt(width) + 1; d < len; d++) {
-                loop:
-                if (width % d == 0) {
-                    // potential new pixel representation
-                    HashMap<Point, int[]> result = new HashMap<Point, int[]>();
-                    // the step width that would be compressed to one pixel
-                    int stepSize = width / d;
-                    // loop over all steps
-                    for (int x = 0; x < d; x++) {
-                        // loop over height
-                        for (int y = 0; y < height; y++) {
-                            Integer lastColor = null;
-                            // loop over step
-                            for (int i = 0; i < stepSize; i++) {
-                                // compute the current point
-                                Point p = new Point(x * stepSize + i, y);
-                                // obtain the pixel
-                                int[] pixel = pixels.get(p);
-                                if (pixel != null) {
-                                    // check if the pixel color is consistent through this step
-                                    if (lastColor == null) {
-                                        lastColor = pixel[2];
-                                        result.put(new Point(x, y), new int[] {x,y,pixel[2]});
-                                    } else {
-                                        if (lastColor != pixel[2]) {
-                                            break loop;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // loop was successful
-                    pixels.clear();
-                    pixels.putAll(result);
-                    width /= stepSize;
-                    break;
+        // only proceed if something was pruned
+        if (minUV[0] > 0 || minUV[1] > 0 || maxUV[0] < width || maxUV[1] < height) {
+            // loop over pixels
+            HashMap<Point, int[]> newPixels = new HashMap<Point, int[]>();
+            for (int[] pixel : pixels.values()) {
+                // check if pixel is in valid area
+                if (pixel[0] >= minUV[0] && pixel[1] >= minUV[1] &&
+                        pixel[0] < maxUV[0] && pixel[1] < maxUV[1]) {
+                    // create shifted pixel
+                    int x = (int) (pixel[0] - minUV[0]);
+                    int y = (int) (pixel[1] - minUV[1]);
+                    newPixels.put(new Point(x, y), new int[] {x, y, pixel[2]});
                 }
             }
+            // adjust uv points
+            double newWidth = maxUV[0] - minUV[0];
+            double newHeight = maxUV[1] - minUV[1];
+            uvPoints[0][0] = (uvPoints[0][0] * width - minUV[0]) / newWidth;
+            uvPoints[0][1] = (uvPoints[0][1] * height - minUV[1]) / newHeight;
+            uvPoints[1][0] = (uvPoints[1][0] * width - minUV[0]) / newWidth;
+            uvPoints[1][1] = (uvPoints[1][1] * height - minUV[1]) / newHeight;
+            uvPoints[2][0] = (uvPoints[2][0] * width - minUV[0]) / newWidth;
+            uvPoints[2][1] = (uvPoints[2][1] * height - minUV[1]) / newHeight;
+            // update
+            pixels.clear();
+            pixels.putAll(newPixels);
+            width = (int)newWidth;
+            height = (int)newHeight;
         }
-
-        if (height > 1) {
-            for (int d = 1, len = (int) Math.sqrt(height) + 1; d < len; d++) {
-                loop:
-                if (height % d == 0) {
-                    // potential new pixel representation
-                    HashMap<Point, int[]> result = new HashMap<Point, int[]>();
-                    // the step height that would be compressed to one pixel
-                    int stepSize = height / d;
-                    // loop over all steps
-                    for (int y = 0; y < d; y++) {
-                        // loop over width
-                        for (int x = 0; x < width; x++) {
-                            Integer lastColor = null;
-                            // loop over step
-                            for (int i = 0; i < stepSize; i++) {
-                                // compute the current point
-                                Point p = new Point(x, y * stepSize + i);
-                                // obtain the pixel
-                                int[] pixel = pixels.get(p);
-                                if (pixel != null) {
-                                    // check if the pixel color is consistent through this step
-                                    if (lastColor == null) {
-                                        lastColor = pixel[2];
-                                        result.put(new Point(x, y), new int[] {x,y,pixel[2]});
-                                    } else {
-                                        if (lastColor != pixel[2]) {
-                                            break loop;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // loop was successful
-                    pixels.clear();
-                    pixels.putAll(result);
-                    height /= stepSize;
-                    break;
-                }
-            }
-        }
-
         return new int[] {width, height};
+    }
+
+    // compress the texture and return new size
+    // Note: This changes the pixel array and also the uv positions (!)
+    private static int[] compress(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints) {
+        // size array (that might still change!)
+        int[] size = new int[] {width, height, 1};
+        // -- compress this texture (scale if this can be done loss-less)
+        // basic compression in x direction
+        size = TextureTools.compress(size[0], size[1], 0, size[0], false, pixels);
+        // basic compression in y direction
+        size = TextureTools.compress(size[0], size[1], 0, size[1], true, pixels);
+
+        // obtain offset and compress with offsets (X)
+        int[] offsetsX = TextureTools.getOffsets(size[0], size[1], false, pixels);
+        if (offsetsX[0] > 0) { // skip left
+            int[] oldSize = new int[] {size[0], size[1]};
+            size = TextureTools.compress(size[0], size[1], offsetsX[0], size[0], false, pixels);
+            if (size[2] > 1) { // check if there has been a compression
+                // move uvs
+                for (double[] p : uvPoints) {
+                    p[0] *= oldSize[0];
+                    if (p[0] > offsetsX[0]) {
+                        p[0] = ((p[0] - offsetsX[0]) / size[2]) + offsetsX[0];
+                    } else {
+                        p[0] += (offsetsX[0] - p[0]) * (1 - 1d / size[2]);
+                    }
+                    p[0] /= size[0];
+                }
+                // update offsets
+                offsetsX = TextureTools.getOffsets(size[0], size[1], false, pixels);
+            }
+        }
+        if (offsetsX[1] < size[0]) { // skip right
+            int[] oldSize = new int[] {size[0], size[1]};
+            size = TextureTools.compress(size[0], size[1], 0, offsetsX[1], false, pixels);
+            if (size[2] > 1) { // check if there has been a compression
+                // move uvs
+                for (double[] p : uvPoints) {
+                    p[0] *= oldSize[0];
+                    if (p[0] < offsetsX[1]) {
+                        p[0] = p[0] / size[2];
+                    } else {
+                        p[0] = (p[0] - offsetsX[1]) * (1d / size[2]) + offsetsX[1] / size[2];
+                    }
+                    p[0] /= size[0];
+                }
+                // update offsets
+                offsetsX = TextureTools.getOffsets(size[0], size[1], false, pixels);
+            }
+        }
+        if (offsetsX[0] > 0 || offsetsX[1] < size[0]) { // skip left and right
+            int[] oldSize = new int[] {size[0], size[1]};
+            size = TextureTools.compress(size[0], size[1], offsetsX[0], offsetsX[1], false, pixels);
+            if (size[2] > 1) { // check if there has been a compression
+                // move uvs
+                for (double[] p : uvPoints) {
+                    p[0] *= oldSize[0];
+                    if (p[0] < offsetsX[0]) {
+                        p[0] += (offsetsX[0] - p[0]) * (1 - 1d / size[2]);
+                    } else if (p[0] < offsetsX[1]) {
+                        p[0] = (p[0] - offsetsX[0]) / size[2] + offsetsX[0];
+                    } else {
+                        p[0] = (p[0] - offsetsX[1]) * (1d / size[2]) + offsetsX[0] + (offsetsX[1] - offsetsX[0]) / size[2];
+                    }
+                    p[0] /= size[0];
+                }
+            }
+        }
+
+
+        // obtain offset and compress with offsets (Y)
+        int[] offsetsY = TextureTools.getOffsets(size[0], size[1], true, pixels);
+        if (offsetsY[0] > 0) { // skip top
+            int[] oldSize = new int[] {size[0], size[1]};
+            size = TextureTools.compress(size[0], size[1], offsetsY[0], size[1], true, pixels);
+            if (size[2] > 1) { // check if there has been a compression
+                // move uvs
+                for (double[] p : uvPoints) {
+                    p[1] *= oldSize[1];
+                    if (p[1] > offsetsY[0]) {
+                        p[1] = ((p[1] - offsetsY[0]) / size[2]) + offsetsY[0];
+                    } else {
+                        p[1] += (offsetsY[0] - p[1]) * (1 - 1d / size[2]);
+                    }
+                    p[1] /= size[1];
+                }
+                // update offsets
+                offsetsY = TextureTools.getOffsets(size[0], size[1], true, pixels);
+            }
+        }
+        if (offsetsY[1] < size[1]) { // skip bottom
+            int[] oldSize = new int[] {size[0], size[1]};
+            size = TextureTools.compress(size[0], size[1], 0, offsetsY[1], true, pixels);
+            if (size[2] > 1) { // check if there has been a compression
+                // move uvs
+                for (double[] p : uvPoints) {
+                    p[1] *= oldSize[1];
+                    if (p[1] < offsetsY[1]) {
+                        p[1] = p[1] / size[2];
+                    } else {
+                        p[1] = (p[1] - offsetsY[1]) * (1d / size[2]) + offsetsY[1] / size[2];
+                    }
+                    p[1] /= size[1];
+                }
+                // update offsets
+                offsetsY = TextureTools.getOffsets(size[0], size[1], true, pixels);
+            }
+        }
+        if (offsetsY[0] > 0 || offsetsY[1] < size[1]) { // skip top and bottom
+            int[] oldSize = new int[] {size[0], size[1]};
+            size = TextureTools.compress(size[0], size[1], offsetsY[0], offsetsY[1], true, pixels);
+            if (size[2] > 1) { // check if there has been a compression
+                // move uvs
+                for (double[] p : uvPoints) {
+                    p[1] *= oldSize[1];
+                    if (p[1] < offsetsY[0]) {
+                        p[1] += (offsetsY[0] - p[1]) * (1 - 1d / size[2]);
+                    } else if (p[1] < offsetsY[1]) {
+                        p[1] = (p[1] - offsetsY[0]) / size[2] + offsetsY[0];
+                    } else {
+                        p[1] = (p[1] - offsetsY[1]) * (1d / size[2]) + offsetsY[0] + (offsetsY[1] - offsetsY[0]) / size[2];
+                    }
+                    p[1] /= size[1];
+                }
+            }
+        }
+        return size;
     }
 }

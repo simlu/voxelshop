@@ -4,10 +4,7 @@ import com.vitco.util.misc.ArrayUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Allows for fast comparison of images.
@@ -29,10 +26,13 @@ public class ImageComparator {
     // dimension of this image
     private final int width;
     private final int height;
+    // dimension minus one (used for position inversion)
+    private final int widthM;
+    private final int heightM;
 
     // amount of pixels in this image
     // Note: this is <= width * height as some pixels might not be set
-    private final int pixelCount;
+    public final int pixelCount;
 
     // amount of different colors in this image
     private final int colorCount;
@@ -117,9 +117,44 @@ public class ImageComparator {
         this.colorCount = colors.size();
 
         // finalize the size
-        this.width = width;
-        this.height = height;
+        this.widthM = width;
+        this.heightM = height;
+        this.width = width + 1;
+        this.height = height + 1;
     }
+
+    // ===========================
+
+    // compute the Jaccard similarity coefficient (using the colors)
+    public float jaccard(ImageComparator other) {
+        HashSet<Integer> uniqueColors = new HashSet<Integer>(this.colors.keySet());
+        uniqueColors.addAll(other.colors.keySet());
+
+        int intersection = 0;
+        int union = 0;
+
+        for (int color : uniqueColors) {
+            Integer count1 = this.colors.get(color);
+            if (count1 == null) {
+                count1 = 0;
+            }
+            Integer count2 = other.colors.get(color);
+            if (count2 == null) {
+                count2 = 0;
+            }
+            intersection += Math.min(count1, count2);
+            union += Math.max(count1, count2);
+        }
+
+        return intersection / (float)union;
+    }
+
+    // find the best "merge" position with orientation
+    public static int[] getMergePoint(ImageComparator one, ImageComparator two) {
+        return new int[] {one.width, 0, 0};
+    }
+
+    // ===========================
 
     // return the first position of this sub image in this image
     // or return null if no position is found
@@ -210,7 +245,7 @@ public class ImageComparator {
                     for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
                         // check for containment in parent
                         Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.width - childPos.x), y + childPos.y));
+                        Integer color = this.pixels.get(new Point(x + (child.widthM - childPos.x), y + childPos.y));
                         // Note: "color" might be null
                         if (!pixel.getValue().equals(color)) {
                             match = false;
@@ -233,7 +268,7 @@ public class ImageComparator {
                     for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
                         // check for containment in parent
                         Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.width - childPos.x), y + (child.height - childPos.y)));
+                        Integer color = this.pixels.get(new Point(x + (child.widthM - childPos.x), y + (child.heightM - childPos.y)));
                         // Note: "color" might be null
                         if (!pixel.getValue().equals(color)) {
                             match = false;
@@ -255,7 +290,7 @@ public class ImageComparator {
                     for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
                         // check for containment in parent
                         Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + childPos.x, y + (child.height - childPos.y)));
+                        Integer color = this.pixels.get(new Point(x + childPos.x, y + (child.heightM - childPos.y)));
                         // Note: "color" might be null
                         if (!pixel.getValue().equals(color)) {
                             match = false;
@@ -307,7 +342,7 @@ public class ImageComparator {
                     for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
                         // check for containment in parent
                         Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.height - childPos.y), y + childPos.x));
+                        Integer color = this.pixels.get(new Point(x + (child.heightM - childPos.y), y + childPos.x));
                         // Note: "color" might be null
                         if (!pixel.getValue().equals(color)) {
                             match = false;
@@ -330,7 +365,7 @@ public class ImageComparator {
                     for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
                         // check for containment in parent
                         Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + childPos.y, y + (child.width - childPos.x)));
+                        Integer color = this.pixels.get(new Point(x + childPos.y, y + (child.widthM - childPos.x)));
                         // Note: "color" might be null
                         if (!pixel.getValue().equals(color)) {
                             match = false;
@@ -352,7 +387,7 @@ public class ImageComparator {
                     for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
                         // check for containment in parent
                         Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.height - childPos.y), y + (child.width - childPos.x)));
+                        Integer color = this.pixels.get(new Point(x + (child.heightM - childPos.y), y + (child.widthM - childPos.x)));
                         // Note: "color" might be null
                         if (!pixel.getValue().equals(color)) {
                             match = false;

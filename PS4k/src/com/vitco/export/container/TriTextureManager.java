@@ -34,7 +34,7 @@ public class TriTextureManager {
             Collections.sort(textures, new Comparator<TriTexture>() {
                 @Override
                 public int compare(TriTexture o1, TriTexture o2) {
-                    return (o2.getTopTexture() == o2 ? 1 : 0) - (o1.getTopTexture() == o1 ? 1 : 0);
+                    return (o1.hasParent() ? 1 : 0) - (o2.hasParent() ? 1 : 0);
                 }
             });
             // regenerate texture id list
@@ -98,11 +98,55 @@ public class TriTextureManager {
             }
         }
 
-        // -- combine remaining "parent" textures into one image
-        // ...
+        //System.out.println("Obtained " + textures.size() + " unique textures after merging.");
 
-        // invalidate
+        // sort by size
+        Collections.sort(textures, new Comparator<TriTexture>() {
+            @Override
+            public int compare(TriTexture o1, TriTexture o2) {
+                return o2.getPixelCount() - o1.getPixelCount();
+            }
+        });
+        // -- combine remaining "parent" textures into one image
+        while (len > 1) {
+            // find the texture with the biggest jaccard similarity
+            TriTexture texture = textures.get(0);
+            TriTexture mergeTo = textures.get(1);
+            int mergeToId = 1;
+            float similarity = texture.jaccard(mergeTo);
+            for (int i = 2; i < len; i++) {
+                TriTexture compareTo = textures.get(i);
+                float newSim = texture.jaccard(compareTo);
+                if (newSim > similarity) {
+                    similarity = newSim;
+                    mergeTo = compareTo;
+                    mergeToId = i;
+                }
+            }
+            // check if we can make this a child
+            // otherwise we combine the textures
+            if (texture.makeChild(mergeTo)) {
+                textures.remove(mergeToId);
+            } else if (mergeTo.makeChild(texture)) {
+                textures.remove(0);
+            } else {
+                // generate the new TriTexture
+                TriTexture parentTexture = new TriTexture(texture, mergeTo, this);
+                // remove textures
+                textures.remove(mergeToId);
+                textures.remove(0);
+                // add new parent
+                textures.add(parentTexture);
+                // register texture
+                this.addTexture(parentTexture);
+            }
+            len--;
+        }
+
+        // invalidate texture list (for id generation)
         invalidate();
+
+        //System.out.println("Pixel Count: " + textures.get(0).getPixelCount());
     }
 
     // update uv maps
