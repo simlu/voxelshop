@@ -324,7 +324,7 @@ public class G2DUtil {
 
         // -- case: dot
         if (y1 == y2 && x1 == x2) {
-            if (x1 == 0 && y1 == 0) {
+            if (x1%1 == 0 && y1%1 == 0) {
                 // return all four grid cells surrounding this dot
                 int[][] result = new int[4][2];
                 result[0][0] = (int) Math.floor(x1 - 0.5);
@@ -336,14 +336,14 @@ public class G2DUtil {
                 result[3][0] = (int) Math.floor(x1 + 0.5);
                 result[3][1] = (int) Math.floor(y1 + 0.5);
                 return result;
-            } else if (x1 == 0) {
+            } else if (x1%1 == 0) {
                 int[][] result = new int[2][2];
                 result[0][0] = (int) Math.floor(x1 - 0.5);
                 result[0][1] = (int) Math.floor(y1);
                 result[1][0] = (int) Math.floor(x1 + 0.5);
                 result[1][1] = (int) Math.floor(y1);
                 return result;
-            } else if (y1 == 0) {
+            } else if (y1%1 == 0) {
                 int[][] result = new int[2][2];
                 result[0][0] = (int) Math.floor(x1);
                 result[0][1] = (int) Math.floor(y1 - 0.5);

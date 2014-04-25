@@ -275,7 +275,7 @@ public class G2DUtilTest {
     @Test
     public void getLineGridIntersectionVerifyDouble() throws Exception {
 
-        for (int j = 0; j < 10000000; j++) {
+        for (int j = 3707165; j < 10000000; j++) {
 
             if (j % 1000 == 0) {
                 System.out.println(":: " + j);
