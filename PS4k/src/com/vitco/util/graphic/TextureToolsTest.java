@@ -69,7 +69,7 @@ public class TextureToolsTest {
             size = TextureTools.compress(size[0], size[1], offsetsY[0], offsetsY[1], true, pixels);
         }
         // write final image
-        BufferedImage imgResult = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_RGB);
+        BufferedImage imgResult = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB);
         for (int[] pixel : pixels.values()) {
             imgResult.setRGB(pixel[0], pixel[1], pixel[2]);
         }
@@ -78,7 +78,7 @@ public class TextureToolsTest {
 
     @Test
     public void testCompress() throws Exception {
-        for (int i = 1; i <= 24; i++) {
+        for (int i = 1; i <= 25; i++) {
             compress("sample" + i);
         }
     }
@@ -243,6 +243,6 @@ public class TextureToolsTest {
         assert getOffsets("sample23", true)[0] == 0;
         assert getOffsets("sample23", true)[1] == 5;
 
-        //System.out.println(getOffsets("sample20", false)[0] + " " + getOffsets("sample20", false)[1]);
+        //System.out.println(getOffsets("sample25", true)[0] + " " + getOffsets("sample25", true)[1]);
     }
 }

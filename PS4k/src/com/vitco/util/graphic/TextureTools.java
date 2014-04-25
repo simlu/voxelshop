@@ -152,7 +152,7 @@ public class TextureTools {
                             }
                         }
                         // -- loop was successful
-                        // add offsets
+                        // add offset pixel to result array
                         for (int x = 0; x < width; x++) {
                             for (int y = 0; y < front; y++) {
                                 Point p = new Point(x, y);
@@ -213,7 +213,7 @@ public class TextureTools {
                             }
                         }
                         // -- loop was successful
-                        // add offsets
+                        // add offset pixel to result array
                         for (int y = 0; y < height; y++) {
                             for (int x = 0; x < front; x++) {
                                 Point p = new Point(x, y);

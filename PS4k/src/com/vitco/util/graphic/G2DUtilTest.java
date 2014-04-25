@@ -7,10 +7,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Test the G2DUtil class
@@ -196,6 +193,8 @@ public class G2DUtilTest {
     }
 
     // verify the DDA supercover algorithm (for line on grid)
+    // this is the integer version where the line starts and ends
+    // in between four grid cells
     @Test
     public void getLineGridIntersectionVerify() throws Exception {
 
@@ -268,5 +267,240 @@ public class G2DUtilTest {
 
         }
 
+    }
+
+    // verify the DDA supercover algorithm (for line on grid)
+    // this is the precise version where the line starts and ends
+    // anywhere on the grid
+    @Test
+    public void getLineGridIntersectionVerifyDouble() throws Exception {
+
+        for (int j = 0; j < 10000000; j++) {
+
+            if (j % 1000 == 0) {
+                System.out.println(":: " + j);
+            }
+
+            // indicates the floating point precision that is used for generating
+            // the test values and for computing the "save" result
+            double scaleFactor;
+
+            // generate the line on the grid
+            Random rand = new Random(j);
+            double xf1, yf1, xf2, yf2;
+            switch (rand.nextInt(4)) {
+                case 0:
+                    scaleFactor = 100d;
+                    xf1 = rand.nextInt(51200) / scaleFactor;
+                    yf1 = rand.nextInt(51200) / scaleFactor;
+                    xf2 = rand.nextInt(51200) / scaleFactor;
+                    yf2 = rand.nextInt(51200) / scaleFactor;
+                    break;
+                case 1:
+                    scaleFactor = 100d;
+                    xf1 = rand.nextInt(512) / scaleFactor;
+                    yf1 = rand.nextInt(512) / scaleFactor;
+                    xf2 = rand.nextInt(512) / scaleFactor;
+                    yf2 = rand.nextInt(512) / scaleFactor;
+                    break;
+                case 2:
+                    scaleFactor = 100d;
+                    xf1 = (rand.nextInt(512) - 256) / scaleFactor;
+                    yf1 = (rand.nextInt(512) - 256) / scaleFactor;
+                    xf2 = (rand.nextInt(512) - 256) / scaleFactor;
+                    yf2 = (rand.nextInt(512) - 256) / scaleFactor;
+                    break;
+                default:
+                    scaleFactor = 1000d;
+                    xf1 = rand.nextInt(5120) / scaleFactor;
+                    yf1 = rand.nextInt(5120) / scaleFactor;
+                    xf2 = rand.nextInt(5120) / scaleFactor;
+                    yf2 = rand.nextInt(5120) / scaleFactor;
+                    break;
+            }
+
+//            System.out.println("============ " + j);
+//            System.out.println((xf1) + " " + (yf1) + " " + (xf2) + " " + (yf2));
+
+            // compute result
+            int[][] result = G2DUtil.getLineGridIntersection(
+                   xf1, yf1, xf2, yf2
+            );
+
+            // sort result
+            Arrays.sort(result, new Comparator<int[]>() {
+                @Override
+                public int compare(int[] o1, int[] o2) {
+                    int sign = o1[0] - o2[0];
+                    if (sign != 0) {
+                        return sign;
+                    } else {
+                        return o1[1] - o2[1];
+                    }
+                }
+            });
+
+            //System.out.println("=======");
+
+            // compute "save" result
+            // we do this by scaling the points and using the integer version
+            // the resulting grid cells are then scaled down again
+            int[][] saveResult = G2DUtil.getLineGridIntersection(
+                    (int)Math.round(xf1 * scaleFactor), (int)Math.round (yf1 * scaleFactor),
+                    (int)Math.round (xf2 * scaleFactor), (int)Math.round (yf2 * scaleFactor)
+            );
+            HashSet<Point> translation = new HashSet<Point>();
+            for (int[] cell : saveResult) {
+                translation.add(new Point((int)Math.floor(cell[0]/scaleFactor), (int)Math.floor(cell[1]/scaleFactor)));
+            }
+            int k = 0;
+            int[][] saveResultArray = new int[translation.size()][2];
+            for (Point p : translation) {
+                saveResultArray[k][0] = p.x;
+                saveResultArray[k++][1] = p.y;
+            }
+
+            // sort save result
+            Arrays.sort(saveResultArray, new Comparator<int[]>() {
+                @Override
+                public int compare(int[] o1, int[] o2) {
+                    int sign = o1[0] - o2[0];
+                    if (sign != 0) {
+                        return sign;
+                    } else {
+                        return o1[1] - o2[1];
+                    }
+                }
+            });
+
+//            if (result.length != saveResultArray.length) {
+//                for (int i = 0; i < Math.max(result.length, saveResultArray.length); i++) {
+//                    if (result.length > i && saveResultArray.length > i) {
+//                        System.out.println(result[i][0] + "," + result[i][1] + " vs " + saveResultArray[i][0] + "," + saveResultArray[i][1]);
+//                    } else if (result.length > i) {
+//                        System.out.println(result[i][0] + "," + result[i][1] + " vs " + "...");
+//                    } else {
+//                        System.out.println("..." + " vs " + saveResultArray[i][0] + "," + saveResultArray[i][1]);
+//                    }
+//                }
+//            }
+
+//            for (int i = 0; i < Math.max(result.length, saveResultArray.length); i++) {
+//                if (result.length > i && saveResultArray.length > i) {
+//                    if (result[i][0] != saveResultArray[i][0] || result[i][1] != saveResultArray[i][1]) {
+//                        System.out.println("@@@@@@@@@@@@");
+//                    }
+//                    System.out.println(result[i][0] + "," + result[i][1] + " vs " + saveResultArray[i][0] + "," + saveResultArray[i][1]);
+//                } else if (result.length > i) {
+//                    System.out.println(result[i][0] + "," + result[i][1] + " vs " + "...");
+//                } else {
+//                    System.out.println("..." + " vs " + saveResultArray[i][0] + "," + saveResultArray[i][1]);
+//                }
+//            }
+
+            // compare results
+            assert result.length == saveResultArray.length;
+
+            for (int i = 0; i < result.length; i++) {
+                assert result[i][0] == saveResultArray[i][0];
+                assert result[i][1] == saveResultArray[i][1];
+            }
+
+//            boolean error = false;
+//            int errorCount = 0;
+//            int diff = 0;
+//            if (result.length != saveResultArray.length) {
+//                error = true;
+//                diff = Math.abs(result.length - saveResultArray.length);
+//            } else {
+//                for (int i = 0; i < result.length; i++) {
+//                    if (result[i][0] != saveResultArray[i][0] || result[i][1] != saveResultArray[i][1]) {
+//                        errorCount++;
+//                        error = true;
+//                    }
+//                }
+//            }
+//            if (error) {
+//                System.out.println((xf1) + " " + (yf1) + " " + (xf2) + " " + (yf2) + " @@ " + errorCount + " diff " + diff);
+//            }
+
+        }
+
+    }
+
+    // manual test for line intersection
+    @Test
+    public void printLineGridIntersection() throws Exception {
+
+        // define the line
+        double xf1 = 15.0;
+        double yf1 = 0.0;
+        double xf2 = 0.0;
+        double yf2 = 7.5;
+
+        System.out.println(xf1 + " " + yf1 + " " + xf2 + " " + yf2);
+
+        // how many pixels is the image high and width
+        int imgSize = 50;
+
+        // =================
+        // obtain the intersected points
+        int[][] points = G2DUtil.getLineGridIntersection(
+                xf1, yf1, xf2, yf2
+        );
+        // ===============
+//        // compute scaled result with integer values
+//        int[][] saveResult = G2DUtil.getLineGridIntersection(
+//                Math.round (xf1 * 100), Math.round (yf1 * 100),
+//                Math.round (xf2 * 100), Math.round (yf2 * 100)
+//        );
+//        HashSet<Point> translation = new HashSet<Point>();
+//        for (int[] cell : saveResult) {
+//            translation.add(new Point(cell[0]/100, cell[1]/100));
+//        }
+//        int k = 0;
+//        int[][] points = new int[translation.size()][2];
+//        for (Point p : translation) {
+//            points[k][0] = p.x;
+//            points[k++][1] = p.y;
+//        }
+        // ===============
+
+
+        // -----------
+        // -- draw the image
+
+        int zoom = 50;
+        BufferedImage img = new BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB);
+
+        // print found voxels
+        for (int[] p : points) {
+            if (p[0] > -1 && p[1] > -1 && p[0] < img.getWidth() && p[1] < img.getHeight()) {
+                img.setRGB(p[0], p[1], Color.BLACK.getRGB());
+            }
+        }
+
+        // enlarge so we can draw the triangle line
+        BufferedImage img2 = new BufferedImage(imgSize * zoom, imgSize * zoom, BufferedImage.TYPE_INT_ARGB);
+        img2.getGraphics().drawImage(img.getScaledInstance(imgSize * zoom, imgSize * zoom, 0), 0, 0, null);
+
+        Graphics2D g2 = (Graphics2D) img2.getGraphics();
+
+        // draw outlines of the voxels
+        g2.setColor(Color.WHITE);
+        for (int[] p : points) {
+            g2.drawRect( (p[0])*zoom, (p[1])*zoom, zoom, zoom);
+        }
+
+        // draw the triangle
+        g2.setColor(Color.RED);
+        g2.drawLine((int) ((xf1) * zoom), (int) ((yf1) * zoom), (int) ((xf2) * zoom), (int) ((yf2) * zoom));
+
+        // write the file
+        try {
+            ImageIO.write(img2, "png", new File("test.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

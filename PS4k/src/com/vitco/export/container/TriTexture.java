@@ -8,6 +8,7 @@ import com.vitco.util.graphic.TextureTools;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -29,9 +30,9 @@ public class TriTexture {
     // reference to the uv points
     private final double[][] uvPoints = new double[3][2];
 
-    // holds the pixels in this triangle
-    // the format is (x, y, color)
-    private final HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
+    // holds the pixels in this triangle, the format is (x, y, color)
+    // Note: Not final since this needs to be nullable
+    private HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
 
     // size of this texture image
     private final int width;
@@ -41,7 +42,8 @@ public class TriTexture {
     private final TriTextureManager textureManager;
 
     // used for pixel comparison
-    private final ImageComparator imageComparator;
+    // Note: Not final since this needs to be nullable
+    private ImageComparator imageComparator;
 
     // ---------------
 
@@ -71,6 +73,9 @@ public class TriTexture {
         // 4 - flipped, 5 - flipped & rotated x 1, 6 - flipped & rotated x 2, 7 - flipped & rotated x 3
         // Note: Rotation is clockwise
         this.orientationFlag = orientationFlag;
+        // free internal memory that is no longer needed
+        pixels = null;
+        imageComparator = null;
     }
 
     // get identifier of this texture
@@ -103,6 +108,8 @@ public class TriTexture {
         // else compute the image for this texture
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int[] pixel : pixels.values()) {
+            assert pixel[0] < width;
+            assert pixel[1] < height;
             result.setRGB(pixel[0], pixel[1], pixel[2]);
         }
         return result;
@@ -453,13 +460,8 @@ public class TriTexture {
         }
 
         // compress textures (scale if this can be done loss-less)
+        // Note: Doing this several times should not make any sense
         int[] newSize = compress(width, height, pixels, uvPoints);
-
-        // check for unnecessary pixels and resize if necessary (prune them)
-        // Note: This can only happen after compression changed the image and uvs
-        if (newSize[0] < width || newSize[1] < height) {
-            newSize = prune(newSize[0], newSize[1], pixels, uvPoints);
-        }
 
         // set the image comparator
         imageComparator = new ImageComparator(pixels.values());
@@ -480,57 +482,123 @@ public class TriTexture {
         this.height = newSize[1];
     }
 
-    // prune unnecessary pixels from this texture (can occur after compression)
-    private static int[] prune(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints) {
-        double[] minUV = new double[] {
-                Math.min(Math.min(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]) * width,
-                Math.min(Math.min(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]) * height
-        };
-        double[] maxUV = new double[] {
-                Math.max(Math.max(uvPoints[0][0], uvPoints[1][0]), uvPoints[2][0]) * width,
-                Math.max(Math.max(uvPoints[0][1], uvPoints[1][1]), uvPoints[2][1]) * height
-        };
-        // adjust to close int (cast to float to prevent rounding errors)
-        minUV[0] = Math.floor((float)minUV[0]);
-        minUV[1] = Math.floor((float)minUV[1]);
-        maxUV[0] = Math.ceil((float)maxUV[0]);
-        maxUV[1] = Math.ceil((float)maxUV[1]);
+    // prune unnecessary and add missing pixels from this texture
+    // Note: This should only be needed after compression changed the image and uvs
+    private static int[] repairPixel(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints, boolean useHeight) {
+        // will store the minimum and maximum pixel values
+        int minX = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        // calculate all required points
+        // Note: some old pixels might not be necessary, and there might be
+        // some pixels that are not set as they were shifted by the distortion
+        // (we need to fetch those)
+        ArrayList<int[]> newPixels = new ArrayList<int[]>();
+        int[][] points = G2DUtil.getTriangleGridIntersection(
+                uvPoints[0][0] * width, uvPoints[0][1] * height,
+                uvPoints[1][0] * width, uvPoints[1][1] * height,
+                uvPoints[2][0] * width, uvPoints[2][1] * height
+        );
 
-        // only proceed if something was pruned
-        if (minUV[0] > 0 || minUV[1] > 0 || maxUV[0] < width || maxUV[1] < height) {
-            // loop over pixels
-            HashMap<Point, int[]> newPixels = new HashMap<Point, int[]>();
-            for (int[] pixel : pixels.values()) {
-                // check if pixel is in valid area
-                if (pixel[0] >= minUV[0] && pixel[1] >= minUV[1] &&
-                        pixel[0] < maxUV[0] && pixel[1] < maxUV[1]) {
-                    // create shifted pixel
-                    int x = (int) (pixel[0] - minUV[0]);
-                    int y = (int) (pixel[1] - minUV[1]);
-                    newPixels.put(new Point(x, y), new int[] {x, y, pixel[2]});
+        // loop over all required pixel positions
+        for (int[] pixel : points) {
+            // verify position (this is just a precaution and shouldn't be necessary)
+            if (pixel[0] > -1 && pixel[1] > -1 && pixel[0] < width && pixel[1] < height) {
+                Point point = new Point(pixel[0], pixel[1]);
+                int[] data = pixels.get(point);
+                // check if the pixel exists
+                if (data == null) {
+                    // -- the pixel does not exists
+                    // find other point
+                    if (useHeight) {
+                        // -- search vertically
+                        boolean found = false;
+                        // search down
+                        for (int y = pixel[1] + 1; y < height; y++) {
+                            point = new Point(pixel[0], y);
+                            data = pixels.get(point);
+                            if (data != null) {
+                                newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            // search up
+                            for (int y = pixel[1] - 1; y > -1; y--) {
+                                point = new Point(pixel[0], y);
+                                data = pixels.get(point);
+                                if (data != null) {
+                                    newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        assert found;
+                    } else {
+                        // -- search horizontal
+                        boolean found = false;
+                        // search right
+                        for (int x = pixel[0] + 1; x < width; x++) {
+                            point = new Point(x, pixel[1]);
+                            data = pixels.get(point);
+                            if (data != null) {
+                                newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            // search left
+                            for (int x = pixel[0] - 1; x > -1; x--) {
+                                point = new Point(x, pixel[1]);
+                                data = pixels.get(point);
+                                if (data != null) {
+                                    newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        assert found;
+                    }
+                } else {
+                    // use the existing pixel
+                    newPixels.add(data);
                 }
+                minX = Math.min(minX, pixel[0]);
+                maxX = Math.max(maxX, pixel[0]);
+                minY = Math.min(minY, pixel[1]);
+                maxY = Math.max(maxY, pixel[1]);
             }
-            // adjust uv points
-            double newWidth = maxUV[0] - minUV[0];
-            double newHeight = maxUV[1] - minUV[1];
-            uvPoints[0][0] = (uvPoints[0][0] * width - minUV[0]) / newWidth;
-            uvPoints[0][1] = (uvPoints[0][1] * height - minUV[1]) / newHeight;
-            uvPoints[1][0] = (uvPoints[1][0] * width - minUV[0]) / newWidth;
-            uvPoints[1][1] = (uvPoints[1][1] * height - minUV[1]) / newHeight;
-            uvPoints[2][0] = (uvPoints[2][0] * width - minUV[0]) / newWidth;
-            uvPoints[2][1] = (uvPoints[2][1] * height - minUV[1]) / newHeight;
-            // update
-            pixels.clear();
-            pixels.putAll(newPixels);
-            width = (int)newWidth;
-            height = (int)newHeight;
         }
-        return new int[] {width, height};
+        // add the pixels that we have found and add an offset
+        pixels.clear();
+        for (int[] pixel : newPixels) {
+            int x = pixel[0] - minX;
+            int y = pixel[1] - minY;
+            pixels.put(new Point(x, y), new int[] {x, y, pixel[2]});
+        }
+        // compute the new width and height
+        int newWidth = maxX - minX + 1;
+        int newHeight = maxY - minY + 1;
+        if (newWidth < width || newHeight < height) {
+            // -- fix uv points
+            uvPoints[0][0] = (uvPoints[0][0] * width - minX) / newWidth;
+            uvPoints[0][1] = (uvPoints[0][1] * height - minY) / newHeight;
+            uvPoints[1][0] = (uvPoints[1][0] * width - minX) / newWidth;
+            uvPoints[1][1] = (uvPoints[1][1] * height - minY) / newHeight;
+            uvPoints[2][0] = (uvPoints[2][0] * width - minX) / newWidth;
+            uvPoints[2][1] = (uvPoints[2][1] * height - minY) / newHeight;
+        }
+        return new int[] {newWidth, newHeight};
     }
 
     // compress the texture and return new size
     // Note: This changes the pixel array and also the uv positions (!)
-    private static int[] compress(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints) {
+    protected static int[] compress(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints) {
         // size array (that might still change!)
         int[] size = new int[] {width, height, 1};
         // -- compress this texture (scale if this can be done loss-less)
@@ -555,6 +623,8 @@ public class TriTexture {
                     }
                     p[0] /= size[0];
                 }
+                // fix the pixels (erase unnecessary and fill in missing)
+                size = repairPixel(size[0], size[1], pixels, uvPoints, false);
                 // update offsets
                 offsetsX = TextureTools.getOffsets(size[0], size[1], false, pixels);
             }
@@ -573,6 +643,8 @@ public class TriTexture {
                     }
                     p[0] /= size[0];
                 }
+                // fix the pixels (erase unnecessary and fill in missing)
+                size = repairPixel(size[0], size[1], pixels, uvPoints, false);
                 // update offsets
                 offsetsX = TextureTools.getOffsets(size[0], size[1], false, pixels);
             }
@@ -593,6 +665,8 @@ public class TriTexture {
                     }
                     p[0] /= size[0];
                 }
+                // fix the pixels (erase unnecessary and fill in missing)
+                size = repairPixel(size[0], size[1], pixels, uvPoints, false);
             }
         }
 
@@ -613,6 +687,8 @@ public class TriTexture {
                     }
                     p[1] /= size[1];
                 }
+                // fix the pixels (erase unnecessary and fill in missing)
+                size = repairPixel(size[0], size[1], pixels, uvPoints, true);
                 // update offsets
                 offsetsY = TextureTools.getOffsets(size[0], size[1], true, pixels);
             }
@@ -631,6 +707,8 @@ public class TriTexture {
                     }
                     p[1] /= size[1];
                 }
+                // fix the pixels (erase unnecessary and fill in missing)
+                size = repairPixel(size[0], size[1], pixels, uvPoints, true);
                 // update offsets
                 offsetsY = TextureTools.getOffsets(size[0], size[1], true, pixels);
             }
@@ -651,6 +729,8 @@ public class TriTexture {
                     }
                     p[1] /= size[1];
                 }
+                // fix the pixels (erase unnecessary and fill in missing)
+                size = repairPixel(size[0], size[1], pixels, uvPoints, true);
             }
         }
         return size;

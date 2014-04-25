@@ -1,27 +1,36 @@
 package com.vitco.util.graphic;
 
 import com.vitco.util.misc.ArrayUtil;
+import gnu.trove.iterator.TIntIntIterator;
+import gnu.trove.iterator.TIntIterator;
+import gnu.trove.iterator.TObjectIntIterator;
+import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Allows for fast comparison of images.
  *
  * - sub image detection
+ * - detection of best merging points for two images (slow)
  */
 public class ImageComparator {
 
     // holds the colors of this texture with count (color -> count)
-    private final HashMap<Integer, Integer> colors = new HashMap<Integer, Integer>();
+    private final TIntIntHashMap colors = new TIntIntHashMap();
 
     // holds the colors of this texture row/column wise (row/column -> color -> count)
-    private final HashMap<Integer, HashMap<Integer, Integer>> colorsPerRow = new HashMap<Integer, HashMap<Integer, Integer>>();
-    private final HashMap<Integer, HashMap<Integer, Integer>> colorsPerCol = new HashMap<Integer, HashMap<Integer, Integer>>();
+    private final TIntObjectHashMap<TIntIntHashMap> colorsPerRow = new TIntObjectHashMap<TIntIntHashMap>();
+    private final TIntObjectHashMap<TIntIntHashMap> colorsPerCol = new TIntObjectHashMap<TIntIntHashMap>();
 
     // stores all the pixels of the encapsulated image
-    private final HashMap<Point, Integer> pixels = new HashMap<Point, Integer>();
+    private final TObjectIntHashMap<Point> pixels = new TObjectIntHashMap<Point>();
 
     // dimension of this image
     private final int width;
@@ -74,34 +83,25 @@ public class ImageComparator {
         // extract colors and count
         for (int[] pixel : pixels) {
             // set global color count
-            Integer count = colors.get(pixel[2]);
-            if (count == null) {
-                count = 0;
-            }
+            int count = colors.get(pixel[2]);
             colors.put(pixel[2], count+1);
 
             // set row count
-            HashMap<Integer, Integer> row = colorsPerRow.get(pixel[1]);
+            TIntIntHashMap row = colorsPerRow.get(pixel[1]);
             if (row == null) {
-                row = new HashMap<Integer, Integer>();
+                row = new TIntIntHashMap();
                 colorsPerRow.put(pixel[1], row);
             }
             count = row.get(pixel[2]);
-            if (count == null) {
-                count = 0;
-            }
             row.put(pixel[2], count+1);
 
             // set col count
-            HashMap<Integer, Integer> col = colorsPerCol.get(pixel[0]);
+            TIntIntHashMap col = colorsPerCol.get(pixel[0]);
             if (col == null) {
-                col = new HashMap<Integer, Integer>();
+                col = new TIntIntHashMap();
                 colorsPerCol.put(pixel[0], col);
             }
             count = col.get(pixel[2]);
-            if (count == null) {
-                count = 0;
-            }
             col.put(pixel[2], count+1);
 
             // update pixel buffer (for fast access)
@@ -127,21 +127,16 @@ public class ImageComparator {
 
     // compute the Jaccard similarity coefficient (using the colors)
     public float jaccard(ImageComparator other) {
-        HashSet<Integer> uniqueColors = new HashSet<Integer>(this.colors.keySet());
+        TIntHashSet uniqueColors = new TIntHashSet(this.colors.keySet());
         uniqueColors.addAll(other.colors.keySet());
 
         int intersection = 0;
         int union = 0;
 
-        for (int color : uniqueColors) {
-            Integer count1 = this.colors.get(color);
-            if (count1 == null) {
-                count1 = 0;
-            }
-            Integer count2 = other.colors.get(color);
-            if (count2 == null) {
-                count2 = 0;
-            }
+        for (TIntIterator it = uniqueColors.iterator(); it.hasNext();) {
+            int color = it.next();
+            int count1 = this.colors.get(color);
+            int count2 = other.colors.get(color);
             intersection += Math.min(count1, count2);
             union += Math.max(count1, count2);
         }
@@ -162,7 +157,7 @@ public class ImageComparator {
         // loop over all "non flipped" start positions
         for (int x = -two.width; x < one.width; x++) {
             for (int y = -two.height; y < one.height; y++) {
-                // compute intersection
+                // compute intersection area
                 int minX = Math.max(0, x);
                 int minY = Math.max(0, y);
                 int maxX = Math.min(one.width, x + two.width);
@@ -180,10 +175,10 @@ public class ImageComparator {
                     int pixelOverlapTmp = 0;
                     loop: for (int i = minX; i < maxX; i++) {
                         for (int j = minY; j < maxY; j++) {
-                            Integer color1 = one.pixels.get(new Point(i, j));
-                            Integer color2 = two.pixels.get(new Point(i - x, j - y));
-                            if (color1 != null && color2 != null) {
-                                if (color1.equals(color2)) {
+                            Point p1 = new Point(i, j);
+                            Point p2 = new Point(i - x, j - y);
+                            if (one.pixels.containsKey(p1) && two.pixels.containsKey(p2)) {
+                                if (one.pixels.get(p1) == two.pixels.get(p2)) {
                                     pixelOverlapTmp++;
                                 } else {
                                     matched = false;
@@ -227,9 +222,10 @@ public class ImageComparator {
                     return new int[] {0,0,0};
                 } else {
                     // find location
-                    for (Map.Entry<Point, Integer> pixel : this.pixels.entrySet()) {
-                        if (pixel.getValue().equals(color)) {
-                            Point p = pixel.getKey();
+                    for (TObjectIntIterator<Point> it = this.pixels.iterator(); it.hasNext();) {
+                        it.advance();
+                        if (it.value() == color) {
+                            Point p = it.key();
                             return new int[]{p.x, p.y, 0};
                         }
                     }
@@ -273,12 +269,13 @@ public class ImageComparator {
                 for (int y : rowRow) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + childPos.x, y + childPos.y));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + childPos.x, y + childPos.y));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -296,12 +293,13 @@ public class ImageComparator {
                 for (int y : rowRow) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.widthM - childPos.x), y + childPos.y));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + (child.widthM - childPos.x), y + childPos.y));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -319,12 +317,13 @@ public class ImageComparator {
                 for (int y : rowRowFlip) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.widthM - childPos.x), y + (child.heightM - childPos.y)));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + (child.widthM - childPos.x), y + (child.heightM - childPos.y)));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -341,12 +340,13 @@ public class ImageComparator {
                 for (int y : rowRowFlip) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + childPos.x, y + (child.heightM - childPos.y)));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + childPos.x, y + (child.heightM - childPos.y)));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -370,12 +370,13 @@ public class ImageComparator {
                 for (int y : colRow) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + childPos.y, y + childPos.x));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + childPos.y, y + childPos.x));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -393,12 +394,13 @@ public class ImageComparator {
                 for (int y : colRow) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.heightM - childPos.y), y + childPos.x));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + (child.heightM - childPos.y), y + childPos.x));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -416,12 +418,13 @@ public class ImageComparator {
                 for (int y : colRowFlip) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + childPos.y, y + (child.widthM - childPos.x)));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + childPos.y, y + (child.widthM - childPos.x)));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -438,12 +441,13 @@ public class ImageComparator {
                 for (int y : colRowFlip) {
                     // loop over all child pixels
                     boolean match = true;
-                    for (Map.Entry<Point, Integer> pixel : child.pixels.entrySet()) {
+                    for (TObjectIntIterator<Point> pixel = child.pixels.iterator(); pixel.hasNext();) {
+                        pixel.advance();
                         // check for containment in parent
-                        Point childPos = pixel.getKey();
-                        Integer color = this.pixels.get(new Point(x + (child.heightM - childPos.y), y + (child.widthM - childPos.x)));
+                        Point childPos = pixel.key();
+                        int color = this.pixels.get(new Point(x + (child.heightM - childPos.y), y + (child.widthM - childPos.x)));
                         // Note: "color" might be null
-                        if (!pixel.getValue().equals(color)) {
+                        if (pixel.value() != color) {
                             match = false;
                             break;
                         }
@@ -461,8 +465,8 @@ public class ImageComparator {
 
     // check "containment" positions of child array in parent array
     private ArrayList<Integer> getPossiblePositions(
-            HashMap<Integer, HashMap<Integer, Integer>> childArray,
-            HashMap<Integer, HashMap<Integer, Integer>> parentArray,
+            TIntObjectHashMap<TIntIntHashMap> childArray,
+            TIntObjectHashMap<TIntIntHashMap> parentArray,
             boolean flip) {
         ArrayList<Integer> result = new ArrayList<Integer>();
 
@@ -508,12 +512,19 @@ public class ImageComparator {
     }
 
     // check if color list is contained in other color list
-    private boolean contained(HashMap<Integer, Integer> child, HashMap<Integer, Integer> parent) {
-        for (Map.Entry<Integer, Integer> entry : child.entrySet()) {
-            // obtain parent color count
-            Integer count = parent.get(entry.getKey());
+    private boolean contained(TIntIntHashMap child, TIntIntHashMap parent) {
+        if (child == null) {
+            System.err.println("ImageComparator Error 3941");
+            return true;
+        }
+        if (parent == null) {
+            System.err.println("ImageComparator Error 3942");
+            return false;
+        }
+        for (TIntIntIterator it = child.iterator(); it.hasNext();) {
+            it.advance();
             // check that the colors are contained in the necessary amount
-            if (count == null || count < entry.getValue()) {
+            if (parent.get(it.key()) < it.value()) {
                 return false;
             }
         }
