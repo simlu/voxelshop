@@ -12,9 +12,12 @@ import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ChangeListener;
 import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.action.types.StateActionPrototype;
+import com.vitco.manager.async.AsyncAction;
+import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.util.misc.SaveResourceLoader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -67,6 +70,13 @@ public class MenuGenerator implements MenuGeneratorInterface {
     @Override
     public final void setComplexActionManager(ComplexActionManager complexActionManager) {
         this.complexActionManager = complexActionManager;
+    }
+
+    // var & setter
+    private AsyncActionManager asyncActionManager;
+    @Autowired
+    public final void setAsyncActionManager(AsyncActionManager asyncActionManager) {
+        this.asyncActionManager = asyncActionManager;
     }
 
     @Override
@@ -216,29 +226,35 @@ public class MenuGenerator implements MenuGeneratorInterface {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     if (evt.getNewValue() != null) {
-                        boolean invert = e.hasAttribute("invert") && e.getAttribute("invert").equals("true");
-                        StateActionPrototype action = ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
-                        if (checkable) {
-                            item.setSelected(
-                                    // triggered when the menu item is show
-                                    // this makes sure the "checked" is always current
-                                    invert ? !action.isChecked() : action.isChecked()
-                            );
-                        }
-                        if (grayable) {
-                            item.setEnabled(
-                                    // triggered when the menu item is show
-                                    // this makes sure the "checked" is always current
-                                    invert ? !action.isEnabled() : action.isEnabled()
-                            );
-                        }
-                        if (hideable) {
-                            item.setVisible(
-                                    // triggered when the menu item is show
-                                    // this makes sure the "checked" is always current
-                                    invert ? !action.isVisible() : action.isVisible()
-                            );
-                        }
+                        // do this async to prevent deadlock (as property change does lock AWT)
+                        asyncActionManager.addAsyncAction(new AsyncAction() {
+                            @Override
+                            public void performAction() {
+                                boolean invert = e.hasAttribute("invert") && e.getAttribute("invert").equals("true");
+                                StateActionPrototype action = ((StateActionPrototype) actionManager.getAction(e.getAttribute("action")));
+                                if (checkable) {
+                                    item.setSelected(
+                                            // triggered when the menu item is show
+                                            // this makes sure the "checked" is always current
+                                            invert ? !action.isChecked() : action.isChecked()
+                                    );
+                                }
+                                if (grayable) {
+                                    item.setEnabled(
+                                            // triggered when the menu item is show
+                                            // this makes sure the "checked" is always current
+                                            invert ? !action.isEnabled() : action.isEnabled()
+                                    );
+                                }
+                                if (hideable) {
+                                    item.setVisible(
+                                            // triggered when the menu item is show
+                                            // this makes sure the "checked" is always current
+                                            invert ? !action.isVisible() : action.isVisible()
+                                    );
+                                }
+                            }
+                        });
                     }
                 }
             });

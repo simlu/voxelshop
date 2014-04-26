@@ -3,6 +3,7 @@ package com.vitco.layout.content.console;
 import com.jidesoft.action.CommandMenuBar;
 import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
+import com.vitco.Main;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.ExportWorld;
@@ -15,6 +16,7 @@ import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.thread.LifeTimeThread;
 import com.vitco.manager.thread.ThreadManagerInterface;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.DateTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
@@ -22,6 +24,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -165,6 +172,88 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             }
         });
 
+        // check for deadlock
+        actionManager.registerAction("check_for_deadlock_toggle", new AbstractAction() {
+            private boolean active = false;
+            private LifeTimeThread thread;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                active = !active;
+                if (active) {
+                    thread = new LifeTimeThread() {
+                        @Override
+                        public void loop() throws InterruptedException {
+                            // -- check for deadlocks
+                            ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+                            // Returns null if no threads are deadlocked.
+                            long[] threadIds = bean.findDeadlockedThreads();
+
+                            if (threadIds != null) {
+                                // retrieve up to 100 lines of stack trace
+                                ThreadInfo[] infos = bean.getThreadInfo(threadIds, 100);
+
+                                // print the deadlock information to file
+                                String path = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+                                try {
+                                    String appJarLocation = URLDecoder.decode(path, "UTF-8");
+                                    File appJar = new File(appJarLocation);
+                                    String absolutePath = appJar.getAbsolutePath();
+                                    String filePath = absolutePath.
+                                            substring(0, absolutePath.lastIndexOf(File.separator) + 1);
+                                    PrintWriter out = new PrintWriter(new BufferedWriter(
+                                            new OutputStreamWriter(new FileOutputStream(filePath + "errorlog.txt", true),"UTF-8")));
+                                    out.println("===================");
+                                    out.println(DateTools.now("yyyy-MM-dd HH-mm-ss"));
+                                    out.println("-------------------");
+                                    out.println("Deadlock");
+                                    if (Main.isDebugMode()) {
+                                        System.err.println("Deadlock");
+                                    }
+                                    for (ThreadInfo info : infos) {
+                                        out.println(info.toString());
+                                        // Log or store stack trace information.
+                                        for (StackTraceElement ele : info.getStackTrace()) {
+                                            out.println(":: " + ele.toString());
+                                        }
+                                        out.println("-------------------");
+                                        if (Main.isDebugMode()) {
+                                            System.err.println(info.toString());
+                                            // Log or store stack trace information.
+                                            for (StackTraceElement ele : info.getStackTrace()) {
+                                                System.err.println(":: " + ele.toString());
+                                            }
+                                            System.err.println("======");
+                                        }
+                                    }
+                                    out.println();
+                                    out.close();
+                                } catch (UnsupportedEncodingException ex) {
+                                    // If this fails, the program is not reporting.
+                                    if (Main.isDebugMode()) {
+                                        ex.printStackTrace();
+                                    }
+                                } catch (IOException ex) {
+                                    // If this fails, the program is not reporting.
+                                    if (Main.isDebugMode()) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                                // prevent further printing
+                                thread.stopThread();
+                            }
+                            Thread.sleep(5000);
+                        }
+                    };
+                    threadManager.manage(thread);
+                    console.addLine("Deadlock checking is activated.");
+                } else {
+                    threadManager.remove(thread);
+                    console.addLine("Deadlock checking is deactivated.");
+                }
+            }
+        });
+
         // start/stop test mode (rapid adding/removing of voxel)
         actionManager.registerAction("toggle_rapid_voxel_testing",new AbstractAction() {
 
@@ -210,7 +299,6 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
                     threadManager.remove(thread);
                     console.addLine("Test deactivated.");
                 }
-
             }
         });
 
@@ -225,6 +313,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/test camera", "toggle_rapid_camera_testing");
         consoleAction.put("/texture", "texture_debug_information");
         consoleAction.put("/shader", "toggle_shader_enabled");
+        consoleAction.put("/check deadlock", "check_for_deadlock_toggle");
 
         // display the currently loaded textures
         actionManager.registerAction("texture_debug_information", new AbstractAction() {
