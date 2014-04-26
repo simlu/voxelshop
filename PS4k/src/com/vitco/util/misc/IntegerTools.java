@@ -59,6 +59,15 @@ public final class IntegerTools {
     public static int makeInt(short x, short y) {
         return (x << 16) | (y & 0xFFFF);
     }
+    // convert two integers into an integer id (assuming that the int
+    // values are actually shorts);
+    public static int makeInt(int x, int y) {
+        return (((short)x) << 16) | (((short)y) & 0xFFFF);
+    }
+    // obtain the two values from an integer
+    public static short[] getShorts(int val) {
+        return new short[] {(short) (val >> 16), (short) (val & 0xFFFF)};
+    }
 
     // =============
 

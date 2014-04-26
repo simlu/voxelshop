@@ -5,11 +5,12 @@ import com.vitco.core.data.container.Voxel;
 import com.vitco.util.graphic.G2DUtil;
 import com.vitco.util.graphic.ImageComparator;
 import com.vitco.util.graphic.TextureTools;
+import com.vitco.util.misc.IntegerTools;
+import gnu.trove.iterator.TIntObjectIterator;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Represents a texture that belongs to a triangle.
@@ -32,7 +33,7 @@ public class TriTexture {
 
     // holds the pixels in this triangle, the format is (x, y, color)
     // Note: Not final since this needs to be nullable
-    private HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
+    private TIntObjectHashMap<int[]> pixels = new TIntObjectHashMap<int[]>();
 
     // size of this texture image
     private final int width;
@@ -113,7 +114,9 @@ public class TriTexture {
         }
         // else compute the image for this texture
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        for (int[] pixel : pixels.values()) {
+        for (TIntObjectIterator<int[]> it = pixels.iterator(); it.hasNext();) {
+            it.advance();
+            int[] pixel = it.value();
             assert pixel[0] < width;
             assert pixel[1] < height;
             result.setRGB(pixel[0], pixel[1], pixel[2]);
@@ -359,13 +362,17 @@ public class TriTexture {
         int minY = Math.min(0, mergePos[1]);
         int maxX = Math.max(0, mergePos[0]);
         int maxY = Math.max(0, mergePos[1]);
-        for (int[] pixel : one.pixels.values()) {
+        for (TIntObjectIterator<int[]> it = one.pixels.iterator(); it.hasNext();) {
+            it.advance();
+            int[] pixel = it.value();
             int x = pixel[0] - minX;
             int y = pixel[1] - minY;
-            pixels.put(new Point(x, y), new int[] {x,y,pixel[2]});
+            pixels.put(IntegerTools.makeInt(x, y), new int[] {x,y,pixel[2]});
         }
         // rotate second image according to result
-        for (int[] pixel : two.pixels.values()) {
+        for (TIntObjectIterator<int[]> it = two.pixels.iterator(); it.hasNext();) {
+            it.advance();
+            int[] pixel = it.value();
             int x;
             int y;
             switch (mergePos[2]) {
@@ -402,11 +409,11 @@ public class TriTexture {
                     y = pixel[1] + maxY;
                     break;
             }
-            pixels.put(new Point(x, y), new int[] {x,y,pixel[2]});
+            pixels.put(IntegerTools.makeInt(x, y), new int[] {x,y,pixel[2]});
         }
 
         // set the image comparator
-        imageComparator = new ImageComparator(pixels.values());
+        imageComparator = new ImageComparator(pixels.valueCollection());
 
         // compute new dimensions (depending on whether the second
         // texture was rotated or not)
@@ -495,7 +502,9 @@ public class TriTexture {
         // fetch colors
         for (int[] point : points) {
             // set the position (for this color)
-            Point p = new Point(point[0] - minX, point[1] - minY);
+            int x = point[0] - minX;
+            int y = point[1] - minY;
+            int p = IntegerTools.makeInt(x, y);
             // get the pixel color
             Voxel voxel = data.searchVoxel(new int[] {
                     axis == 0 ? depth : point[0],
@@ -504,7 +513,7 @@ public class TriTexture {
             }, false);
             assert voxel != null;
             // add the pixel
-            pixels.put(p, new int[] {p.x, p.y, voxel.getColor().getRGB()});
+            pixels.put(p, new int[] {x, y, voxel.getColor().getRGB()});
         }
 
         // compress textures (scale if this can be done loss-less)
@@ -512,7 +521,7 @@ public class TriTexture {
         int[] newSize = compress(width, height, pixels, uvPoints);
 
         // set the image comparator
-        imageComparator = new ImageComparator(pixels.values());
+        imageComparator = new ImageComparator(pixels.valueCollection());
 
         // overwrite uv to prevent unnecessary unique uv coordinates.
         // Note: this enables better compression for COLLADA
@@ -532,7 +541,7 @@ public class TriTexture {
 
     // prune unnecessary and add missing pixels from this texture
     // Note: This should only be needed after compression changed the image and uvs
-    private static int[] repairPixel(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints, boolean useHeight) {
+    private static int[] repairPixel(int width, int height, TIntObjectHashMap<int[]> pixels, double[][] uvPoints, boolean useHeight) {
         // will store the minimum and maximum pixel values
         int minX = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;
@@ -553,7 +562,7 @@ public class TriTexture {
         for (int[] pixel : points) {
             // verify position (this is just a precaution and shouldn't be necessary)
             if (pixel[0] > -1 && pixel[1] > -1 && pixel[0] < width && pixel[1] < height) {
-                Point point = new Point(pixel[0], pixel[1]);
+                int point = IntegerTools.makeInt(pixel[0], pixel[1]);
                 int[] data = pixels.get(point);
                 // check if the pixel exists
                 if (data == null) {
@@ -564,7 +573,7 @@ public class TriTexture {
                         boolean found = false;
                         // search down
                         for (int y = pixel[1] + 1; y < height; y++) {
-                            point = new Point(pixel[0], y);
+                            point = IntegerTools.makeInt(pixel[0], y);
                             data = pixels.get(point);
                             if (data != null) {
                                 newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
@@ -575,7 +584,7 @@ public class TriTexture {
                         if (!found) {
                             // search up
                             for (int y = pixel[1] - 1; y > -1; y--) {
-                                point = new Point(pixel[0], y);
+                                point = IntegerTools.makeInt(pixel[0], y);
                                 data = pixels.get(point);
                                 if (data != null) {
                                     newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
@@ -590,7 +599,7 @@ public class TriTexture {
                         boolean found = false;
                         // search right
                         for (int x = pixel[0] + 1; x < width; x++) {
-                            point = new Point(x, pixel[1]);
+                            point = IntegerTools.makeInt(x, pixel[1]);
                             data = pixels.get(point);
                             if (data != null) {
                                 newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
@@ -601,7 +610,7 @@ public class TriTexture {
                         if (!found) {
                             // search left
                             for (int x = pixel[0] - 1; x > -1; x--) {
-                                point = new Point(x, pixel[1]);
+                                point = IntegerTools.makeInt(x, pixel[1]);
                                 data = pixels.get(point);
                                 if (data != null) {
                                     newPixels.add(new int[]{pixel[0], pixel[1], data[2]});
@@ -627,7 +636,7 @@ public class TriTexture {
         for (int[] pixel : newPixels) {
             int x = pixel[0] - minX;
             int y = pixel[1] - minY;
-            pixels.put(new Point(x, y), new int[] {x, y, pixel[2]});
+            pixels.put(IntegerTools.makeInt(x, y), new int[] {x, y, pixel[2]});
         }
         // compute the new width and height
         int newWidth = maxX - minX + 1;
@@ -646,7 +655,7 @@ public class TriTexture {
 
     // compress the texture and return new size
     // Note: This changes the pixel array and also the uv positions (!)
-    protected static int[] compress(int width, int height, HashMap<Point, int[]> pixels, double[][] uvPoints) {
+    protected static int[] compress(int width, int height, TIntObjectHashMap<int[]> pixels, double[][] uvPoints) {
         // size array (that might still change!)
         int[] size = new int[] {width, height, 1};
         // -- compress this texture (scale if this can be done loss-less)

@@ -1,6 +1,8 @@
 package com.vitco.export.container;
 
 import com.vitco.util.graphic.G2DUtil;
+import com.vitco.util.misc.IntegerTools;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
@@ -8,7 +10,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Random;
 
 public class TriTextureTest {
@@ -18,13 +19,13 @@ public class TriTextureTest {
         // load image that we want to compress
         BufferedImage input = ImageIO.read(new File("C:\\Users\\flux\\Dropbox\\java\\VoxelShop\\Test Files\\Texture Compression\\sample25.png"));
         // create hashmap with pixels
-        HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
+        TIntObjectHashMap<int[]> pixels = new TIntObjectHashMap<int[]>();
         for (int x = 0, width = input.getWidth(); x < width; x++) {
             for (int y = 0, height = input.getHeight(); y < height; y++) {
                 int rgb = input.getRGB(x,y);
                 // check that this is not a fully transparent pixel
                 if (((rgb >> 24) & 0xff) != 0) {
-                    pixels.put(new Point(x,y), new int[]{x, y, rgb});
+                    pixels.put(IntegerTools.makeInt(x, y), new int[]{x, y, rgb});
                 }
             }
         }
@@ -48,7 +49,7 @@ public class TriTextureTest {
         BufferedImage img = new BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB);
 
         // print found voxels
-        for (int[] p : pixels.values()) {
+        for (int[] p : pixels.valueCollection()) {
             if (p[0] > -1 && p[1] > -1 && p[0] < img.getWidth() && p[1] < img.getHeight()) {
                 img.setRGB(p[0], p[1], p[2]);
             }
@@ -62,7 +63,7 @@ public class TriTextureTest {
 
         // draw outlines of the voxels
         g2.setColor(Color.WHITE);
-        for (int[] p : pixels.values()) {
+        for (int[] p : pixels.valueCollection()) {
             g2.drawRect( (p[0])*zoom, (p[1])*zoom, zoom, zoom);
         }
 
@@ -140,15 +141,15 @@ public class TriTextureTest {
                     uvPoints[2][0] * size[0],  uvPoints[2][1] * size[1]
             );
             // generate required points (two colors)
-            HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
+            TIntObjectHashMap<int[]> pixels = new TIntObjectHashMap<int[]>();
             for (int[] point : points) {
-                pixels.put(new Point(point[0], point[1]), new int[] {point[0], point[1],
+                pixels.put(IntegerTools.makeInt(point[0], point[1]), new int[] {point[0], point[1],
                         rand.nextBoolean() ? Color.RED.getRGB() : Color.BLUE.getRGB()
                 });
             }
 
             // -- compress
-            HashMap<Point, int[]> pixelsCompressed = new HashMap<Point, int[]>();
+            TIntObjectHashMap<int[]> pixelsCompressed = new TIntObjectHashMap<int[]>();
             pixelsCompressed.putAll(pixels);
             double[][] uvPointsCompressed = new double[][] {
                     new double[] {uvPoints[0][0], uvPoints[0][1]},
@@ -197,7 +198,7 @@ public class TriTextureTest {
                 // print points that are checked
 //                System.out.println(x + " " + y + " vs " + xCompressed + " " + yCompressed);
                 // check that the color values match
-                assert pixels.get(new Point(x, y))[2] == pixelsCompressed.get(new Point(xCompressed, yCompressed))[2];
+                assert pixels.get(IntegerTools.makeInt(x, y))[2] == pixelsCompressed.get(IntegerTools.makeInt(xCompressed, yCompressed))[2];
             }
 
         }

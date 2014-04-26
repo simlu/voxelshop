@@ -1,13 +1,13 @@
 package com.vitco.util.graphic;
 
+import com.vitco.util.misc.IntegerTools;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Test class for TextureTools
@@ -17,13 +17,13 @@ public class TextureToolsTest {
     private void compress(String image) throws IOException {
         BufferedImage img = ImageIO.read(new File("C:\\Users\\flux\\Dropbox\\java\\VoxelShop\\Test Files\\Texture Compression\\" + image + ".png"));
         // create hashmap
-        HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
+        TIntObjectHashMap<int[]> pixels = new TIntObjectHashMap<int[]>();
         for (int x = 0, width = img.getWidth(); x < width; x++) {
             for (int y = 0, height = img.getHeight(); y < height; y++) {
                 int rgb = img.getRGB(x,y);
                 // check that this is not a fully transparent pixel
                 if (((rgb >> 24) & 0xff) != 0) {
-                    pixels.put(new Point(x,y), new int[]{x, y, rgb});
+                    pixels.put(IntegerTools.makeInt(x, y), new int[]{x, y, rgb});
                 }
             }
         }
@@ -70,7 +70,7 @@ public class TextureToolsTest {
         }
         // write final image
         BufferedImage imgResult = new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB);
-        for (int[] pixel : pixels.values()) {
+        for (int[] pixel : pixels.valueCollection()) {
             imgResult.setRGB(pixel[0], pixel[1], pixel[2]);
         }
         ImageIO.write(imgResult, "png", new File("C:\\Users\\flux\\Dropbox\\java\\VoxelShop\\Test Files\\Texture Compression\\" + image + "_result.png"));
@@ -87,13 +87,13 @@ public class TextureToolsTest {
     private int[] getOffsets(String image, boolean useHeight) throws IOException {
         BufferedImage img = ImageIO.read(new File("C:\\Users\\flux\\Dropbox\\java\\VoxelShop\\Test Files\\Texture Compression\\" + image + ".png"));
         // create hashmap
-        HashMap<Point, int[]> pixels = new HashMap<Point, int[]>();
+        TIntObjectHashMap<int[]> pixels = new TIntObjectHashMap<int[]>();
         for (int x = 0, width = img.getWidth(); x < width; x++) {
             for (int y = 0, height = img.getHeight(); y < height; y++) {
                 int rgb = img.getRGB(x,y);
                 // check that this is not a fully transparent pixel
                 if (((rgb >> 24) & 0xff) != 0) {
-                    pixels.put(new Point(x, y), new int[]{x, y, rgb});
+                    pixels.put(IntegerTools.makeInt(x, y), new int[]{x, y, rgb});
                 }
             }
         }
