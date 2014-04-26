@@ -142,7 +142,6 @@ public class TriTextureManager {
                 this.addTexture(parentTexture);
             }
             len--;
-            //System.out.println(len);
         }
 
         // invalidate texture list (for id generation)
