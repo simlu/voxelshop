@@ -382,13 +382,21 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
         short stepY = (short) Math.signum(dir.y);
         short stepZ = (short) Math.signum(dir.z);
 
+        boolean stepXB = stepX > 0;
+        boolean stepYB = stepY > 0;
+        boolean stepZB = stepZ > 0;
+
+        short sideX = (short) (stepXB ? 1 : 0);
+        short sideY = (short) (stepYB ? 3 : 2);
+        short sideZ = (short) (stepZB ? 5 : 4);
+
         // starting grid coordinates
-        short[] pos = new short[] {
+        short lastHitSide;
+        int pos = CubeIndexer.getId(
                 (short) Math.floor(position.x),
                 (short) Math.floor(position.y),
-                (short) Math.floor(position.z),
-                0
-        };
+                (short) Math.floor(position.z)
+        );
 
         // compute the offsets
         double offX = stepX == Math.signum(position.x) ? (1 - Math.abs(position.x%1d)) : Math.abs(position.x%1d);
@@ -416,7 +424,9 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
         int tMaxY = 0;
         int tMaxZ = 0;
 
-        while (true) {
+        // only check for nearby voxels (ray length)
+        int i = 0;
+        while (i++ < 400) {
 
             double diffYX = valYX * (tMaxX + offX) - (tMaxY + offY);
 
@@ -424,42 +434,32 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
                 double diffZX = valZX * (tMaxX + offX) - (tMaxZ + offZ);
                 if (diffZX < 0) {
                     tMaxX++;
-                    pos[0] += stepX;
-                    pos[3] = (short) (stepX == 1 ? 1 : 0);
-                    if (Math.abs(pos[0]) >= CubeIndexer.radius) {
-                        return null;
-                    }
+                    pos = CubeIndexer.changeX(pos, stepXB);
+                    lastHitSide = sideX;
                 } else {
                     tMaxZ++;
-                    pos[2] += stepZ;
-                    pos[3] = (short) (stepZ == 1 ? 5 : 4);
-                    if (Math.abs(pos[2]) >= CubeIndexer.radius) {
-                        return null;
-                    }
+                    pos = CubeIndexer.changeZ(pos, stepZB);
+                    lastHitSide = sideZ;
                 }
             } else {
                 double diffZY = valZY * (tMaxY + offY) - (tMaxZ + offZ);
                 if (diffZY < 0) {
                     tMaxY++;
-                    pos[1] += stepY;
-                    pos[3] = (short) (stepY == 1 ? 3 : 2);
-                    if (Math.abs(pos[1]) >= CubeIndexer.radius) {
-                        return null;
-                    }
+                    pos = CubeIndexer.changeY(pos, stepYB);
+                    lastHitSide = sideY;
                 } else {
                     tMaxZ++;
-                    pos[2] += stepZ;
-                    pos[3] = (short) (stepZ == 1 ? 5 : 4);
-                    if (Math.abs(pos[2]) >= CubeIndexer.radius) {
-                        return null;
-                    }
+                    pos = CubeIndexer.changeZ(pos, stepZB);
+                    lastHitSide = sideZ;
                 }
             }
 
-            if (this.contains(pos)) {
-                return pos;
+            // check for containment
+            if (id2obj.containsKey(pos)) {
+                short[] result = CubeIndexer.getPos(pos);
+                return new short[] {result[0], result[1], result[2], lastHitSide};
             }
         }
-
+        return null;
     }
 }

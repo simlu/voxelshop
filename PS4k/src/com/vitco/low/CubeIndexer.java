@@ -25,7 +25,7 @@ public class CubeIndexer {
 
     // compute the 1d representation for the position (x right, y up, z into background)
     public static int getId(int x, int y, int z) {
-        return min + (x + radius) + (y + radius) * width + (z + radius) * widthwidth;
+        return min + (x + radius) + (z + radius) * width + (y + radius) * widthwidth;
     }
 
     // compute the 1d representation for the position (x right, y up, z into background)
@@ -36,4 +36,13 @@ public class CubeIndexer {
         return new short[]{x,y,z};
     }
 
+    public static int changeX(int pos, boolean add) {
+        return pos + (add ? 1 : -1);
+    }
+    public static int changeY(int pos, boolean add) {
+        return pos + (add ? widthwidth : -widthwidth);
+    }
+    public static int changeZ(int pos, boolean add) {
+        return pos + (add ? width : -width);
+    }
 }
