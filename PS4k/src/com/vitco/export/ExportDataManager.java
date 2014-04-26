@@ -127,6 +127,8 @@ public class ExportDataManager {
                 // generate triangles
                 short[][][] polys = Grid2PolyHelper.convert(data);
                 for (DelaunayTriangle tri : Grid2TriPolyFast.triangulate(polys)) {
+//                for (DelaunayTriangle tri : Grid2TriGreedyOptimal.triangulate(data)) {
+//                for (DelaunayTriangle tri : Grid2TriMono.triangulate(data, false)) {
 
                     // create the triangle
                     TexTriangle texTri = new TexTriangle(tri, triangleManager, i);

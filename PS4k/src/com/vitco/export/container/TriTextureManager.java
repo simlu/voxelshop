@@ -104,7 +104,7 @@ public class TriTextureManager {
         Collections.sort(textures, new Comparator<TriTexture>() {
             @Override
             public int compare(TriTexture o1, TriTexture o2) {
-                return o2.getPixelCount() - o1.getPixelCount();
+                return o2.getArea() - o1.getArea();
             }
         });
         // -- combine remaining "parent" textures into one image
@@ -117,6 +117,7 @@ public class TriTextureManager {
             for (int i = 2; i < len; i++) {
                 TriTexture compareTo = textures.get(i);
                 float newSim = texture.jaccard(compareTo);
+                // note: this gets the largest most similar neighbour
                 if (newSim > similarity) {
                     similarity = newSim;
                     mergeTo = compareTo;
@@ -141,6 +142,7 @@ public class TriTextureManager {
                 this.addTexture(parentTexture);
             }
             len--;
+            //System.out.println(len);
         }
 
         // invalidate texture list (for id generation)

@@ -151,12 +151,96 @@ public class ImageComparator {
         int[] result = new int[]{one.width, 0, 0};
         int width = one.width + two.width;
         int height = Math.max(one.height, two.height);
+        // add to bottom if the first image is wide
+        if (width > height * 3) {
+            result = new int[]{0, one.height, 0};
+            width = Math.max(one.width, two.width);
+            height = one.height + two.height;
+        }
         int area = width * height;
         int pixelOverlap = 0;
 
+        int originalWidth = width;
+        int originalHeight = height;
+
+        // loop over all "flipped" start positions
+        // (i.e. the width and height of "two" are swapped)
+        for (int x = -two.height + 1; x <= one.width; x++) {
+            for (int y = -two.width + 1; y < one.height; y++) {
+                // compute intersection area
+                int minX = Math.max(0, x);
+                int minY = Math.max(0, y);
+                int maxX = Math.min(one.width, x + two.height);
+                int maxY = Math.min(one.height, y + two.width);
+                // compute new width, height and pixel count
+                int widthTmp = Math.max(one.width, x + two.height) - Math.min(0, x);
+                int heightTmp = Math.max(one.height, y + two.width) - Math.min(0, y);
+                int areaTmp = widthTmp * heightTmp;
+                // do some restriction checking
+                if ((area >= areaTmp) &&
+                        // ensure that the image can not only grow into one direction
+                        (widthTmp < heightTmp * 3 || (originalWidth != width && width >= widthTmp)) &&
+                        (heightTmp < widthTmp * 3 || (originalHeight != height && height >= heightTmp))) {
+                    // initialize variables
+                    boolean[] matched = new boolean[] {true, true, true, true};
+                    int[] pixelOverlapTmp = new int[4];
+                    // loop over all intersection points
+                    loop: for (int i = minX; i < maxX; i++) {
+                        for (int j = minY; j < maxY; j++) {
+                            // compute point in static image ("one")
+                            Point p1 = new Point(i, j);
+                            // -- check for overlap of corresponding pixel
+                            // 0 : check for "rotation 1" (1)
+                            // 1 : check for "rotation 3" (3)
+                            // 2 : check for "flipped and rotation 1" (5)
+                            // 3 : check for "flipped and rotation 3" (7)
+                            for (int k = 0; k < 4; k ++) {
+                                // only proceed if this check has not already failed
+                                if (matched[k]) {
+                                    // compute the corresponding pixel in image "two"
+                                    Point p2;
+                                    switch (k) {
+                                        case 0: p2 = new Point(j - y, two.height - 1 - (i - x)); break;
+                                        case 1: p2 = new Point(two.width - 1 - (j - y), i - x); break;
+                                        case 2: p2 = new Point(two.width - 1 - (j - y), two.height - 1 - (i - x)); break;
+                                        default: p2 = new Point(j - y, i - x); break;
+                                    }
+                                    // check for containment
+                                    if (one.pixels.containsKey(p1) && two.pixels.containsKey(p2)) {
+                                        if (one.pixels.get(p1) == two.pixels.get(p2)) {
+                                            pixelOverlapTmp[k]++;
+                                        } else {
+                                            matched[k] = false;
+                                        }
+                                    }
+                                }
+                            }
+                            // if no matching is pending we break the loop
+                            if (!matched[0] && !matched[1] && !matched[2] && !matched[3]) {
+                                break loop;
+                            }
+                        }
+                    }
+
+                    // check if matches are better
+                    for (int k = 0; k < 4; k ++) {
+                        if (matched[k]) {
+                            if (area > areaTmp || pixelOverlapTmp[k] > pixelOverlap) {
+                                result = new int[]{x, y, k * 2 + 1};
+                                area = areaTmp;
+                                width = widthTmp;
+                                height = heightTmp;
+                                pixelOverlap = pixelOverlapTmp[k];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // loop over all "non flipped" start positions
-        for (int x = -two.width; x < one.width; x++) {
-            for (int y = -two.height; y < one.height; y++) {
+        for (int x = -two.width + 1; x < one.width; x++) {
+            for (int y = -two.height + 1; y < one.height; y++) {
                 // compute intersection area
                 int minX = Math.max(0, x);
                 int minY = Math.max(0, y);
@@ -168,32 +252,60 @@ public class ImageComparator {
                 int areaTmp = widthTmp * heightTmp;
                 // do some restriction checking
                 if ((area >= areaTmp) &&
-                        (widthTmp < heightTmp * 3 || height == heightTmp) &&
-                        (heightTmp < widthTmp * 3 || width == widthTmp)) {
-                    // check if intersection matches
-                    boolean matched = true;
-                    int pixelOverlapTmp = 0;
+                        // ensure that the image can not only grow into one direction
+                        (widthTmp < heightTmp * 3 || (originalWidth != width && width >= widthTmp)) &&
+                        (heightTmp < widthTmp * 3 || (originalHeight != height && height >= heightTmp))) {
+                    // initialize variables
+                    boolean[] matched = new boolean[] {true, true, true, true};
+                    int[] pixelOverlapTmp = new int[4];
+                    // loop over all intersection points
                     loop: for (int i = minX; i < maxX; i++) {
                         for (int j = minY; j < maxY; j++) {
+                            // compute point in static image ("one")
                             Point p1 = new Point(i, j);
-                            Point p2 = new Point(i - x, j - y);
-                            if (one.pixels.containsKey(p1) && two.pixels.containsKey(p2)) {
-                                if (one.pixels.get(p1) == two.pixels.get(p2)) {
-                                    pixelOverlapTmp++;
-                                } else {
-                                    matched = false;
-                                    break loop;
+                            // -- check for overlap of corresponding pixel
+                            // 0 : check for "default orientation" (0)
+                            // 1 : check for "twice rotated" (2)
+                            // 2 : check for "flipped" (4)
+                            // 3 : check for "flipped and twice rotated" (6)
+                            for (int k = 0; k < 4; k ++) {
+                                // only proceed if this check has not already failed
+                                if (matched[k]) {
+                                    // compute the corresponding pixel in image "two"
+                                    Point p2;
+                                    switch (k) {
+                                        case 0: p2 = new Point(i - x, j - y); break;
+                                        case 1: p2 = new Point(two.width - 1 - (i - x), two.height - 1 - (j - y)); break;
+                                        case 2: p2 = new Point(two.width - 1 - (i - x), j - y); break;
+                                        default: p2 = new Point(i - x, two.height - 1 - (j - y)); break;
+                                    }
+                                    // check for containment
+                                    if (one.pixels.containsKey(p1) && two.pixels.containsKey(p2)) {
+                                        if (one.pixels.get(p1) == two.pixels.get(p2)) {
+                                            pixelOverlapTmp[k]++;
+                                        } else {
+                                            matched[k] = false;
+                                        }
+                                    }
                                 }
+                            }
+                            // if no matching is pending we break the loop
+                            if (!matched[0] && !matched[1] && !matched[2] && !matched[3]) {
+                                break loop;
                             }
                         }
                     }
-                    if (matched) {
-                        if (area > areaTmp || pixelOverlapTmp > pixelOverlap) {
-                            result = new int[]{x, y, 0};
-                            area = areaTmp;
-                            width = widthTmp;
-                            height = heightTmp;
-                            pixelOverlap = pixelOverlapTmp;
+
+                    // check if matches are better
+                    for (int k = 0; k < 4; k ++) {
+                        if (matched[k]) {
+                            if (area > areaTmp || pixelOverlapTmp[k] > pixelOverlap) {
+                                result = new int[]{x, y, k * 2};
+                                area = areaTmp;
+                                width = widthTmp;
+                                height = heightTmp;
+                                pixelOverlap = pixelOverlapTmp[k];
+                            }
                         }
                     }
                 }

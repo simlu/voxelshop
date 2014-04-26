@@ -94,6 +94,12 @@ public class TriTexture {
         return imageComparator.pixelCount;
     }
 
+    // obtain the area this texture uses
+    // (this is usually larger than the pixel count)
+    public final int getArea() {
+        return width * height;
+    }
+
     // obtain the jaccard distance
     public final float jaccard(TriTexture other) {
         return this.imageComparator.jaccard(other.imageComparator);
@@ -336,7 +342,7 @@ public class TriTexture {
         }
     }
 
-    // alternative constructor
+    // alternative constructor that merges two textures
     public TriTexture(TriTexture one, TriTexture two, TriTextureManager textureManager) {
         assert !one.hasParent();
         assert !two.hasParent();
@@ -358,17 +364,59 @@ public class TriTexture {
             int y = pixel[1] - minY;
             pixels.put(new Point(x, y), new int[] {x,y,pixel[2]});
         }
+        // rotate second image according to result
         for (int[] pixel : two.pixels.values()) {
-            int x = pixel[0] + maxX;
-            int y = pixel[1] + maxY;
+            int x;
+            int y;
+            switch (mergePos[2]) {
+                case 1: // 1 : check for "rotation 1" (1)
+                    x = (two.height - 1 - pixel[1]) + maxX;
+                    y = pixel[0] + maxY;
+                    break;
+                case 3: // 3 : check for "rotation 3" (3)
+                    x = pixel[1] + maxX;
+                    y = (two.width - 1 - pixel[0]) + maxY;
+                    break;
+                case 5: // 5 : check for "flipped and rotation 1" (5)
+                    x = (two.height - 1 - pixel[1]) + maxX;
+                    y = (two.width - 1 - pixel[0]) + maxY;
+                    break;
+                case 7: // 7 : check for "flipped and rotation 3" (7)
+                    x = pixel[1] + maxX;
+                    y = pixel[0] + maxY;
+                    break;
+                case 2: // 2 : check for "twice rotated" (2)
+                    x = (two.width - 1 - pixel[0]) + maxX;
+                    y = (two.height - 1 - pixel[1]) + maxY;
+                    break;
+                case 4: // 4 : check for "flipped" (4)
+                    x = (two.width - 1 - pixel[0]) + maxX;
+                    y = pixel[1] + maxY;
+                    break;
+                case 6: // 6 : check for "flipped and twice rotated" (6)
+                    x = pixel[0] + maxX;
+                    y = (two.height - 1 - pixel[1]) + maxY;
+                    break;
+                default: // 0 : check for "default orientation" (0)
+                    x = pixel[0] + maxX;
+                    y = pixel[1] + maxY;
+                    break;
+            }
             pixels.put(new Point(x, y), new int[] {x,y,pixel[2]});
         }
+
         // set the image comparator
         imageComparator = new ImageComparator(pixels.values());
 
-        // compute new dimensions
-        this.width = Math.max(two.width + maxX, one.width - minX);
-        this.height = Math.max(two.height + maxY, one.height - minY);
+        // compute new dimensions (depending on whether the second
+        // texture was rotated or not)
+        if (mergePos[2]%2 == 0) {
+            this.width = Math.max(two.width + maxX, one.width - minX);
+            this.height = Math.max(two.height + maxY, one.height - minY);
+        } else {
+            this.width = Math.max(two.height + maxX, one.width - minX);
+            this.height = Math.max(two.width + maxY, one.height - minY);
+        }
 
         // -----------
 

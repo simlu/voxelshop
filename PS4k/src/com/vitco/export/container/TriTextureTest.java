@@ -173,6 +173,8 @@ public class TriTextureTest {
                 do {
                     // we do not care about triangle corner points
                     // (since we're interpolating later anyway!)
+                    // Note: these points might cause trouble since they might be rounded to the next integer value
+                    // and that pixel might outside the triangle area
                     r1 = rand.nextDouble();
                     r2 = rand.nextDouble();
                 } while (r1 == 1 || r2 == 1 || r1 == 0 || r2 == 0);
