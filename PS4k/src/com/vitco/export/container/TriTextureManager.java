@@ -104,7 +104,7 @@ public class TriTextureManager {
         Collections.sort(textures, new Comparator<TriTexture>() {
             @Override
             public int compare(TriTexture o1, TriTexture o2) {
-                return o2.getArea() - o1.getArea();
+                return Math.max(o2.width, o2.height) - Math.max(o1.width, o1.height);
             }
         });
         // -- combine remaining "parent" textures into one image

@@ -36,8 +36,8 @@ public class TriTexture {
     private TIntObjectHashMap<int[]> pixels = new TIntObjectHashMap<int[]>();
 
     // size of this texture image
-    private final int width;
-    private final int height;
+    public final int width;
+    public final int height;
 
     // reference to texture manager
     private final TriTextureManager textureManager;
