@@ -1,5 +1,6 @@
 package com.vitco.low.hull;
 
+import com.threed.jpct.SimpleVector;
 import com.vitco.low.CubeIndexer;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -365,5 +366,100 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
             result[count++] = CubeIndexer.getPos(it.next());
         }
         return result;
+    }
+
+    // do a hit test against the voxels in this hull manager
+    @Override
+    public short[] hitTest(SimpleVector position, SimpleVector dir) {
+
+        // todo: move origin into bounding box of hull manager
+        // Note: This is only needed when camera is zoomed out far!)
+        // Util3D provides a triangle ray intersection test that could be used
+        // with a bounding box (needs to be modified to return "t", the distance value)
+
+        // step direction
+        short stepX = (short) Math.signum(dir.x);
+        short stepY = (short) Math.signum(dir.y);
+        short stepZ = (short) Math.signum(dir.z);
+
+        // starting grid coordinates
+        short[] pos = new short[] {
+                (short) Math.floor(position.x),
+                (short) Math.floor(position.y),
+                (short) Math.floor(position.z),
+                0
+        };
+
+        // compute the offsets
+        double offX = stepX == Math.signum(position.x) ? (1 - Math.abs(position.x%1d)) : Math.abs(position.x%1d);
+        double offY = stepY == Math.signum(position.y) ? (1 - Math.abs(position.y%1d)) : Math.abs(position.y%1d);
+        double offZ = stepZ == Math.signum(position.z) ? (1 - Math.abs(position.z%1d)) : Math.abs(position.z%1d);
+        offX = (double)Math.round(offX * 1000000000) / 1000000000;
+        offY = (double)Math.round(offY * 1000000000) / 1000000000;
+        offZ = (double)Math.round(offZ * 1000000000) / 1000000000;
+        if (offX == 0) {
+            offX = 1;
+        }
+        if (offY == 0) {
+            offY = 1;
+        }
+        if (offZ == 0) {
+            offZ = 1;
+        }
+
+        // the "progress" value
+        double valYX = Math.abs(dir.y / dir.x);
+        double valZX = Math.abs(dir.z / dir.x);
+        double valZY = Math.abs(dir.z / dir.y);
+
+        int tMaxX = 0;
+        int tMaxY = 0;
+        int tMaxZ = 0;
+
+        while (true) {
+
+            double diffYX = valYX * (tMaxX + offX) - (tMaxY + offY);
+
+            if (diffYX < 0) {
+                double diffZX = valZX * (tMaxX + offX) - (tMaxZ + offZ);
+                if (diffZX < 0) {
+                    tMaxX++;
+                    pos[0] += stepX;
+                    pos[3] = (short) (stepX == 1 ? 1 : 0);
+                    if (Math.abs(pos[0]) >= CubeIndexer.radius) {
+                        return null;
+                    }
+                } else {
+                    tMaxZ++;
+                    pos[2] += stepZ;
+                    pos[3] = (short) (stepZ == 1 ? 5 : 4);
+                    if (Math.abs(pos[2]) >= CubeIndexer.radius) {
+                        return null;
+                    }
+                }
+            } else {
+                double diffZY = valZY * (tMaxY + offY) - (tMaxZ + offZ);
+                if (diffZY < 0) {
+                    tMaxY++;
+                    pos[1] += stepY;
+                    pos[3] = (short) (stepY == 1 ? 3 : 2);
+                    if (Math.abs(pos[1]) >= CubeIndexer.radius) {
+                        return null;
+                    }
+                } else {
+                    tMaxZ++;
+                    pos[2] += stepZ;
+                    pos[3] = (short) (stepZ == 1 ? 5 : 4);
+                    if (Math.abs(pos[2]) >= CubeIndexer.radius) {
+                        return null;
+                    }
+                }
+            }
+
+            if (this.contains(pos)) {
+                return pos;
+            }
+        }
+
     }
 }

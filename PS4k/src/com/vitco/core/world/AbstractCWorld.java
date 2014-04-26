@@ -53,22 +53,24 @@ public abstract class AbstractCWorld extends World {
             getCamera().moveCamera(offset, -length);
         } else {
             renderScene(buffer);
-            drawWireframe(buffer, VitcoSettings.SELECTED_VOXEL_WIREFRAME_COLOR);
+            drawWireframe(buffer, selected);
         }
     }
 
     // find the collision point for a selected voxel (shifted selection)
-    public final SimpleVector shiftedCollisionPoint(SimpleVector dir) {
+    public final short[] getShiftedCollisionVoxel(SimpleVector dir) {
         // check if we hit a <selected> voxel
-        SimpleVector result = null;
+        short[] result = null;
         Camera camera = getCamera();
         camera.moveCamera(offset, length);
-        Object[] res = calcMinDistanceAndObject3D(camera.getPosition(), dir, 100000);
-        if (res[1] != null) { // something hit
+        SimpleVector origin = camera.getPosition().calcAdd(
+                new SimpleVector(VitcoSettings.HALF_VOXEL_SIZE, VitcoSettings.VOXEL_GROUND_DISTANCE, VitcoSettings.HALF_VOXEL_SIZE)
+        );
+        origin.scalarMul(1 / VitcoSettings.VOXEL_SIZE);
+        short[] hit = this.hitTest(origin, dir);
+        if (hit != null) { // something hit
             // find collision point
-            result = camera.getPosition();
-            dir.scalarMul((Float)res[0]);
-            result.add(dir);
+            result = hit;
         }
         camera.moveCamera(offset, -length);
         return result;
@@ -100,4 +102,6 @@ public abstract class AbstractCWorld extends World {
     // get side for world object
     public abstract Integer getSide(Integer objectId);
 
+    // do a hit test against the voxels in this world
+    public abstract short[] hitTest(SimpleVector position, SimpleVector dir);
 }

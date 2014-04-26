@@ -133,6 +133,7 @@ public final class VitcoSettings {
 
     // general voxel stuff
     public static final float VOXEL_SIZE = 10f;
+    public static final float HALF_VOXEL_SIZE = 5f;
 
     public static final float VOXEL_GROUND_DISTANCE = VitcoSettings.VOXEL_SIZE/2;
     public static final Color VOXEL_GROUND_PLANE_COLOR = new Color(215, 215, 215);

@@ -103,7 +103,7 @@ public class SelectTool extends AbstractVoxelTool {
     // shifting selection,
     // if neq null user is currently dragging the selection
     private int[] currentSelectionShift = null;
-    // the reference click position (in 3D)
+    // the reference click voxel (in 3D)
     private SimpleVector dragStartReferencePos = null;
     // the "real" drag position (applying shifting)
     private SimpleVector dragStart = null;
@@ -116,8 +116,8 @@ public class SelectTool extends AbstractVoxelTool {
     public void move(MouseEvent e) {
         data.highlightVoxel(null);
 
-        SimpleVector hitPos = container.shiftedCollisionPoint(e.getPoint());
-        if (hitPos != null) {
+        short[] hitVoxel = container.getShiftedCollisionVoxel(e.getPoint());
+        if (hitVoxel != null) {
             container.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         } else {
             container.setCursor(Cursor.getDefaultCursor());
@@ -129,10 +129,10 @@ public class SelectTool extends AbstractVoxelTool {
         start = e.getPoint();
         mouse3down = isMouse3Down();
         // check if we hit something selected
-        SimpleVector hitPos = container.shiftedCollisionPoint(e.getPoint());
-        if (hitPos != null) {
+        short[] hitVoxel = container.getShiftedCollisionVoxel(e.getPoint());
+        if (hitVoxel != null) {
             // start dragging selection
-            dragStartReferencePos = hitPos;
+            dragStartReferencePos = new SimpleVector(hitVoxel[0], hitVoxel[1], hitVoxel[2]);
             dragStart = container.convert2D3D(e.getX(), e.getY(), dragStartReferencePos);
             dragStop = null;
             currentSelectionShift = data.getVoxelSelectionShift();

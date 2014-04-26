@@ -1,5 +1,7 @@
 package com.vitco.low.hull;
 
+import com.threed.jpct.SimpleVector;
+
 import java.util.Set;
 
 /**
@@ -30,4 +32,7 @@ public interface HullFinderInterface<T> {
 
     // get the current hull
     short[][] getHull(int direction);
+
+    // do a hit test against the voxels in this hull manager
+    short[] hitTest(SimpleVector position, SimpleVector dir);
 }

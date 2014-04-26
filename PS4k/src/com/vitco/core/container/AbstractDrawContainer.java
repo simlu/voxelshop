@@ -1,13 +1,11 @@
 package com.vitco.core.container;
 
 import com.threed.jpct.Interact2D;
-import com.threed.jpct.Object3D;
 import com.threed.jpct.SimpleVector;
 import com.vitco.core.CCamera;
 import com.vitco.core.CameraChangeListener;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.ExtendedVector;
-import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.AbstractCWorld;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.settings.DynamicSettings;
@@ -334,32 +332,28 @@ public abstract class AbstractDrawContainer extends JPanel {
         int[] voxelPos = null;
         // check if we hit something
         SimpleVector dir = this.getDirection(point.x, point.y);
-        Object[] res = world.calcMinDistanceAndObject3D(camera.getPosition(), dir, 10000);
-        if (res[1] != null) { // something hit
-            Object3D obj3D = ((Object3D)res[1]);
-
-            // find collision point
-            SimpleVector colPoint = camera.getPosition();
-            dir.scalarMul((Float)res[0]);
-            colPoint.add(dir);
-
-            voxelPos = world.getVoxelPos(obj3D.getID(), colPoint.x, colPoint.y, colPoint.z);
-            if (voxelPos != null) {
-                Voxel hitVoxel = data.searchVoxel(voxelPos, false);
-                if (hitVoxel != null) {
-                    // find side that it hits
-                    lastActiveSide = world.getSide(obj3D.getID());
-                    if (selectNeighbour) {
-                        switch (lastActiveSide) {
-                            case 0: voxelPos[0] += 1; break;
-                            case 1: voxelPos[0] -= 1; break;
-                            case 2: voxelPos[1] += 1; break;
-                            case 3: voxelPos[1] -= 1; break;
-                            case 4: voxelPos[2] += 1; break;
-                            case 5: voxelPos[2] -= 1; break;
-                            default: break;
-                        }
-                    }
+        // shift the origin since voxel are slightly offset
+        SimpleVector origin = camera.getPosition().calcAdd(
+                new SimpleVector(VitcoSettings.HALF_VOXEL_SIZE, VitcoSettings.VOXEL_GROUND_DISTANCE, VitcoSettings.HALF_VOXEL_SIZE)
+        );
+        // scale the camera origin to the voxel space
+        origin.scalarMul(1 / VitcoSettings.VOXEL_SIZE);
+        // test if we do hit a voxel
+        short[] hit = world.hitTest(origin, dir);
+        if (hit != null) { // something hit
+            voxelPos = new int[] {
+                    hit[0], hit[1], hit[2]
+            };
+            lastActiveSide = hit[3];
+            if (selectNeighbour) {
+                switch (lastActiveSide) {
+                    case 0: voxelPos[0] += 1; break;
+                    case 1: voxelPos[0] -= 1; break;
+                    case 2: voxelPos[1] += 1; break;
+                    case 3: voxelPos[1] -= 1; break;
+                    case 4: voxelPos[2] += 1; break;
+                    case 5: voxelPos[2] -= 1; break;
+                    default: break;
                 }
             }
         } else if (useBoundingBox) {
@@ -450,8 +444,8 @@ public abstract class AbstractDrawContainer extends JPanel {
     }
 
     // do hit detection with shifted selection
-    public final SimpleVector shiftedCollisionPoint(Point p) {
-        return selectedVoxelsWorld.shiftedCollisionPoint(
+    public final short[] getShiftedCollisionVoxel(Point p) {
+        return selectedVoxelsWorld.getShiftedCollisionVoxel(
                 this.getDirection(p.x, p.y)
         );
     }

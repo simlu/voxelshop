@@ -1,5 +1,6 @@
 package com.vitco.core.world;
 
+import com.threed.jpct.SimpleVector;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.container.BorderObject3D;
 import com.vitco.core.world.container.VoxelManager;
@@ -340,6 +341,12 @@ public class CWorld extends AbstractCWorld {
     @Override
     public Integer getSide(Integer objectId) {
         return worldId2Side.get(objectId);
+    }
+
+    // do a hit test against the voxels in this world
+    @Override
+    public short[] hitTest(SimpleVector position, SimpleVector dir) {
+        return hullManager.hitTest(position, dir);
     }
 
 }
