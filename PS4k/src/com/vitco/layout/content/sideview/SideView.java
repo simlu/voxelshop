@@ -6,6 +6,7 @@ import com.threed.jpct.Config;
 import com.threed.jpct.SimpleVector;
 import com.vitco.core.EngineInteractionPrototype;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.low.hull.HullManager;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.pref.PrefChangeListener;
 import com.vitco.settings.VitcoSettings;
@@ -60,12 +61,17 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
     // --------------
     // define ghost overlay that we draw
 
-    private VoxelOutline voxelOutline;
+    private boolean voxelOutlineOutdated = false;
+    SimpleVector[][] voxelOutlineData = new SimpleVector[0][];
+    private HullManager<Voxel> voxelOutlineManager = new HullManager<Voxel>();
 
     @Override
     protected SimpleVector[][] getGhostOverlay() {
-        // return the edges to draw
-        return voxelOutline.getLines();
+        if (voxelOutlineOutdated) {
+            voxelOutlineOutdated = false;
+            voxelOutlineData = voxelOutlineManager.getOutline(side);
+        }
+        return voxelOutlineData;
     }
 
     @Override
@@ -75,26 +81,29 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
         Voxel[][] changedVoxel = data.getNewSideVoxel("side" + side, side, prevcurrentplane);
 
         if (changedVoxel[0] == null) {
-            voxelOutline.clear();
+            voxelOutlineManager.clear();
+            voxelOutlineOutdated = true;
             result = true;
         } else {
             // remove voxels
             for (Voxel remove : changedVoxel[0]) {
-                voxelOutline.removePosition(remove);
+                voxelOutlineManager.clearPosition(remove.posId);
             }
             // update has changed
             if (changedVoxel[0].length > 0) {
+                voxelOutlineOutdated = true;
                 result = true;
             }
         }
 
         // add new voxels
         for (Voxel add : changedVoxel[1]) {
-            voxelOutline.addPosition(add);
+            voxelOutlineManager.update(add.posId, add);
         }
 
         // update has changed
         if (changedVoxel[1].length > 0) {
+            voxelOutlineOutdated = true;
             result = true;
         }
 
@@ -226,7 +235,6 @@ public class SideView extends EngineInteractionPrototype implements SideViewInte
 
         // draw the ghost voxels (outline)
         container.setDrawGhostOverlay(true);
-        voxelOutline = new VoxelOutline(side); // prepare outline helper
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane,VitcoSettings.SIDE_VIEW_MAX_ZOOM*2);

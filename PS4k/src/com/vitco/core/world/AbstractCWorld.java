@@ -63,9 +63,7 @@ public abstract class AbstractCWorld extends World {
         short[] result = null;
         Camera camera = getCamera();
         camera.moveCamera(offset, length);
-        SimpleVector origin = camera.getPosition().calcAdd(
-                new SimpleVector(VitcoSettings.HALF_VOXEL_SIZE, VitcoSettings.VOXEL_GROUND_DISTANCE, VitcoSettings.HALF_VOXEL_SIZE)
-        );
+        SimpleVector origin = camera.getPosition().calcAdd(VitcoSettings.VOXEL_WORLD_OFFSET);
         origin.scalarMul(1 / VitcoSettings.VOXEL_SIZE);
         short[] hit = this.hitTest(origin, dir);
         if (hit != null) { // something hit
@@ -83,9 +81,6 @@ public abstract class AbstractCWorld extends World {
 
     // erase the entire content of this world
     public abstract void clear();
-
-    // clear field by position
-    public abstract boolean clearPosition(int[] pos);
 
     // clear field by voxel
     public abstract boolean clearPosition(Voxel voxel);

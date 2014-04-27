@@ -145,7 +145,7 @@ public final class Data extends VoxelHighlighting implements DataInterface {
 //            Voxel[] voxels = getVisibleLayerVoxel();
 //            HullManager<Voxel> hullManager = new HullManager<Voxel>();
 //            for (Voxel voxel : voxels) {
-//                hullManager.update(new short[]{(short) voxel.x, (short) voxel.y, (short) voxel.z}, voxel);
+//                hullManager.update(voxel.posId, voxel);
 //            }
 //
 //            ColladaFile colladaExport = new ColladaFile();

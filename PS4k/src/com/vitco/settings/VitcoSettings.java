@@ -141,6 +141,9 @@ public final class VitcoSettings {
     public static final Color VOXEL_PREVIEW_LINE_COLOR = new Color(0,0,0,100);
     public static final Color VOXEL_PREVIEW_LINE_COLOR_BRIGHT = new Color(255,255,255,100);
 
+    public static final SimpleVector VOXEL_WORLD_OFFSET = new SimpleVector(
+            VitcoSettings.HALF_VOXEL_SIZE, VitcoSettings.VOXEL_GROUND_DISTANCE, VitcoSettings.HALF_VOXEL_SIZE);
+
     public static final Color[] GRAYSCALE_COLOR_SWATCH = new Color[]{
             new Color(0, 0, 0), new Color(14, 14, 14), new Color(27, 27, 27),
             new Color(41, 41, 41), new Color(54, 54, 54), new Color(68, 68, 68),

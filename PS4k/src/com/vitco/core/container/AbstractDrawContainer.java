@@ -332,10 +332,8 @@ public abstract class AbstractDrawContainer extends JPanel {
         int[] voxelPos = null;
         // check if we hit something
         SimpleVector dir = this.getDirection(point.x, point.y);
-        // shift the origin since voxel are slightly offset
-        SimpleVector origin = camera.getPosition().calcAdd(
-                new SimpleVector(VitcoSettings.HALF_VOXEL_SIZE, VitcoSettings.VOXEL_GROUND_DISTANCE, VitcoSettings.HALF_VOXEL_SIZE)
-        );
+        // shift the origin since voxels are slightly offset
+        SimpleVector origin = camera.getPosition().calcAdd(VitcoSettings.VOXEL_WORLD_OFFSET);
         // scale the camera origin to the voxel space
         origin.scalarMul(1 / VitcoSettings.VOXEL_SIZE);
         // test if we do hit a voxel

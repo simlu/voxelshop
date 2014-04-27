@@ -26,11 +26,6 @@ public class CWorld extends AbstractCWorld {
         super(culling, side, simpleMode);
     }
 
-    // convert a voxel to its short[] position
-    private static short[] voxel2Short(Voxel voxel) {
-        return new short[] {(short) voxel.x, (short) voxel.y, (short) voxel.z};
-    }
-
     // ----------------
 
     // static constructor
@@ -68,7 +63,7 @@ public class CWorld extends AbstractCWorld {
     // add or update a voxel
     @Override
     public void updateVoxel(Voxel voxel) {
-        hullManager.update(voxel2Short(voxel), voxel);
+        hullManager.update(voxel.posId, voxel);
     }
 
     // erase the entire content of this world
@@ -81,16 +76,11 @@ public class CWorld extends AbstractCWorld {
         worldNeedsClear = true;
     }
 
-    // clear field by position
-    @Override
-    public boolean clearPosition(int[] pos) {
-        return hullManager.clearPosition(new short[]{(short) pos[0], (short) pos[1], (short) pos[2]});
-    }
 
     // clear field by voxel
     @Override
     public boolean clearPosition(Voxel voxel) {
-        return hullManager.clearPosition(voxel2Short(voxel));
+        return hullManager.clearPosition(voxel.posId);
     }
 
     // ====================================

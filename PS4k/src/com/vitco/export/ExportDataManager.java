@@ -49,7 +49,7 @@ public class ExportDataManager {
         Voxel[] voxels = data.getVisibleLayerVoxel();
         HullManager<Voxel> hullManager = new HullManager<Voxel>();
         for (Voxel voxel : voxels) {
-            hullManager.update(new short[]{(short) voxel.x, (short) voxel.y, (short) voxel.z}, voxel);
+            hullManager.update(voxel.posId, voxel);
         }
 
         // store references

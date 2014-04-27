@@ -10,19 +10,29 @@ import java.util.Set;
  *
  * At most one object is expected in any position at any given time.
  */
-public interface HullFinderInterface<T> {
+public interface HullManagerInterface<T> {
 
     void clear();
 
     boolean contains(short[] pos);
 
+    boolean contains(int posId);
+
     boolean containsBorder(short[] pos, int orientation);
+
+    boolean containsBorder(int posId, int orientation);
 
     // add an object to the hull finder
     public void update(short[] pos, T object);
 
     // remove an object from this hull finder
+    void update(int posId, T object);
+
+    // remove an object from this hull finder
     public boolean clearPosition(short[] pos);
+
+    // remove an object from this hull finder
+    boolean clearPosition(int posId);
 
     // get the hull additions (in direction 0-5)
     Set<T> getHullAdditions(int direction);
@@ -32,6 +42,9 @@ public interface HullFinderInterface<T> {
 
     // get the current hull
     short[][] getHull(int direction);
+
+    // get the outline of all voxels into one direction
+    SimpleVector[][] getOutline(int direction);
 
     // do a hit test against the voxels in this hull manager
     short[] hitTest(SimpleVector position, SimpleVector dir);
