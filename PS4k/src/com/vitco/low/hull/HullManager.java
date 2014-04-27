@@ -455,7 +455,7 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
             }
 
             // check for containment
-            if (id2obj.containsKey(pos)) {
+            if (border[lastHitSide].contains(pos)) {
                 short[] result = CubeIndexer.getPos(pos);
                 return new short[] {result[0], result[1], result[2], lastHitSide};
             }

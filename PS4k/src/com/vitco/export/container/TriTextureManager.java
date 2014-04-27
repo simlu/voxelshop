@@ -80,6 +80,13 @@ public class TriTextureManager {
         // -- find textures that are "inside" other textures
         // create dummy list that we can delete from
         ArrayList<TriTexture> textures = new ArrayList<TriTexture>(this.textures);
+        // sort by size (smallest first) - this makes processing a bit faster
+        Collections.sort(textures, new Comparator<TriTexture>() {
+            @Override
+            public int compare(TriTexture o1, TriTexture o2) {
+                return Math.max(o1.width, o1.height) - Math.max(o2.width, o2.height);
+            }
+        });
         int len = textures.size();
         for (int i = 0; i < len; i++) {
             for (int j = i + 1; j < len; j++) {
@@ -100,7 +107,7 @@ public class TriTextureManager {
 
         //System.out.println("Obtained " + textures.size() + " unique textures after merging.");
 
-        // sort by size
+        // sort by size (largest first) - better combining having the "smaller ones in the back"
         Collections.sort(textures, new Comparator<TriTexture>() {
             @Override
             public int compare(TriTexture o1, TriTexture o2) {

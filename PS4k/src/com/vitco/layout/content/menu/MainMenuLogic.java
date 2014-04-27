@@ -320,8 +320,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                                         textureImgDir + " " + langSelector.getString("replace_file_query"),
                                                         langSelector.getString("replace_file_query_title"),
                                                         JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
+                                    long time = System.currentTimeMillis();
                                     if (data.exportToCollada(exportTo, exportTextureTo)) {
-                                        console.addLine(langSelector.getString("export_file_successful"));
+                                        console.addLine(
+                                                String.format(langSelector.getString("export_file_successful"), System.currentTimeMillis() - time)
+                                        );
                                     } else {
                                         console.addLine(langSelector.getString("export_file_error"));
                                     }
