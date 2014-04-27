@@ -6,6 +6,7 @@ import com.vitco.export.container.*;
 import com.vitco.low.hull.HullManager;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.low.triangulate.util.Grid2PolyHelper;
+import gnu.trove.list.array.TShortArrayList;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import java.util.ArrayList;
@@ -66,6 +67,75 @@ public class ExportDataManager {
         textureManager.validateUVMappings();
     }
 
+    // make sure that the polygon has no 3D t-junction problems
+    private short[][][] fix3DTJunctionProblems(short[][][] polys, int planeAbove, int id1, int id2, int minA, int minB) {
+        // result array
+        short[][][] result = new short[polys.length][][];
+        // temporary arrays to do comparisons
+        short[] pos1 = new short[] {(short) planeAbove, (short) planeAbove, (short) planeAbove};
+        short[] pos2 = new short[] {(short) planeAbove, (short) planeAbove, (short) planeAbove};
+        // loop over all polygons
+        for (int i1 = 0; i1 < polys.length; i1++) {
+            // create corresponding result part
+            short[][] poly = polys[i1];
+            result[i1] = new short[poly.length][];
+            // loop over outlines (poly + holes)
+            for (int i2 = 0; i2 < poly.length; i2++) {
+                short[] outline = poly[i2];
+                // create dynamic list that we can later convert to result
+                TShortArrayList list = new TShortArrayList(outline.length + 2);
+                // loop over all points
+                for (int i = 0, len = outline.length - 2; i < len; i += 2) {
+                    // add current point
+                    list.add(outline[i]);
+                    list.add(outline[i+1]);
+                    // check the type of line segment
+                    if (outline[i + 2] == outline[i]) { // x values are equal
+                        // compute the move direction
+                        int step = (outline[i + 3] > outline[i + 1]) ? 1 : -1;
+                        // move over all whole "in between" steps between this and the next point
+                        for (short y = (short) (outline[i + 1] + step); y != outline[i + 3]; y += step) {
+                            short x = (short) (outline[i] + (step == 1 ? -1 : 0) + minA);
+                            pos1[id1] = x;
+                            pos1[id2] = (short) (y + minB);
+                            pos2[id1] = x;
+                            pos2[id2] = (short) (y-1 + minB);
+                            if (hullManager.contains(pos1) != hullManager.contains(pos2)) {
+                                // the "in between" point needs to be used for triangle generation
+                                list.add(outline[i]);
+                                list.add(y);
+                            }
+                        }
+                    } else { // y values are equal
+                        // compute the move direction
+                        int step = (outline[i + 2] > outline[i]) ? 1 : -1;
+                        // move over all whole "in between" steps between this and the next point
+                        for (short x = (short) (outline[i] + step); x != outline[i + 2]; x += step) {
+                            short y = (short) (outline[i + 1] + (step == -1 ? -1 : 0) + minB);
+                            pos1[id1] = (short) (x + minA);
+                            pos1[id2] = y;
+                            pos2[id1] = (short) (x - 1 + minA);
+                            pos2[id2] = y;
+                            if (hullManager.contains(pos1) != hullManager.contains(pos2)) {
+                                // the "in between" point needs to be used for triangle generation
+                                list.add(x);
+                                list.add(outline[i + 1]);
+                            }
+                        }
+                    }
+                }
+                // add last point (same as first)
+                list.add(outline[0]);
+                list.add(outline[1]);
+                // add to result
+                short[] shortsList = new short[list.size()];
+                list.toArray(shortsList);
+                result[i1][i2] = shortsList;
+            }
+        }
+        return result;
+    }
+
     // extract the necessary information from the hull manager
     private void extract() {
         // loop over all sides
@@ -100,7 +170,7 @@ public class ExportDataManager {
                     id1 = 0;
                     id2 = 2;
                     break;
-                default:
+                default: //case 2
                     id1 = 0;
                     id2 = 1;
                     break;
@@ -126,6 +196,11 @@ public class ExportDataManager {
 
                 // generate triangles
                 short[][][] polys = Grid2PolyHelper.convert(data);
+
+                // fix 3D t-junction problems
+                int planeAbove = entries.getKey() + (i%2 == 0 ? 1 : -1);
+                polys = fix3DTJunctionProblems(polys, planeAbove, id1, id2, minA, minB);
+
                 for (DelaunayTriangle tri : Grid2TriPolyFast.triangulate(polys)) {
 //                for (DelaunayTriangle tri : Grid2TriGreedyOptimal.triangulate(data)) {
 //                for (DelaunayTriangle tri : Grid2TriMono.triangulate(data, false)) {

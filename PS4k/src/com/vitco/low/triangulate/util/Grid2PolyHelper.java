@@ -204,7 +204,7 @@ public class Grid2PolyHelper {
     // the first array holds the different polygons, the first inner array holds as
     // a first entry the polygon outline and the following entries describe the outline
     // of the holes. The inner most arrays finally describe outlines and are structured
-    // as x1,y1,x2,y2,x3,y3,....
+    // as x1,y1,x2,y2,x3,y3,....,xn,yn,x1,y1
     public static short[][][] convert(boolean[][] data) {
         // result list that still needs conversion into array, each array list holds a polygon.
         // The outline is stored in the first entry and the holes as further entries (optionally).
