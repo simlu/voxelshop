@@ -370,12 +370,17 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
 
     // do a hit test against the voxels in this hull manager
     @Override
-    public short[] hitTest(SimpleVector position, SimpleVector dir) {
+    public short[] hitTest(SimpleVector origin, SimpleVector dir) {
 
-        // todo: move origin into bounding box of hull manager
-        // Note: This is only needed when camera is zoomed out far!)
-        // Util3D provides a triangle ray intersection test that could be used
-        // with a bounding box (needs to be modified to return "t", the distance value)
+        // If the origin is outside the max box of the CubeIndexer it needs to be
+        // shifted into the cube before we can proceed
+        // Note: Not necessary atm (since the camera is usually inside the max box)
+//        origin = CubeIndexer.validateRay(origin, dir);
+//        if (origin == null) {
+//            return null;
+//        }
+
+        // ---------------
 
         // step direction
         short stepX = (short) Math.signum(dir.x);
@@ -393,15 +398,15 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
         // starting grid coordinates
         short lastHitSide;
         int pos = CubeIndexer.getId(
-                (short) Math.floor(position.x),
-                (short) Math.floor(position.y),
-                (short) Math.floor(position.z)
+                (short) Math.floor(origin.x),
+                (short) Math.floor(origin.y),
+                (short) Math.floor(origin.z)
         );
 
         // compute the offsets
-        double offX = stepX == Math.signum(position.x) ? (1 - Math.abs(position.x%1d)) : Math.abs(position.x%1d);
-        double offY = stepY == Math.signum(position.y) ? (1 - Math.abs(position.y%1d)) : Math.abs(position.y%1d);
-        double offZ = stepZ == Math.signum(position.z) ? (1 - Math.abs(position.z%1d)) : Math.abs(position.z%1d);
+        double offX = stepX == Math.signum(origin.x) ? (1 - Math.abs(origin.x%1d)) : Math.abs(origin.x%1d);
+        double offY = stepY == Math.signum(origin.y) ? (1 - Math.abs(origin.y%1d)) : Math.abs(origin.y%1d);
+        double offZ = stepZ == Math.signum(origin.z) ? (1 - Math.abs(origin.z%1d)) : Math.abs(origin.z%1d);
         offX = (double)Math.round(offX * 1000000000) / 1000000000;
         offY = (double)Math.round(offY * 1000000000) / 1000000000;
         offZ = (double)Math.round(offZ * 1000000000) / 1000000000;
@@ -455,7 +460,8 @@ public class HullManager<T> implements HullFinderInterface<T>, Serializable {
             }
 
             // check for containment
-            if (border[lastHitSide].contains(pos)) {
+            if (border[lastHitSide].contains(pos)) { // hit side has to be visible
+            //if (id2obj.containsKey(pos)) { // any voxel can be hit
                 short[] result = CubeIndexer.getPos(pos);
                 return new short[] {result[0], result[1], result[2], lastHitSide};
             }

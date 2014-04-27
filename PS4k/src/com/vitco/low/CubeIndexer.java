@@ -1,5 +1,7 @@
 package com.vitco.low;
 
+import com.threed.jpct.SimpleVector;
+import com.vitco.util.graphic.Util3D;
 import com.vitco.util.misc.IntegerTools;
 
 /**
@@ -44,5 +46,65 @@ public class CubeIndexer {
     }
     public static int changeZ(int pos, boolean add) {
         return pos + (add ? width : -width);
+    }
+
+    // --------------------
+
+    // declare all triangles of the max box of this indexer
+    // Note: this is required to check if a ray hits the bounding box
+    private static final int intRadius = radius;
+    private static final SimpleVector upperLeftFront=new SimpleVector(-intRadius,-intRadius,-intRadius);
+    private static final SimpleVector upperRightFront=new SimpleVector(intRadius,-intRadius,-intRadius);
+    private static final SimpleVector lowerLeftFront=new SimpleVector(-intRadius, intRadius,-intRadius);
+    private static final SimpleVector lowerRightFront=new SimpleVector(intRadius, intRadius,-intRadius);
+    private static final SimpleVector upperLeftBack = new SimpleVector( -intRadius, -intRadius, intRadius);
+    private static final SimpleVector upperRightBack = new SimpleVector(intRadius, -intRadius, intRadius);
+    private static final SimpleVector lowerLeftBack = new SimpleVector( -intRadius, intRadius, intRadius);
+    private static final SimpleVector lowerRightBack = new SimpleVector(intRadius, intRadius, intRadius);
+    public static final SimpleVector[][] triangles = new SimpleVector[][]{
+            // Front
+            new SimpleVector[]{CubeIndexer.upperLeftFront, CubeIndexer.upperRightFront, CubeIndexer.lowerLeftFront}, // xy
+            new SimpleVector[]{CubeIndexer.upperRightFront, CubeIndexer.lowerRightFront, CubeIndexer.lowerLeftFront},
+            // Back
+            new SimpleVector[]{CubeIndexer.upperLeftBack, CubeIndexer.lowerLeftBack, CubeIndexer.upperRightBack},
+            new SimpleVector[]{CubeIndexer.upperRightBack, CubeIndexer.lowerLeftBack, CubeIndexer.lowerRightBack},
+            // Upper
+            new SimpleVector[]{CubeIndexer.upperLeftBack, CubeIndexer.upperRightBack, CubeIndexer.upperLeftFront}, // xz
+            new SimpleVector[]{CubeIndexer.upperRightBack, CubeIndexer.upperRightFront, CubeIndexer.upperLeftFront},
+            // Lower
+            new SimpleVector[]{CubeIndexer.lowerLeftBack, CubeIndexer.lowerLeftFront, CubeIndexer.lowerRightBack},
+            new SimpleVector[]{CubeIndexer.lowerRightBack, CubeIndexer.lowerLeftFront, CubeIndexer.lowerRightFront},
+            // Left
+            new SimpleVector[]{CubeIndexer.upperLeftBack, CubeIndexer.upperLeftFront, CubeIndexer.lowerLeftBack}, // yz
+            new SimpleVector[]{CubeIndexer.lowerLeftBack, CubeIndexer.upperLeftFront, CubeIndexer.lowerLeftFront},
+            // Right
+            new SimpleVector[]{CubeIndexer.upperRightBack, CubeIndexer.lowerRightBack, CubeIndexer.upperRightFront},
+            new SimpleVector[]{CubeIndexer.lowerRightBack, CubeIndexer.lowerRightFront, CubeIndexer.upperRightFront}
+    };
+
+    // If the origin is outside the limits of the max box this function tries to shift the
+    // origin into the max box or returns null if this is not possible
+    public static SimpleVector validateRay(SimpleVector origin, SimpleVector dir) {
+        if (origin.x < -CubeIndexer.radius || origin.x > CubeIndexer.radius ||
+                origin.y < -CubeIndexer.radius || origin.y > CubeIndexer.radius ||
+                origin.z < -CubeIndexer.radius || origin.z > CubeIndexer.radius
+                ) {
+            // move origin into max box of hull manager
+            // We do this by checking all triangles of the bounding box until we hit one (or not)
+            boolean found = false;
+            for (SimpleVector[] triangle : CubeIndexer.triangles) {
+                SimpleVector newOrigin = Util3D.rayTriangleIntersects(triangle[0], triangle[1], triangle[2], origin, dir, true);
+                if (newOrigin != null) {
+                    origin = newOrigin;
+                    found = true;
+                    break;
+                }
+            }
+            // no scaling possible since the CubeIndexer max box was not hit
+            if (!found) {
+                return null;
+            }
+        }
+        return origin;
     }
 }

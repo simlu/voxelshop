@@ -62,7 +62,8 @@ public final class Util3D {
     // test if a ray intersects a triangle (single sided parameter indicates
     // whether only testing from the front should be performed)
     // Note: This assumes that the direction is normalized (!)
-    public static boolean rayTriangleIntersects(
+    // returns null if no hit is detected, otherwise the hit position is returned
+    public static SimpleVector rayTriangleIntersects(
             SimpleVector v0, SimpleVector v1, SimpleVector v2,
             SimpleVector origin, SimpleVector dir,
             boolean isSingledSided
@@ -76,12 +77,12 @@ public final class Util3D {
         float nDotRay = N.calcDot(dir);
 
         // ray parallel to triangle or hit from the back
-        if (nDotRay == 0 || (isSingledSided && nDotRay > 0)) return false;
+        if (nDotRay == 0 || (isSingledSided && nDotRay > 0)) return null;
 
         float d = N.calcDot(v0);
         float t = -(N.calcDot(origin) + d) / nDotRay;
 
-        if (t < 0) return false; // ray behind triangle
+        if (t < 0) return null; // ray behind triangle
         // inside-out test
         SimpleVector dist = new SimpleVector(dir);
         dist.scalarMul(t);
@@ -90,22 +91,21 @@ public final class Util3D {
         // inside-out test edge0
         SimpleVector v0p = pos.calcSub(v0);
         float v = N.calcDot(v0v1.calcCross(v0p));
-        if (v < 0) return false; // P outside triangle
+        if (v < 0) return null; // P outside triangle
 
         // inside-out test edge1
         SimpleVector v1p = pos.calcSub(v1);
         SimpleVector v1v2 = v2.calcSub(v1);
         float w = N.calcDot(v1v2.calcCross(v1p));
-        if (w < 0) return false; // P outside triangle
+        if (w < 0) return null; // P outside triangle
 
         // inside-out test edge2
         SimpleVector v2p = pos.calcSub(v2);
         SimpleVector v2v0 = v0.calcSub(v2);
         float u = N.calcDot(v2v0.calcCross(v2p));
-        if (u < 0) return false; // P outside triangle
+        if (u < 0) return null; // P outside triangle
 
         // Note: t contains the distance
-
-        return true;
+        return pos;
     }
 }

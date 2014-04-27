@@ -59,7 +59,7 @@ public class Util3DTest {
             SimpleVector dir = new SimpleVector(0, 0, 1).normalize();
 
             // Note: This might fail in edge cases (i.e. when using integer values)
-            boolean resultsEqual = G2DUtil.inTriangle(px, py, x1, y1, x2, y2, x3, y3) == Util3D.rayTriangleIntersects(vec1, vec2, vec3, origin, dir, false);
+            boolean resultsEqual = G2DUtil.inTriangle(px, py, x1, y1, x2, y2, x3, y3) == (Util3D.rayTriangleIntersects(vec1, vec2, vec3, origin, dir, false) != null);
             if (!resultsEqual) {
                 System.out.println(" :: " + i);
                 System.out.println(x1 + " " + y1 + " " + x2 + " " + y2 + " " + x3 + " " + y3 + " @ " + px + " " + py);
