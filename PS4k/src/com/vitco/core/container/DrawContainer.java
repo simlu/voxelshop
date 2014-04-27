@@ -182,11 +182,11 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                         drawDashLine(ig, vectors[1], vectors[2], color1, color2);
                         drawDashLine(ig, vectors[2], vectors[3], color1, color2);
                         drawDashLine(ig, vectors[3], vectors[0], color1, color2);
-
                         drawText = true;
                     }
                 }
             }
+            break;
             // draw any boxes in 3D
             default: {
                 // define the points of the voxel
@@ -238,6 +238,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                     }
                 }
             }
+            break;
         }
 
         if (drawText) {
