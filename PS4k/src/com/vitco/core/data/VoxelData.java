@@ -9,7 +9,9 @@ import com.vitco.low.CubeIndexer;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.GraphicTools;
 import com.vitco.util.misc.ArrayUtil;
+import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.set.hash.TIntHashSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -51,7 +52,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
 
     // holds the voxel positions that are currently selected (so we only notify
     // position where the selection state has actually changed!)
-    private final HashSet<String> currentSelectedVoxel = new HashSet<String>();
+    private final TIntHashSet currentSelectedVoxel = new TIntHashSet();
 
     // invalidate cache
     protected final void invalidateV(int[][] effected) {
@@ -69,16 +70,16 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             }
 
             // notification of changed selected voxels
-            HashMap<String, int[]> invalidSelected = new HashMap<String, int[]>();
+            TIntObjectHashMap<int[]> invalidSelected = new TIntObjectHashMap<int[]>();
             for (int[] invalid : effected) {
                 Voxel voxel = searchVoxel(invalid, false);
                 if (voxel == null) {
-                    String key = invalid[0] + "_" + invalid[1] + "_" + invalid[2];
+                    int key = CubeIndexer.getId(invalid[0], invalid[1], invalid[2]);
                     if (currentSelectedVoxel.remove(key)) {
                         invalidSelected.put(key, invalid);
                     }
                 } else {
-                    String key = voxel.getPosAsString();
+                    int key = voxel.posId;
                     if (voxel.isSelected()) {
                         if (currentSelectedVoxel.add(key)) {
                             invalidSelected.put(key, invalid);
@@ -90,14 +91,15 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     }
                 }
             }
-            for (HashMap<String, int[]> map : changedSelectedVoxel.values()) {
+            for (TIntObjectHashMap<int[]> map : changedSelectedVoxel.values()) {
                 if (map != null) {
                     map.putAll(invalidSelected);
                 }
             }
 
             // notification of changed visible voxel for this plane
-            for (Integer side : changedVisibleVoxelPlane.keySet()) {
+            for (TIntIterator it = changedVisibleVoxelPlane.keySet().iterator(); it.hasNext();) {
+                int side = it.next();
                 int missingSide = 1;
                 switch (side) {
                     case 0: missingSide = 2; break;
@@ -109,10 +111,10 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                         // make sure this is set
                         if (!changedVisibleVoxelPlane.get(side).get(requestId).containsKey(invalid[missingSide])) {
                             changedVisibleVoxelPlane.get(side).get(requestId).put(
-                                    invalid[missingSide], new HashMap<String, int[]>());
+                                    invalid[missingSide], new TIntObjectHashMap<int[]>());
                         }
                         // fill the details
-                        String key = invalid[0] + "_" + invalid[1] + "_" + invalid[2];
+                        int key = CubeIndexer.getId(invalid[0], invalid[1], invalid[2]);
                         if (!changedVisibleVoxelPlane.get(side).get(requestId).get(invalid[missingSide]).containsKey(key)) {
                             changedVisibleVoxelPlane.get(side).get(requestId).get(invalid[missingSide]).put(key, invalid);
                         }
@@ -1808,7 +1810,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
-    private final HashMap<String, HashMap<String, int[]>> changedSelectedVoxel = new HashMap<String, HashMap<String, int[]>>();
+    private final HashMap<String, TIntObjectHashMap<int[]>> changedSelectedVoxel = new HashMap<String, TIntObjectHashMap<int[]>>();
     @Override
     public final Voxel[][] getNewSelectedVoxel(String requestId) {
         synchronized (VitcoSettings.SYNC) {
@@ -1816,12 +1818,12 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 changedSelectedVoxel.put(requestId, null);
             }
             if (changedSelectedVoxel.get(requestId) == null) {
-                changedSelectedVoxel.put(requestId, new HashMap<String, int[]>());
+                changedSelectedVoxel.put(requestId, new TIntObjectHashMap<int[]>());
                 return new Voxel[][] {null, getSelectedVoxels()};
             } else {
                 ArrayList<Voxel> removed = new ArrayList<Voxel>();
                 ArrayList<Voxel> added = new ArrayList<Voxel>();
-                for (int[] pos : changedSelectedVoxel.get(requestId).values()) {
+                for (int[] pos : changedSelectedVoxel.get(requestId).valueCollection()) {
                     Voxel voxel = searchVoxel(pos, false);
                     if (voxel != null && voxel.isSelected()) {
                         added.add(voxel);
@@ -2033,11 +2035,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         synchronized (VitcoSettings.SYNC) {
             // make sure this plane is set
             if (!changedVisibleVoxelPlane.containsKey(side)) {
-                changedVisibleVoxelPlane.put(side, new HashMap<String, HashMap<Integer, HashMap<String, int[]>>>());
+                changedVisibleVoxelPlane.put(side, new HashMap<String, TIntObjectHashMap<TIntObjectHashMap<int[]>>>());
             }
             // make sure the requestId is set
             if (!changedVisibleVoxelPlane.get(side).containsKey(requestId)) {
-                changedVisibleVoxelPlane.get(side).put(requestId, new HashMap<Integer, HashMap<String, int[]>>());
+                changedVisibleVoxelPlane.get(side).put(requestId, new TIntObjectHashMap<TIntObjectHashMap<int[]>>());
             }
             // make sure this plane has no information stored (force complete refresh)
             changedVisibleVoxelPlane.get(side).get(requestId).remove(plane);
@@ -2045,8 +2047,8 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     // side -> requestId -> plane -> positions
-    private final HashMap<Integer, HashMap<String, HashMap<Integer, HashMap<String, int[]>>>> changedVisibleVoxelPlane
-            = new HashMap<Integer, HashMap<String, HashMap<Integer, HashMap<String, int[]>>>>();
+    private final TIntObjectHashMap<HashMap<String, TIntObjectHashMap<TIntObjectHashMap<int[]>>>> changedVisibleVoxelPlane
+            = new TIntObjectHashMap<HashMap<String, TIntObjectHashMap<TIntObjectHashMap<int[]>>>>();
     @Override
     public final Voxel[][] getNewSideVoxel(String requestId, Integer side, Integer plane) {
         synchronized (VitcoSettings.SYNC) {
@@ -2054,11 +2056,11 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             Voxel[][] result = new Voxel[][]{null, new Voxel[0]};
             // make sure this plane is set
             if (!changedVisibleVoxelPlane.containsKey(side)) {
-                changedVisibleVoxelPlane.put(side, new HashMap<String, HashMap<Integer, HashMap<String, int[]>>>());
+                changedVisibleVoxelPlane.put(side, new HashMap<String, TIntObjectHashMap<TIntObjectHashMap<int[]>>>());
             }
             // make sure the requestId is set
             if (!changedVisibleVoxelPlane.get(side).containsKey(requestId)) {
-                changedVisibleVoxelPlane.get(side).put(requestId, new HashMap<Integer, HashMap<String, int[]>>());
+                changedVisibleVoxelPlane.get(side).put(requestId, new TIntObjectHashMap<TIntObjectHashMap<int[]>>());
             }
 
             if (changedVisibleVoxelPlane.get(side).get(requestId).get(plane) == null) {
@@ -2076,12 +2078,12 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     default: break;
                 }
                 // reset
-                changedVisibleVoxelPlane.get(side).get(requestId).put(plane, new HashMap<String, int[]>());
+                changedVisibleVoxelPlane.get(side).get(requestId).put(plane, new TIntObjectHashMap<int[]>());
             } else {
                 // if there are changed positions, notify only those positions
                 ArrayList<Voxel> removed = new ArrayList<Voxel>();
                 ArrayList<Voxel> added = new ArrayList<Voxel>();
-                for (int[] pos : changedVisibleVoxelPlane.get(side).get(requestId).get(plane).values()) {
+                for (int[] pos : changedVisibleVoxelPlane.get(side).get(requestId).get(plane).valueCollection()) {
                     Voxel voxel = searchVoxel(pos, false);
                     if (voxel != null) {
                         added.add(voxel);

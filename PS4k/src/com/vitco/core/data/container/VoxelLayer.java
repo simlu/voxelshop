@@ -1,12 +1,12 @@
 package com.vitco.core.data.container;
 
 import com.vitco.low.CubeIndexer;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -20,11 +20,11 @@ public final class VoxelLayer implements Serializable {
     // list of all voxels
     private final ArrayList<Voxel> voxelList = new ArrayList<Voxel>();
     // string "index"
-    private transient HashMap<Integer, Voxel> index = new HashMap<Integer, Voxel>();
+    private transient TIntObjectHashMap<Voxel> index = new TIntObjectHashMap<Voxel>();
     // side index
-    private transient HashMap<Integer, HashSet<Voxel>> sideX = new HashMap<Integer, HashSet<Voxel>>();
-    private transient HashMap<Integer, HashSet<Voxel>> sideY = new HashMap<Integer, HashSet<Voxel>>();
-    private transient HashMap<Integer, HashSet<Voxel>> sideZ = new HashMap<Integer, HashSet<Voxel>>();
+    private transient TIntObjectHashMap<HashSet<Voxel>> sideX = new TIntObjectHashMap<HashSet<Voxel>>();
+    private transient TIntObjectHashMap<HashSet<Voxel>> sideY = new TIntObjectHashMap<HashSet<Voxel>>();
+    private transient TIntObjectHashMap<HashSet<Voxel>> sideZ = new TIntObjectHashMap<HashSet<Voxel>>();
 
     public final int id;
     private String layerName; // layerName of layer
@@ -142,16 +142,16 @@ public final class VoxelLayer implements Serializable {
         in.defaultReadObject();
         // build the indices when loading from file
         if (sideX == null) {
-            sideX = new HashMap<Integer, HashSet<Voxel>>();
+            sideX = new TIntObjectHashMap<HashSet<Voxel>>();
         }
         if (sideY == null) {
-            sideY = new HashMap<Integer, HashSet<Voxel>>();
+            sideY = new TIntObjectHashMap<HashSet<Voxel>>();
         }
         if (sideZ == null) {
-            sideZ = new HashMap<Integer, HashSet<Voxel>>();
+            sideZ = new TIntObjectHashMap<HashSet<Voxel>>();
         }
         if (index == null) {
-            index = new HashMap<Integer, Voxel>();
+            index = new TIntObjectHashMap<Voxel>();
         }
         for (Voxel voxel : voxelList) {
             indexVoxel(voxel);

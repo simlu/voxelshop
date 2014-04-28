@@ -16,7 +16,7 @@ public class CubeIndexer {
     public static final short radius = 800;
     public static final int widthwidth = width * width;
 
-    // needs to be dividable by width ^ 2 and smaller than Integer.MIN_VALUE
+    // needs to be dividable by width ^ 2 and not smaller than Integer.MIN_VALUE
     public static final int min = - 2145280000;
     private static final int minOffset = radius + min/widthwidth;
 
