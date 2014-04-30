@@ -21,6 +21,7 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="I" action="import_file_action" caption="import_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="E" action="export_file_action" caption="export_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
         <!--Tools-->
