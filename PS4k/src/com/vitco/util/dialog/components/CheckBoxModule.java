@@ -19,8 +19,10 @@ public class CheckBoxModule extends BlankDialogModule {
         super(identifier);
         setLayout(new BorderLayout());
         // add checkbox
-        checkbox = new JCheckBox(caption);
+        checkbox = new JCheckBox(" " + caption); // add a bit more spacing
         checkbox.setFocusable(false);
+        // remove border (align to right side)
+        checkbox.setBorder(BorderFactory.createEmptyBorder());
         // add to west so it doesn't stretch over the whole width
         add(checkbox, BorderLayout.WEST);
         // listen to checkbox event

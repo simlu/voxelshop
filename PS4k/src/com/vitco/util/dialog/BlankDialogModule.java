@@ -5,6 +5,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Needs to be extended by all objects that are added to a UserInputDialog.
@@ -14,7 +15,10 @@ public class BlankDialogModule extends JComponent {
     private boolean ready = true;
 
     // the child modules of this module
-    private final HashMap<String, BlankDialogModule> childModules = new HashMap<String, BlankDialogModule>();
+    private final HashSet<BlankDialogModule> childModules = new HashSet<BlankDialogModule>();
+
+    // maps ids to the child modules (needs to be separate if several child modules have the same identifier)
+    private final HashMap<String, BlankDialogModule> id2ChildModule = new HashMap<String, BlankDialogModule>();
 
     // the identifier of this object
     private final String identifier;
@@ -95,30 +99,54 @@ public class BlankDialogModule extends JComponent {
     protected final void refreshState(BlankDialogModule topLevelParent) {
         for (int i = 0; i < 4; i++) {
             if (lookups[i] != null) {
-                String[] lookup = lookups[i].split("=");
-                if (lookup.length == 2) {
-                    Object value = topLevelParent.getValue(lookup[0]);
-                    if (value != null) {
-                        String[] possibleValues = lookup[1].split(",");
-                        boolean matched = false;
-                        for (String possibleValue : possibleValues) {
-                            if (possibleValue.equals(value)) {
-                                matched = true;
+                // split into different parts
+                String[] parts = lookups[i].split("&");
+                int matchCount = 0;
+                // loop over parts (we need to check all of them)
+                for (String part : parts) {
+                    // split into key and possible values
+                    String[] lookup = part.split("=");
+                    if (lookup.length == 2) {
+                        // get the value for the key
+                        Object value = topLevelParent.getValue(lookup[0]);
+                        if (value != null) {
+                            // split possible values and see if one matches
+                            String[] possibleValues = lookup[1].split(",");
+                            boolean matched = false;
+                            for (String possibleValue : possibleValues) {
+                                if (possibleValue.equals(value.toString())) {
+                                    matched = true;
+                                    break;
+                                }
+                            }
+                            // we matched this part, increase counter
+                            if (matched) {
+                                matchCount++;
+                            } else {
                                 break;
                             }
                         }
-                        switch (i) {
-                            case 0: this.setDeepEnabled(matched); break;
-                            case 1: this.setDeepEnabled(!matched); break;
-                            case 2: this.setVisible(matched); break;
-                            default: this.setVisible(!matched); break;
-                        }
                     }
+                }
+                boolean matched = matchCount == parts.length;
+                switch (i) {
+                    case 0:
+                        this.setDeepEnabled(matched);
+                        break;
+                    case 1:
+                        this.setDeepEnabled(!matched);
+                        break;
+                    case 2:
+                        this.setVisible(matched);
+                        break;
+                    default:
+                        this.setVisible(!matched);
+                        break;
                 }
             }
         }
         // refresh all children
-        for (BlankDialogModule child : childModules.values()) {
+        for (BlankDialogModule child : childModules) {
             child.refreshState(topLevelParent);
         }
     }
@@ -143,7 +171,8 @@ public class BlankDialogModule extends JComponent {
         // remove spacing (the child deals with that now)
         setBorder(BorderFactory.createEmptyBorder());
         // register this module
-        childModules.put(module.getIdentifier(), module);
+        childModules.add(module);
+        id2ChildModule.put(module.getIdentifier(), module);
         // inject listener
         module.addListener(propagationListener);
         // add child module to this container to be displayed
@@ -178,7 +207,7 @@ public class BlankDialogModule extends JComponent {
             return false;
         }
         // check if any child is not ready
-        for (BlankDialogModule module : childModules.values()) {
+        for (BlankDialogModule module : childModules) {
             if (!module.isReady()) {
                 return false;
             }
@@ -195,7 +224,7 @@ public class BlankDialogModule extends JComponent {
             return null;
         }
         String[] path = identifier.split("\\.", 2);
-        BlankDialogModule object = childModules.get(path[0]);
+        BlankDialogModule object = id2ChildModule.get(path[0]);
         if (object != null) {
             return object.getValue(path.length > 1 ? path[1] : null);
         }

@@ -164,6 +164,9 @@ public class FieldSetWrapper extends BlankDialogModule {
         // set drop list to null (unused)
         comboBox = null;
 
+        // always enforce that content is maximum height
+        content.setPreferredSize(new Dimension(content.getPreferredSize().width, fieldSet.getPreferredSize().height + PADDING[0] + PADDING[2]));
+
         // -----
 
         // add the label as "title" of this fieldSet
