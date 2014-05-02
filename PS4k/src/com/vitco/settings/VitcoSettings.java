@@ -155,7 +155,7 @@ public final class VitcoSettings {
     };
 
     // maximum voxel count per layer (and for picture import)
-    public static final int MAX_VOXEL_COUNT_PER_LAYER = 20000;
+    public static final int MAX_VOXEL_COUNT_PER_LAYER = 100000;
 
     // grid size for triangulation
     public static final int TRI_GRID_SIZE = 13;

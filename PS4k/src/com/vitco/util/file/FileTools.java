@@ -22,6 +22,22 @@ public class FileTools {
         });
     }
 
+    // todo: improve so it only ever erases from "slash to slash"
+    // shorten a long file path for display purposes
+    public static String shortenPath(String path, int length) {
+        int originalLength = path.length();
+        if (originalLength <= length) {
+            return path;
+        }
+        int toCrop = originalLength - length + 3;
+        if (toCrop > originalLength) {
+            toCrop = originalLength;
+        }
+        int starting = originalLength/2 - toCrop/2;
+        int stopping = starting + toCrop;
+        return path.substring(0, starting) + "..." + path.substring(stopping, originalLength);
+    }
+
     // remove extension from file and return name without extension
     public static String extractNameWithoutExtension(File f) {
         // if it's a directory, don't remove the extension

@@ -544,10 +544,13 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     }
 
     // wrapper
-    private void drawAxeHalf(SimpleVector unitVector, boolean invert, Graphics2D ig, Color innerColor, Color outerColor, float size) {
+    private void drawAxeHalf(SimpleVector unitVector, boolean invert, Graphics2D ig,
+                             Color innerColor, Color outerColor, float size,
+                             int offsetX, int offsetY
+    ) {
         G2DUtil.drawLine(
-                new SimpleVector((invert?-1:1)*unitVector.x*15 + 25, (invert?-1:1)*unitVector.y*15 + 25, 0),
-                new SimpleVector((invert?-1:1)*unitVector.x*3 + 25, (invert?-1:1)*unitVector.y*3 + 25, 0),
+                new SimpleVector((invert?-1:1)*unitVector.x*15 + offsetX, (invert?-1:1)*unitVector.y*15 + offsetY, 0),
+                new SimpleVector((invert?-1:1)*unitVector.x*3 + offsetX, (invert?-1:1)*unitVector.y*3 + offsetY, 0),
                 ig,
                 innerColor,
                 outerColor,
@@ -561,12 +564,33 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         ig.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
+        // draw the bounding box
+        if (drawBoundingBox) {
+            drawBoundingBox(ig, side);
+        }
+
+        int offsetX = 25;
+        int offsetY = 25;
+
+//        // this moves the axis (red blue green) to the corner of the bounding box (main view)
+//            if (side == -1) {
+//                // need to convert this vector to static
+//                SimpleVector pos =
+//                        convert3D2D(new SimpleVector(
+//                                (DynamicSettings.VOXEL_PLANE_RANGE_X - 0.5) * VitcoSettings.VOXEL_SIZE, VitcoSettings.HALF_VOXEL_SIZE,
+//                                (DynamicSettings.VOXEL_PLANE_RANGE_Z - 0.5) * VitcoSettings.VOXEL_SIZE));
+//                if (pos != null) {
+//                    offsetX = Math.round(pos.x);
+//                    offsetY = Math.round(pos.y);
+//                }
+//            }
+
         // draw axis into corner (top left)
         Matrix matrix = camera.getBack();
         ExtendedVector[] vec = new ExtendedVector[]{
-                new ExtendedVector(1,0,0,0),
-                new ExtendedVector(0,1,0,1),
-                new ExtendedVector(0,0,1,2)
+                new ExtendedVector(1, 0, 0, 0),
+                new ExtendedVector(0, 1, 0, 1),
+                new ExtendedVector(0, 0, 1, 2)
         };
         for (ExtendedVector v : vec) {
             v.matMul(matrix);
@@ -584,7 +608,9 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                             : (v.id == 1
                             ? VitcoSettings.ANIMATION_AXIS_COLOR_Y
                             : VitcoSettings.ANIMATION_AXIS_COLOR_Z)),
-                    VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE);
+                    VitcoSettings.ANIMATION_AXIS_OUTER_COLOR, VitcoSettings.ANIMATION_AXIS_LINE_SIZE,
+                    offsetX, offsetY
+            );
         }
 
         // draw center cross
@@ -596,10 +622,6 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                 ig.drawLine(Math.round(center.x - 5), Math.round(center.y), Math.round(center.x + 5), Math.round(center.y));
                 ig.drawLine(Math.round(center.x), Math.round(center.y - 5), Math.round(center.x), Math.round(center.y + 5));
             }
-        }
-        // draw the bounding box
-        if (drawBoundingBox) {
-            drawBoundingBox(ig, side);
         }
     }
 

@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -1556,7 +1557,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             VoxelLayer layer = dataContainer.layers.get(dataContainer.selectedLayer);
             if (layer != null) {
                 ArrayList<Voxel> validVoxel = new ArrayList<Voxel>();
-                ArrayList<String> voxelPos = new ArrayList<String>();
+                HashSet<String> voxelPos = new HashSet<String>();
                 for (Voxel voxel : voxels) {
                     String posHash = voxel.getPosAsString();
                     if (layer.voxelPositionFree(voxel)
@@ -1868,7 +1869,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     public final boolean massSetVoxelSelected(Integer[] voxelIds, boolean selected) {
         synchronized (VitcoSettings.SYNC) {
             ArrayList<Integer> validVoxel = new ArrayList<Integer>();
-            for (int voxelId : voxelIds) {
+            for (Integer voxelId : voxelIds) {
                 if (dataContainer.voxels.containsKey(voxelId) && dataContainer.voxels.get(voxelId).isSelected() != selected) {
                     validVoxel.add(voxelId);
                 }
