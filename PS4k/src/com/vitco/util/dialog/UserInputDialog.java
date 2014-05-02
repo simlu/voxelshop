@@ -196,6 +196,8 @@ public class UserInputDialog extends JDialog {
         }
         // create a drop down field set
         FieldSetWrapper fieldSetWrapper = new FieldSetWrapper(identifier, comboBoxFieldSets, selected);
+        // listen to the wrapper select events (when a combo title box changes)
+        // this can update the enabled buttons
         fieldSetWrapper.addListener(new DialogModuleChangeAdapter() {
             @Override
             public void onContentChanged() {

@@ -25,6 +25,9 @@ public class FieldSetWrapper extends BlankDialogModule {
     // maps identifiers to ids
     private final HashMap<String, Integer> identifier2comboId = new HashMap<String, Integer>();
 
+    // currently selected id
+    private int selectedId = 0;
+
     // border spacing below every wrapper
     private static final int BORDER_BELOW = 10;
 
@@ -100,6 +103,8 @@ public class FieldSetWrapper extends BlankDialogModule {
         }
         // always enforce that content is maximum height
         content.setPreferredSize(new Dimension(content.getPreferredSize().width, maxHeight + PADDING[0] + PADDING[2]));
+        // store selected id
+        selectedId = selected;
         // create the combo box
         comboBox = new ComboBoxModule("combobox", displayedStrings, selected);
         // disable spacing
@@ -114,7 +119,9 @@ public class FieldSetWrapper extends BlankDialogModule {
             public void onContentChanged() {
                 super.onContentChanged();
                 Integer id = identifier2comboId.get(comboBox.getValue(null).toString());
-                if (id != null) {
+                // prevent unnecessary refresh
+                if (id != null && id != selectedId) {
+                    selectedId = id;
                     setBodyComponent(dropFieldSets[id]);
                 }
             }
