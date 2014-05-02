@@ -19,6 +19,8 @@ public class ComboBoxModule extends BlankDialogModule {
 
     // list that maps ids to identifier (for passed fieldSet Array)
     private final HashMap<Integer, String> id2Identifier = new HashMap<Integer, String>();
+    // list of identifiers to ids
+    private final HashMap<String, Integer> identifier2Id = new HashMap<String, Integer>();
 
     // constructor
     public ComboBoxModule(String identifier, String[][] values, int selected) {
@@ -39,6 +41,7 @@ public class ComboBoxModule extends BlankDialogModule {
             }
             // add identifier
             id2Identifier.put(i, values[i][0]);
+            identifier2Id.put(values[i][0], i);
         }
 
         // create the combo box
@@ -80,7 +83,7 @@ public class ComboBoxModule extends BlankDialogModule {
     @Override
     protected ArrayList<String[]> getSerialization(String path) {
         ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
-        keyValuePair.add(new String[] {path, comboBox.getSelectedIndex() + ""});
+        keyValuePair.add(new String[] {path, (String) getValue(null)});
         return keyValuePair;
     }
 
@@ -88,8 +91,11 @@ public class ComboBoxModule extends BlankDialogModule {
     protected boolean loadValue(String[] pair) {
         if (pair[0].equals("")) {
             try {
-                comboBox.setSelectedIndex(Integer.parseInt(pair[1]));
-                notifyContentChanged();
+                Integer id = identifier2Id.get(pair[1]);
+                if (id != null) {
+                    comboBox.setSelectedIndex(id);
+                    notifyContentChanged();
+                }
             } catch (NumberFormatException ignored) {}
             return true;
         }
