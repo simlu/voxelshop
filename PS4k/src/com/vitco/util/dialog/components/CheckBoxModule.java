@@ -4,6 +4,7 @@ import com.vitco.util.dialog.BlankDialogModule;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Module that has a checkbox
@@ -22,6 +23,13 @@ public class CheckBoxModule extends BlankDialogModule {
         checkbox.setFocusable(false);
         // add to west so it doesn't stretch over the whole width
         add(checkbox, BorderLayout.WEST);
+        // listen to checkbox event
+        checkbox.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                notifyContentChanged();
+            }
+        });
     }
 
     // get the value of this object

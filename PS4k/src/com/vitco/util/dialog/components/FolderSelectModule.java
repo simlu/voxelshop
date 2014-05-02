@@ -44,6 +44,8 @@ public class FolderSelectModule extends BlankDialogModule {
                     File folder = fileDialog.getSelectedFile();
                     if (folder != null) {
                         label.setText(FileTools.shortenPath(folder.getPath() + "\\", 50));
+                        // listen to changes
+                        notifyContentChanged();
                     }
                 }
             }

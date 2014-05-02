@@ -24,7 +24,7 @@ public class FieldSetWrapper extends BlankDialogModule {
     private final JideComboBox comboBox;
 
     // list that maps ids to identifier (for passed fieldSet Array)
-    private HashMap<Integer, String> id2Identifier = new HashMap<Integer, String>();
+    private final HashMap<Integer, String> id2Identifier = new HashMap<Integer, String>();
 
     // border spacing below every wrapper
     private static final int BORDER_BELOW = 10;
@@ -90,15 +90,15 @@ public class FieldSetWrapper extends BlankDialogModule {
 
         // --------
 
-        // add drop down menu
-        String[] dropStrings = new String[dropFieldSets.length];
+        // add combo box menu
+        String[] displayedStrings = new String[dropFieldSets.length];
         String longestString = "";
         int maxHeight = 0;
         for (int i = 0; i < dropFieldSets.length; i++) {
             // set drop down text entries
-            dropStrings[i] = dropFieldSets[i].getCaption();
-            if (longestString.length() < dropStrings[i].length()) {
-                longestString = dropStrings[i];
+            displayedStrings[i] = dropFieldSets[i].getCaption();
+            if (longestString.length() < displayedStrings[i].length()) {
+                longestString = displayedStrings[i];
             }
             maxHeight = Math.max(maxHeight, dropFieldSets[i].getPreferredSize().height);
             // update identifier map
@@ -107,7 +107,7 @@ public class FieldSetWrapper extends BlankDialogModule {
         // always enforce that content is maximum height
         content.setPreferredSize(new Dimension(content.getPreferredSize().width, maxHeight + PADDING[0] + PADDING[2]));
         // create the combo box
-        comboBox = new JideComboBox(dropStrings) {
+        comboBox = new JideComboBox(displayedStrings) {
             @Override
             public Dimension getPreferredSize() {
                 Dimension dimension = super.getPreferredSize();

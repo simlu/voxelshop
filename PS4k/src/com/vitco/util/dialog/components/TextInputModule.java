@@ -49,6 +49,13 @@ public class TextInputModule extends BlankDialogModule {
                 }
             });
         }
+        // listen to change events
+        textField.addTextChangeListener(new TextChangeListener() {
+            @Override
+            public void onChange() {
+                notifyContentChanged();
+            }
+        });
     }
 
     // get the value of this object

@@ -79,6 +79,12 @@ public class UserInputDialog extends JDialog {
             public void onReadyStateChanged() {
                 refreshButtonEnabled();
             }
+
+            @Override
+            public void onContentChanged() {
+                // refresh the state of all components
+                content.refreshState(content);
+            }
         });
 
         // add "close" listener (when "X" button is pressed)
@@ -117,6 +123,8 @@ public class UserInputDialog extends JDialog {
             this.setLocationRelativeTo(null);
             // check if buttons are enabled or not
             refreshButtonEnabled();
+            // check states
+            content.refreshState(content);
         }
         // show/hide
         super.setVisible(flag);
@@ -178,14 +186,14 @@ public class UserInputDialog extends JDialog {
     }
 
     // add several fieldSets that are displayed as a dropdown menu
-    public void addDropDown(String identifier, FieldSet[] dropFieldSets, int selected) {
+    public void addComboBox(String identifier, FieldSet[] comboBoxFieldSets, int selected) {
         // add to internal list (for later access) but don't display
         // (the wrapper will be used to display instead)
-        for (FieldSet fieldSet : dropFieldSets) {
+        for (FieldSet fieldSet : comboBoxFieldSets) {
             content.addModule(fieldSet, false);
         }
         // create a drop down field set
-        FieldSetWrapper fieldSetWrapper = new FieldSetWrapper(identifier, dropFieldSets, selected);
+        FieldSetWrapper fieldSetWrapper = new FieldSetWrapper(identifier, comboBoxFieldSets, selected);
         fieldSetWrapper.addListener(new DialogModuleChangeAdapter() {
             @Override
             public void onContentChanged() {

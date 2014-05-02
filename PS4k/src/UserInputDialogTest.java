@@ -2,8 +2,7 @@ import com.jidesoft.plaf.LookAndFeelFactory;
 import com.vitco.util.dialog.FieldSet;
 import com.vitco.util.dialog.UserInputDialog;
 import com.vitco.util.dialog.UserInputDialogListener;
-import com.vitco.util.dialog.components.CheckBoxModule;
-import com.vitco.util.dialog.components.FileSelectModule;
+import com.vitco.util.dialog.components.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +35,15 @@ public class UserInputDialogTest {
         // create file select FieldSet
         FieldSet fieldSet = new FieldSet("location", "Location");
         fieldSet.addComponent(new FileSelectModule("file", new File("C:\\Users\\flux\\Dropbox\\"), frame));
+        CheckBoxModule checkBoxModule = new CheckBoxModule("enable_overwrite", "Overwrite File");
+        checkBoxModule.setDisabledLookup("location.option=hello");
+        fieldSet.addComponent(checkBoxModule);
+        fieldSet.addComponent(new TextInputModule("name", "Your name: ", new File("blank.dae"), false));
+        fieldSet.addComponent(new LabelModule("Hello?"));
+        fieldSet.addComponent(new ComboBoxModule("option", new String[][] {
+            new String[] {"hello", "Hello There!"},
+                new String[] {"bye", "Ok, bb!"}
+        }, 0));
         userInputDialog.addFieldSet(fieldSet);
         // create menu tree
         FieldSet[] menuItems = new FieldSet[] {
@@ -46,7 +54,7 @@ public class UserInputDialogTest {
         menuItems[1].addComponent(new FileSelectModule("export_img", new File("tmp.png"), frame));
         menuItems[1].addComponent(new FileSelectModule("export_img2", new File("tmp.png"), frame));
         menuItems[1].addComponent(new CheckBoxModule("enable_overwrite", "Overwrite File"));
-        userInputDialog.addDropDown("encoder_type", menuItems, 1);
+        userInputDialog.addComboBox("encoder_type", menuItems, 1);
 
         // listen to events
         userInputDialog.setListener(new UserInputDialogListener() {

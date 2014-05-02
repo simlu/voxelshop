@@ -3,6 +3,7 @@ package com.vitco.util.dialog;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -44,13 +45,17 @@ public class BlankDialogModule extends JComponent {
 
     // called when the ready state of this component has changed
     protected final void notifyReadyStateChanged() {
+        // notify all listeners (including parents)
         for (DialogModuleChangeListener listener : listeners) {
             listener.onReadyStateChanged();
         }
     }
 
     // called when the content of this component has changed
+    // modules that overwrite their values should call this when the
+    // value changes
     protected final void notifyContentChanged() {
+        // notify all listeners (including parents)
         for (DialogModuleChangeListener listener : listeners) {
             listener.onContentChanged();
         }
@@ -69,6 +74,69 @@ public class BlankDialogModule extends JComponent {
     }
 
     // -------------------
+
+    // set enabled lookup (format "[identifier]=[string]")
+    private final String[] lookups = new String[4];
+
+    public final void setEnabledLookup(String lookup) {
+        lookups[0] = lookup;
+    }
+    public final void setDisabledLookup(String lookup) {
+        lookups[1] = lookup;
+    }
+    public final void setVisibleLookup(String lookup) {
+        lookups[2] = lookup;
+    }
+    public final void setInvisibleLookup(String lookup) {
+        lookups[3] = lookup;
+    }
+
+    // called to update the state of this component
+    protected final void refreshState(BlankDialogModule topLevelParent) {
+        for (int i = 0; i < 4; i++) {
+            if (lookups[i] != null) {
+                String[] lookup = lookups[i].split("=");
+                if (lookup.length == 2) {
+                    Object value = topLevelParent.getValue(lookup[0]);
+                    if (value != null) {
+                        String[] possibleValues = lookup[1].split(",");
+                        boolean matched = false;
+                        for (String possibleValue : possibleValues) {
+                            if (possibleValue.equals(value)) {
+                                matched = true;
+                                break;
+                            }
+                        }
+                        switch (i) {
+                            case 0: this.setDeepEnabled(matched); break;
+                            case 1: this.setDeepEnabled(!matched); break;
+                            case 2: this.setVisible(matched); break;
+                            default: this.setVisible(!matched); break;
+                        }
+                    }
+                }
+            }
+        }
+        // refresh all children
+        for (BlankDialogModule child : childModules.values()) {
+            child.refreshState(topLevelParent);
+        }
+    }
+
+    // disable all children when this is triggered
+    private void setDeepEnabled(boolean value) {
+        ArrayList<Component> components = new ArrayList<Component>();
+        components.add(this);
+        while (!components.isEmpty()) {
+            Component com = components.remove(0);
+            com.setEnabled(value);
+            if (com instanceof Container) {
+                Collections.addAll(components, ((Container) com).getComponents());
+            }
+        }
+    }
+
+    // ------------------
 
     // add a child module to this module
     protected final void addModule(BlankDialogModule module, boolean display) {
@@ -99,6 +167,9 @@ public class BlankDialogModule extends JComponent {
     // returns true if this component and all sub components are ready
     protected final boolean isReady() {
         // check if visible (invisible components are ok to be not ready)
+        if (!this.isVisible()) {
+            return true;
+        }
         if (!this.isDisplayable()) {
             return true;
         }
