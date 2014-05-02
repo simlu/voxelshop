@@ -7,6 +7,7 @@ import com.vitco.util.dialog.BlankDialogModule;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * A Text input element for the UserInputDialog
@@ -62,5 +63,22 @@ public class TextInputModule extends BlankDialogModule {
     @Override
     protected Object getValue(String identifier) {
         return textField.getText();
+    }
+
+    @Override
+    protected ArrayList<String[]> getSerialization(String path) {
+        ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
+        keyValuePair.add(new String[] {path, (String) getValue(null)});
+        return keyValuePair;
+    }
+
+    @Override
+    protected boolean loadValue(String[] pair) {
+        if (pair[0].equals("")) {
+            textField.setText(pair[1]);
+            notifyContentChanged();
+            return true;
+        }
+        return false;
     }
 }

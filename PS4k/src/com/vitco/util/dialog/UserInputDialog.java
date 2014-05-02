@@ -1,6 +1,8 @@
 package com.vitco.util.dialog;
 
 import com.vitco.util.dialog.components.DialogButton;
+import com.vitco.util.dialog.components.FieldSet;
+import com.vitco.util.dialog.components.FieldSetWrapper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -120,7 +122,7 @@ public class UserInputDialog extends JDialog {
             // set default size
             this.setSize(600, getHeight());
             // set position to center
-            this.setLocationRelativeTo(null);
+            this.setLocationRelativeTo(getParent());
             // check if buttons are enabled or not
             refreshButtonEnabled();
             // check states
@@ -204,4 +206,17 @@ public class UserInputDialog extends JDialog {
         content.addModule(fieldSetWrapper, true);
     }
 
+    // retrieve serialization of this object
+    public final ArrayList<String[]> getSerialization() {
+        return content.getSerialization("");
+    }
+
+    // load serialization
+    public final void loadSerialization(ArrayList<String[]> ser) {
+        for (String[] pair : ser) {
+            if (pair.length == 2) {
+                content.loadValue(pair);
+            }
+        }
+    }
 }

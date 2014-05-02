@@ -22,7 +22,7 @@ public class BlankDialogModule extends JComponent {
 
     // the identifier of this object
     private final String identifier;
-    protected final String getIdentifier() {
+    public final String getIdentifier() {
         return identifier;
     }
 
@@ -229,6 +229,27 @@ public class BlankDialogModule extends JComponent {
             return object.getValue(path.length > 1 ? path[1] : null);
         }
         return null;
+    }
+
+    // retrieve the serialization of this object
+    // needs to be overwritten if the object wants to store its value (serialization)
+    protected ArrayList<String[]> getSerialization(String currentIdentifier) {
+        ArrayList<String[]> keyValueSet = new ArrayList<String[]>();
+        for (BlankDialogModule child : childModules) {
+            keyValueSet.addAll(child.getSerialization(
+                            currentIdentifier + (currentIdentifier.equals("") ? "" : ".") + child.getIdentifier())
+            );
+        }
+        return keyValueSet;
+    }
+
+    // load a key
+    // needs to be overwritten if the object wants to restore its value (deserialization)
+    protected boolean loadValue(String[] pair) {
+        String[] path = pair[0].split("\\.", 2);
+        BlankDialogModule object = id2ChildModule.get(path[0]);
+        pair = new String[]{path.length > 1 ? path[1] : "", pair[1]};
+        return object != null && object.loadValue(pair);
     }
 
 }

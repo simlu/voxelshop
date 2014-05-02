@@ -6,6 +6,7 @@ import com.vitco.util.dialog.BlankDialogModule;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -74,5 +75,24 @@ public class ComboBoxModule extends BlankDialogModule {
     @Override
     protected Object getValue(String identifier) {
         return id2Identifier.get(comboBox.getSelectedIndex());
+    }
+
+    @Override
+    protected ArrayList<String[]> getSerialization(String path) {
+        ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
+        keyValuePair.add(new String[] {path, comboBox.getSelectedIndex() + ""});
+        return keyValuePair;
+    }
+
+    @Override
+    protected boolean loadValue(String[] pair) {
+        if (pair[0].equals("")) {
+            try {
+                comboBox.setSelectedIndex(Integer.parseInt(pair[1]));
+                notifyContentChanged();
+            } catch (NumberFormatException ignored) {}
+            return true;
+        }
+        return false;
     }
 }

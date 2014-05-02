@@ -1,4 +1,6 @@
-package com.vitco.util.dialog;
+package com.vitco.util.dialog.components;
+
+import com.vitco.util.dialog.BlankDialogModule;
 
 /**
  * FieldSet class

@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Object that allows the user to select a folder.
@@ -15,6 +16,9 @@ public class FolderSelectModule extends BlankDialogModule {
 
     // dialog that is used to select the folder
     private final JFileChooser fileDialog;
+
+    // the label that displays the folder
+    private final JLabel label;
 
     // constructor
     public FolderSelectModule(String identifier, final JFrame owner, File initTo) {
@@ -28,7 +32,7 @@ public class FolderSelectModule extends BlankDialogModule {
         fileDialog.setCurrentDirectory(initTo);
 
         // create the label that displays the current folder name
-        final JLabel label = new JLabel(FileTools.shortenPath(fileDialog.getCurrentDirectory().getPath() + "\\", 50));
+        label = new JLabel(FileTools.shortenPath(fileDialog.getCurrentDirectory().getPath() + "\\", 50));
         label.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
         add(label, BorderLayout.CENTER);
 
@@ -55,7 +59,33 @@ public class FolderSelectModule extends BlankDialogModule {
     @Override
     protected Object getValue(String identifier) {
         // return the directory of the selected folder
-        return fileDialog.getCurrentDirectory();
+        if (fileDialog.getSelectedFile() != null) {
+            return fileDialog.getSelectedFile().getPath() + "\\";
+        } else {
+            // ensures that the path is stored even if it was not changed
+            return fileDialog.getCurrentDirectory().getPath() + "\\";
+        }
+    }
+
+    @Override
+    protected ArrayList<String[]> getSerialization(String path) {
+        ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
+        keyValuePair.add(new String[]{path, (String) getValue(null)});
+        return keyValuePair;
+    }
+
+    @Override
+    protected boolean loadValue(String[] pair) {
+        if (pair[0].equals("")) {
+            // set the path
+            fileDialog.setCurrentDirectory(new File(pair[1]));
+            // update the text label
+            label.setText(FileTools.shortenPath(pair[1], 50));
+            // listen to changes
+            notifyContentChanged();
+            return true;
+        }
+        return false;
     }
 
 }

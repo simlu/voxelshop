@@ -1,5 +1,4 @@
 import com.jidesoft.plaf.LookAndFeelFactory;
-import com.vitco.util.dialog.FieldSet;
 import com.vitco.util.dialog.UserInputDialog;
 import com.vitco.util.dialog.UserInputDialogListener;
 import com.vitco.util.dialog.components.*;
@@ -9,6 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 public class UserInputDialogTest {
 
@@ -67,17 +67,17 @@ public class UserInputDialogTest {
         collada.addComponent(legacyInfo);
 
         // add options
-        CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed holes");
+        CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed holes", true);
         removeEnclosed.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(removeEnclosed);
 
         // add options
-        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new object for every layer");
+        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new object for every layer", false);
         layersAsObjects.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(layersAsObjects);
 
         // use vertex colors
-        CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)");
+        CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(useVertexColors);
 
@@ -85,7 +85,7 @@ public class UserInputDialogTest {
 
         // add "render" export
         FieldSet imageRenderer = new FieldSet("image_renderer", "Render View");
-        imageRenderer.addComponent(new CheckBoxModule("render_depth", "Render Depth Image"));
+        imageRenderer.addComponent(new CheckBoxModule("render_depth", "Render Depth Image", true));
 
         // ---------------
 
@@ -94,18 +94,25 @@ public class UserInputDialogTest {
 
         // ---------------
 
+        final ArrayList<String[]> serialization = new ArrayList<String[]>();
+
         // listen to events
         dialog.setListener(new UserInputDialogListener() {
             @Override
             public boolean onClose(int resultFlag) {
                 if (resultFlag == JOptionPane.OK_OPTION) {
+                    serialization.clear();
+                    serialization.addAll(dialog.getSerialization());
+                    for (String[] pair :serialization) {
+                        System.out.println(pair[0] + "=" + pair[1]);
+                    }
                     System.out.println(dialog.getValue("location.file"));
-                    System.out.println(dialog.getValue("location"));
-                    System.out.println(dialog.getValue("adobe_media_encoder.export_dae"));
-                    System.out.println(dialog.getValue("divx_encoder.export_img"));
-                    System.out.println(dialog.getValue("divx_encoder.export_img2"));
-                    System.out.println(dialog.getValue("divx_encoder.enable_overwrite"));
-                    System.out.println(dialog.getValue("encoder_type"));
+//                    System.out.println(dialog.getValue("location"));
+//                    System.out.println(dialog.getValue("adobe_media_encoder.export_dae"));
+//                    System.out.println(dialog.getValue("divx_encoder.export_img"));
+//                    System.out.println(dialog.getValue("divx_encoder.export_img2"));
+//                    System.out.println(dialog.getValue("divx_encoder.enable_overwrite"));
+//                    System.out.println(dialog.getValue("encoder_type"));
                 }
                 return true;
             }
@@ -117,6 +124,7 @@ public class UserInputDialogTest {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                dialog.loadSerialization(serialization);
                 dialog.setVisible(true);
             }
         });

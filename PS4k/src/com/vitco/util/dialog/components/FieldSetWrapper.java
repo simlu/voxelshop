@@ -1,12 +1,11 @@
-package com.vitco.util.dialog;
+package com.vitco.util.dialog.components;
 
-import com.jidesoft.swing.JideComboBox;
+import com.vitco.util.dialog.BlankDialogModule;
+import com.vitco.util.dialog.DialogModuleChangeAdapter;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,10 +20,10 @@ public class FieldSetWrapper extends BlankDialogModule {
     private final int topSpace;
 
     // drop down menu used to select the active menu
-    private final JideComboBox comboBox;
+    private final ComboBoxModule comboBox;
 
-    // list that maps ids to identifier (for passed fieldSet Array)
-    private final HashMap<Integer, String> id2Identifier = new HashMap<Integer, String>();
+    // maps identifiers to ids
+    private final HashMap<String, Integer> identifier2comboId = new HashMap<String, Integer>();
 
     // border spacing below every wrapper
     private static final int BORDER_BELOW = 10;
@@ -91,46 +90,33 @@ public class FieldSetWrapper extends BlankDialogModule {
         // --------
 
         // add combo box menu
-        String[] displayedStrings = new String[dropFieldSets.length];
-        String longestString = "";
+        String[][] displayedStrings = new String[dropFieldSets.length][];
         int maxHeight = 0;
         for (int i = 0; i < dropFieldSets.length; i++) {
             // set drop down text entries
-            displayedStrings[i] = dropFieldSets[i].getCaption();
-            if (longestString.length() < displayedStrings[i].length()) {
-                longestString = displayedStrings[i];
-            }
+            displayedStrings[i] = new String[] {dropFieldSets[i].getIdentifier(), dropFieldSets[i].getCaption()};
             maxHeight = Math.max(maxHeight, dropFieldSets[i].getPreferredSize().height);
-            // update identifier map
-            id2Identifier.put(i, dropFieldSets[i].getIdentifier());
+            identifier2comboId.put(dropFieldSets[i].getIdentifier(), i);
         }
         // always enforce that content is maximum height
         content.setPreferredSize(new Dimension(content.getPreferredSize().width, maxHeight + PADDING[0] + PADDING[2]));
         // create the combo box
-        comboBox = new JideComboBox(displayedStrings) {
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension dimension = super.getPreferredSize();
-                // add width to prevent dots in menu items (they show at the end otherwise!)
-                return new Dimension(dimension.width + 30, dimension.height);
-            }
-        };
-        // compute the top space
+        comboBox = new ComboBoxModule("combobox", displayedStrings, selected);
+        // disable spacing
+        comboBox.setBorder(BorderFactory.createEmptyBorder());
+        // register comboBox as a module
+        addModule(comboBox, false);
+        // compute the top space (the drawn line offset from the top border)
         topSpace = comboBox.getPreferredSize().height/2;
-        // disable focus for combo box
-        comboBox.setFocusable(false);
-        // make sure the combo box is "long enough"
-        comboBox.setPrototypeDisplayValue(longestString);
-        // validate and set selected index
-        selected = Math.min(dropFieldSets.length - 1, Math.max(0, selected));
-        comboBox.setSelectedIndex(selected);
-        // listen to select events of combo box
-        comboBox.addActionListener(new ActionListener() {
+        // listen to content changes
+        addListener(new DialogModuleChangeAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setBodyComponent(dropFieldSets[comboBox.getSelectedIndex()]);
-                // notify that the content has changed
-                notifyContentChanged();
+            public void onContentChanged() {
+                super.onContentChanged();
+                Integer id = identifier2comboId.get(comboBox.getValue(null).toString());
+                if (id != null) {
+                    setBodyComponent(dropFieldSets[id]);
+                }
             }
         });
 
@@ -181,12 +167,7 @@ public class FieldSetWrapper extends BlankDialogModule {
     // retrieve the selector that was selected in the combo box
     @Override
     public Object getValue(String identifier) {
-        if (comboBox != null) {
-            return id2Identifier.get(comboBox.getSelectedIndex());
-        } else {
-            // not used since the single wrapper is not added to the main dialog content
-            return super.getValue(identifier);
-        }
+        return comboBox.getValue(identifier);
     }
 
     // overwrite paint method to draw border
