@@ -1,4 +1,4 @@
-package com.vitco.export.container;
+package com.vitco.export.generic.container;
 
 import java.util.ArrayList;
 import java.util.Collections;

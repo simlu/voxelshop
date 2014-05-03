@@ -6,7 +6,7 @@ import com.threed.jpct.TextureManager;
 import com.vitco.Main;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
-import com.vitco.export.ExportWorld;
+import com.vitco.export.generic.ExportWorld;
 import com.vitco.layout.content.JCustomScrollPane;
 import com.vitco.layout.content.ViewPrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
@@ -166,7 +166,8 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
                         countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_MONO_SAVE);
                         console.addLine("Monotone Meshing (Save in 2D): " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
                         countInfo = exportWorld.analyzeTriCount(ExportWorld.ALGORITHM_POLY2TRI);
-                        console.addLine("Poly2Tri Meshing: " + countInfo[0] + " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
+                        console.addLine("Poly2Tri Meshing (Without mesh fixing): " + countInfo[0] +
+                                " triangles (" + countInfo[1] + " before) in " + countInfo[2] + "ms");
                     }
                 });
             }

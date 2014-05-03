@@ -1,15 +1,17 @@
-package com.vitco.export;
+package com.vitco.export.generic;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
-import com.vitco.export.container.*;
+import com.vitco.export.generic.container.*;
 import com.vitco.low.hull.HullManager;
+import com.vitco.low.triangulate.Grid2TriGreedyOptimal;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.low.triangulate.util.Grid2PolyHelper;
 import gnu.trove.list.array.TShortArrayList;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +45,12 @@ public class ExportDataManager {
 
     // -------------
 
+    // the algorithms static variables
+    public static final int POLY2TRI_ALGORITHM = 0;
+    public static final int MINIMAL_RECT_ALGORITHM = 1;
+
     // constructor
-    public ExportDataManager(Data data) {
+    public ExportDataManager(Data data, int algoritm) {
 
         // create hull manager that exposes hull information
         Voxel[] voxels = data.getVisibleLayerVoxel();
@@ -58,7 +64,7 @@ public class ExportDataManager {
         this.data = data;
 
         // extract information
-        extract();
+        extract(algoritm);
 
         // combine the textures
         textureManager.combine();
@@ -137,7 +143,7 @@ public class ExportDataManager {
     }
 
     // extract the necessary information from the hull manager
-    private void extract() {
+    private void extract(int algorithm) {
         // loop over all sides
         for (int i = 0; i < 6; i++) {
             // get borders into specific direction and
@@ -194,14 +200,24 @@ public class ExportDataManager {
                     data[entry[id1]-minA][entry[id2]-minB] = true;
                 }
 
-                // generate triangles
-                short[][][] polys = Grid2PolyHelper.convert(data);
+                Collection<DelaunayTriangle> tris;
+                switch (algorithm) {
+                    case ExportDataManager.MINIMAL_RECT_ALGORITHM:
+                        tris = Grid2TriGreedyOptimal.triangulate(data);
+                        break;
+                    default:
+                        // generate triangles
+                        short[][][] polys = Grid2PolyHelper.convert(data);
+                        // fix 3D t-junction problems
+                        int planeAbove = entries.getKey() + (i%2 == 0 ? 1 : -1);
+                        polys = fix3DTJunctionProblems(polys, planeAbove, id1, id2, minA, minB);
+                        // extract triangles
+                        tris = Grid2TriPolyFast.triangulate(polys);
+                        break;
+                }
 
-                // fix 3D t-junction problems
-                int planeAbove = entries.getKey() + (i%2 == 0 ? 1 : -1);
-                polys = fix3DTJunctionProblems(polys, planeAbove, id1, id2, minA, minB);
 
-                for (DelaunayTriangle tri : Grid2TriPolyFast.triangulate(polys)) {
+                for (DelaunayTriangle tri : tris) {
 //                for (DelaunayTriangle tri : Grid2TriGreedyOptimal.triangulate(data)) {
 //                for (DelaunayTriangle tri : Grid2TriMono.triangulate(data, false)) {
 

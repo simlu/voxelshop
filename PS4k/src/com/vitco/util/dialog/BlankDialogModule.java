@@ -97,6 +97,8 @@ public class BlankDialogModule extends JComponent {
 
     // called to update the state of this component
     protected final void refreshState(BlankDialogModule topLevelParent) {
+        boolean visible = true;
+        boolean enabled = true;
         for (int i = 0; i < 4; i++) {
             if (lookups[i] != null) {
                 // split into different parts
@@ -131,19 +133,33 @@ public class BlankDialogModule extends JComponent {
                 boolean matched = matchCount == parts.length;
                 switch (i) {
                     case 0:
-                        this.setDeepEnabled(matched);
+                        if (!matched) {
+                            enabled = false;
+                        }
                         break;
                     case 1:
-                        this.setDeepEnabled(!matched);
+                        if (matched) {
+                            enabled = false;
+                        }
                         break;
                     case 2:
-                        this.setVisible(matched);
+                        if (!matched) {
+                            visible = false;
+                        }
                         break;
                     default:
-                        this.setVisible(!matched);
+                        if (matched) {
+                            visible = false;
+                        }
                         break;
                 }
             }
+        }
+        if (lookups[0] != null || lookups[1] != null) {
+            this.setDeepEnabled(enabled);
+        }
+        if (lookups[2] != null || lookups[3] != null) {
+            this.setVisible(visible);
         }
         // refresh all children
         for (BlankDialogModule child : childModules) {
@@ -219,7 +235,7 @@ public class BlankDialogModule extends JComponent {
     // get the value of this object
     // needs to be overwritten for objects that do not
     // get their value from their children
-    protected Object getValue(String identifier) {
+    protected String getValue(String identifier) {
         if (identifier == null) {
             return null;
         }

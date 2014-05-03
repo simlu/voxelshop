@@ -21,7 +21,7 @@ public class FolderSelectModule extends BlankDialogModule {
     private final JLabel label;
 
     // constructor
-    public FolderSelectModule(String identifier, final JFrame owner, File initTo) {
+    public FolderSelectModule(String identifier, final Frame owner, File initTo) {
         super(identifier);
         // set layout
         setLayout(new BorderLayout());
@@ -57,7 +57,7 @@ public class FolderSelectModule extends BlankDialogModule {
     }
 
     @Override
-    protected Object getValue(String identifier) {
+    protected String getValue(String identifier) {
         // return the directory of the selected folder
         if (fileDialog.getSelectedFile() != null) {
             return fileDialog.getSelectedFile().getPath() + "\\";
@@ -70,7 +70,7 @@ public class FolderSelectModule extends BlankDialogModule {
     @Override
     protected ArrayList<String[]> getSerialization(String path) {
         ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
-        keyValuePair.add(new String[]{path, (String) getValue(null)});
+        keyValuePair.add(new String[]{path, getValue(null)});
         return keyValuePair;
     }
 

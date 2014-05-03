@@ -3,10 +3,16 @@ package com.vitco.layout.content.menu;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
+import com.vitco.export.collada.ColladaExportWrapper;
+import com.vitco.export.collada.ColladaFile;
+import com.vitco.export.generic.ExportDataManager;
 import com.vitco.importer.*;
 import com.vitco.layout.content.mainview.MainView;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.dialog.UserInputDialog;
+import com.vitco.util.dialog.UserInputDialogListener;
+import com.vitco.util.dialog.components.*;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.CFileDialog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Handles the main menu logic.
@@ -37,13 +44,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
     // util for save/load/new file
     // ======================================
     // the location of active file (or null if none active)
-    final String[] save_location = new String[] {null};
+    private final String[] save_location = new String[] {null};
     // the file chooser
-    final CFileDialog fc_vsd = new CFileDialog();
-    // export file chooser
-    final CFileDialog fc_export = new CFileDialog();
+    private final CFileDialog fc_vsd = new CFileDialog();
     // import file chooser
-    final CFileDialog fc_import = new CFileDialog();
+    private final CFileDialog fc_import = new CFileDialog();
 
     // save file prompt (and overwrite prompt): true iff save was successful
     private boolean handleSaveDialog(Frame frame) {
@@ -159,7 +164,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
     }
     // ======================================
 
-    public void registerLogic(final Frame frame) {
+    public final void registerLogic(final Frame frame) {
         // initialize the filter
         fc_vsd.addFileType("vsd", "PS4k File");
 
@@ -289,75 +294,254 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             }
         });
 
-        fc_export.addFileType("dae", "COLLADA");
-        fc_export.addFileType("png", "Image and Depth Map");
+        // ==========================
+        // set up exporter dialog
+        final UserInputDialog dialog = new UserInputDialog(frame, "Export Voxels", JOptionPane.CANCEL_OPTION);
+
+        // add submit buttons
+        dialog.addButton("Export", JOptionPane.OK_OPTION);
+        dialog.addButton("Cancel", JOptionPane.CANCEL_OPTION);
+
+        // add file select
+        FieldSet location = new FieldSet("location", "Location");
+        location.addComponent(new FileSelectModule("file", new File("exported"), frame));
+        dialog.addFieldSet(location);
+
+        // ---------------
+
+        // set up Collada format
+        final FieldSet collada = new FieldSet("collada", "Collada (*.dae)");
+        collada.addComponent(new LabelModule("Select Export Options:"));
+        collada.addComponent(new ComboBoxModule("type", new String[][] {
+                new String[] {"poly2tri", "Optimal (Poly2Tri)"},
+                new String[] {"minimal", "Low Poly (Rectangular)"},
+                new String[] {"legacy", "Legacy (Unoptimized)"}
+        }, 0));
+        // add information for "poly2tri"
+        LabelModule poly2triInfo = new LabelModule("Info: This is the preferred exporter. The mesh is highly " +
+                "optimized and no rendering artifacts can appear.");
+        poly2triInfo.setVisibleLookup("collada.type=poly2tri");
+        collada.addComponent(poly2triInfo);
+        // add information for "optimalGreedy"
+        LabelModule minimalInfo = new LabelModule("Info: This exporter results in a slightly lower triangle " +
+                "count, however rendering artifacts can appear (T-Junction problems). Use only if you absolutely must!");
+        minimalInfo.setVisibleLookup("collada.type=minimal");
+        collada.addComponent(minimalInfo);
+        // add information for "legacy"
+        LabelModule legacyInfo = new LabelModule("Info: Unoptimized legacy exporter. Useful if you want to " +
+                "process the mesh further. Suitable for 3D printing (uses vertex coloring).");
+        legacyInfo.setVisibleLookup("collada.type=legacy");
+        collada.addComponent(legacyInfo);
+
+        // option: remove holes
+        CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed holes", true);
+        removeEnclosed.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(removeEnclosed);
+
+        // option: layer as object
+        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new object for every layer", false);
+        layersAsObjects.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(layersAsObjects);
+
+        // option: use vertex colors
+        CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)", false);
+        useVertexColors.setInvisibleLookup("collada.type=legacy");
+        useVertexColors.setVisibleLookup("collada.use_black_edges=false");
+        collada.addComponent(useVertexColors);
+
+        // option: export with black outline
+        CheckBoxModule useBlackOutline = new CheckBoxModule("use_black_edges", "Use black edges", false);
+        useBlackOutline.setInvisibleLookup("collada.type=legacy");
+        useBlackOutline.setVisibleLookup("collada.use_vertex_coloring=false");
+        collada.addComponent(useBlackOutline);
+
+        // ---------------
+
+        // add "render" export
+        FieldSet imageRenderer = new FieldSet("image_renderer", "Render (*.png)");
+        imageRenderer.addComponent(new LabelModule("Select Export Options:"));
+        TextInputModule depthMapFileName = new TextInputModule("depth_map", "Name (Depth Render):", "depth", true);
+        depthMapFileName.setEnabledLookup("export_type=image_renderer&image_renderer.render_depth=true");
+        depthMapFileName.setVisibleLookup("export_type=image_renderer");
+        imageRenderer.addComponent(depthMapFileName);
+        imageRenderer.addComponent(new CheckBoxModule("render_depth", "Render Depth Image", true));
+
+        // ---------------
+
+        // add all formats
+        dialog.addComboBox("export_type", new FieldSet[] {collada, imageRenderer}, 0);
+
+        // ---------------
+
+        // try to load the serialization
+        Object serialization = preferences.loadObject("export_dialog_serialization");
+        if (serialization != null && serialization instanceof ArrayList) {
+            ArrayList data = (ArrayList) serialization;
+            ArrayList<String[]> validatedData = new ArrayList<String[]>();
+            for (Object pair : data) {
+                if (pair instanceof String[]) {
+                    String[] confirmedPair = (String[]) pair;
+                    if (((String[]) pair).length == 2) {
+                        validatedData.add(confirmedPair);
+                    }
+                }
+            }
+            dialog.loadSerialization(validatedData);
+        }
+
+        // listen to events
+        dialog.setListener(new UserInputDialogListener() {
+            @Override
+            public boolean onClose(int resultFlag) {
+                // user approved the dialog
+                if (resultFlag == JOptionPane.OK_OPTION) {
+                    String baseName = dialog.getValue("location.file");
+                    // validate folder (that it exists and is actually a folder)
+                    File toValidateFolder = new File(baseName);
+                    if (!toValidateFolder.getParentFile().exists() || !toValidateFolder.getParentFile().isDirectory()) {
+                        JOptionPane.showMessageDialog(frame, langSelector.getString("error_invalid_folder"));
+                        return false;
+                    }
+
+                    // handle logic
+                    if (dialog.is("export_type=image_renderer")) {
+
+                        // ===========
+
+                        // -- export render
+                        // extract file name
+                        File exportRenderTo = new File(baseName + (baseName.endsWith(".png") ? "" : ".png"));
+                        // check if file exists
+                        if (exportRenderTo.exists()) {
+                            if (JOptionPane.showConfirmDialog(frame,
+                                    exportRenderTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                return false;
+                            }
+                        }
+
+                        // -- export depth map
+                        if (dialog.is("image_renderer.render_depth=true")) {
+                            // extract file name
+                            String depthBaseName = dialog.getValue("image_renderer.depth_map");
+                            File exportDepthMapTo = new File(exportRenderTo.getParent() + "\\" + depthBaseName + (depthBaseName.endsWith(".png") ? "" : ".png"));
+                            // check if file exists
+                            if (exportDepthMapTo.exists()) {
+                                if (JOptionPane.showConfirmDialog(frame,
+                                        exportDepthMapTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                        langSelector.getString("replace_file_query_title"),
+                                        JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                    return false;
+                                }
+                            }
+                            // export depth map
+                            BufferedImage depth = mainView.getDepthImage();
+                            try {
+                                ImageIO.write(depth,"png",exportDepthMapTo);
+                            } catch (IOException e) {
+                                errorHandler.handle(e);
+                            }
+                        }
+
+                        // export color render (image)
+                        BufferedImage image = mainView.getImage();
+                        try {
+                            ImageIO.write(image,"png", exportRenderTo);
+                        } catch (IOException e) {
+                            errorHandler.handle(e);
+                        }
+
+                        // ===========
+
+                    } else if (dialog.is("export_type=collada")) {
+
+                        // ===========
+
+                        // -- export collada
+                        // extract file name
+                        File exportColladaTo = new File(baseName + (baseName.endsWith(".dae") ? "" : ".dae"));
+                        // check if file exists
+                        if (exportColladaTo.exists()) {
+                            if (JOptionPane.showConfirmDialog(frame,
+                                    exportColladaTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                return false;
+                            }
+                        }
+                        // extract texture name (this is only actually used by the legacy
+                        // exporter and to query the user if the file should be overwritten)
+                        File exportTextureTo = new File(FileTools.changeExtension(exportColladaTo.getPath(), "_texture0.png"));
+                        // check if file exists
+                        if (exportTextureTo.exists()) {
+                            if (JOptionPane.showConfirmDialog(frame,
+                                    exportTextureTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                return false;
+                            }
+                        }
+
+                        // -- do the actual exporting
+                        if (dialog.is("collada.type=legacy")) {
+                            // -- export legacy (todo: remove when other is strictly better)
+                            long time = System.currentTimeMillis();
+                            if (ColladaFile.exportLegacy(data, errorHandler, exportColladaTo, exportTextureTo)) {
+                                console.addLine(
+                                        String.format(langSelector.getString("export_file_successful"),
+                                                System.currentTimeMillis() - time)
+                                );
+                            } else {
+                                console.addLine(langSelector.getString("export_file_error"));
+                            }
+                            // ----
+                        } else {
+                            // -- default export
+                            // check if we use layers
+                            boolean layers_as_objects = dialog.is("collada.layers_as_objects=true");
+
+                            ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper();
+                            // set the "use layers" flag
+                            colladaExportWrapper.setUseLayers(layers_as_objects);
+                            // set the algorithm type
+                            if (dialog.is("collada.type=minimal")) {
+                                colladaExportWrapper.setAlgorithm(ExportDataManager.MINIMAL_RECT_ALGORITHM);
+                            } else if (dialog.is("collada.type=poly2tri")) {
+                                colladaExportWrapper.setAlgorithm(ExportDataManager.POLY2TRI_ALGORITHM);
+                            }
+
+                            long time = System.currentTimeMillis();
+                            if (colladaExportWrapper.export(data, errorHandler, exportColladaTo)) {
+                                console.addLine(
+                                        String.format(langSelector.getString("export_file_successful"),
+                                                System.currentTimeMillis() - time)
+                                );
+                            } else {
+                                console.addLine(langSelector.getString("export_file_error"));
+                            }
+                        }
+
+                        // ===========
+
+                    }
+                    // -----
+                    // store serialization
+                    preferences.storeObject("export_dialog_serialization", dialog.getSerialization());
+                }
+                return true;
+            }
+        });
+
+        // -----------------
 
         // export file
         actionManager.registerAction("export_file_action", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-
-                    File exportTo = fc_export.saveFile(frame);
-                    String type = fc_export.getCurrentExt();
-                    if (type != null && exportTo != null) {
-                        String dir = exportTo.getPath();
-                        // query if file already exists
-                        if ((!exportTo.exists() ||
-                                JOptionPane.showConfirmDialog(frame,
-                                        dir + " " + langSelector.getString("replace_file_query"),
-                                        langSelector.getString("replace_file_query_title"),
-                                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
-
-                            if (type.equals("dae")) {
-                                // -----------
-                                // export collada (we need texture!)
-                                String textureImgDir = FileTools.changeExtension(dir, ".png");
-                                File exportTextureTo = new File(textureImgDir);
-                                // query if texture file already exists
-                                if ((!exportTextureTo.exists() ||
-                                                JOptionPane.showConfirmDialog(frame,
-                                                        textureImgDir + " " + langSelector.getString("replace_file_query"),
-                                                        langSelector.getString("replace_file_query_title"),
-                                                        JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
-                                    long time = System.currentTimeMillis();
-                                    if (data.exportToCollada(exportTo, exportTextureTo)) {
-                                        console.addLine(
-                                                String.format(langSelector.getString("export_file_successful"), System.currentTimeMillis() - time)
-                                        );
-                                    } else {
-                                        console.addLine(langSelector.getString("export_file_error"));
-                                    }
-                                }
-                            } else if (type.equals("png")) {
-                                // -----------
-                                // export image and depth map
-                                BufferedImage image = mainView.getImage();
-                                try {
-                                    ImageIO.write(image,"png",exportTo);
-                                } catch (IOException e) {
-                                    errorHandler.handle(e);
-                                }
-                                // check if we want to overwrite the depth map
-                                File exportDepthMapTo = new File(FileTools.removeExtension(exportTo) + "_depth.png");
-                                if ((!exportDepthMapTo.exists() ||
-                                        JOptionPane.showConfirmDialog(frame,
-                                                exportDepthMapTo.getPath() + " " + langSelector.getString("replace_file_query"),
-                                                langSelector.getString("replace_file_query_title"),
-                                                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)) {
-                                    BufferedImage depth = mainView.getDepthImage();
-                                    try {
-                                        ImageIO.write(depth,"png",exportDepthMapTo);
-                                    } catch (IOException e) {
-                                        errorHandler.handle(e);
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-
-
+                    // show dialog
+                    dialog.setVisible(true);
                 }
             }
 
@@ -366,6 +550,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 return data.anyLayerVoxelVisible();
             }
         });
+        // =========================
 
         // quick save
         actionManager.registerAction("quick_save_file_action", new StateActionPrototype() {
@@ -456,7 +641,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // store folder locations (for open / close / import / export)
         preferences.storeString("file_open_close_dialog_last_directory", fc_vsd.getDialogPath());
         preferences.storeString("file_import_dialog_last_directory", fc_import.getDialogPath());
-        preferences.storeString("file_export_dialog_last_directory", fc_export.getDialogPath());
     }
 
     @PostConstruct
@@ -469,10 +653,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         if (preferences.contains("file_import_dialog_last_directory")) {
             File file = new File(preferences.loadString("file_import_dialog_last_directory"));
             fc_import.setDialogPath(file);
-        }
-        if (preferences.contains("file_export_dialog_last_directory")) {
-            File file = new File(preferences.loadString("file_export_dialog_last_directory"));
-            fc_export.setDialogPath(file);
         }
     }
 }

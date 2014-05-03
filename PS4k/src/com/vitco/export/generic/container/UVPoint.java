@@ -1,4 +1,4 @@
-package com.vitco.export.container;
+package com.vitco.export.generic.container;
 
 /**
  * Represents a UV point (for texture coordinates).

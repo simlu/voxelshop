@@ -76,14 +76,14 @@ public class ComboBoxModule extends BlankDialogModule {
 
     // get the value identifier of the selected entry
     @Override
-    protected Object getValue(String identifier) {
+    protected String getValue(String identifier) {
         return id2Identifier.get(comboBox.getSelectedIndex());
     }
 
     @Override
     protected ArrayList<String[]> getSerialization(String path) {
         ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
-        keyValuePair.add(new String[] {path, (String) getValue(null)});
+        keyValuePair.add(new String[] {path, getValue(null)});
         return keyValuePair;
     }
 

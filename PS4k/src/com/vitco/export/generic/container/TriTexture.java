@@ -1,4 +1,4 @@
-package com.vitco.export.container;
+package com.vitco.export.generic.container;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;

@@ -1,4 +1,4 @@
-package com.vitco.export;
+package com.vitco.export.generic;
 
 import com.vitco.core.data.container.Voxel;
 import com.vitco.low.triangulate.Grid2TriGreedyOptimal;

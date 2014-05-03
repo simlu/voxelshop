@@ -50,7 +50,7 @@ public class UserInputDialog extends JDialog {
     }
 
     // constructor
-    public UserInputDialog(JFrame owner, String title, final int cancelFlag) {
+    public UserInputDialog(Frame owner, String title, final int cancelFlag) {
         // make this dialog block all user content (that is behind it)
         super(owner, title, Dialog.ModalityType.DOCUMENT_MODAL);
         // set layout for the dialog
@@ -139,8 +139,22 @@ public class UserInputDialog extends JDialog {
     // object was not found). This uses the fieldSet identifier
     // together with the object identifier, separated by a dot.
     // E.g. "fieldD=SetId.objectId.objectId...."
-    public final Object getValue(String identifier) {
-        return content.getValue(identifier);
+    // Can not return null
+    public final String getValue(String identifier) {
+        String result = content.getValue(identifier);
+        return result == null ? "" : result;
+    }
+
+    // check that an expression is true (simple equal)
+    public final boolean is(String expression) {
+        String[] pair = expression.split("\\=", 2);
+        if (pair.length == 2) {
+            String actualValue = getValue(pair[0]);
+            if (pair[1].equals(actualValue)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ---------------------

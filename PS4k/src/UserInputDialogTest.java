@@ -37,7 +37,7 @@ public class UserInputDialogTest {
         // add file select
         FieldSet location = new FieldSet("location", "Location");
         location.addComponent(new FileSelectModule("file", new File("exported"), frame));
-        TextInputModule depthMapFileName = new TextInputModule("depth_map", "Depth Render File", new File("depthRender"), false);
+        TextInputModule depthMapFileName = new TextInputModule("depth_map", "Depth Render File", "depth", true);
         depthMapFileName.setEnabledLookup("export_type=image_renderer&image_renderer.render_depth=true");
         depthMapFileName.setVisibleLookup("export_type=image_renderer");
         location.addComponent(depthMapFileName);

@@ -1,4 +1,4 @@
-package com.vitco.export.container;
+package com.vitco.export.generic.container;
 
 /**
  * Abstract class that holds corner information for a TexTriangle

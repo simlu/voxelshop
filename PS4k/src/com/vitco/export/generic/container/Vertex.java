@@ -1,4 +1,4 @@
-package com.vitco.export.container;
+package com.vitco.export.generic.container;
 
 /**
  * Definition of a vertex for Collada Export.

@@ -38,14 +38,14 @@ public class CheckBoxModule extends BlankDialogModule {
 
     // get the value of this object
     @Override
-    protected Object getValue(String identifier) {
-        return checkbox.isSelected();
+    protected String getValue(String identifier) {
+        return String.valueOf(checkbox.isSelected());
     }
 
     @Override
     protected ArrayList<String[]> getSerialization(String path) {
         ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
-        keyValuePair.add(new String[] {path, getValue(null) + ""});
+        keyValuePair.add(new String[] {path, getValue(null)});
         return keyValuePair;
     }
 

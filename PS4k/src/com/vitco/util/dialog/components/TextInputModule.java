@@ -6,7 +6,8 @@ import com.vitco.util.dialog.BlankDialogModule;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
@@ -22,7 +23,7 @@ public class TextInputModule extends BlankDialogModule {
     private final JCustomTextField textField = new JCustomTextField();
 
     // constructor
-    public TextInputModule(String identifier, String caption, File initFile, boolean requireText) {
+    public TextInputModule(String identifier, String caption, String text, boolean requireText) {
         super(identifier);
         setLayout(new BorderLayout());
         // create label
@@ -31,10 +32,7 @@ public class TextInputModule extends BlankDialogModule {
         textLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         add(textLabel, BorderLayout.WEST);
         // create input field
-        if (initFile.isFile()) {
-            // only add if this is a file (and not a folder)
-            textField.setText(initFile.getName());
-        }
+        textField.setText(text);
         add(textField, BorderLayout.CENTER);
 
         // only proceed if text is required for this component to be ready
@@ -46,29 +44,42 @@ public class TextInputModule extends BlankDialogModule {
             textField.addTextChangeListener(new TextChangeListener() {
                 @Override
                 public void onChange() {
-                    setReady(!textField.getText().trim().equals(""));
+                    setReady(!textField.getText().trim().equals("") || !textField.isEnabled());
+                    notifyContentChanged();
+                }
+            });
+
+            // listen to enabled/disabled changes (they affect the "readyness")
+            textField.addPropertyChangeListener(new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ("enabled".equals(evt.getPropertyName())) {
+                        setReady(!textField.getText().trim().equals("") || !textField.isEnabled());
+                        notifyContentChanged();
+                    }
+                }
+            });
+        } else {
+            // listen to change events (simple)
+            textField.addTextChangeListener(new TextChangeListener() {
+                @Override
+                public void onChange() {
+                    notifyContentChanged();
                 }
             });
         }
-        // listen to change events
-        textField.addTextChangeListener(new TextChangeListener() {
-            @Override
-            public void onChange() {
-                notifyContentChanged();
-            }
-        });
     }
 
     // get the value of this object
     @Override
-    protected Object getValue(String identifier) {
+    protected String getValue(String identifier) {
         return textField.getText();
     }
 
     @Override
     protected ArrayList<String[]> getSerialization(String path) {
         ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
-        keyValuePair.add(new String[] {path, (String) getValue(null)});
+        keyValuePair.add(new String[] {path, getValue(null)});
         return keyValuePair;
     }
 

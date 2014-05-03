@@ -39,7 +39,7 @@ public class LabelModule extends BlankDialogModule {
     }
 
     @Override
-    public Object getValue(String identifier) {
+    public String getValue(String identifier) {
         // nothing to return
         return null;
     }

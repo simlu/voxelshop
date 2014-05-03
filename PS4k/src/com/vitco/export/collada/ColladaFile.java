@@ -1,12 +1,18 @@
-package com.vitco.export;
+package com.vitco.export.collada;
 
-import com.vitco.export.container.PlaneMaterial;
-import com.vitco.export.container.UVPoint;
-import com.vitco.export.container.Vertex;
+import com.vitco.Main;
+import com.vitco.core.data.Data;
+import com.vitco.core.data.container.Voxel;
+import com.vitco.export.generic.container.PlaneMaterial;
+import com.vitco.export.generic.container.UVPoint;
+import com.vitco.export.generic.container.Vertex;
+import com.vitco.low.hull.HullManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.DateTools;
+import com.vitco.util.misc.SaveResourceLoader;
 import com.vitco.util.xml.XmlFile;
+import com.vitco.util.xml.XmlTools;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -20,8 +26,69 @@ import java.util.*;
  * Wrapper class for easily exporting *.dae files.
  *
  * Note: The object that is exported is references to as "Plane"
+ *
+ * //todo remove legacy
  */
 public class ColladaFile {
+
+    // legacy exporter for collada
+    public static boolean exportLegacy(Data data, ErrorHandlerInterface errorHandler, File exportColladaTo, File exportTextureTo) {
+        boolean result = true;
+        // hull manager that exposes hull information
+        HullManager<Voxel> hullManager = new HullManager<Voxel>();
+        for (Voxel voxel : data.getVisibleLayerVoxel()) {
+            hullManager.update(voxel.posId, voxel);
+        }
+
+        ColladaFile colladaExport = new ColladaFile();
+
+        for (int i = 0; i < 6; i++) {
+            for (Voxel voxel : hullManager.getHullAdditions(i)) {
+                int[] textureId = voxel.getTexture();
+                int[] rotation = voxel.getRotation();
+                boolean[] flip = voxel.getFlip();
+                colladaExport.addPlane(
+                        voxel.getPosAsInt(),
+                        i,
+                        voxel.getColor(),
+                        textureId == null ? null : textureId[i],
+                        rotation == null ? 0 : rotation[i],
+                        flip != null && flip[i]
+                );
+                if (textureId != null) {
+                    colladaExport.registerTexture(textureId[i], data.getTexture(textureId[i]));
+                }
+            }
+        }
+
+
+        colladaExport.finish(exportTextureTo.getName());
+
+        // write the file
+        if (!colladaExport.writeToFile(exportColladaTo, errorHandler)) {
+            result = false;
+        }
+
+        // write the texture image file (if there is one)
+        if (colladaExport.hasTextureMap()) {
+            if (!colladaExport.writeTextureMap(exportTextureTo, errorHandler)) {
+                result = false;
+            }
+        }
+
+        // validation - only check in debug mode
+        if (Main.isDebugMode()) {
+            // validate the file
+            if (!XmlTools.validateAgainstXSD(
+                    exportColladaTo.getAbsolutePath(),
+                    new SaveResourceLoader("resource/xsd/collada_schema_1_4_1.xsd").asStreamSource(),
+                    errorHandler)) {
+                result = false;
+            }
+        }
+
+        return result;
+    }
 
     // the xml Collada file
     private final XmlFile xmlFile = new XmlFile("COLLADA");

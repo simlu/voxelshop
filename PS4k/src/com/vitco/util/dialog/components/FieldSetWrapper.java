@@ -118,7 +118,7 @@ public class FieldSetWrapper extends BlankDialogModule {
             @Override
             public void onContentChanged() {
                 super.onContentChanged();
-                Integer id = identifier2comboId.get(comboBox.getValue(null).toString());
+                Integer id = identifier2comboId.get(comboBox.getValue(null));
                 // prevent unnecessary refresh
                 if (id != null && id != selectedId) {
                     selectedId = id;
@@ -173,7 +173,7 @@ public class FieldSetWrapper extends BlankDialogModule {
 
     // retrieve the selector that was selected in the combo box
     @Override
-    public Object getValue(String identifier) {
+    public String getValue(String identifier) {
         return comboBox.getValue(identifier);
     }
 

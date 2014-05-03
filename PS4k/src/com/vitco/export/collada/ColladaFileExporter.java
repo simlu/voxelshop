@@ -1,8 +1,9 @@
-package com.vitco.export;
+package com.vitco.export.collada;
 
-import com.vitco.export.container.TexTriangleManager;
-import com.vitco.export.container.TriTexture;
-import com.vitco.export.container.TriTextureManager;
+import com.vitco.export.generic.ExportDataManager;
+import com.vitco.export.generic.container.TexTriangleManager;
+import com.vitco.export.generic.container.TriTexture;
+import com.vitco.export.generic.container.TriTextureManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.DateTools;

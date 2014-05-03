@@ -1,14 +1,9 @@
 package com.vitco.core.data;
 
-import com.vitco.Main;
 import com.vitco.core.data.container.DataContainer;
-import com.vitco.export.ColladaFileExporter;
-import com.vitco.export.ExportDataManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
-import com.vitco.util.misc.SaveResourceLoader;
-import com.vitco.util.xml.XmlTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
@@ -113,88 +108,6 @@ public final class Data extends VoxelHighlighting implements DataInterface {
             if (result) {
                 hasChanged = false;
             }
-            return result;
-        }
-    }
-
-    // todo: move this method somewhere more appropriate (it doesn't belong into the data class!)
-    @Override
-    public final boolean exportToCollada(File file, File textureFile) {
-        synchronized (VitcoSettings.SYNC) {
-            boolean result = true;
-
-            // define the prefix for the texture filex
-            String prefix = FileTools.extractNameWithoutExtension(file) + "_texture";
-
-            // create data export objects
-            ExportDataManager exportDataManager = new ExportDataManager(this);
-            ColladaFileExporter colladaFileExporter = new ColladaFileExporter(exportDataManager, prefix);
-
-            // write the dae file
-            if (!colladaFileExporter.writeToFile(file, errorHandler)) {
-                result = false;
-            }
-
-            // write the texture files
-            File folder = file.getParentFile();
-            if (!colladaFileExporter.writeTexturesToFolder(folder, errorHandler)) {
-                result = false;
-            }
-
-//            // hull manager that exposes hull information
-//            Voxel[] voxels = getVisibleLayerVoxel();
-//            HullManager<Voxel> hullManager = new HullManager<Voxel>();
-//            for (Voxel voxel : voxels) {
-//                hullManager.update(voxel.posId, voxel);
-//            }
-//
-//            ColladaFile colladaExport = new ColladaFile();
-//
-//            for (int i = 0; i < 6; i++) {
-//                for (Voxel voxel : hullManager.getHullAdditions(i)) {
-//                    int[] textureId = voxel.getTexture();
-//                    int[] rotation = voxel.getRotation();
-//                    boolean[] flip = voxel.getFlip();
-//                    colladaExport.addPlane(
-//                            voxel.getPosAsInt(),
-//                            i,
-//                            voxel.getColor(),
-//                            textureId == null ? null : textureId[i],
-//                            rotation == null ? 0 : rotation[i],
-//                            flip != null && flip[i]
-//                    );
-//                    if (textureId != null) {
-//                        colladaExport.registerTexture(textureId[i], this.getTexture(textureId[i]));
-//                    }
-//                }
-//            }
-//
-//
-//            colladaExport.finish(textureFile.getName());
-//
-//            // write the file
-//            if (!colladaExport.writeToFile(file, errorHandler)) {
-//                result = false;
-//            }
-//
-//            // write the texture image file (if there is one)
-//            if (colladaExport.hasTextureMap()) {
-//                if (!colladaExport.writeTextureMap(textureFile, errorHandler)) {
-//                    result = false;
-//                }
-//            }
-
-            // validation - only check in debug mode
-            if (Main.isDebugMode()) {
-                // validate the file
-                if (!XmlTools.validateAgainstXSD(
-                        file.getAbsolutePath(),
-                        new SaveResourceLoader("resource/xsd/collada_schema_1_4_1.xsd").asStreamSource(),
-                        errorHandler)) {
-                    result = false;
-                }
-            }
-
             return result;
         }
     }
