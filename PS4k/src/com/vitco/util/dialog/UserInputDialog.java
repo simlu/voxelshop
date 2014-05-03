@@ -59,6 +59,9 @@ public class UserInputDialog extends JDialog {
         // store cancel flag
         this.cancelFlag = cancelFlag;
 
+        // prevent resize
+        setResizable(false);
+
         // create formatting for and add right side (buttons)
         JPanel buttonWrapperPanel = new JPanel();
         buttonWrapperPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

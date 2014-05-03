@@ -47,6 +47,16 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
         public void paint(Graphics g) {
             super.paintComponents(g);
 
+            // listen to resize events and repaint this component
+            panel.addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    super.componentResized(e);
+                    // force a repaint
+                    panel.repaint();
+                }
+            });
+
             // refresh the buffer if required
             if (bufferOutdated) {
                 buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);

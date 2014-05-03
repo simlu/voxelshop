@@ -1,9 +1,9 @@
 package com.vitco.layout;
 
 import com.jidesoft.action.*;
-import com.jidesoft.docking.DockableFrame;
-import com.jidesoft.docking.DockableFrameFactory;
-import com.jidesoft.docking.DockingManager;
+import com.jidesoft.docking.*;
+import com.jidesoft.docking.event.DockableFrameAdapter;
+import com.jidesoft.docking.event.DockableFrameEvent;
 import com.jidesoft.swing.LayoutPersistence;
 import com.vitco.core.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
@@ -23,14 +23,14 @@ import org.xml.sax.SAXException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.swing.*;
+import javax.swing.plaf.InsetsUIResource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 
 /*
@@ -211,6 +211,150 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         preferences.storeInteger("program_start_count", start_count+1);
     }
 
+    // handle borderless logic (make floated windows borderless)
+    private void handleBorderLess(DockingManager dockingManager) {
+        // list of managed floating containers
+        final HashSet<DialogFloatingContainer> containers = new HashSet<DialogFloatingContainer>();
+        // the last mouse position (used to determine which container(s) need borders)
+        final Point lastMousePos = new Point(0,0);
+        // check if ctrl is currently pressed
+        final boolean[] ctrlDown = new boolean[] {false};
+        // the container that currently has a border
+        final DialogFloatingContainer[] activeContainer = {null};
+
+        // display the titlebar of frames when frame is docked and hide it when its floated
+        dockingManager.addDockableFrameListener(new DockableFrameAdapter() {
+            @Override
+            public void dockableFrameDocked(DockableFrameEvent dockableFrameEvent) {
+                dockableFrameEvent.getDockableFrame().setShowTitleBar(true);
+            }
+
+            @Override
+            public void dockableFrameFloating(DockableFrameEvent dockableFrameEvent) {
+                dockableFrameEvent.getDockableFrame().setShowTitleBar(false);
+            }
+        });
+
+        // wrapper action to refresh the container borders
+        final AbstractAction refreshBorderAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // loop over all managed containers
+                for (DialogFloatingContainer container : containers) {
+                    // check if we need to show/hide the border and title
+                    boolean showBorder = ctrlDown[0] && container.getBounds().contains(lastMousePos);
+                    // show/hide resize border
+                    container.setBorder(showBorder ? BorderFactory.createMatteBorder(3, 3, 3, 3, Color.WHITE) : BorderFactory.createEmptyBorder());
+                    // show/hide title bar
+                    for (Component child : container.getContentPane().getComponents()) {
+                        if (child instanceof ContainerContainer) {
+                            Component[] comps = ((ContainerContainer) child).getComponents();
+                            if (comps.length > 0) {
+                                if (comps[0] instanceof FrameContainer) {
+                                    for (Component comp : ((FrameContainer) comps[0]).getComponents()) {
+                                        if (comp instanceof DockableFrame) {
+                                            ((DockableFrame) comp).setShowTitleBar(showBorder);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // listen to mouse events
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+            @Override
+            public void eventDispatched(AWTEvent event) {
+                if (event.getID() == MouseEvent.MOUSE_ENTERED) {
+                    // remember the location
+                    lastMousePos.setLocation(MouseInfo.getPointerInfo().getLocation());
+                    if (ctrlDown[0]) {
+                        // check which container is active
+                        for (DialogFloatingContainer container : containers) {
+                            if (container.getBounds().contains(lastMousePos)) {
+                                if (activeContainer[0] != container) {
+                                    // a new container is now active, we need to update
+                                    activeContainer[0] = container;
+                                    refreshBorderAction.actionPerformed(null);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }, AWTEvent.MOUSE_EVENT_MASK);
+
+        // handle keyboard events (global)
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+
+            @Override
+            public boolean dispatchKeyEvent(final KeyEvent e) {
+                // listen to ctrl events
+                if (ctrlDown[0] != e.isControlDown()) {
+                    ctrlDown[0] = !ctrlDown[0];
+                    // update border state
+                    refreshBorderAction.actionPerformed(null);
+                    activeContainer[0] = null;
+                }
+                return false;
+            }
+        });
+
+        // remove border from all FloatingContainer and store reference for dynamically changing them
+        dockingManager.setFloatingContainerCustomizer(new DockingManager.FloatingContainerCustomizer() {
+            @Override
+            public void customize(FloatingContainer fc) {
+                final DialogFloatingContainer dialogFloatingContainer = ((DialogFloatingContainer) fc);
+                // always make sure this has no border
+                dialogFloatingContainer.setBorder(BorderFactory.createEmptyBorder());
+                // register container
+                containers.add(dialogFloatingContainer);
+            }
+        });
+
+        // remove extra spacing of frames
+        UIManager.getDefaults().put("FrameContainer.contentBorderInsets", new InsetsUIResource(0, 0, 0, 0));
+
+        // listen to main frame resize events and make sure the floated windows do not
+        // disappear outside the frame area (prevent windows from disappearing)
+        thisFrame.addComponentListener(new ComponentAdapter() {
+            Integer xOld = thisFrame.getX();
+            Integer yOld = thisFrame.getY();
+
+            // validate the floated window position to be contained inside main jframe
+            private void validateWindow(DialogFloatingContainer container) {
+                container.setLocation(
+                        Math.max(thisFrame.getX() + 20, Math.min(thisFrame.getX() + thisFrame.getWidth() - container.getWidth() - 20, container.getLocation().x)),
+                        Math.max(thisFrame.getY() + 20, Math.min(thisFrame.getY() + thisFrame.getHeight() - container.getHeight() - 20, container.getLocation().y))
+                );
+            }
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                // make sure all floating containers are "on main JFrame"
+                for (DialogFloatingContainer container : containers) {
+                    validateWindow(container);
+                }
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                // move all DialogFloatingContainer with this main JFrame
+                int x = thisFrame.getX();
+                int y = thisFrame.getY();
+                for (DialogFloatingContainer container : containers) {
+                    Point oldPosition = container.getLocation();
+                    container.setLocation(oldPosition.x + (x - xOld), oldPosition.y + (y - yOld));
+                }
+                xOld = x;
+                yOld = y;
+            }
+        });
+    }
+
     @PostConstruct
     @Override
     public final void init() {
@@ -231,6 +375,9 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             DockingManager dockingManager = getDockingManager();
             DockableBarManager dockableBarManager = getDockableBarManager();
             LayoutPersistence layoutPersistence = getLayoutPersistence();
+
+            // handles all the logic to make floating frames borderless
+            handleBorderLess(dockingManager);
 
             // init loading
             ////////////////
