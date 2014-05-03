@@ -222,7 +222,42 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         // the container that currently has a border
         final DialogFloatingContainer[] activeContainer = {null};
 
+        // wrapper action to refresh the container borders
+        final AbstractAction refreshBorderAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // loop over all managed containers
+                for (DialogFloatingContainer container : containers) {
+                    // check if we need to show/hide the border and title
+                    boolean showBorder = ctrlDown[0] && container.getBounds().contains(lastMousePos);
+                    // nested check
+                    for (Component child : container.getContentPane().getComponents()) {
+                        if (child instanceof ContainerContainer) {
+                            Component[] comps = ((ContainerContainer) child).getComponents();
+                            if (comps.length > 0) {
+                                if (comps[0] instanceof FrameContainer) {
+                                    for (Component comp : ((FrameContainer) comps[0]).getComponents()) {
+                                        if (comp instanceof DockableFrame) {
+                                            // show/hide title bar
+                                            ((DockableFrame) comp).setShowTitleBar(showBorder);
+                                            // show/hide resize border (different border depending if active or inactive)
+                                            container.setBorder(showBorder
+                                                    ? (((DockableFrame) comp).isActive()
+                                                        ? VitcoSettings.FLOATING_FRAME_BORDER_ACTIVE
+                                                        : VitcoSettings.FLOATING_FRAME_BORDER_INACTIVE)
+                                                    : BorderFactory.createEmptyBorder());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
         // display the titlebar of frames when frame is docked and hide it when its floated
+        // also handle border color change when active frame changes
         dockingManager.addDockableFrameListener(new DockableFrameAdapter() {
             @Override
             public void dockableFrameDocked(DockableFrameEvent dockableFrameEvent) {
@@ -233,36 +268,17 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             public void dockableFrameFloating(DockableFrameEvent dockableFrameEvent) {
                 dockableFrameEvent.getDockableFrame().setShowTitleBar(false);
             }
-        });
 
-        // wrapper action to refresh the container borders
-        final AbstractAction refreshBorderAction = new AbstractAction() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                // loop over all managed containers
-                for (DialogFloatingContainer container : containers) {
-                    // check if we need to show/hide the border and title
-                    boolean showBorder = ctrlDown[0] && container.getBounds().contains(lastMousePos);
-                    // show/hide resize border
-                    container.setBorder(showBorder ? BorderFactory.createMatteBorder(3, 3, 3, 3, Color.WHITE) : BorderFactory.createEmptyBorder());
-                    // show/hide title bar
-                    for (Component child : container.getContentPane().getComponents()) {
-                        if (child instanceof ContainerContainer) {
-                            Component[] comps = ((ContainerContainer) child).getComponents();
-                            if (comps.length > 0) {
-                                if (comps[0] instanceof FrameContainer) {
-                                    for (Component comp : ((FrameContainer) comps[0]).getComponents()) {
-                                        if (comp instanceof DockableFrame) {
-                                            ((DockableFrame) comp).setShowTitleBar(showBorder);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+            public void dockableFrameActivated(DockableFrameEvent dockableFrameEvent) {
+                // call this to update the border color
+                if (ctrlDown[0]) {
+                    refreshBorderAction.actionPerformed(null);
+                    // null the active container
+                    activeContainer[0] = null;
                 }
             }
-        };
+        });
 
         // listen to mouse events
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
@@ -430,6 +446,8 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             // allow frames to fill empty space
             dockingManager.getWorkspace().setAcceptDockableFrame(true);
             dockingManager.setEasyTabDock(true);
+            // set the grid snap size, e.g. when dragging
+            dockingManager.setSnapGridSize(5);
 
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen

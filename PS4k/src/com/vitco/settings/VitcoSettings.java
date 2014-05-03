@@ -19,6 +19,11 @@ public final class VitcoSettings {
     // color for the "big bounding box"
     public static final Color BOUNDING_BOX_COLOR = new Color(255, 255, 255, 100);
 
+    // floatable frame settings
+    public static final Border FLOATING_FRAME_BORDER_ACTIVE = BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(160, 160, 160), 1), BorderFactory.createLineBorder(new Color(248, 203, 115), 2));
+    public static final Border FLOATING_FRAME_BORDER_INACTIVE = BorderFactory.createLineBorder(new Color(216, 232, 254), 3);
+
     // texture window settings
     public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
     public static final Color TEXTURE_BORDER = Color.BLACK;
