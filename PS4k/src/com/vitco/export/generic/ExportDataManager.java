@@ -5,6 +5,7 @@ import com.vitco.core.data.container.Voxel;
 import com.vitco.export.generic.container.*;
 import com.vitco.low.hull.HullManager;
 import com.vitco.low.triangulate.Grid2TriGreedyOptimal;
+import com.vitco.low.triangulate.Grid2TriNaive;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.low.triangulate.util.Grid2PolyHelper;
 import gnu.trove.list.array.TShortArrayList;
@@ -48,6 +49,7 @@ public class ExportDataManager {
     // the algorithms static variables
     public static final int POLY2TRI_ALGORITHM = 0;
     public static final int MINIMAL_RECT_ALGORITHM = 1;
+    public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
     public ExportDataManager(Data data, int algoritm) {
@@ -204,6 +206,9 @@ public class ExportDataManager {
                 switch (algorithm) {
                     case ExportDataManager.MINIMAL_RECT_ALGORITHM:
                         tris = Grid2TriGreedyOptimal.triangulate(data);
+                        break;
+                    case ExportDataManager.NAIVE_ALGORITHM:
+                        tris = Grid2TriNaive.triangulate(data);
                         break;
                     default:
                         // generate triangles

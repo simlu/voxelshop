@@ -15,10 +15,34 @@ import java.io.File;
  */
 public class ColladaExportWrapper {
 
+    // the object name (only used if layers are not exported separately)
+    private String objectName = "modelTEX";
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
+    }
+
     // true if every voxel layer should be exported as its own object
     private boolean useLayers = false;
     public final void setUseLayers(boolean state) {
         useLayers = state;
+    }
+
+    // true if holes should be removed
+    private boolean removeHoles = true;
+    public final void setRemoveHoles(boolean state) {
+        removeHoles = state;
+    }
+
+    // true if colored vertices should be used
+    private boolean useColoredVertices = false;
+    public final void setUseColoredVertices(boolean state) {
+        useColoredVertices = state;
+    }
+
+    // true if the export should have the "black outline"
+    private boolean useBlackOutline = false;
+    public final void setUseBlackOutline(boolean state) {
+        useBlackOutline = state;
     }
 
     // setter for algorithm that is used
@@ -36,7 +60,7 @@ public class ColladaExportWrapper {
 
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(data, algorithm);
-        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(exportDataManager, prefix);
+        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(exportDataManager, prefix, objectName);
 
         // write the dae file
         if (!colladaFileExporter.writeToFile(colladaFile, errorHandler)) {

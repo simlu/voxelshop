@@ -18,8 +18,8 @@ public class QbImporter extends AbstractImporter {
         super(file, name);
     }
 
-    private static final int CODEFLAG = 2;
-    private static final int NEXTSLICEFLAG = 6;
+    private static final int CODE_FLAG = 2;
+    private static final int NEXT_SLICE_FLAG = 6;
 
     @Override
     protected boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException {
@@ -50,7 +50,7 @@ public class QbImporter extends AbstractImporter {
 
             //System.out.println(sx + " " + sy + " " + sz);
 
-            // read matrix size
+            // read offset size
             int cx = fileIn.readIntRev();
             int cy = fileIn.readIntRev();
             int cz = fileIn.readIntRev();
@@ -88,9 +88,9 @@ public class QbImporter extends AbstractImporter {
 
                     while (true) {
                         int data = fileIn.readIntRev();
-                        if (data == NEXTSLICEFLAG) {
+                        if (data == NEXT_SLICE_FLAG) {
                             break;
-                        } else if (data == CODEFLAG) {
+                        } else if (data == CODE_FLAG) {
                             int count = fileIn.readIntRevUnsigned();
                             data = fileIn.readIntRev();
 

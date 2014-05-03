@@ -29,13 +29,13 @@ public class ColladaFileExporter {
     private final String texturePrefix;
 
     // constructor
-    public ColladaFileExporter(ExportDataManager exportDataManager, String texturePrefix) {
+    public ColladaFileExporter(ExportDataManager exportDataManager, String texturePrefix, String name) {
         this.exportDataManager = exportDataManager;
         this.texturePrefix = texturePrefix;
         // initialize the xml file
         initXmlFile();
         // create the object in the scene
-        writeObject();
+        writeObject(name);
         // write the texture information
         writeTextures();
         // write the mesh + uv of the object (triangles)
@@ -43,12 +43,12 @@ public class ColladaFileExporter {
     }
 
     // create the object in the scene
-    private void writeObject() {
+    private void writeObject(String name) {
         // create the object
         xmlFile.resetTopNode("library_visual_scenes/visual_scene/node[-1]");
         xmlFile.addAttributes("", new String[]{
-                "id=PlaneTEX",
-                "name=PlaneTEX",
+                "id=" + name,
+                "name=" + name,
                 "type=NODE"
         });
         xmlFile.addAttrAndTextContent("translate", new String[]{"sid=location"},

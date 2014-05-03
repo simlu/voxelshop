@@ -315,6 +315,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         collada.addComponent(new ComboBoxModule("type", new String[][] {
                 new String[] {"poly2tri", "Optimal (Poly2Tri)"},
                 new String[] {"minimal", "Low Poly (Rectangular)"},
+                new String[] {"naive", "Naive (Unoptimized)"},
                 new String[] {"legacy", "Legacy (Unoptimized)"}
         }, 0));
         // add information for "poly2tri"
@@ -323,13 +324,19 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         poly2triInfo.setVisibleLookup("collada.type=poly2tri");
         collada.addComponent(poly2triInfo);
         // add information for "optimalGreedy"
-        LabelModule minimalInfo = new LabelModule("Info: This exporter results in a slightly lower triangle " +
-                "count, however rendering artifacts can appear (T-Junction problems). Use only if you absolutely must!");
+        LabelModule minimalInfo = new LabelModule("Info: This exporter results in a very low triangle " +
+                "count, however rendering artifacts can appear (T-Junction problems).");
         minimalInfo.setVisibleLookup("collada.type=minimal");
         collada.addComponent(minimalInfo);
+        // add information for "naive"
+        LabelModule naiveInfo = new LabelModule("Info: Unoptimized exporter. Creates two triangles for each voxel. " +
+                "This might be useful if the voxel mesh needs further processing.");
+        naiveInfo.setVisibleLookup("collada.type=naive");
+        collada.addComponent(naiveInfo);
         // add information for "legacy"
         LabelModule legacyInfo = new LabelModule("Info: Unoptimized legacy exporter. Useful if you want to " +
-                "process the mesh further. Suitable for 3D printing (uses vertex coloring).");
+                "process the mesh further. Suitable for 3D printing (uses vertex coloring). Also currently the " +
+                "only exporter that correctly exports textured voxels (will change in the future).");
         legacyInfo.setVisibleLookup("collada.type=legacy");
         collada.addComponent(legacyInfo);
 
@@ -498,17 +505,26 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             // ----
                         } else {
                             // -- default export
-                            // check if we use layers
-                            boolean layers_as_objects = dialog.is("collada.layers_as_objects=true");
-
                             ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper();
+
                             // set the "use layers" flag
-                            colladaExportWrapper.setUseLayers(layers_as_objects);
+                            colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
+                            // set remove holes flag
+                            colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
+                            // set use vertex colors flag
+                            colladaExportWrapper.setUseColoredVertices(dialog.is("collada.use_vertex_coloring=true"));
+                            // set use black outline
+                            colladaExportWrapper.setUseBlackOutline(dialog.is("collada.use_black_edges=true"));
+                            // set the file name (only used if the layers are not used)
+                            colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
+
                             // set the algorithm type
                             if (dialog.is("collada.type=minimal")) {
                                 colladaExportWrapper.setAlgorithm(ExportDataManager.MINIMAL_RECT_ALGORITHM);
                             } else if (dialog.is("collada.type=poly2tri")) {
                                 colladaExportWrapper.setAlgorithm(ExportDataManager.POLY2TRI_ALGORITHM);
+                            } else if (dialog.is("collada.type=naive")) {
+                                colladaExportWrapper.setAlgorithm(ExportDataManager.NAIVE_ALGORITHM);
                             }
 
                             long time = System.currentTimeMillis();
