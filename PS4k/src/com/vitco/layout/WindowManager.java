@@ -122,7 +122,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             // add help overlay (this is only used if this frame is floated!)
             JRootPane rootPane = frame.getRootPane();
             final FrameHelpOverlay overlay = new FrameHelpOverlay(rootPane, actionManager, complexActionManager, langSelector);
-            rootPane.setGlassPane(overlay);
             // add help button
             final DockableFrame finalFrame = frame;
             AbstractAction action = new AbstractAction("help", new SaveResourceLoader("resource/img/icons/frame_help_button_icon.png").asIconImage()) {
@@ -460,7 +459,6 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
         // register help overlay for entire window
         JRootPane rootPane = thisFrame.getRootPane();
         final FrameHelpOverlay overlay = new FrameHelpOverlay(rootPane, actionManager, complexActionManager, langSelector);
-        rootPane.setGlassPane(overlay);
         actionManager.registerAction("show_help_overlay", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
