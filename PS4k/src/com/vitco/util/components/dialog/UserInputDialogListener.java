@@ -1,4 +1,4 @@
-package com.vitco.util.dialog;
+package com.vitco.util.components.dialog;
 
 /**
  * Listener interface for the UserInputDialog that is

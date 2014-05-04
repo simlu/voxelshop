@@ -1,7 +1,7 @@
-package com.vitco.util.dialog.components;
+package com.vitco.util.components.dialog.components;
 
-import com.vitco.util.dialog.BlankDialogModule;
-import com.vitco.util.dialog.DialogModuleChangeAdapter;
+import com.vitco.util.components.dialog.BlankDialogModule;
+import com.vitco.util.components.dialog.DialogModuleChangeAdapter;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

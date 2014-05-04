@@ -1,4 +1,4 @@
-package com.vitco.util.components;
+package com.vitco.util.components.textfield;
 
 /**
  * Used to notify listeners of the changes of a JCustomTextField.

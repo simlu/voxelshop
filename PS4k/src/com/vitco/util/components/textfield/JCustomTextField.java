@@ -1,4 +1,4 @@
-package com.vitco.util.components;
+package com.vitco.util.components.textfield;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;

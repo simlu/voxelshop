@@ -1,7 +1,7 @@
-package com.vitco.util.dialog.components;
+package com.vitco.util.components.dialog.components;
 
 import com.jidesoft.swing.JideLabel;
-import com.vitco.util.dialog.BlankDialogModule;
+import com.vitco.util.components.dialog.BlankDialogModule;
 
 import javax.swing.*;
 import javax.swing.text.View;

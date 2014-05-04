@@ -6,6 +6,8 @@ import com.vitco.export.generic.container.TriTexture;
 import com.vitco.export.generic.container.TriTextureManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.components.progressbar.ProgressReporter;
 import com.vitco.util.misc.DateTools;
 import com.vitco.util.xml.XmlFile;
 
@@ -17,7 +19,7 @@ import java.io.IOException;
 /**
  * Export data to COLLADA file ( with optional settings )
  */
-public class ColladaFileExporter {
+public class ColladaFileExporter extends ProgressReporter {
     // contains the data that will be used to write this collada file
     private final ExportDataManager exportDataManager;
 
@@ -29,16 +31,21 @@ public class ColladaFileExporter {
     private final String texturePrefix;
 
     // constructor
-    public ColladaFileExporter(ExportDataManager exportDataManager, String texturePrefix, String name) {
+    public ColladaFileExporter(ProgressDialog dialog, ExportDataManager exportDataManager, String texturePrefix, String name) {
+        super(dialog);
         this.exportDataManager = exportDataManager;
         this.texturePrefix = texturePrefix;
         // initialize the xml file
+        setActivity("Creating File Data...", true);
         initXmlFile();
         // create the object in the scene
+        setActivity("Creating Objects...", true);
         writeObject(name);
         // write the texture information
+        setActivity("Creating Textures...", true);
         writeTextures();
         // write the mesh + uv of the object (triangles)
+        setActivity("Creating Coordinates and UVs...", true);
         writeCoordinates();
     }
 

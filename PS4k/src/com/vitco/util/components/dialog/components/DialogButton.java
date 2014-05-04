@@ -1,4 +1,4 @@
-package com.vitco.util.dialog.components;
+package com.vitco.util.components.dialog.components;
 
 import com.jidesoft.swing.ButtonStyle;
 import com.jidesoft.swing.JideButton;

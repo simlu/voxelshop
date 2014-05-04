@@ -1,5 +1,8 @@
 package com.vitco.export.generic.container;
 
+import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.components.progressbar.ProgressReporter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,7 +11,7 @@ import java.util.HashMap;
 /**
  * Manages a list of textures and implements compression techniques for the textures.
  */
-public class TriTextureManager {
+public class TriTextureManager extends ProgressReporter {
     // holds list of textures
     private final ArrayList<TriTexture> textures = new ArrayList<TriTexture>();
 
@@ -20,6 +23,11 @@ public class TriTextureManager {
 
     // true if the texture list is outdated
     private boolean outdated = false;
+
+    // constructor
+    public TriTextureManager(ProgressDialog dialog) {
+        super(dialog);
+    }
 
     // invalidate the texture list
     private void invalidate() {
@@ -88,8 +96,11 @@ public class TriTextureManager {
             }
         });
         int len = textures.size();
+        int originalLength = len;
+        setActivity("Merging Textures...", false);
         for (int i = 0; i < len; i++) {
             for (int j = i + 1; j < len; j++) {
+                if (len%100 == 0) {setProgress(((originalLength - len - i)/(float)originalLength)*100);}
                 TriTexture tex1 = textures.get(i);
                 TriTexture tex2 = textures.get(j);
                 if (tex1.makeChild(tex2)) {
@@ -115,7 +126,10 @@ public class TriTextureManager {
             }
         });
         // -- combine remaining "parent" textures into one image
+        int lengthBeforeCombining = len;
+        setActivity("Combining Textures...", false);
         while (len > 1) {
+            setProgress(((lengthBeforeCombining - len + 1)/(float)lengthBeforeCombining) * 100);
             // find the texture with the biggest jaccard similarity
             TriTexture texture = textures.get(0);
             TriTexture mergeTo = textures.get(1);

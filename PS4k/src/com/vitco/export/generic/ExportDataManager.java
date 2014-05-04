@@ -8,6 +8,8 @@ import com.vitco.low.triangulate.Grid2TriGreedyOptimal;
 import com.vitco.low.triangulate.Grid2TriNaive;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.low.triangulate.util.Grid2PolyHelper;
+import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.components.progressbar.ProgressReporter;
 import gnu.trove.list.array.TShortArrayList;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
@@ -19,7 +21,7 @@ import java.util.Map;
 /**
  * Encapsulates the voxel data and manages restructuring, preparing it for exporting.
  */
-public class ExportDataManager {
+public class ExportDataManager extends ProgressReporter {
 
     // contains the current hull that we need for triangulation
     private final HullManager<Voxel> hullManager;
@@ -37,7 +39,7 @@ public class ExportDataManager {
     }
 
     // Data Structure that manages the textures
-    private final TriTextureManager textureManager = new TriTextureManager();
+    private final TriTextureManager textureManager = new TriTextureManager(getProgressDialog());
 
     // getter for the texture manager
     public final TriTextureManager getTextureManager() {
@@ -52,9 +54,11 @@ public class ExportDataManager {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(Data data, int algoritm) {
+    public ExportDataManager(ProgressDialog dialog, Data data, int algorithm) {
+        super(dialog);
 
         // create hull manager that exposes hull information
+        setActivity("Computing Hull...", true);
         Voxel[] voxels = data.getVisibleLayerVoxel();
         HullManager<Voxel> hullManager = new HullManager<Voxel>();
         for (Voxel voxel : voxels) {
@@ -66,12 +70,13 @@ public class ExportDataManager {
         this.data = data;
 
         // extract information
-        extract(algoritm);
+        extract(algorithm);
 
         // combine the textures
         textureManager.combine();
 
         // validate uv mappings
+        setActivity("Validating UV Mappings...", true);
         textureManager.validateUVMappings();
     }
 
@@ -146,6 +151,7 @@ public class ExportDataManager {
 
     // extract the necessary information from the hull manager
     private void extract(int algorithm) {
+        setActivity("Extracting Mesh...", false);
         // loop over all sides
         for (int i = 0; i < 6; i++) {
             // get borders into specific direction and
@@ -185,7 +191,11 @@ public class ExportDataManager {
             }
 
             // loop over planes
+            int progressCount = 0;
+            float elementCount = planes.size();
             for (Map.Entry<Short, ArrayList<short[]>> entries : planes.entrySet()) {
+                setProgress((i/6f) * 100 + ((progressCount/elementCount)/6f) * 100);
+                progressCount++;
                 // generate mesh
                 short minA = Short.MAX_VALUE;
                 short minB = Short.MAX_VALUE;

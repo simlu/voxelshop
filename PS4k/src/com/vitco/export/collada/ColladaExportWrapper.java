@@ -4,6 +4,8 @@ import com.vitco.Main;
 import com.vitco.core.data.Data;
 import com.vitco.export.generic.ExportDataManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
+import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.components.progressbar.ProgressReporter;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.SaveResourceLoader;
 import com.vitco.util.xml.XmlTools;
@@ -13,10 +15,16 @@ import java.io.File;
 /**
  * Wrapper class for the collada export.
  */
-public class ColladaExportWrapper {
+public class ColladaExportWrapper extends ProgressReporter {
 
     // the object name (only used if layers are not exported separately)
     private String objectName = "modelTEX";
+
+    // constructor
+    public ColladaExportWrapper(ProgressDialog dialog) {
+        super(dialog);
+    }
+
     public void setObjectName(String objectName) {
         this.objectName = objectName;
     }
@@ -59,14 +67,16 @@ public class ColladaExportWrapper {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(data, algorithm);
-        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(exportDataManager, prefix, objectName);
+        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, algorithm);
+        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), exportDataManager, prefix, objectName);
 
+        setActivity("Writing Data File...", true);
         // write the dae file
         if (!colladaFileExporter.writeToFile(colladaFile, errorHandler)) {
             result = false;
         }
 
+        setActivity("Writing Textures...", true);
         // write the texture files
         File folder = colladaFile.getParentFile();
         if (!colladaFileExporter.writeTexturesToFolder(folder, errorHandler)) {
@@ -75,6 +85,7 @@ public class ColladaExportWrapper {
 
         // validation - only check in debug mode
         if (Main.isDebugMode()) {
+            setActivity("Validating File...", true);
             // validate the file
             if (!XmlTools.validateAgainstXSD(
                     colladaFile.getAbsolutePath(),

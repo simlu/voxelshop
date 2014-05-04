@@ -1,7 +1,7 @@
-package com.vitco.util.dialog.components;
+package com.vitco.util.components.dialog.components;
 
 import com.jidesoft.swing.JideComboBox;
-import com.vitco.util.dialog.BlankDialogModule;
+import com.vitco.util.components.dialog.BlankDialogModule;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

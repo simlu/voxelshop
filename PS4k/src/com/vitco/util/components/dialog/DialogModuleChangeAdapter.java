@@ -1,4 +1,4 @@
-package com.vitco.util.dialog;
+package com.vitco.util.components.dialog;
 
 /**
  * Simple adapter for the DialogModuleStateListener

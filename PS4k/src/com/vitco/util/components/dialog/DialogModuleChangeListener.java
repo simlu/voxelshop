@@ -1,4 +1,4 @@
-package com.vitco.util.dialog;
+package com.vitco.util.components.dialog;
 
 /**
  * Called when the state of a module changes

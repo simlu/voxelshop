@@ -1,8 +1,8 @@
-package com.vitco.util.dialog;
+package com.vitco.util.components.dialog;
 
-import com.vitco.util.dialog.components.DialogButton;
-import com.vitco.util.dialog.components.FieldSet;
-import com.vitco.util.dialog.components.FieldSetWrapper;
+import com.vitco.util.components.dialog.components.DialogButton;
+import com.vitco.util.components.dialog.components.FieldSet;
+import com.vitco.util.components.dialog.components.FieldSetWrapper;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,11 +1,14 @@
-package com.vitco.util.dialog.components;
+package com.vitco.util.components.dialog.components;
 
-import com.vitco.util.dialog.BlankDialogModule;
+import com.vitco.util.components.dialog.BlankDialogModule;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.font.TextAttribute;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Module that has a checkbox
@@ -34,6 +37,13 @@ public class CheckBoxModule extends BlankDialogModule {
                 notifyContentChanged();
             }
         });
+    }
+
+    // strike the text of this checkbox (but don't disable)
+    public final void setStrikeThrough(boolean state) {
+        Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+        attributes.put(TextAttribute.STRIKETHROUGH, state);
+        checkbox.setFont(checkbox.getFont().deriveFont(attributes));
     }
 
     // get the value of this object

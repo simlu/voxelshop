@@ -10,9 +10,11 @@ import com.vitco.importer.*;
 import com.vitco.layout.content.mainview.MainView;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
-import com.vitco.util.dialog.UserInputDialog;
-import com.vitco.util.dialog.UserInputDialogListener;
-import com.vitco.util.dialog.components.*;
+import com.vitco.util.components.dialog.UserInputDialog;
+import com.vitco.util.components.dialog.UserInputDialogListener;
+import com.vitco.util.components.dialog.components.*;
+import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.components.progressbar.ProgressWorker;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.CFileDialog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,12 +210,13 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (checkUnsavedChanges(frame)) {
-                    File toOpen = fc_import.openFile(frame);
+                    final File toOpen = fc_import.openFile(frame);
                     if (toOpen != null) {
                         String ext = fc_import.getCurrentExt();
                         // todo: rework import so that history can stay (!)
                         //data.freshStart();
                         //data.deleteLayer(data.getSelectedLayer());
+                        final ProgressDialog dialog = new ProgressDialog(frame);
                         try {
                             if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext) || "bmp".equals(ext)) {
                                 // -----------------
@@ -252,33 +255,76 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             } else if ("binvox".equals(ext)) {
                                 // ----------------
                                 // import .binvox files
-                                AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                importVoxelData(importer, true);
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, true);
+                                        return null;
+                                    }
+                                });
+
                             } else if ("kv6".equals(ext)) {
                                 // ----------------
                                 // import .kv6 files
-                                AbstractImporter importer = new Kv6Importer(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                importVoxelData(importer, false);
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new Kv6Importer(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, false);
+                                        return null;
+                                    }
+                                });
                             } else if ("kvx".equals(ext)) {
                                 // ----------------
                                 // import .kvx files
-                                AbstractImporter importer = new KvxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                importVoxelData(importer, false);
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new KvxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, false);
+                                        return null;
+                                    }
+                                });
                             } else if ("qb".equals(ext)) {
                                 // ----------------
                                 // import .qb files
-                                AbstractImporter importer = new QbImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                importVoxelData(importer, false);
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new QbImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, false);
+                                        return null;
+                                    }
+                                });
                             } else if ("vox".equals(ext)) {
                                 // ----------------
                                 // import .vox files
-                                AbstractImporter importer = new VoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                importVoxelData(importer, true);
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new VoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, true);
+                                        return null;
+                                    }
+                                });
                             } else if ("rawvox".equals(ext)) {
                                 // ----------------
                                 // import .rawvox files
-                                AbstractImporter importer = new RawVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                importVoxelData(importer, true);
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new RawVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, true);
+                                        return null;
+                                    }
+                                });
                             }
                         } catch (IOException e1) {
                             console.addLine(langSelector.getString("error_on_file_import"));
@@ -343,23 +389,27 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // option: remove holes
         CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed holes", true);
         removeEnclosed.setInvisibleLookup("collada.type=legacy");
+        removeEnclosed.setStrikeThrough(true);
         collada.addComponent(removeEnclosed);
 
         // option: layer as object
         CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new object for every layer", false);
         layersAsObjects.setInvisibleLookup("collada.type=legacy");
+        layersAsObjects.setStrikeThrough(true);
         collada.addComponent(layersAsObjects);
 
         // option: use vertex colors
         CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
         useVertexColors.setVisibleLookup("collada.use_black_edges=false");
+        useVertexColors.setStrikeThrough(true);
         collada.addComponent(useVertexColors);
 
         // option: export with black outline
         CheckBoxModule useBlackOutline = new CheckBoxModule("use_black_edges", "Use black edges", false);
         useBlackOutline.setInvisibleLookup("collada.type=legacy");
         useBlackOutline.setVisibleLookup("collada.use_vertex_coloring=false");
+        useBlackOutline.setStrikeThrough(true);
         collada.addComponent(useBlackOutline);
 
         // ---------------
@@ -417,7 +467,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
                         // -- export render
                         // extract file name
-                        File exportRenderTo = new File(baseName + (baseName.endsWith(".png") ? "" : ".png"));
+                        final File exportRenderTo = new File(baseName + (baseName.endsWith(".png") ? "" : ".png"));
                         // check if file exists
                         if (exportRenderTo.exists()) {
                             if (JOptionPane.showConfirmDialog(frame,
@@ -429,10 +479,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         }
 
                         // -- export depth map
+                        boolean exportDepthMap = false;
+                        File exportDepthMapTo = null;
                         if (dialog.is("image_renderer.render_depth=true")) {
                             // extract file name
                             String depthBaseName = dialog.getValue("image_renderer.depth_map");
-                            File exportDepthMapTo = new File(exportRenderTo.getParent() + "\\" + depthBaseName + (depthBaseName.endsWith(".png") ? "" : ".png"));
+                            exportDepthMapTo = new File(exportRenderTo.getParent() + "\\" + depthBaseName + (depthBaseName.endsWith(".png") ? "" : ".png"));
                             // check if file exists
                             if (exportDepthMapTo.exists()) {
                                 if (JOptionPane.showConfirmDialog(frame,
@@ -442,22 +494,38 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     return false;
                                 }
                             }
-                            // export depth map
-                            BufferedImage depth = mainView.getDepthImage();
-                            try {
-                                ImageIO.write(depth,"png",exportDepthMapTo);
-                            } catch (IOException e) {
-                                errorHandler.handle(e);
-                            }
+                            exportDepthMap = true;
                         }
 
-                        // export color render (image)
-                        BufferedImage image = mainView.getImage();
-                        try {
-                            ImageIO.write(image,"png", exportRenderTo);
-                        } catch (IOException e) {
-                            errorHandler.handle(e);
-                        }
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+
+                        final File finalExportDepthMapTo = exportDepthMapTo;
+                        final boolean finalExportDepthMap = exportDepthMap;
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+                                // export color render (image)
+                                progressDialog.setActivity("Writing Render...", true);
+                                BufferedImage image = mainView.getImage();
+                                try {
+                                    ImageIO.write(image,"png", exportRenderTo);
+                                } catch (IOException e) {
+                                    errorHandler.handle(e);
+                                }
+                                // export depth map
+                                if (finalExportDepthMap) {
+                                    progressDialog.setActivity("Writing Depth Render...", true);
+                                    BufferedImage depth = mainView.getDepthImage();
+                                    try {
+                                        ImageIO.write(depth,"png", finalExportDepthMapTo);
+                                    } catch (IOException e) {
+                                        errorHandler.handle(e);
+                                    }
+                                }
+                                return null;
+                            }
+                        });
 
                         // ===========
 
@@ -467,7 +535,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
                         // -- export collada
                         // extract file name
-                        File exportColladaTo = new File(baseName + (baseName.endsWith(".dae") ? "" : ".dae"));
+                        final File exportColladaTo = new File(baseName + (baseName.endsWith(".dae") ? "" : ".dae"));
                         // check if file exists
                         if (exportColladaTo.exists()) {
                             if (JOptionPane.showConfirmDialog(frame,
@@ -479,7 +547,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         }
                         // extract texture name (this is only actually used by the legacy
                         // exporter and to query the user if the file should be overwritten)
-                        File exportTextureTo = new File(FileTools.changeExtension(exportColladaTo.getPath(), "_texture0.png"));
+                        final File exportTextureTo = new File(FileTools.changeExtension(exportColladaTo.getPath(), "_texture0.png"));
                         // check if file exists
                         if (exportTextureTo.exists()) {
                             if (JOptionPane.showConfirmDialog(frame,
@@ -493,49 +561,70 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         // -- do the actual exporting
                         if (dialog.is("collada.type=legacy")) {
                             // -- export legacy (todo: remove when other is strictly better)
-                            long time = System.currentTimeMillis();
-                            if (ColladaFile.exportLegacy(data, errorHandler, exportColladaTo, exportTextureTo)) {
-                                console.addLine(
-                                        String.format(langSelector.getString("export_file_successful"),
-                                                System.currentTimeMillis() - time)
-                                );
-                            } else {
-                                console.addLine(langSelector.getString("export_file_error"));
-                            }
+                            final ProgressDialog progressDialog = new ProgressDialog(frame);
+
+                            progressDialog.start(new ProgressWorker() {
+                                @Override
+                                protected Object doInBackground() throws Exception {
+                                    progressDialog.setActivity("Writing Legacy Format...", true);
+                                    long time = System.currentTimeMillis();
+                                    if (ColladaFile.exportLegacy(data, errorHandler, exportColladaTo, exportTextureTo)) {
+                                        console.addLine(
+                                                String.format(langSelector.getString("export_file_successful"),
+                                                        System.currentTimeMillis() - time)
+                                        );
+                                    } else {
+                                        console.addLine(langSelector.getString("export_file_error"));
+                                    }
+                                    return null;
+                                }
+                            });
                             // ----
                         } else {
                             // -- default export
-                            ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper();
+                            // create progress dialog
+                            final ProgressDialog progressDialog = new ProgressDialog(frame);
+                            // do the exporting
+                            progressDialog.start(new ProgressWorker() {
+                                @Override
+                                protected Object doInBackground() throws Exception {
 
-                            // set the "use layers" flag
-                            colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
-                            // set remove holes flag
-                            colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
-                            // set use vertex colors flag
-                            colladaExportWrapper.setUseColoredVertices(dialog.is("collada.use_vertex_coloring=true"));
-                            // set use black outline
-                            colladaExportWrapper.setUseBlackOutline(dialog.is("collada.use_black_edges=true"));
-                            // set the file name (only used if the layers are not used)
-                            colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
+                                    ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper(progressDialog);
 
-                            // set the algorithm type
-                            if (dialog.is("collada.type=minimal")) {
-                                colladaExportWrapper.setAlgorithm(ExportDataManager.MINIMAL_RECT_ALGORITHM);
-                            } else if (dialog.is("collada.type=poly2tri")) {
-                                colladaExportWrapper.setAlgorithm(ExportDataManager.POLY2TRI_ALGORITHM);
-                            } else if (dialog.is("collada.type=naive")) {
-                                colladaExportWrapper.setAlgorithm(ExportDataManager.NAIVE_ALGORITHM);
-                            }
+                                    // set the "use layers" flag
+                                    colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
+                                    // set remove holes flag
+                                    colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
+                                    // set use vertex colors flag
+                                    colladaExportWrapper.setUseColoredVertices(dialog.is("collada.use_vertex_coloring=true"));
+                                    // set use black outline
+                                    colladaExportWrapper.setUseBlackOutline(dialog.is("collada.use_black_edges=true"));
+                                    // set the file name (only used if the layers are not used)
+                                    colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
 
-                            long time = System.currentTimeMillis();
-                            if (colladaExportWrapper.export(data, errorHandler, exportColladaTo)) {
-                                console.addLine(
-                                        String.format(langSelector.getString("export_file_successful"),
-                                                System.currentTimeMillis() - time)
-                                );
-                            } else {
-                                console.addLine(langSelector.getString("export_file_error"));
-                            }
+                                    // set the algorithm type
+                                    if (dialog.is("collada.type=minimal")) {
+                                        colladaExportWrapper.setAlgorithm(ExportDataManager.MINIMAL_RECT_ALGORITHM);
+                                    } else if (dialog.is("collada.type=poly2tri")) {
+                                        colladaExportWrapper.setAlgorithm(ExportDataManager.POLY2TRI_ALGORITHM);
+                                    } else if (dialog.is("collada.type=naive")) {
+                                        colladaExportWrapper.setAlgorithm(ExportDataManager.NAIVE_ALGORITHM);
+                                    }
+
+                                    long time = System.currentTimeMillis();
+                                    if (colladaExportWrapper.export(data, errorHandler, exportColladaTo)) {
+                                        console.addLine(
+                                                String.format(langSelector.getString("export_file_successful"),
+                                                        System.currentTimeMillis() - time)
+                                        );
+                                    } else {
+                                        console.addLine(langSelector.getString("export_file_error"));
+                                    }
+                                    return null;
+                                }
+                            });
+                            // ------------
+
                         }
 
                         // ===========
