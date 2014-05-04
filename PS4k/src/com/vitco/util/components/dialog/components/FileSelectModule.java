@@ -1,6 +1,7 @@
 package com.vitco.util.components.dialog.components;
 
 import com.vitco.util.components.dialog.BlankDialogModule;
+import com.vitco.util.file.FileTools;
 
 import java.awt.*;
 import java.io.File;
@@ -22,6 +23,6 @@ public class FileSelectModule extends BlankDialogModule {
     @Override
     public String getValue(String identifier) {
         // return the file that is currently selected
-        return super.getValue("folder") + "/" + super.getValue("file");
+        return FileTools.ensureTrailingSeparator(super.getValue("folder")) + super.getValue("file");
     }
 }

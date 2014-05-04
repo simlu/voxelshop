@@ -22,6 +22,14 @@ public class FileTools {
         });
     }
 
+    // add a separator to file path if not already present
+    public static String ensureTrailingSeparator(String path) {
+        if (path.charAt(path.length()-1) != File.separatorChar) {
+            path += File.separator;
+        }
+        return path;
+    }
+
     // todo: improve so it only ever erases from "slash to slash"
     // shorten a long file path for display purposes
     public static String shortenPath(String path, int length) {

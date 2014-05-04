@@ -147,7 +147,7 @@ public class UserInputDialog extends JDialog {
 
     // check that an expression is true (simple equal)
     public final boolean is(String expression) {
-        String[] pair = expression.split("\\=", 2);
+        String[] pair = expression.split("=", 2);
         if (pair.length == 2) {
             String actualValue = getValue(pair[0]);
             if (pair[1].equals(actualValue)) {

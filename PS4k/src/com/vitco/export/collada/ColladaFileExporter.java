@@ -8,6 +8,7 @@ import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.components.progressbar.ProgressReporter;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.DateTools;
 import com.vitco.util.xml.XmlFile;
 
@@ -296,8 +297,8 @@ public class ColladaFileExporter extends ProgressReporter {
                 TriTexture texture = triTextureManager.getTexture(textureId[0]);
                 BufferedImage textureImage = texture.getImage();
                 ImageIO.write(textureImage, "png", new File(
-                        folder + "/" + texturePrefix + textureId[0] + ".png"
-                ));
+                        FileTools.ensureTrailingSeparator(folder.getAbsolutePath()) + texturePrefix + textureId[0] + ".png"
+                        ));
             }
             return true;
         } catch (IOException e) {

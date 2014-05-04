@@ -484,7 +484,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         if (dialog.is("image_renderer.render_depth=true")) {
                             // extract file name
                             String depthBaseName = dialog.getValue("image_renderer.depth_map");
-                            exportDepthMapTo = new File(exportRenderTo.getParent() + "\\" + depthBaseName + (depthBaseName.endsWith(".png") ? "" : ".png"));
+                            exportDepthMapTo = new File(FileTools.ensureTrailingSeparator(exportRenderTo.getParent()) + depthBaseName + (depthBaseName.endsWith(".png") ? "" : ".png"));
                             // check if file exists
                             if (exportDepthMapTo.exists()) {
                                 if (JOptionPane.showConfirmDialog(frame,

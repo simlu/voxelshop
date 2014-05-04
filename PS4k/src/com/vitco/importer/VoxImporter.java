@@ -1,6 +1,7 @@
 package com.vitco.importer;
 
 import com.vitco.util.file.FileIn;
+import com.vitco.util.file.FileTools;
 import com.vitco.util.file.RandomAccessFileIn;
 import com.vitco.util.misc.NumberTools;
 
@@ -104,7 +105,7 @@ public class VoxImporter extends AbstractImporter {
                                 } else if (name.equals("hands")) {
                                     name = "hand";
                                 }
-                                File partFile = new File(fileIn.getInternalFile().getParent() + "\\" + name + ".vox");
+                                File partFile = new File(FileTools.ensureTrailingSeparator(fileIn.getInternalFile().getParent()) + name + ".vox");
                                 if (partFile.exists()) {
                                     VoxImporter voxImporter = new VoxImporter(partFile, name);
                                     if (voxImporter.hasLoaded()) {
