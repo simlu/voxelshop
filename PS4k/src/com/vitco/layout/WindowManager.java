@@ -445,6 +445,7 @@ public class WindowManager extends DefaultDockableBarDockableHolder implements W
             // allow frames to fill empty space
             dockingManager.getWorkspace().setAcceptDockableFrame(true);
             dockingManager.setEasyTabDock(true);
+            dockingManager.setUseGlassPaneEnabled(false);
             // set the grid snap size, e.g. when dragging
             dockingManager.setSnapGridSize(5);
 
