@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class TriTexture {
 
     // interpolation value
-    private static final float interp = 0.00001f;
+    private static final float interp = 0.001f;
 
     // ---------------
 
