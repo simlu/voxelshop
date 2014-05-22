@@ -28,7 +28,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         final DrawContainer container = this;
 
         // add a border to our view
-        container.setBorder(BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR));
+        container.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, VitcoSettings.DEFAULT_BORDER_COLOR));
 
         // register size change of container and change buffer size accordingly
         container.addComponentListener(new ComponentAdapter() {

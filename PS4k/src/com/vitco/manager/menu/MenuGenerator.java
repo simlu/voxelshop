@@ -241,7 +241,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
                                 }
                                 if (grayable) {
                                     item.setEnabled(
-                                            // triggered when the menu item is show
+                                            // triggered when the menu item is shown
                                             // this makes sure the "checked" is always current
                                             invert ? !action.isEnabled() : action.isEnabled()
                                     );

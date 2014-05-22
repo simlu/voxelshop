@@ -11,6 +11,7 @@ import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.menu.MenuGeneratorInterface;
 import com.vitco.manager.pref.PrefChangeListener;
+import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.CFileDialog;
 import com.vitco.util.misc.SaveResourceLoader;
@@ -99,6 +100,9 @@ public class ColorPaletteLinkage extends FrameLinkagePrototype {
                 colorPaletteChooser.setColor((float[])o);
             }
         });
+
+        // set border
+        colorPaletteChooser.setBorder(BorderFactory.createMatteBorder(1,1,0,1, VitcoSettings.DEFAULT_BORDER_COLOR));
 
         frame.setLayout(new BorderLayout());
         frame.add(colorPaletteChooser, BorderLayout.CENTER);

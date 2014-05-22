@@ -244,9 +244,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
                                             ((DockableFrame) comp).setShowTitleBar(showBorder);
                                             // show/hide resize border (different border depending if active or inactive)
                                             container.setBorder(showBorder
-                                                    ? (((DockableFrame) comp).isActive()
-                                                        ? VitcoSettings.FLOATING_FRAME_BORDER_ACTIVE
-                                                        : VitcoSettings.FLOATING_FRAME_BORDER_INACTIVE)
+                                                    ? VitcoSettings.FLOATING_FRAME_BORDER
                                                     : BorderFactory.createEmptyBorder());
                                         }
                                     }

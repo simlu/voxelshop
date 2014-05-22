@@ -19,10 +19,26 @@ public final class VitcoSettings {
     // color for the "big bounding box"
     public static final Color BOUNDING_BOX_COLOR = new Color(255, 255, 255, 100);
 
-    // floatable frame settings
-    public static final Border FLOATING_FRAME_BORDER_ACTIVE = BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(160, 160, 160), 1), BorderFactory.createLineBorder(new Color(248, 203, 115), 2));
-    public static final Border FLOATING_FRAME_BORDER_INACTIVE = BorderFactory.createLineBorder(new Color(216, 232, 254), 3);
+    // float-able frame settings
+    public static final Border FLOATING_FRAME_BORDER = BorderFactory.createLineBorder(new Color(20, 20, 20), 3);
+    // frame settings
+    public static final int FRAME_BORDER_SIZE = 4;
+    public static final Border FRAME_BORDER = BorderFactory.createLineBorder(new Color(20, 20, 20), FRAME_BORDER_SIZE);
+    public final static Color MAIN_MENU_ENABLED_COLOR = new Color(230, 230, 230);
+    public final static Color MAIN_MENU_DISABLED_COLOR = new Color(170, 170, 170);
+    // soft black color
+    public final static Color SOFT_BLACK = new Color(38, 38, 38);
+    public final static Color SOFT_WHITE = new Color(230, 230, 230);
+    public static final Color DEFAULT_BG_COLOR = new Color(83, 83, 83);
+    // tabbed pane
+    public static final Color TABBED_PANE_HEADER_ACTIVE_COLOR = new Color(130, 130, 130);
+    // button colors
+    public static final Color BUTTON_BACKGROUND_DEFAULT = new Color(83, 83, 83);
+    public static final Color BUTTON_BACKGROUND_ROLLOVER = new Color(98, 98, 98);
+    public static final Color BUTTON_BACKGROUND_SELECTED = new Color(55, 55, 55);
+    public static final Color BUTTON_BACKGROUND_DISABLED_SELECTED = new Color(83, 83, 83);
+    public static final Color BUTTON_BACKGROUND_PRESSED = new Color(83, 83, 83);
+    public static final Color BUTTON_BORDER_COLOR = new Color(39, 39, 39);
 
     // texture window settings
     public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
@@ -61,7 +77,6 @@ public final class VitcoSettings {
     public static final Color EDIT_TEXT_COLOR = new Color(30, 30, 30); // new Color(0, 0, 0);
     public static final Color EDIT_ERROR_BG_COLOR = new Color(255, 171, 161); // new Color(255,200,200);
     public static final Color DEFAULT_TEXT_COLOR = new Color(233,233,233);
-    public static final Color DEFAULT_BG_COLOR =  new Color(85, 85, 85);
     public static final Color DEFAULT_HOVER_COLOR = new Color(90,100,120);
     public static final Color DEFAULT_DARK_BG_COLOR = new Color(40, 40, 40);
 
@@ -113,7 +128,7 @@ public final class VitcoSettings {
     public static final float MAIN_VIEW_ROTATION_Y_FACTOR = 0.01f;
 
     // general
-    public static final Color DEFAULT_BORDER_COLOR = new Color(90, 90, 90);
+    public static final Color DEFAULT_BORDER_COLOR = new Color(60, 60, 60);
     public static final Color DEFAULT_BORDER_COLOR_LIGHT = new Color(130, 135, 144);
 
     // layer
@@ -131,10 +146,10 @@ public final class VitcoSettings {
             BorderFactory.createEmptyBorder(0, 10, 0, 0);
     public static final Border DEFAULT_CELL_BORDER_EDIT =
             BorderFactory.createEmptyBorder(DEFAULT_TABLE_INCREASE / 2, 10, 0, 0);
-    public static final Color TABLE_HEADER_BG_COLOR = new Color(191, 219, 255, 200);
-    public static final Color TABLE_HEADER_COLOR = new Color(0, 0, 0);
+    public static final Color TABLE_HEADER_BG_COLOR = new Color(100, 100, 100, 200);
+    public static final Color TABLE_HEADER_COLOR = new Color(40, 40, 40);
     public static final Color DEFAULT_CELL_COLOR = new Color(95, 95, 95);
-    public static final Color DEFAULT_SCROLL_PANE_BG_COLOR = new Color(203, 225, 254);
+    public static final Color DEFAULT_SCROLL_PANE_BG_COLOR = new Color(100, 100, 100, 200);
 
     // general voxel stuff
     public static final float VOXEL_SIZE = 10f;

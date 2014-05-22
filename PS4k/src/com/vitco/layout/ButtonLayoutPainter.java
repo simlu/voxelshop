@@ -1,7 +1,8 @@
 package com.vitco.layout;
 
-import com.jidesoft.swing.JideButton;
+import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideSplitButton;
+import com.vitco.settings.VitcoSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,40 +17,75 @@ import java.awt.*;
  */
 public class ButtonLayoutPainter extends CustomLayoutPainter {
 
-    private static final Color BUTTON_BACKGROUND_DEFAULT = new Color(83, 83, 83);
-    private static final Color BUTTON_BACKGROUND_ROLLOVER = new Color(98, 98, 98);
-    private static final Color BUTTON_BACKGROUND_SELECTED = new Color(55, 55, 55);
-    private static final Color BUTTON_BACKGROUND_DISABLED_SELECTED = new Color(83, 83, 83);
-    private static final Color BUTTON_BACKGROUND_PRESSED = new Color(83, 83, 83);
+    // arc size of the button corners
+    private static final int BUTTON_CORNER_ARC_SIZE = 6;
 
-    private static final Color BUTTON_BORDER_COLOR = new Color(39, 39, 39);
+    @Override
+    public void paintGripper(javax.swing.JComponent c, java.awt.Graphics g, java.awt.Rectangle rect, int orientation, int state) {
+        g.setColor(VitcoSettings.DEFAULT_BG_COLOR);
+        g.fillRect(rect.x, rect.y, rect.width, rect.height);
+        // paint "gripper"
+        g.setColor(VitcoSettings.SOFT_BLACK);
+        if (orientation == HORIZONTAL) {
+            for (int i = rect.y + 3; i < rect.height - 2; i++) {
+                if (i%2 == 0) {
+                    g.drawLine(rect.x+2, i, rect.x + 5, i);
+                }
+            }
+        } else {
+            for (int i = rect.x + 3; i < rect.width - 2; i++) {
+                if (i%2 == 0) {
+                    g.drawLine(i, rect.y+2, i, rect.y+5);
+                }
+            }
+        }
+    }
 
-    private static final int BUTTON_CORNER_ARC_SIZE = 4;
+    @Override
+    public void paintCommandBarBackground(javax.swing.JComponent c, java.awt.Graphics g, java.awt.Rectangle rect, int orientation, int state) {
+        g.setColor(VitcoSettings.DEFAULT_BG_COLOR);
+        g.fillRect(rect.x, rect.y, rect.width, rect.height);
+        g.setColor(VitcoSettings.DEFAULT_BORDER_COLOR);
+        g.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
+    }
 
     @Override
     public void paintButtonBackground(JComponent c, Graphics g, Rectangle rect, int orientation, int state, boolean showBorder) {
         switch (state) {
             case STATE_DEFAULT:
-                paintBackground(c, g, rect, showBorder ? BUTTON_BORDER_COLOR : null, BUTTON_BACKGROUND_DEFAULT, orientation);
+                if ((c instanceof JideMenu) && ((JideMenu)c).isPopupMenuVisible()) {
+                    paintBackground(c, g, rect, VitcoSettings.BUTTON_BORDER_COLOR, VitcoSettings.BUTTON_BACKGROUND_SELECTED, orientation);
+                } else {
+                    paintBackground(c, g, rect, showBorder ? VitcoSettings.BUTTON_BORDER_COLOR : null, VitcoSettings.BUTTON_BACKGROUND_DEFAULT, orientation);
+                }
                 break;
             case STATE_ROLLOVER:
-                paintBackground(c, g, rect, showBorder ? BUTTON_BORDER_COLOR : null, BUTTON_BACKGROUND_ROLLOVER, orientation);
+                paintBackground(c, g, rect, showBorder ? VitcoSettings.BUTTON_BORDER_COLOR : null, VitcoSettings.BUTTON_BACKGROUND_ROLLOVER, orientation);
                 break;
             case STATE_SELECTED:
-                paintBackground(c, g, rect, showBorder ? BUTTON_BORDER_COLOR : null, BUTTON_BACKGROUND_SELECTED, orientation);
+                paintBackground(c, g, rect, showBorder ? VitcoSettings.BUTTON_BORDER_COLOR : null, VitcoSettings.BUTTON_BACKGROUND_SELECTED, orientation);
                 break;
             case STATE_DISABLE_SELECTED:
-                paintBackground(c, g, rect, showBorder ? BUTTON_BORDER_COLOR : null, BUTTON_BACKGROUND_DISABLED_SELECTED, orientation);
+                paintBackground(c, g, rect, showBorder ? VitcoSettings.BUTTON_BORDER_COLOR : null, VitcoSettings.BUTTON_BACKGROUND_DISABLED_SELECTED, orientation);
                 break;
             case STATE_PRESSED:
-                paintBackground(c, g, rect, showBorder ? BUTTON_BORDER_COLOR : null, BUTTON_BACKGROUND_PRESSED, orientation);
+                paintBackground(c, g, rect, showBorder ? VitcoSettings.BUTTON_BORDER_COLOR : null, VitcoSettings.BUTTON_BACKGROUND_PRESSED, orientation);
+                break;
+            case STATE_DISABLE:
+                break;
+            case STATE_DISABLE_ROLLOVER:
+                break;
+            case STATE_INACTIVE_ROLLOVER:
                 break;
         }
     }
 
     @Override
     protected void paintBackground(JComponent c, Graphics g, Rectangle rect, Color borderColor, Color background, int orientation) {
-        Color oldColor = g.getColor();
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        Color oldColor = g2.getColor();
         if (borderColor != null) {
             boolean paintDefaultBorder = true;
             Object o = c.getClientProperty("JideButton.paintDefaultBorder");
@@ -57,59 +93,53 @@ public class ButtonLayoutPainter extends CustomLayoutPainter {
                 paintDefaultBorder = (Boolean) o;
             }
             if (paintDefaultBorder) {
+                boolean flipped = (c instanceof JideSplitButton) &&
+                        ((JideSplitButton)c).getOrientation() != JideSplitButton.HORIZONTAL;
                 // draw gradient inside
-                g.setColor(background);
-                ((Graphics2D)g).setPaint(new GradientPaint(
-                        (c instanceof JideSplitButton) ? rect.x -10 : 0,
-                        !(c instanceof JideSplitButton) ? rect.y -10 : 0,
+                g2.setColor(background);
+                g2.setPaint(new GradientPaint(
+                        flipped ? rect.x -50 : 0,
+                        !flipped ? rect.y -50 : 0,
                         background.brighter(),
-                        (c instanceof JideSplitButton) ? rect.width+10 : 0,
-                        !(c instanceof JideSplitButton) ? rect.height+10 : 0,
+                        flipped ? rect.width : 0,
+                        !flipped ? rect.height : 0,
                         background
                 ));
-                g.fillRoundRect(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                ((Graphics2D)g).setPaint(null);
-                // draw outline
+                g2.fillRoundRect(rect.x + (flipped?1:0) + 1,
+                        rect.y + (flipped?0:1) - (flipped?1:0) + 1,
+                        rect.width - (flipped?1:0) - 2,
+                        rect.height - (flipped?0:1) - 2,
+                        BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
+                g2.setPaint(null);
+                // compute outline rect
                 rect = new Rectangle(rect);
                 rect.grow(-1, -1);
-                g.setColor(borderColor);
-                Object position = c.getClientProperty(JideButton.CLIENT_PROPERTY_SEGMENT_POSITION);
-                if (position == null || JideButton.SEGMENT_POSITION_ONLY.equals(position)) {
-                    g.drawRoundRect(rect.x, rect.y, rect.width - 1, rect.height - 1, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                }
-                else if (JideButton.SEGMENT_POSITION_FIRST.equals(position)) {
-                    if (orientation == SwingConstants.HORIZONTAL) {
-                        g.drawRoundRect(rect.x, rect.y, rect.width, rect.height - 1, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                    }
-                    else {
-                        g.drawRoundRect(rect.x, rect.y, rect.width - 1, rect.height, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                    }
-                }
-                else if (JideButton.SEGMENT_POSITION_MIDDLE.equals(position)) {
-                    if (orientation == SwingConstants.HORIZONTAL) {
-                        g.drawRoundRect(rect.x, rect.y, rect.width, rect.height - 1, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                    }
-                    else {
-                        g.drawRoundRect(rect.x, rect.y, rect.width - 1, rect.height, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                    }
-                }
-                else if (JideButton.SEGMENT_POSITION_LAST.equals(position)) {
-                    if (orientation == SwingConstants.HORIZONTAL) {
-                        g.drawRoundRect(rect.x, rect.y, rect.width - 1, rect.height - 1, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                    }
-                    else {
-                        g.drawRoundRect(rect.x, rect.y, rect.width - 1, rect.height - 1, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
-                    }
-                }
+                // draw outline
+                g2.setColor(background.brighter());
+                g2.drawRoundRect(
+                        rect.x + (flipped?1:0),
+                        rect.y + (flipped?0:1) - (flipped?1:0),
+                        rect.width - (flipped?1:0),
+                        rect.height - (flipped?0:1),
+                        BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
+                g2.setColor(borderColor);
+                g2.drawRoundRect(
+                        rect.x,
+                        rect.y - (flipped?1:0),
+                        rect.width - (flipped?1:0),
+                        rect.height - (flipped?0:1),
+                        BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
             } else {
-                g.setColor(background);
-                g.fillRoundRect(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
+                g2.setColor(background);
+                g2.fillRoundRect(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
             }
         }
         else {
-            g.setColor(background);
-            g.fillRoundRect(rect.x, rect.y, rect.width, rect.height, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
+            g2.setColor(background);
+            g2.fillRoundRect(rect.x, rect.y, rect.width, rect.height, BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
         }
-        g.setColor(oldColor);
+        g2.setColor(oldColor);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 }
