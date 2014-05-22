@@ -84,6 +84,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             }
         }
         final ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setBorder(BorderFactory.createMatteBorder(1,0,1,1,VitcoSettings.DEFAULT_BORDER_COLOR));
         // load the stored preferences for this
         if (preferences.contains("console_auto_scroll_status")) {
             scrollPane.autoScroll = preferences.loadBoolean("console_auto_scroll_status");

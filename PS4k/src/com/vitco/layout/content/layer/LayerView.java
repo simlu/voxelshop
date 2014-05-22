@@ -365,6 +365,7 @@ public class LayerView extends ViewPrototype implements LayerViewInterface {
 
         // container for table
         JCustomScrollPane pane = new JCustomScrollPane(table);
+        pane.setBorder(BorderFactory.createMatteBorder(1,1,0,1,VitcoSettings.DEFAULT_BORDER_COLOR));
         result.add(pane, BorderLayout.CENTER);
 
         // create the menu bar
