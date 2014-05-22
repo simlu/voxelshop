@@ -440,6 +440,7 @@ public class TriTexture {
             TexTriUV uv2, int xf2, int yf2,
             TexTriUV uv3, int xf3, int yf3,
             int depth,
+            boolean usePadding,
             TexTriangle texTri, Data data,
             TriTextureManager textureManager
     ) {
@@ -520,6 +521,11 @@ public class TriTexture {
         // Note: Doing this several times should not make any sense
         int[] newSize = compress(width, height, pixels, uvPoints);
 
+        // do texture padding (if enabled)
+        if (usePadding) {
+            newSize = pad(newSize[0], newSize[1], pixels, uvPoints);
+        }
+
         // set the image comparator
         imageComparator = new ImageComparator(pixels.valueCollection());
 
@@ -539,9 +545,69 @@ public class TriTexture {
         this.height = newSize[1];
     }
 
+    // pad textures "surround with same color pixels"
+    protected static int[] pad(int width, int height, TIntObjectHashMap<int[]> pixels, double[][] uvPoints) {
+
+        int[] newSize = new int[] {width + 2, height + 2};
+
+        // -- translate pixels
+        TIntObjectHashMap<int[]> translatedPixels = new TIntObjectHashMap<int[]>();
+        for (TIntObjectIterator<int[]> it = pixels.iterator(); it.hasNext();) {
+            it.advance();
+            int[] pixel = it.value();
+            int point = IntegerTools.makeInt(pixel[0] + 1, pixel[1] + 1);
+            translatedPixels.put(point, new int[] {pixel[0] + 1, pixel[1] + 1, pixel[2]});
+        }
+        pixels.clear();
+        pixels.putAll(translatedPixels);
+
+        // -- fix horizontal padding
+        for (TIntObjectIterator<int[]> it = pixels.iterator(); it.hasNext();) {
+            it.advance();
+            int[] pixel = it.value();
+            int point = IntegerTools.makeInt(pixel[0] + 1, pixel[1]);
+            if (!pixels.containsKey(point)) {
+                translatedPixels.put(point, new int[] {pixel[0] + 1, pixel[1], pixel[2]});
+            }
+            point = IntegerTools.makeInt(pixel[0] - 1, pixel[1]);
+            if (!pixels.containsKey(point)) {
+                translatedPixels.put(point, new int[] {pixel[0] - 1, pixel[1], pixel[2]});
+            }
+        }
+        pixels.clear();
+        pixels.putAll(translatedPixels);
+
+        // -- fix vertical padding
+        for (TIntObjectIterator<int[]> it = pixels.iterator(); it.hasNext();) {
+            it.advance();
+            int[] pixel = it.value();
+            int point = IntegerTools.makeInt(pixel[0], pixel[1] + 1);
+            if (!pixels.containsKey(point)) {
+                translatedPixels.put(point, new int[] {pixel[0], pixel[1] + 1, pixel[2]});
+            }
+            point = IntegerTools.makeInt(pixel[0], pixel[1] - 1);
+            if (!pixels.containsKey(point)) {
+                translatedPixels.put(point, new int[] {pixel[0], pixel[1] - 1, pixel[2]});
+            }
+        }
+        pixels.clear();
+        pixels.putAll(translatedPixels);
+
+        // -- fix uv points
+        uvPoints[0][0] = (uvPoints[0][0] * width + 1) / newSize[0];
+        uvPoints[0][1] = (uvPoints[0][1] * height + 1) / newSize[1];
+        uvPoints[1][0] = (uvPoints[1][0] * width + 1) / newSize[0];
+        uvPoints[1][1] = (uvPoints[1][1] * height + 1) / newSize[1];
+        uvPoints[2][0] = (uvPoints[2][0] * width + 1) / newSize[0];
+        uvPoints[2][1] = (uvPoints[2][1] * height + 1) / newSize[1];
+
+        return newSize;
+    }
+
     // prune unnecessary and add missing pixels from this texture
     // Note: This should only be needed after compression changed the image and uvs
-    private static int[] repairPixel(int width, int height, TIntObjectHashMap<int[]> pixels, double[][] uvPoints, boolean useHeight) {
+    private static int[] repairPixel(int width, int height, TIntObjectHashMap<int[]> pixels,
+                                     double[][] uvPoints, boolean useHeight) {
         // will store the minimum and maximum pixel values
         int minX = Integer.MAX_VALUE;
         int maxX = Integer.MIN_VALUE;

@@ -30,12 +30,7 @@
     <!-- laod the initial layout -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass"><value>com.vitco.layout.LayoutLoader</value></property>
-        <property name="targetMethod"><value>loadLayoutFile</value></property>
-        <property name="arguments">
-            <list>
-                <value>resource/layout/layout.xml</value>
-            </list>
-        </property>
+        <property name="targetMethod"><value>loadLayout</value></property>
     </bean>
 
     <!-- manages the console data -->

@@ -398,6 +398,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         layersAsObjects.setStrikeThrough(true);
         collada.addComponent(layersAsObjects);
 
+        // option: make texture edges save (pad textures)
+        CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", false);
+        padTextures.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(padTextures);
+
         // option: use vertex colors
         CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
@@ -595,6 +600,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
                                     // set remove holes flag
                                     colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
+                                    // set pad textures flag
+                                    colladaExportWrapper.setPadTextures(dialog.is("collada.pad_textures=true"));
                                     // set use vertex colors flag
                                     colladaExportWrapper.setUseColoredVertices(dialog.is("collada.use_vertex_coloring=true"));
                                     // set use black outline

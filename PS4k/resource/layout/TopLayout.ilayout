@@ -249,8 +249,8 @@
                 floating="false" hidable="false" hidden="false"
                 horiDocked="true" initIndex="0" initMode="2"
                 initSide="1" initSubindex="-1" key="mainMenu"
-                menuBar="true" paintBackground="false"
-                rearrangable="true" stretch="false" title="Main Menu"
+                menuBar="true" paintBackground="true"
+                rearrangable="false" stretch="true" title="Main Menu"
                 undockedBounds="253; 85; 294; 47" vertDocked="false"/>
             <DockableBar allowedDockSides="15"
                 chevronAlwaysVisible="false" floatable="true"

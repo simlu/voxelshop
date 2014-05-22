@@ -29,6 +29,9 @@ public class ExportDataManager extends ProgressReporter {
     // used to access voxel data (for color generation)
     private final Data data;
 
+    // true if texture padding is enabled
+    private final boolean usePadding;
+
     // -------------
     // Data Structure that manages the triangles
     private final TexTriangleManager triangleManager = new TexTriangleManager();
@@ -54,7 +57,7 @@ public class ExportDataManager extends ProgressReporter {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(ProgressDialog dialog, Data data, int algorithm) {
+    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, int algorithm) {
         super(dialog);
 
         // create hull manager that exposes hull information
@@ -68,6 +71,7 @@ public class ExportDataManager extends ProgressReporter {
         // store references
         this.hullManager = hullManager;
         this.data = data;
+        this.usePadding = usePadding;
 
         // extract information
         extract(algorithm);
@@ -233,8 +237,6 @@ public class ExportDataManager extends ProgressReporter {
 
 
                 for (DelaunayTriangle tri : tris) {
-//                for (DelaunayTriangle tri : Grid2TriGreedyOptimal.triangulate(data)) {
-//                for (DelaunayTriangle tri : Grid2TriMono.triangulate(data, false)) {
 
                     // create the triangle
                     TexTriangle texTri = new TexTriangle(tri, triangleManager, i);
@@ -248,6 +250,7 @@ public class ExportDataManager extends ProgressReporter {
                             uvs[1], Math.round(minA + tri.points[1].getXf()), Math.round(minB + tri.points[1].getYf()),
                             uvs[2], Math.round(minA + tri.points[2].getXf()), Math.round(minB + tri.points[2].getYf()),
                             entries.getKey(),
+                            usePadding,
                             texTri, this.data,
                             textureManager
                     );

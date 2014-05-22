@@ -41,6 +41,12 @@ public class ColladaExportWrapper extends ProgressReporter {
         removeHoles = state;
     }
 
+    // true if texture padding is enabled
+    private boolean padTextures = true;
+    public final void setPadTextures(boolean state) {
+        padTextures = state;
+    }
+
     // true if colored vertices should be used
     private boolean useColoredVertices = false;
     public final void setUseColoredVertices(boolean state) {
@@ -67,7 +73,7 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, algorithm);
+        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, algorithm);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), exportDataManager, prefix, objectName);
 
         setActivity("Writing Data File...", true);

@@ -1,6 +1,9 @@
 package com.vitco.layout;
 
-import com.jidesoft.action.*;
+import com.jidesoft.action.CommandMenuBar;
+import com.jidesoft.action.DockableBar;
+import com.jidesoft.action.DockableBarFactory;
+import com.jidesoft.action.DockableBarManager;
 import com.jidesoft.docking.*;
 import com.jidesoft.docking.event.DockableFrameAdapter;
 import com.jidesoft.docking.event.DockableFrameEvent;
@@ -40,7 +43,7 @@ import java.util.Map;
  * configured classes.
  */
 
-public class WindowManager extends DefaultDockableBarDockableHolder implements WindowManagerInterface {
+public class WindowManager extends ExtendedDockableBarDockableHolder implements WindowManagerInterface {
 
     // maps the bars to the linkage class that deals with them
     private Map<String, BarLinkagePrototype> barLinkageMap;
