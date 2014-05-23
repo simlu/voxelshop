@@ -16,7 +16,7 @@ public class LayoutLoader {
 
         // load the layout
         LookAndFeelFactory.installDefaultLookAndFeel();
-        //LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_XERTO);
+        LookAndFeelFactory.installJideExtension(LookAndFeelFactory.EXTENSION_STYLE_VSNET);
 
         // hide border from menu popups
         UIManager.put("PopupMenu.border", BorderFactory.createLineBorder(VitcoSettings.SOFT_BLACK));
@@ -59,6 +59,9 @@ public class LayoutLoader {
 
         // set the table cell outline
         UIManager.put("Table.gridColor", VitcoSettings.DEFAULT_BORDER_COLOR);
+
+        // prevent icon from floating (hover)
+        UIManager.put("Icon.floating", false);
 
         // set custom painter
         UIManager.getDefaults().put("Theme.painter", new ButtonLayoutPainter());

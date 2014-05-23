@@ -1,14 +1,15 @@
 package com.vitco.layout.bars;
 
 import com.jidesoft.action.CommandMenuBar;
+import com.jidesoft.swing.JideButton;
+import com.vitco.manager.action.ActionManager;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.SaveResourceLoader;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 /**
  * the main menu, uses menu generator to load content from file
@@ -20,12 +21,73 @@ public class MainMenuLinkage extends BarLinkagePrototype {
     // true if the frame is currently maximized
     private boolean maximized = false;
 
+    // var & setter
+    private ActionManager actionManager;
+    @Autowired
+    public final void setActionManager(ActionManager actionManager) {
+        this.actionManager = actionManager;
+    }
+
     @Override
     public CommandMenuBar buildBar(String key, final Frame frame) {
         final CommandMenuBar bar = new CommandMenuBar(key);
 
         // build the menu
         menuGenerator.buildMenuFromXML(bar, "com/vitco/layout/bars/main_menu.xml");
+
+        // add buttons to the titlebar
+        bar.addExpansion();
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setOpaque(false);
+        JideButton minimize = new JideButton(new SaveResourceLoader(
+                "resource/img/icons/application/minimize.png"
+        ).asIconImage());
+        minimize.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        minimize.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setState(Frame.ICONIFIED);
+            }
+        });
+        panel.add(minimize, BorderLayout.WEST);
+        JideButton maximize = new JideButton(new SaveResourceLoader(
+                "resource/img/icons/application/maximize.png"
+        ).asIconImage());
+        maximize.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        maximize.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int state = frame.getExtendedState();
+                if((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
+                    frame.setExtendedState(JFrame.NORMAL);
+                }
+                else {
+                    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                }
+            }
+        });
+        panel.add(maximize, BorderLayout.CENTER);
+        JideButton close = new JideButton(new SaveResourceLoader(
+                "resource/img/icons/application/close.png"
+        ).asIconImage());
+        close.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
+        close.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                // execute closing action
+                actionManager.performWhenActionIsReady("close_program_action", new Runnable() {
+                    @Override
+                    public void run() {
+                        actionManager.getAction("close_program_action").actionPerformed(
+                                new ActionEvent(e.getSource(), e.getID(), e.paramString())
+                        );
+                    }
+                });
+            }
+        });
+        panel.add(close, BorderLayout.EAST);
+        bar.add(panel);
 
         // make borderless
         frame.setUndecorated(true);
@@ -285,12 +347,15 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         public void mousePressed(MouseEvent e) {
             this.start_drag = this.getScreenLocation(e);
             this.start_loc = frame.getLocation();
+        }
+
+        public void mouseReleased(MouseEvent e) {
             // change maximized state on dbl click
             if (e.getClickCount()%2 == 0) {
                 if ((frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
                     frame.setExtendedState(JFrame.NORMAL);
                 } else {
-                    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
                 }
             }
         }

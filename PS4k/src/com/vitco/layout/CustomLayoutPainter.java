@@ -230,12 +230,6 @@ public abstract class CustomLayoutPainter extends BasicPainter {
     }
 
     @Override
-    public void paintChevronMore(javax.swing.JComponent jComponent, java.awt.Graphics graphics, java.awt.Rectangle rectangle, int i, int i1) {
-        graphics.setColor(VitcoSettings.DEFAULT_BG_COLOR);
-        graphics.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    }
-
-    @Override
     public void paintChevronOption(javax.swing.JComponent jComponent, java.awt.Graphics graphics, java.awt.Rectangle rectangle, int i, int i1) {
         graphics.setColor(VitcoSettings.DEFAULT_BG_COLOR);
         graphics.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);

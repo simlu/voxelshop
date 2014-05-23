@@ -21,6 +21,13 @@ public class ButtonLayoutPainter extends CustomLayoutPainter {
     private static final int BUTTON_CORNER_ARC_SIZE = 6;
 
     @Override
+    public void paintChevronMore(JComponent c, Graphics g, Rectangle rect, int orientation, int state) {
+        super.paintChevronMore(c, g, rect, orientation, state);
+        g.setColor(VitcoSettings.DEFAULT_BORDER_COLOR);
+        g.drawRect(rect.x, rect.y, rect.width-1, rect.height-1);
+    }
+
+    @Override
     public void paintGripper(javax.swing.JComponent c, java.awt.Graphics g, java.awt.Rectangle rect, int orientation, int state) {
         g.setColor(VitcoSettings.DEFAULT_BG_COLOR);
         g.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -106,9 +113,9 @@ public class ButtonLayoutPainter extends CustomLayoutPainter {
                         background
                 ));
                 g2.fillRoundRect(rect.x + (flipped?1:0) + 1,
-                        rect.y + (flipped?0:1) - (flipped?1:0) + 1,
-                        rect.width - (flipped?1:0) - 2,
-                        rect.height - (flipped?0:1) - 2,
+                        rect.y - (flipped?1:0) + 2,
+                        rect.width - 3,
+                        rect.height - (flipped?0:1) - 3,
                         BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
                 g2.setPaint(null);
                 // compute outline rect
@@ -118,16 +125,16 @@ public class ButtonLayoutPainter extends CustomLayoutPainter {
                 g2.setColor(background.brighter());
                 g2.drawRoundRect(
                         rect.x + (flipped?1:0),
-                        rect.y + (flipped?0:1) - (flipped?1:0),
-                        rect.width - (flipped?1:0),
-                        rect.height - (flipped?0:1),
+                        rect.y + 1 - (flipped?1:0),
+                        rect.width - 1,
+                        rect.height - (flipped?0:1) - 1,
                         BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
                 g2.setColor(borderColor);
                 g2.drawRoundRect(
                         rect.x,
-                        rect.y - (flipped?1:0),
-                        rect.width - (flipped?1:0),
-                        rect.height - (flipped?0:1),
+                        rect.y,
+                        rect.width - 1,
+                        rect.height - (flipped?0:1) - 1,
                         BUTTON_CORNER_ARC_SIZE, BUTTON_CORNER_ARC_SIZE);
             } else {
                 g2.setColor(background);
