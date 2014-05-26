@@ -3,6 +3,7 @@ package com.vitco.layout;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import com.jidesoft.swing.JideTabbedPane;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.SaveResourceLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,6 +63,32 @@ public class LayoutLoader {
 
         // prevent icon from floating (hover)
         UIManager.put("Icon.floating", false);
+
+        // make title bar "thin"
+        UIManager.put("DockableFrameTitlePane.margin", new Insets(0, 5, 0, 3));
+        UIManager.put("DockableFrame.titleBorder", BorderFactory.createEmptyBorder());
+        UIManager.put("DockableFrameTitlePane.buttonGap", 4);
+
+        // set margin
+        UIManager.put("JideButton.margin", new Insets(3,3,3,3));
+
+        // set buttons alignment (required for OSX)
+        UIManager.put("DockableFrameTitlePane.buttonsAlignment", SwingConstants.TRAILING);
+        UIManager.put("DockableFrameTitlePane.titleAlignment", SwingConstants.LEADING);
+
+        // set icons for title bar
+        UIManager.put("DockableFrameTitlePane.hideIcon", new SaveResourceLoader(
+                "resource/img/icons/frame_close_button_icon.png"
+        ).asIconImage());
+        UIManager.put("DockableFrameTitlePane.unfloatIcon", new SaveResourceLoader(
+                "resource/img/icons/frame_maximize_button_icon.png"
+        ).asIconImage());
+        UIManager.put("DockableFrameTitlePane.floatIcon", new SaveResourceLoader(
+                "resource/img/icons/frame_maximize_button_icon.png"
+        ).asIconImage());
+
+        // allow cursor changes
+        UIManager.put("DockingFramework.changeCursor", true);
 
         // set custom painter
         UIManager.getDefaults().put("Theme.painter", new ButtonLayoutPainter());

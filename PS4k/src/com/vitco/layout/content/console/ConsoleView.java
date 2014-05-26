@@ -367,6 +367,17 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             actionManager.registerActionIsUsed(action);
         }
 
+        // set textarea colors
+        inputField.setBackground(VitcoSettings.DEFAULT_DARK_BG_COLOR);
+        inputField.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createMatteBorder(0,0,1,1,VitcoSettings.DEFAULT_BORDER_COLOR),
+                        BorderFactory.createEmptyBorder(3,3,3,3)
+                )
+        );
+        inputField.setForeground(VitcoSettings.SOFT_WHITE);
+        inputField.setCaretColor(VitcoSettings.SOFT_WHITE);
+
         inputField.addKeyListener(new KeyAdapter() {
             // holds previous console commands
             String tmpCommand = null;

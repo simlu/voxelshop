@@ -41,7 +41,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                             cleanup();
                             buffer = null; // so the gc can collect before creation if necessary
                             buffer = new HackedFrameBuffer(container.getWidth(),
-                                    container.getHeight(), DynamicSettings.SAMPLING_MODE);
+                                    // increase size by one to prevent black frame
+                                    container.getHeight() + 1, DynamicSettings.SAMPLING_MODE);
                             container.notifyAboutResize(container.getWidth(), container.getHeight());
                             container.doNotSkipNextWorldRender();
                             forceRepaint();
