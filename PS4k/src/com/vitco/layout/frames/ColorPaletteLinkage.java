@@ -3,6 +3,8 @@ package com.vitco.layout.frames;
 import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.swing.JideToggleButton;
+import com.vitco.core.data.Data;
+import com.vitco.core.data.container.Voxel;
 import com.vitco.layout.content.colorchooser.ColorPaletteChooser;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
 import com.vitco.layout.content.console.ConsoleInterface;
@@ -27,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -45,6 +48,13 @@ public class ColorPaletteLinkage extends FrameLinkagePrototype {
     @Autowired
     public final void setComplexActionManager(ComplexActionManager complexActionManager) {
         this.complexActionManager = complexActionManager;
+    }
+
+    // var & setter
+    protected Data data;
+    @Autowired
+    public final void setData(Data data) {
+        this.data = data;
     }
 
     // var & setter
@@ -234,6 +244,36 @@ public class ColorPaletteLinkage extends FrameLinkagePrototype {
             }
         });
 
+        // extract colors from selected voxels
+        actionManager.registerAction("color-palette_extract-colors", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                HashSet<Integer> colors = new HashSet<Integer>();
+                for (Voxel voxel : data.getSelectedVoxels()) {
+                    colors.add(voxel.getColor().getRGB());
+                }
+                for (Color color : colorPaletteChooser.getColors().values()) {
+                    colors.remove(color.getRGB());
+                }
+                colorPaletteChooser.addColors(colors);
+            }
+        });
+
+        // erase colors
+        actionManager.registerAction("color-palette_erase-colors", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                colorPaletteChooser.loadColors(new HashMap<Point, Color>());
+            }
+        });
+
+        // rearrange color palette
+        actionManager.registerAction("color-palette_reorder-colors", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                colorPaletteChooser.reorderColors();
+            }
+        });
 
         // create menu
         CommandMenuBar menuPanel = new CommandMenuBar();

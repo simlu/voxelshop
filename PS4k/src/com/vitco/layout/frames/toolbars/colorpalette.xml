@@ -12,4 +12,14 @@
     <icon-item src="resource/img/framebars/colorpalette/export.png"
                tool-tip="color-palette_export_caption"
                action="color-palette_export"/>
+    <separator/>
+    <icon-item src="resource/img/framebars/colorpalette/extract_colors.png"
+               tool-tip="color-palette_extract-colors_caption"
+               action="color-palette_extract-colors"/>
+    <icon-item src="resource/img/framebars/colorpalette/reorder_colors.png"
+               tool-tip="color-palette_reorder-colors_caption"
+               action="color-palette_reorder-colors"/>
+    <icon-item src="resource/img/framebars/colorpalette/erase_colors.png"
+               tool-tip="color-palette_erase-colors_caption"
+               action="color-palette_erase-colors"/>
 </head>

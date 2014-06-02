@@ -1,6 +1,8 @@
 package com.vitco.util.misc;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Basic color conversion tools
@@ -20,6 +22,15 @@ public class ColorTools {
 
     public static double perceivedBrightness(float[] hsb) {
         return perceivedBrightness(hsbToColor(hsb));
+    }
+
+    // compare two colors (get perceived similarity)
+    public static double perceivedSimilarity(Color col1, Color col2) {
+        float[] hsb1 = colorToHSB(col1);
+        float[] hsb2 = colorToHSB(col2);
+        return 1 - (0.8 * Math.abs((hsb1[0] - Math.floor(hsb1[0])) - (hsb2[0] - Math.floor(hsb2[0]))) +
+                0.1 * Math.abs(hsb1[1] - hsb2[1]) +
+                0.1 * Math.abs(hsb1[2] - hsb2[2]));
     }
 
     public static Color cmykToColor(float[] cmyk) {
@@ -104,5 +115,47 @@ public class ColorTools {
         result[3] = minCMY;
 
         return result;
+    }
+
+    // get ordered list of given colors (by perceived similarity
+    public static ArrayList<Color> orderColors(HashSet<Integer> colors) {
+        // check if empty
+        if (colors.isEmpty()) {
+            return new ArrayList<Color>();
+        }
+
+        // extract colors
+        ArrayList<Color> list = new ArrayList<Color>();
+        for (Integer val : colors) {
+            list.add(new Color(val));
+        }
+        // -- order
+        ArrayList<Color> sorted = new ArrayList<Color>();
+        sorted.add(list.remove(0));
+        while (!list.isEmpty()) {
+            double simFront = 0;
+            double simBack = 0;
+            int valFront = 0;
+            int valBack = 0;
+            for (int i = 0; i < list.size(); i++) {
+                double simFrontTmp = ColorTools.perceivedSimilarity(list.get(i), sorted.get(0));
+                if (simFrontTmp > simFront) {
+                    valFront = i;
+                    simFront = simFrontTmp;
+                }
+                double simBackTmp = ColorTools.perceivedSimilarity(list.get(i), sorted.get(sorted.size()-1));
+                if (simBackTmp > simBack) {
+                    valBack = i;
+                    simBack = simBackTmp;
+                }
+            }
+            if (simFront > simBack) {
+                sorted.add(0, list.remove(valFront));
+            } else {
+                sorted.add(list.remove(valBack));
+            }
+        }
+        // return sorted colors
+        return sorted;
     }
 }

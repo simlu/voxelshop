@@ -12,8 +12,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A color chooser that uses a color palette to determine/store the color.
@@ -122,9 +121,137 @@ public class ColorPaletteChooser extends ColorChooserPrototype {
     }
 
     // get the current color batch
-    public HashMap<Point, Color> getColors() {
+    public final HashMap<Point, Color> getColors() {
         return new HashMap<Point, Color>(colors);
     }
+
+    // =============
+
+    // reorder colors (according to similarity)
+    public final void reorderColors() {
+        // order colors
+        HashSet<Integer> unOrdered = new HashSet<Integer>();
+        for (Color col : colors.values()) {
+            unOrdered.add(col.getRGB());
+        }
+        ArrayList<Color> ordered = ColorTools.orderColors(unOrdered);
+
+        // clear existing colors
+        colors.clear();
+
+        // re-add colors
+        int i = 0;
+        int size = ordered.size();
+        for (int y = 0; y < 7 && i < size; y++) {
+            for (int x = 0, len = Math.max(15, (int)Math.ceil(ordered.size()/7.0)); x < len && i < size; x++) {
+                this.colors.put(new Point(x + 1, y + 1), ordered.get(i++));
+            }
+        }
+
+        // repaint
+        invalidateBuffer();
+        panel.repaint();
+    }
+
+    // add colors to this color palette (arrange automatically)
+    public final void addColors(HashSet<Integer> colors) {
+        // sort colors
+        ArrayList<Color> ordered = ColorTools.orderColors(colors);
+
+        // ============
+
+        // -- add to existing colors colors
+        for (Color color : ordered) {
+            addColor(color);
+        }
+
+        // repaint
+        invalidateBuffer();
+        panel.repaint();
+    }
+
+    // helper - add color to this color palette (arrange automatically)
+    private void addColor(final Color color) {
+        // sort by color similarity
+        ArrayList<Object[]> orderedColors = new ArrayList<Object[]>();
+        for (Map.Entry<Point, Color> entry : colors.entrySet()) {
+            orderedColors.add(new Object[] {entry.getKey(), entry.getValue()});
+        }
+        Collections.sort(orderedColors, new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] o1, Object[] o2) {
+                return (int) Math.signum(
+                        ColorTools.perceivedSimilarity((Color) o2[1], color) -
+                                ColorTools.perceivedSimilarity((Color) o1[1], color)
+                );
+            }
+        });
+        // check for a color that we can find a suitable match with
+        boolean matched = false;
+        while (!matched && !orderedColors.isEmpty()) {
+            Object[] currentMatch = orderedColors.remove(0);
+            // check if there exists a suitable surrounding
+            Point p = (Point)currentMatch[0];
+            if (addColor(new Point(p.x - 1, p.y), color) ||
+                    addColor(new Point(p.x, p.y - 1), color) ||
+                    addColor(new Point(p.x + 1, p.y), color) ||
+                    addColor(new Point(p.x, p.y + 1), color)
+                    ) {
+                matched = true;
+            }
+        }
+        if (!matched) {
+            for (int y = 1; !matched; y++) {
+                for (int x = 1; x < 7 && !matched; x++) {
+                    Point p = new Point(x, y);
+                    if (!colors.containsKey(p)) {
+                        colors.put(p, color);
+                        matched = true;
+                    }
+                }
+            }
+        }
+    }
+
+    // helper to add a color (return true on success)
+    private boolean addColor(Point pos, Color col) {
+        // check that position is not invalid
+        if (pos.x < 1 || pos.y < 1 || pos.y > 7) {
+            return false;
+        }
+        // check that color is not set
+        if (colors.containsKey(pos)) {
+            return false;
+        }
+        double maxSim = 0;
+        double minSim = 1;
+        Color[] neighbours = new Color[] {
+                colors.get(new Point(pos.x+1, pos.y)),
+                colors.get(new Point(pos.x-1, pos.y)),
+                colors.get(new Point(pos.x, pos.y+1)),
+                colors.get(new Point(pos.x, pos.y-1))
+        };
+        for (Color neighbour : neighbours) {
+            if (neighbour != null) {
+                Double val = ColorTools.perceivedSimilarity(col, neighbour);
+                maxSim = Math.max(maxSim, val);
+                minSim = Math.min(minSim, val);
+            }
+        }
+        // no neighbouring colors
+        if (minSim > maxSim) {
+            colors.put(pos, col);
+            return true;
+        }
+        // check that neighbour similarity is consistent
+        if (minSim * 1.5 > maxSim) {
+            colors.put(pos, col);
+            return true;
+        }
+        return false;
+    }
+
+    // ==============
 
     // constructor
     public ColorPaletteChooser() {
