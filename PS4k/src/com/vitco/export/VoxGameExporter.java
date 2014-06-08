@@ -36,7 +36,7 @@ public class VoxGameExporter extends AbstractExporter {
         for (int y = max[1]; y > min[1] - 1; y--) {
             for (int x = max[0]; x > min[0] - 1; x--) {
                 for (int z = min[2]; z <= max[2]; z++) {
-                    Voxel voxel = data.searchVoxel(new int[]{x,y,z}, true);
+                    Voxel voxel = data.searchVoxel(new int[]{x,y,z}, false);
                     if (voxel == null) {
                         raf.writeBytes("0 1 1 1 ");
                     } else {
