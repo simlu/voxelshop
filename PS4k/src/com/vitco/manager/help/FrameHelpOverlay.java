@@ -32,8 +32,6 @@ import java.util.ArrayList;
 public class FrameHelpOverlay extends JComponent {
     // the frame this overlay lives in
     private final JRootPane frame;
-    // old glass pane
-    private final Component oldGlassPane;
     // the action managers that are used to acquire the actions
     private final ActionManager actionManager;
     private ComplexActionManager complexActionManager;
@@ -101,7 +99,6 @@ public class FrameHelpOverlay extends JComponent {
                             ComplexActionManager complexActionManager, LangSelectorInterface langSelector) {
         // set final parameters
         this.frame = frame;
-        this.oldGlassPane = frame.getGlassPane();
         this.actionManager = actionManager;
         this.complexActionManager = complexActionManager;
         this.langSelector = langSelector;
@@ -181,7 +178,7 @@ public class FrameHelpOverlay extends JComponent {
     private boolean active = false;
     public final void setActive(boolean active) {
         this.active = active;
-        frame.setGlassPane(active ? this : oldGlassPane);
+        frame.setGlassPane(this);
         this.setVisible(active); // this will trigger updating
         if (active) {
             // request focus if visible
