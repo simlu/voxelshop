@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  * Exporter into *.vox format for the VOX game (http://www.vox-game.com/)
@@ -29,8 +31,12 @@ public class VoxGameExporter extends AbstractExporter {
         // get and prepare variables
         int[] min = getMin();
         int[] max = getMax();
-        DecimalFormat df = new DecimalFormat("#.###");
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+        otherSymbols.setDecimalSeparator('.');
+        otherSymbols.setGroupingSeparator(',');
+        DecimalFormat df = new DecimalFormat("#.###", otherSymbols);
         df.setRoundingMode(RoundingMode.HALF_UP);
+        df.setGroupingUsed(false);
 
         // write data (set flag, r, g, b)
         for (int y = max[1]; y > min[1] - 1; y--) {
