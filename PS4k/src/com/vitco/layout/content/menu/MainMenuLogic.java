@@ -3,6 +3,7 @@ package com.vitco.layout.content.menu;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
+import com.vitco.export.VoxGameExporter;
 import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.collada.ColladaFile;
 import com.vitco.export.generic.ExportDataManager;
@@ -430,8 +431,18 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // ---------------
 
+        // add "vox (the game)" exporter
+        FieldSet voxExporter = new FieldSet("vox_game_format", "Vox Game Format (*.vox)");
+
+        // add information for voxel format
+        LabelModule label = new LabelModule("Note: Does not support textured voxels.");
+        label.setVisibleLookup("export_type=vox_game_format");
+        voxExporter.addComponent(label);
+
+        // ---------------
+
         // add all formats
-        dialog.addComboBox("export_type", new FieldSet[] {collada, imageRenderer}, 0);
+        dialog.addComboBox("export_type", new FieldSet[] {collada, voxExporter, imageRenderer}, 0);
 
         // ---------------
 
@@ -636,6 +647,41 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
                         // ===========
 
+                    } else if (dialog.is("export_type=vox_game_format")) {
+
+                        // ===========
+                        // -- handle vox file format
+
+                        // extract file name
+                        final File exportTo = new File(baseName + (baseName.endsWith(".vox") ? "" : ".vox"));
+                        // check if file exists
+                        if (exportTo.exists()) {
+                            if (JOptionPane.showConfirmDialog(frame,
+                                    exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                return false;
+                            }
+                        }
+
+                        // export vox engine format
+                        boolean success;
+                        long time = System.currentTimeMillis();
+                        try {
+                            success = new VoxGameExporter(exportTo, data).wasWritten();
+                        } catch (IOException ignored) {
+                            success = false;
+                        }
+                        if (success) {
+                            console.addLine(
+                                    String.format(langSelector.getString("export_file_successful"),
+                                            System.currentTimeMillis() - time)
+                            );
+                        } else {
+                            console.addLine(langSelector.getString("export_file_error"));
+                        }
+
+                        // ===========
                     }
                     // -----
                     // store serialization
