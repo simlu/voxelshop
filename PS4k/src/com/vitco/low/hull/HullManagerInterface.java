@@ -45,7 +45,4 @@ public interface HullManagerInterface<T> {
 
     // get the outline of all voxels into one direction
     SimpleVector[][] getOutline(int direction);
-
-    // do a hit test against the voxels in this hull manager
-    short[] hitTest(SimpleVector position, SimpleVector dir);
 }

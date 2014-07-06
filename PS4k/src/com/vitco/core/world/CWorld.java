@@ -4,7 +4,7 @@ import com.threed.jpct.SimpleVector;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.container.BorderObject3D;
 import com.vitco.core.world.container.VoxelManager;
-import com.vitco.low.hull.HullManager;
+import com.vitco.low.hull.HullManagerExt;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.low.triangulate.util.Grid2PolyHelper;
 import com.vitco.settings.VitcoSettings;
@@ -51,7 +51,7 @@ public class CWorld extends AbstractCWorld {
     }
 
     // manages the voxel "hull" (allows for easy querying of hull changes)
-    private final HullManager<Voxel> hullManager = new HullManager<Voxel>();
+    private final HullManagerExt<Voxel> hullManager = new HullManagerExt<Voxel>();
 
     // manages the voxels that are in this world, allows for easy detection
     // of changed areas (combined faces of neighbouring voxels)

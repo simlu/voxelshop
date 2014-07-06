@@ -3,7 +3,7 @@ package com.vitco.export.generic;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.generic.container.*;
-import com.vitco.low.hull.HullManager;
+import com.vitco.low.hull.HullManagerExt;
 import com.vitco.low.triangulate.Grid2TriGreedyOptimal;
 import com.vitco.low.triangulate.Grid2TriNaive;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
@@ -24,13 +24,16 @@ import java.util.Map;
 public class ExportDataManager extends ProgressReporter {
 
     // contains the current hull that we need for triangulation
-    private final HullManager<Voxel> hullManager;
+    private final HullManagerExt<Voxel> hullManager;
 
     // used to access voxel data (for color generation)
     private final Data data;
 
     // true if texture padding is enabled
     private final boolean usePadding;
+
+    // true if holes are removed
+    private final boolean removeHoles;
 
     // -------------
     // Data Structure that manages the triangles
@@ -57,13 +60,13 @@ public class ExportDataManager extends ProgressReporter {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, int algorithm) {
+    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, boolean removeHoles, int algorithm) {
         super(dialog);
 
         // create hull manager that exposes hull information
         setActivity("Computing Hull...", true);
         Voxel[] voxels = data.getVisibleLayerVoxel();
-        HullManager<Voxel> hullManager = new HullManager<Voxel>();
+        HullManagerExt<Voxel> hullManager = new HullManagerExt<Voxel>();
         for (Voxel voxel : voxels) {
             hullManager.update(voxel.posId, voxel);
         }
@@ -72,6 +75,12 @@ public class ExportDataManager extends ProgressReporter {
         this.hullManager = hullManager;
         this.data = data;
         this.usePadding = usePadding;
+        this.removeHoles = removeHoles;
+
+        // pre-compute exterior hole if necessary
+        if (removeHoles) {
+            hullManager.computeExterior();
+        }
 
         // extract information
         extract(algorithm);
@@ -160,7 +169,7 @@ public class ExportDataManager extends ProgressReporter {
         for (int i = 0; i < 6; i++) {
             // get borders into specific direction and
             // calculate orientation related variables
-            short[][] hull = hullManager.getHull(i);
+            short[][] hull = removeHoles ? hullManager.getExteriorHull(i) : hullManager.getHull(i);
             final int directionId = i/2;
             final boolean orientationPositive = i%2 != (directionId == 1 ? 1 : 0);
             final int offset = i%2 != 1 ? 1 : 0;
@@ -229,6 +238,7 @@ public class ExportDataManager extends ProgressReporter {
                         short[][][] polys = Grid2PolyHelper.convert(data);
                         // fix 3D t-junction problems
                         int planeAbove = entries.getKey() + (i%2 == 0 ? 1 : -1);
+                        // Note: This *should* work the same if only outside is used (i.e. holes are removed)
                         polys = fix3DTJunctionProblems(polys, planeAbove, id1, id2, minA, minB);
                         // extract triangles
                         tris = Grid2TriPolyFast.triangulate(polys);

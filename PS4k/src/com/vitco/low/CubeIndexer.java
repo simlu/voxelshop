@@ -38,6 +38,18 @@ public class CubeIndexer {
         return new short[]{x,y,z};
     }
 
+    // change position depending on orientation (move into direction)
+    public static int change(int pos, int orientation) {
+        switch (orientation) {
+            case 0: return changeX(pos, true);
+            case 1: return changeX(pos, false);
+            case 2: return changeY(pos, true);
+            case 3: return changeY(pos, false);
+            case 4: return changeZ(pos, true);
+            default: return changeZ(pos, false);
+        }
+    }
+
     public static int changeX(int pos, boolean add) {
         return pos + (add ? 1 : -1);
     }

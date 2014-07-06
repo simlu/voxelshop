@@ -10,6 +10,7 @@ import com.vitco.export.generic.ExportWorld;
 import com.vitco.layout.content.JCustomScrollPane;
 import com.vitco.layout.content.ViewPrototype;
 import com.vitco.layout.frames.FrameLinkagePrototype;
+import com.vitco.low.hull.HullManagerExt;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
@@ -316,6 +317,32 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/texture", "texture_debug_information");
         consoleAction.put("/shader", "toggle_shader_enabled");
         consoleAction.put("/check deadlock", "check_for_deadlock_toggle");
+        consoleAction.put("/study holes", "study_holes_print_info");
+
+        // check current content for holes and print info
+        actionManager.registerAction("study_holes_print_info", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                HullManagerExt<Integer> hullManager = new HullManagerExt<Integer>();
+                for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                    hullManager.update(voxel.posId, null);
+                }
+                boolean interiorFound = hullManager.computeExterior();
+                if (interiorFound) {
+                    console.addLine("Holes were detected.");
+                    console.addLine("Voxel faces with holes: " +
+                            (hullManager.getHull(0).length + hullManager.getHull(1).length +
+                                    hullManager.getHull(2).length + hullManager.getHull(3).length +
+                                    hullManager.getHull(4).length + hullManager.getHull(5).length));
+                    console.addLine("Voxel faces without holes: " +
+                            (hullManager.getExteriorHull(0).length + hullManager.getExteriorHull(1).length +
+                                    hullManager.getExteriorHull(2).length + hullManager.getExteriorHull(3).length +
+                                    hullManager.getExteriorHull(4).length + hullManager.getExteriorHull(5).length));
+                } else {
+                    console.addLine("No holes were detected.");
+                }
+            }
+        });
 
         // display the currently loaded textures
         actionManager.registerAction("texture_debug_information", new AbstractAction() {

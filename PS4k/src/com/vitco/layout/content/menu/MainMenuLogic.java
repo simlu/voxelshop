@@ -390,7 +390,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // option: remove holes
         CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed holes", true);
         removeEnclosed.setInvisibleLookup("collada.type=legacy");
-        removeEnclosed.setStrikeThrough(true);
         collada.addComponent(removeEnclosed);
 
         // option: layer as object

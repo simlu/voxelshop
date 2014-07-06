@@ -73,7 +73,7 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, algorithm);
+        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, removeHoles, algorithm);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), exportDataManager, prefix, objectName);
 
         setActivity("Writing Data File...", true);

@@ -198,4 +198,37 @@ public class HullManagerTest {
 
 
     }
+
+    @Test
+    public void testExteriorDetection() {
+        for (int max = 3; max < 20; max++) {
+            HullManagerExt<String> hullManager = new HullManagerExt<String>();
+            // create the "flat" outline of a block (corners not set), e.g.
+            //   ---
+            //  |   |
+            //   ---
+            for (short x = 0; x < max; x++) {
+                for (short y = 0; y < max; y++) {
+                    for (short z = 0; z < max; z++) {
+                        boolean valid = (x == 0 || x == max - 1) && (y > 0 && y < max - 1) && (z > 0 && z < max - 1) ||
+                                (y == 0 || y == max - 1) && (x > 0 && x < max - 1) && (z > 0 && z < max - 1) ||
+                                (z == 0 || z == max - 1) && (y > 0 && y < max - 1) && (x > 0 && x < max - 1);
+                        if (valid) {
+                            update(hullManager, get(x, y, z));
+                        }
+                    }
+                }
+            }
+
+            // test exterior detection
+            hullManager.computeExterior();
+            for (int j = 0; j < 6; j++) {
+                //System.out.println(hullManager.getHull(j).length);
+                //System.out.println(hullManager.getExteriorHull(j).length);
+                assert hullManager.getHull(j).length == max * max - 4 + (max - 2) * (max - 2);
+                assert hullManager.getExteriorHull(j).length == max * max - 4;
+            }
+        }
+
+    }
 }
