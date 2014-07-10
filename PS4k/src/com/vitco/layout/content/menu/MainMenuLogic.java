@@ -3,12 +3,15 @@ package com.vitco.layout.content.menu;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
+import com.vitco.core.data.container.Voxel;
 import com.vitco.export.VoxGameExporter;
 import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.collada.ColladaFile;
 import com.vitco.export.generic.ExportDataManager;
 import com.vitco.importer.*;
 import com.vitco.layout.content.mainview.MainView;
+import com.vitco.low.CubeIndexer;
+import com.vitco.low.hull.HullManagerExt;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.components.dialog.UserInputDialog;
@@ -18,6 +21,7 @@ import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.components.progressbar.ProgressWorker;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.CFileDialog;
+import com.vitco.util.misc.ColorTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
@@ -791,6 +795,64 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 }
             }
         });
+
+        // fill voxels action
+        actionManager.registerAction("fill_voxels_action", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                // compute the hull manager
+                HullManagerExt<String> hullManager = new HullManagerExt<String>();
+                for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                    hullManager.update(voxel.posId, null);
+                }
+                hullManager.computeExterior();
+                // fetch the empty interior
+                int[] emptyInterior = hullManager.getEmptyInterior();
+                // create and add the missing voxels
+                Voxel[] voxels = new Voxel[emptyInterior.length];
+                Color color = ColorTools.hsbToColor((float[]) preferences.loadObject("currently_used_color"));
+                for (int i = 0; i < emptyInterior.length; i++) {
+                    short[] pos = CubeIndexer.getPos(emptyInterior[i]);
+                    voxels[i] = new Voxel(-1, new int[] {pos[0], pos[1], pos[2]}, color, false, null, data.getSelectedLayer());
+                }
+                data.massAddVoxel(voxels);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return true;
+            }
+        });
+        // hollow voxels action
+        actionManager.registerAction("hollow_voxels_action", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                // compute the hull manager
+                HullManagerExt<String> hullManager = new HullManagerExt<String>();
+                for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                    hullManager.update(voxel.posId, null);
+                }
+                hullManager.computeExterior();
+                // fetch the filled interior
+                int[] filledInterior = hullManager.getFilledInterior();
+                // search for the interior voxels and remove
+                Integer[] voxelIds = new Integer[filledInterior.length];
+                // todo: This will only remove the top voxel, change it so that it removes all voxels in all layers at this position
+                for (int i = 0; i < filledInterior.length; i++) {
+                    short[] pos = CubeIndexer.getPos(filledInterior[i]);
+                    Voxel voxel = data.searchVoxel(new int[] {pos[0], pos[1], pos[2]}, false);
+                    assert voxel != null;
+                    voxelIds[i] = voxel.id;
+                }
+                data.massRemoveVoxel(voxelIds);
+            }
+
+            @Override
+            public boolean getStatus() {
+                return true;
+            }
+        });
+
     }
 
     @PreDestroy

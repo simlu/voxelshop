@@ -22,6 +22,8 @@ public interface HullManagerInterface<T> {
 
     boolean containsBorder(int posId, int orientation);
 
+    int[] getPosIds();
+
     // add an object to the hull finder
     public void update(short[] pos, T object);
 
@@ -42,6 +44,9 @@ public interface HullManagerInterface<T> {
 
     // get the current hull
     short[][] getHull(int direction);
+
+    // get the current hull as ids
+    int[] getHullAsIds(int direction);
 
     // get the outline of all voxels into one direction
     SimpleVector[][] getOutline(int direction);

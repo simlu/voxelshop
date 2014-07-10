@@ -9,9 +9,12 @@
         <item caption="save_file_caption" action="save_file_action"/>
         <item caption="close_program_caption" action="close_program_action"/>
     </menu>
-    <!--<menu caption="edit_btn">-->
 
-    <!--</menu>-->
+    <menu caption="edit_btn">
+        <item caption="make_voxels_filled_caption" action="fill_voxels_action"/>
+        <item caption="make_voxels_hollow_caption" action="hollow_voxels_action"/>
+    </menu>
+
     <menu caption="view_btn">
         <menu caption="tool_windows_btn">
             <item caption="console_caption" action="console_state-action_show" checkable="true"/>

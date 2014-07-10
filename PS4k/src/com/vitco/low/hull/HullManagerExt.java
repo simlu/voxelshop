@@ -3,9 +3,14 @@ package com.vitco.low.hull;
 import com.threed.jpct.SimpleVector;
 import com.vitco.low.CubeIndexer;
 import gnu.trove.iterator.TIntIterator;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.hash.TIntShortHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Extended functionality for the hull manager
@@ -127,6 +132,11 @@ public class HullManagerExt<T> extends HullManager<T> implements HullManagerExtI
             new TIntHashSet(), new TIntHashSet(), new TIntHashSet(),
             new TIntHashSet(), new TIntHashSet(), new TIntHashSet()
     };
+    // holds the computed interior
+    private final TIntHashSet[] interior = new TIntHashSet[] {
+            new TIntHashSet(), new TIntHashSet(), new TIntHashSet(),
+            new TIntHashSet(), new TIntHashSet(), new TIntHashSet()
+    };
 
     // helper, return true if given border is present in hull
     // if true -> add border to stack if not already present in processed
@@ -214,14 +224,67 @@ public class HullManagerExt<T> extends HullManager<T> implements HullManagerExtI
         return result;
     }
 
+    // helper class that wraps a (continuous set of sides)
+    private static final class HullWrapper {
+        // holds the data
+        private TIntHashSet[] data = new TIntHashSet[] {
+                new TIntHashSet(), new TIntHashSet(), new TIntHashSet(),
+                new TIntHashSet(), new TIntHashSet(), new TIntHashSet()
+        };
+
+        // constructor
+        public HullWrapper(TIntHashSet[] data) {
+            for (int i = 0; i < 6; i++) {
+                this.data[i].addAll(data[i]);
+            }
+        }
+
+        // returns true if containment is detected
+        public boolean contains(HullWrapper other) {
+            // -- check if the other HullWrapper is contained in this hull wrapper
+            // fetch a first side into X direction
+            short[] side = CubeIndexer.getPos(other.data[0].iterator().next());
+            // search for all sides at the found YZ position in the potential "outer" HullWrapper
+            ArrayList<Short> list = new ArrayList<Short>();
+            for (TIntIterator it = this.data[0].iterator(); it.hasNext();) {
+                short[] val = CubeIndexer.getPos(it.next());
+                if (val[1] == side[1] && val[2] == side[2]) {
+                    list.add(val[0]);
+                }
+            }
+            for (TIntIterator it = this.data[1].iterator(); it.hasNext();) {
+                short[] val = CubeIndexer.getPos(it.next());
+                if (val[1] == side[1] && val[2] == side[2]) {
+                    list.add(val[0]);
+                }
+            }
+            // sort the found sides
+            Collections.sort(list);
+            // check if the initially selected side lives inside the extracted sides
+            boolean inside = false;
+            short lastDepth = 0;
+            boolean foundInside = false;
+            for (short depth : list) {
+                inside = !inside;
+                if (!inside) {
+                    if (side[0] < depth && side[0] > lastDepth) {
+                        foundInside = true;
+                        break;
+                    }
+                }
+                lastDepth = depth;
+            }
+            return foundInside;
+        }
+    }
+
     // compute the "outside" of the described object
     @Override
     public boolean computeExterior() {
         // holds known exterior sides
-        TIntHashSet[] exterior = new TIntHashSet[] {
-                new TIntHashSet(), new TIntHashSet(), new TIntHashSet(),
-                new TIntHashSet(), new TIntHashSet(), new TIntHashSet()
-        };
+        ArrayList<HullWrapper> exterior = new ArrayList<HullWrapper>();
+        // holds known interior sides
+        ArrayList<HullWrapper> interior = new ArrayList<HullWrapper>();
         // holds the processed sides
         TIntHashSet[] processed = new TIntHashSet[] {
                 new TIntHashSet(), new TIntHashSet(), new TIntHashSet(),
@@ -229,60 +292,71 @@ public class HullManagerExt<T> extends HullManager<T> implements HullManagerExtI
         };
         // true if a hole was found
         boolean interiorFound = false;
-        // loop over all orientations
-        for (short i = 0; i < 6; i++) {
-            short[][] hull = getHull(i);
-//            // order by depth
-//            final int k = i/2;
-//            final boolean val = i%2 != 0;
-//            Arrays.sort(hull, new Comparator<short[]>() {
-//                @Override
-//                public int compare(short[] o1, short[] o2) {
-//                    return val ? o1[k] - o2[k] : o2[k] - o1[k];
-//                }
-//            });
+        // loop over all potential starting positions
+        // (one direction is enough for this!)
+        for (int pos : getHullAsIds(0)) {
+            // check if this side was already processed with another starting position
+            if (!processed[0].contains(pos)) {
+                // -- fetch the contour that this border belongs to
+                TIntHashSet[] detected = detectContour(pos, (short) 0, processed);
 
-            // loop over all sides
-            for (short[] aHull : hull) {
-                // check if this side was already processed
-                int pos = CubeIndexer.getId(aHull[0], aHull[1], aHull[2]);
-                if (!processed[i].contains(pos)) {
-                    // -- fetch the contour that this border belongs to
-                    TIntHashSet[] detected = detectContour(pos, i, processed);
+                // -- analyse whether it's outside or inside facing hull
+                int minA = Integer.MAX_VALUE;
+                for (TIntIterator it = detected[0].iterator(); it.hasNext(); ) {
+                    minA = Math.min(minA, CubeIndexer.getPos(it.next())[0]);
+                }
+                int minB = Integer.MAX_VALUE;
+                for (TIntIterator it = detected[1].iterator(); it.hasNext(); ) {
+                    minB = Math.min(minB, CubeIndexer.getPos(it.next())[0]);
+                }
+                boolean isInsideHull = minA < minB;
 
-                    // -- analyse whether it's exterior or interior
-                    int minA = Integer.MAX_VALUE;
-                    for (TIntIterator it = detected[0].iterator(); it.hasNext(); ) {
-                        minA = Math.min(minA, CubeIndexer.getPos(it.next())[0]);
-                    }
-                    int minB = Integer.MAX_VALUE;
-                    for (TIntIterator it = detected[1].iterator(); it.hasNext(); ) {
-                        minB = Math.min(minB, CubeIndexer.getPos(it.next())[0]);
-                    }
-                    boolean interior = minA < minB;
-
-                    // -- do action accordingly
-                    if (interior) {
-                        interiorFound = true;
-                    } else {
-                        // add to exterior list
-                        for (int t = 0; t < 6; t++) {
-                            exterior[t].addAll(detected[t]);
-                        }
-                    }
+                // -- add to according lists
+                if (isInsideHull) {
+                    interiorFound = true;
+                    // add to interior list
+                    interior.add(new HullWrapper(detected));
+                } else {
+                    // add to exterior list
+                    exterior.add(new HullWrapper(detected));
                 }
             }
         }
-        // update global exterior
-        for (int i = 0; i < 6; i++) {
-            this.exterior[i].clear();
-            this.exterior[i].addAll(exterior[i]);
+        // check if we need to migrate any exterior to interior
+        // (this is the case if the outside facing hull lives
+        // inside an inside facing hull)
+        int i = 0;
+        while (i < exterior.size()) {
+            HullWrapper exteriorWrapper = exterior.get(i);
+            boolean found = false;
+            for (HullWrapper interiorWrapper : interior) {
+                if (interiorWrapper.contains(exteriorWrapper)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                interior.add(exterior.remove(i));
+            } else {
+                i++;
+            }
+        }
+        // update global exterior and interior
+        for (int k = 0; k < 6; k++) {
+            this.exterior[k].clear();
+            for (HullWrapper wrapper : exterior) {
+                this.exterior[k].addAll(wrapper.data[k]);
+            }
+            this.interior[k].clear();
+            for (HullWrapper wrapper : interior) {
+                this.interior[k].addAll(wrapper.data[k]);
+            }
         }
         // return result
         return interiorFound;
     }
 
-    // fetch the "outside" of the described object
+    // fetch the "outside" faces of the described object
     // into a specific direction.
     // Required computeExterior() to be called before working
     @Override
@@ -299,4 +373,80 @@ public class HullManagerExt<T> extends HullManager<T> implements HullManagerExtI
         return result;
     }
 
+    // fetch the "inside" faces of the described object
+    // into a specific direction.
+    // Required computeExterior() to be called before working
+    @Override
+    public short[][] getInteriorHull(int direction) {
+        short[][] result = new short[interior[direction].size()][3]; // allocate with correct size
+        int count = 0;
+        for (TIntIterator it = interior[direction].iterator(); it.hasNext();) {
+            short[] val = CubeIndexer.getPos(it.next());
+            result[count][0] = val[0];
+            result[count][1] = val[1];
+            result[count][2] = val[2];
+            count++;
+        }
+        return result;
+    }
+
+    // get the empty positions of voxels inside
+    // Required computeExterior() to be called before working
+    @Override
+    public int[] getEmptyInterior() {
+        // result
+        TIntArrayList list = new TIntArrayList();
+        // -- fetch the interior faces into two opposite directions
+        short[][] hullA = getInteriorHull(0);
+        short[][] hullB = getInteriorHull(1);
+        if (hullA.length > 0 && hullB.length > 0) {
+            // -- order by depth
+            Comparator<short[]> comparator = new Comparator<short[]>() {
+                @Override
+                public int compare(short[] o1, short[] o2) {
+                    return o1[0] - o2[0];
+                }
+            };
+            Arrays.sort(hullA, comparator);
+            Arrays.sort(hullB, comparator);
+            // find places to fill
+            int iA = 0;
+            int iB = 0;
+            TIntShortHashMap buffer = new TIntShortHashMap();
+            while (iB < hullB.length || iA < hullA.length) {
+                if (iA < hullA.length && (!(iB < hullB.length) || hullA[iA][0] < hullB[iB][0])) {
+                    // front face - add the starting position
+                    buffer.put(CubeIndexer.getId(0, hullA[iA][1], hullA[iA][2]), hullA[iA][0]);
+                    iA++;
+                } else {
+                    // back face - add missing until finish positions
+                    short val = buffer.remove(CubeIndexer.getId(0, hullB[iB][1], hullB[iB][2]));
+                    for (short pos = ++val; pos < hullB[iB][0]; pos++) {
+                        list.add(CubeIndexer.getId(pos, hullB[iB][1], hullB[iB][2]));
+                    }
+                    iB++;
+                }
+            }
+        }
+        // empty result
+        return list.toArray();
+    }
+
+    // get the voxel positions of voxels inside
+    // Required computeExterior() to be called before working
+    @Override
+    public int[] getFilledInterior() {
+        TIntArrayList result = new TIntArrayList();
+        // loop over all objects
+        for (int posId : getPosIds()) {
+            // exclude positions that have an exterior face attached
+            if (!exterior[0].contains(posId) && !exterior[1].contains(posId) &&
+                    !exterior[2].contains(posId) && !exterior[3].contains(posId) &&
+                    !exterior[4].contains(posId) && !exterior[5].contains(posId)) {
+                result.add(posId);
+            }
+        }
+        // return result
+        return result.toArray();
+    }
 }

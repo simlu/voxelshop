@@ -24,4 +24,11 @@
     <icon-item src="resource/img/framebars/view/xySwap.png"
                tool-tip="swap_mainView_with_xyView_tooltip"
                action="swap_mainView_with_xyView"/>
+    <separator/>
+    <icon-item src="resource/img/framebars/mainview/hollow.png"
+               tool-tip="make_voxels_hollow_tooltip"
+               action="hollow_voxels_action"/>
+    <icon-item src="resource/img/framebars/mainview/fill.png"
+               tool-tip="make_voxels_filled_tooltip"
+               action="fill_voxels_action"/>
 </head>

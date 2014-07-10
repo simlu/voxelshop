@@ -91,6 +91,11 @@ public class HullManager<T> implements HullManagerInterface<T>, Serializable {
     }
 
     @Override
+    public final int[] getPosIds() {
+        return id2obj.keys();
+    }
+
+    @Override
     public final void update(short[] pos, T object) {
         //System.out.println("U " + pos[0] + "," + pos[1] + "," + pos[2]);
         update(CubeIndexer.getId(pos), object);
@@ -380,6 +385,7 @@ public class HullManager<T> implements HullManagerInterface<T>, Serializable {
         return result;
     }
 
+    // get the current hull
     @Override
     public final short[][] getHull(int direction) {
         short[][] result = new short[border[direction].size()][3]; // allocate with correct size
@@ -392,6 +398,12 @@ public class HullManager<T> implements HullManagerInterface<T>, Serializable {
             count++;
         }
         return result;
+    }
+
+    // get the current hull as ids
+    @Override
+    public final int[] getHullAsIds(int direction) {
+        return border[direction].toArray();
     }
 
     // get the outline of all voxels into one direction
