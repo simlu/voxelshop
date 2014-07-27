@@ -30,6 +30,12 @@ public class CubeIndexer {
         return min + (x + radius) + (z + radius) * width + (y + radius) * widthwidth;
     }
 
+    // get shift value (value that needs to be added to another pos id to
+    // shift it by that much into that direction)
+    public static int getShiftOperand(int shiftX, int shiftY, int shiftZ) {
+        return getId(shiftX,shiftY,shiftZ) + 95999200;
+    }
+
     // compute the 1d representation for the position (x right, y up, z into background)
     public static short[] getPos(int id) {
         short x = (short) (IntegerTools.ifloormod2(id, width) - radius);

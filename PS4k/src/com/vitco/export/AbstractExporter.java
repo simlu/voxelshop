@@ -2,15 +2,17 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.components.progressbar.ProgressReporter;
+import com.vitco.util.file.FileOut;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * Abstract class for voxel format exporter.
  */
-public abstract class AbstractExporter {
+public abstract class AbstractExporter extends ProgressReporter {
 
     // the file that we export to
     protected final File exportTo;
@@ -26,18 +28,23 @@ public abstract class AbstractExporter {
         return wasWritten;
     }
 
-    // random access file for writing
-    protected final RandomAccessFile raf;
+    // wrapper for writing
+    protected final FileOut fileOut;
 
     // store voxel information
     private final int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
     private final int[] max = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
     private final int[] size = new int[] {0,0,0};
+    private final int[] centerSum = new int[] {0, 0, 0};
+    private float count = 0;
 
     // constructor
-    public AbstractExporter(File exportTo, Data data) throws IOException {
+    public AbstractExporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
+        super(dialog);
         this.exportTo = exportTo;
         this.data = data;
+
+        setActivity("Initializing export...", true);
 
         // retrieve information
         for (Voxel voxel : data.getVisibleLayerVoxel()) {
@@ -47,19 +54,21 @@ public abstract class AbstractExporter {
             max[0] = Math.max(voxel.x, max[0]);
             max[1] = Math.max(voxel.y, max[1]);
             max[2] = Math.max(voxel.z, max[2]);
+            // update center sum information
+            centerSum[0] += voxel.x;
+            centerSum[1] += voxel.y;
+            centerSum[2] += voxel.z;
+            // update count
+            count++;
         }
-        size[0] = max[0] - min[0];
-        size[1] = max[1] - min[1];
-        size[2] = max[2] - min[2];
+        size[0] = max[0] - min[0] + 1;
+        size[1] = max[1] - min[1] + 1;
+        size[2] = max[2] - min[2] + 1;
 
         // write the file content
-        raf = new RandomAccessFile(exportTo, "rw");
-        raf.setLength(0);
-        try {
-            wasWritten = writeFile();
-        } finally {
-            raf.close();
-        }
+        fileOut = new FileOut(exportTo.getAbsolutePath());
+        wasWritten = writeFile();
+        fileOut.finish();
     }
 
     // write the file - to be implemented
@@ -82,6 +91,9 @@ public abstract class AbstractExporter {
         return max.clone();
     }
 
-
+    // helper - get the center of the model
+    protected final float[] getCenter() {
+        return new float[] {centerSum[0]/count, centerSum[1]/count, centerSum[2]/count};
+    }
 
 }

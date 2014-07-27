@@ -4,6 +4,7 @@ import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.export.Kv6Exporter;
 import com.vitco.export.VoxGameExporter;
 import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.collada.ColladaFile;
@@ -438,14 +439,24 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         FieldSet voxExporter = new FieldSet("vox_game_format", "Vox Game Format (*.vox)");
 
         // add information for voxel format
-        LabelModule label = new LabelModule("Note: Does not support textured voxels.");
-        label.setVisibleLookup("export_type=vox_game_format");
-        voxExporter.addComponent(label);
+        LabelModule label_vox_game = new LabelModule("Note: Does not support textured voxels. This file format is used by vox-game.com");
+        label_vox_game.setVisibleLookup("export_type=vox_game_format");
+        voxExporter.addComponent(label_vox_game);
+
+        // ---------------
+
+        // add "kv6" exporter
+        FieldSet kv6Exporter = new FieldSet("kv6_format", "Kv6 Format (*.kv6)");
+
+        // add information for voxel format
+        LabelModule label_kv6 = new LabelModule("Note: Does not support textured voxels. This file format is used by Ace of Spades and Slab6.");
+        label_kv6.setVisibleLookup("export_type=kv6_format");
+        kv6Exporter.addComponent(label_kv6);
 
         // ---------------
 
         // add all formats
-        dialog.addComboBox("export_type", new FieldSet[] {collada, voxExporter, imageRenderer}, 0);
+        dialog.addComboBox("export_type", new FieldSet[] {collada, voxExporter, kv6Exporter, imageRenderer}, 0);
 
         // ---------------
 
@@ -471,7 +482,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             public boolean onClose(int resultFlag) {
                 // user approved the dialog
                 if (resultFlag == JOptionPane.OK_OPTION) {
-                    String baseName = dialog.getValue("location.file");
+                    final String baseName = dialog.getValue("location.file");
                     // validate folder (that it exists and is actually a folder)
                     File toValidateFolder = new File(baseName);
                     if (!toValidateFolder.getParentFile().exists() || !toValidateFolder.getParentFile().isDirectory()) {
@@ -655,34 +666,93 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         // ===========
                         // -- handle vox file format
 
-                        // extract file name
-                        final File exportTo = new File(baseName + (baseName.endsWith(".vox") ? "" : ".vox"));
-                        // check if file exists
-                        if (exportTo.exists()) {
-                            if (JOptionPane.showConfirmDialog(frame,
-                                    exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
-                                    langSelector.getString("replace_file_query_title"),
-                                    JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
-                                return false;
-                            }
-                        }
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
 
-                        // export vox engine format
-                        boolean success;
-                        long time = System.currentTimeMillis();
-                        try {
-                            success = new VoxGameExporter(exportTo, data).wasWritten();
-                        } catch (IOException ignored) {
-                            success = false;
-                        }
-                        if (success) {
-                            console.addLine(
-                                    String.format(langSelector.getString("export_file_successful"),
-                                            System.currentTimeMillis() - time)
-                            );
-                        } else {
-                            console.addLine(langSelector.getString("export_file_error"));
-                        }
+                        // do the importing
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // extract file name
+                                final File exportTo = new File(baseName + (baseName.endsWith(".vox") ? "" : ".vox"));
+                                // check if file exists
+                                if (exportTo.exists()) {
+                                    if (JOptionPane.showConfirmDialog(frame,
+                                            exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                        return false;
+                                    }
+                                }
+
+                                // export vox engine format
+                                boolean success;
+                                long time = System.currentTimeMillis();
+                                try {
+                                    success = new VoxGameExporter(exportTo, data, progressDialog).wasWritten();
+                                } catch (IOException ignored) {
+                                    success = false;
+                                }
+                                if (success) {
+                                    console.addLine(
+                                            String.format(langSelector.getString("export_file_successful"),
+                                                    System.currentTimeMillis() - time)
+                                    );
+                                } else {
+                                    console.addLine(langSelector.getString("export_file_error"));
+                                }
+
+                                return null;
+                            }
+                        });
+
+                        // ===========
+                    } else if (dialog.is("export_type=kv6_format")) {
+
+                        // ===========
+                        // -- handle kv6 file format
+
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+
+                        // do the importing
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // extract file name
+                                final File exportTo = new File(baseName + (baseName.endsWith(".kv6") ? "" : ".kv6"));
+                                // check if file exists
+                                if (exportTo.exists()) {
+                                    if (JOptionPane.showConfirmDialog(frame,
+                                            exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                        return false;
+                                    }
+                                }
+
+                                // export kv6 engine format
+                                boolean success;
+                                long time = System.currentTimeMillis();
+                                try {
+                                    success = new Kv6Exporter(exportTo, data, progressDialog).wasWritten();
+                                } catch (IOException ignored) {
+                                    success = false;
+                                }
+                                if (success) {
+                                    console.addLine(
+                                            String.format(langSelector.getString("export_file_successful"),
+                                                    System.currentTimeMillis() - time)
+                                    );
+                                } else {
+                                    console.addLine(langSelector.getString("export_file_error"));
+                                }
+
+                                return null;
+                            }
+                        });
 
                         // ===========
                     }

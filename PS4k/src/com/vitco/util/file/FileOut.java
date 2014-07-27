@@ -27,14 +27,26 @@ public class FileOut {
         p.writeInt(Integer.reverseBytes(data));
     }
 
-    // write short revered
+    // write short reversed
     public void writeShortRev(short data) throws IOException {
         p.writeShort(Short.reverseBytes(data));
+    }
+
+    // write float reversed
+    public void writeFloatRev(float data) throws IOException {
+        p.writeFloat(Float.intBitsToFloat(
+                Integer.reverseBytes(Float.floatToIntBits (data))
+        ));
     }
 
     // write byte
     public void writeByte(byte data) throws IOException {
         p.writeByte(data);
+    }
+
+    // write bytes
+    public void writeBytes(String bytes) throws IOException {
+        p.writeBytes(bytes);
     }
 
     // write an image file

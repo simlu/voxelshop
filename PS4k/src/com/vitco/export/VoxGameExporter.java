@@ -2,6 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.util.components.progressbar.ProgressDialog;
 
 import java.awt.*;
 import java.io.File;
@@ -17,8 +18,8 @@ import java.util.Locale;
 public class VoxGameExporter extends AbstractExporter {
 
     // constructor
-    public VoxGameExporter(File exportTo, Data data) throws IOException {
-        super(exportTo, data);
+    public VoxGameExporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
+        super(exportTo, data, dialog);
     }
 
     // write the file
@@ -26,7 +27,7 @@ public class VoxGameExporter extends AbstractExporter {
     protected boolean writeFile() throws IOException {
         // write dimension information
         int[] size = getSize();
-        raf.writeBytes((size[0]+1) + " " + (size[1]+1) + " " + (size[2]+1) + "\r\n\r\n");
+        fileOut.writeBytes((size[0] + 1) + " " + (size[1] + 1) + " " + (size[2] + 1) + "\r\n\r\n");
 
         // get and prepare variables
         int[] min = getMin();
@@ -38,16 +39,19 @@ public class VoxGameExporter extends AbstractExporter {
         df.setRoundingMode(RoundingMode.HALF_UP);
         df.setGroupingUsed(false);
 
+        setActivity("Exporting to file...", false);
+
         // write data (set flag, r, g, b)
         for (int y = max[1]; y > min[1] - 1; y--) {
+            setProgress((1 - ((y - min[1])/(float)size[1]))*100);
             for (int x = max[0]; x > min[0] - 1; x--) {
                 for (int z = min[2]; z <= max[2]; z++) {
                     Voxel voxel = data.searchVoxel(new int[]{x,y,z}, false);
                     if (voxel == null) {
-                        raf.writeBytes("0 1 1 1 ");
+                        fileOut.writeBytes("0 1 1 1 ");
                     } else {
                         Color color = voxel.getColor();
-                        raf.writeBytes(
+                        fileOut.writeBytes(
                                 "1 " +
                                 df.format(color.getRed()/255f) + " " +
                                 df.format(color.getGreen()/255f) + " " +

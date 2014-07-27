@@ -400,6 +400,16 @@ public class HullManager<T> implements HullManagerInterface<T>, Serializable {
         return result;
     }
 
+    // get the visible voxel ids
+    @Override
+    public final TIntHashSet getVisibleVoxelsIds() {
+        TIntHashSet visibleVoxels = new TIntHashSet();
+        for (int i = 0; i < 6; i++) {
+            visibleVoxels.addAll(border[i]);
+        }
+        return visibleVoxels;
+    }
+
     // get the current hull as ids
     @Override
     public final int[] getHullAsIds(int direction) {

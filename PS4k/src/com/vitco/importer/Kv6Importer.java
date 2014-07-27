@@ -60,7 +60,18 @@ public class Kv6Importer extends AbstractImporter {
             // -----------
             int zpos = fileIn.readShortRevUnsigned();
             int visfaces = fileIn.readByteUnsigned();
-            fileIn.readByteUnsigned(); //int lighting = fileIn.readByteUnsigned();
+            fileIn.readByteUnsigned(); //int lightDir = fileIn.readByteUnsigned();
+//            System.out.println(
+//                    r + " " + g + " " + b + " (" + lightDir + ") @ " +
+//                    (ByteHelper.isBitSet((byte) visfaces, 0) ? "1" : "0") +
+//                    (ByteHelper.isBitSet((byte) visfaces, 1) ? "1" : "0") +
+//                    (ByteHelper.isBitSet((byte) visfaces, 2) ? "1" : "0") +
+//                    (ByteHelper.isBitSet((byte) visfaces, 3) ? "1" : "0") +
+//                    (ByteHelper.isBitSet((byte) visfaces, 4) ? "1" : "0") +
+//                    (ByteHelper.isBitSet((byte) visfaces, 5) ? "1" : "0") +
+//                    (ByteHelper.isBitSet((byte) visfaces, 6) ? "1" : "0") +
+//                    (ByteHelper.isBitSet((byte) visfaces, 7) ? "1" : "0")
+//            );
 
             voxel.add(new int[]{zpos, color.getRGB(), visfaces});
         }

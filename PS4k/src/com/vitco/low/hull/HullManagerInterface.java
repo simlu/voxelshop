@@ -1,6 +1,7 @@
 package com.vitco.low.hull;
 
 import com.threed.jpct.SimpleVector;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.Set;
 
@@ -44,6 +45,9 @@ public interface HullManagerInterface<T> {
 
     // get the current hull
     short[][] getHull(int direction);
+
+    // get the visible voxel ids
+    TIntHashSet getVisibleVoxelsIds();
 
     // get the current hull as ids
     int[] getHullAsIds(int direction);
