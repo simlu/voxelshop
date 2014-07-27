@@ -20,16 +20,8 @@ public abstract class AbstractExporter extends ProgressReporter {
     // the data that we use
     protected final Data data;
 
-    // true if write was successful
-    private final boolean wasWritten;
-
-    // check if write was successful
-    public final boolean wasWritten() {
-        return wasWritten;
-    }
-
     // wrapper for writing
-    protected final FileOut fileOut;
+    protected FileOut fileOut;
 
     // store voxel information
     private final int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
@@ -64,11 +56,14 @@ public abstract class AbstractExporter extends ProgressReporter {
         size[0] = max[0] - min[0] + 1;
         size[1] = max[1] - min[1] + 1;
         size[2] = max[2] - min[2] + 1;
+    }
 
-        // write the file content
+    // compute and write the file content
+    public final boolean writeData() throws IOException {
         fileOut = new FileOut(exportTo.getAbsolutePath());
-        wasWritten = writeFile();
+        boolean wasWritten = writeFile();
         fileOut.finish();
+        return wasWritten;
     }
 
     // write the file - to be implemented

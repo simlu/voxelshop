@@ -28,6 +28,12 @@ public class Kv6Exporter extends AbstractExporter {
         super(exportTo, data, dialog);
     }
 
+    // decide whether to use weighted center or origin (default)
+    private boolean useWeightedCenter = false;
+    public void setUseWeightedCenter(boolean flag) {
+        useWeightedCenter = flag;
+    }
+
     // helper to get direction (lighting bit)
     private static byte getDirectionByte(int voxPosId, HullManager<String> hullManager) {
 
@@ -82,10 +88,16 @@ public class Kv6Exporter extends AbstractExporter {
         int[] min = getMin();
 
         // write center
-        float[] center = getCenter();
-        fileOut.writeFloatRev(center[0] - min[0]);
-        fileOut.writeFloatRev(center[2] - min[2]);
-        fileOut.writeFloatRev(center[1] - min[1]);
+        if (useWeightedCenter) {
+            float[] center = getCenter();
+            fileOut.writeFloatRev(center[0] - min[0]);
+            fileOut.writeFloatRev(center[2] - min[2]);
+            fileOut.writeFloatRev(center[1] - min[1]);
+        } else {
+            fileOut.writeFloatRev(- min[0]);
+            fileOut.writeFloatRev(- min[2]);
+            fileOut.writeFloatRev(- min[1]);
+        }
 
         // fetch all visible voxels
         HullManager<String> hullManager = new HullManager<String>();

@@ -448,6 +448,10 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // add "kv6" exporter
         FieldSet kv6Exporter = new FieldSet("kv6_format", "Kv6 Format (*.kv6)");
 
+        // add option to set weighted center
+        final CheckBoxModule use_weighted_center = new CheckBoxModule("use_weighted_center", "Use weighted center instead of origin", false);
+        kv6Exporter.addComponent(use_weighted_center);
+
         // add information for voxel format
         LabelModule label_kv6 = new LabelModule("Note: Does not support textured voxels. This file format is used by Ace of Spades and Slab6.");
         label_kv6.setVisibleLookup("export_type=kv6_format");
@@ -690,7 +694,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                    success = new VoxGameExporter(exportTo, data, progressDialog).wasWritten();
+                                    VoxGameExporter exporter = new VoxGameExporter(exportTo, data, progressDialog);
+                                    success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
                                 }
@@ -737,7 +742,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                    success = new Kv6Exporter(exportTo, data, progressDialog).wasWritten();
+                                    Kv6Exporter exporter = new Kv6Exporter(exportTo, data, progressDialog);
+                                    exporter.setUseWeightedCenter(dialog.is("kv6_format.use_weighted_center=true"));
+                                    success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
                                 }
