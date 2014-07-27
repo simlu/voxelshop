@@ -82,6 +82,7 @@ public class Kv6Importer extends AbstractImporter {
         // read the xoffset
         for (int x = 0; x < sx; x++) {
             int xoff = fileIn.readIntRev();
+//            System.out.println(xoff);
             sumxoffset += xoff;
         }
         // read the xyoffset

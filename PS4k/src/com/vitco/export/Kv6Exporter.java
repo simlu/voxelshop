@@ -184,7 +184,7 @@ public class Kv6Exporter extends AbstractExporter {
         }
 
         // write the xoffsets
-        for (short x = (short) (size[0] - 1); x >= 0; x--) {
+        for (short x = 0; x < size[0]; x++) {
             fileOut.writeIntRev(xMap.get(x));
         }
 
