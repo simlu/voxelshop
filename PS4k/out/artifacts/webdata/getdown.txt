@@ -4,6 +4,9 @@ appbase = http://blackflux.com/software/vs/upd/
 # UI Configuration
 ui.name = VoxelShop
 
+# In case Getdown needs an upgrade
+resource = getdown-client-new.jar
+
 # Application jar files
 code = main.jar
 code = lib/commons-logging-1.1.1.jar
@@ -31,11 +34,20 @@ code = lib/poly2tri-ardor3d-0.1.1-SNAPSHOT.jar
 code = lib/poly2tri-core-0.1.1-SNAPSHOT.jar
 code = lib/slf4j-api-1.6.5.jar
 code = lib/slf4j-log4j12-1.6.5.jar
+code = lib/trove-3.0.3.jar
+code = lib/algs4-package.jar
+code = lib/stdlib-package.jar
+
+# Image Resources
+uresource = images.jar
 
 # The main entry point for the application
 class = com.vitco.Main
 
 # Heap size
-jvmarg = -Xmx512m
-jvmarg = -Xms512m
+jvmarg = -Xmx1024m
+jvmarg = -Xms512M
 jvmarg = -XX:+UseParNewGC
+
+# Splash screen
+jvmarg = -splash:%APPDIR%/images/splash.png

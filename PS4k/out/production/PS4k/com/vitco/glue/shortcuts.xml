@@ -16,20 +16,22 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="8" action="layer_state-action_show" caption="layer_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="9" action="colorpicker_state-action_show" caption="colorpicker_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="0" action="mainview_state-action_show" caption="mainView_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="-" action="colorPalette_state-action_show" caption="colorPalette_caption" />
         <!--File-->
         <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="I" action="import_file_action" caption="import_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="E" action="export_file_action" caption="export_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
         <!--Tools-->
-        <shortcut ctrl="no" alt="no" shift="no" key="F1" action="voxel_mode_select_type_view" caption="voxel_mode_select_type_view_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F2" action="voxel_mode_select_type_draw" caption="voxel_mode_select_type_draw_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F5" action="voxel_mode_select_type_floodfill_tool" caption="voxel_mode_select_type_floodfill_tool_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F6" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="F7" action="voxel_mode_select_type_select_tool" caption="voxel_mode_select_type_select_tool_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="1" action="voxel_mode_select_type_view" caption="voxel_mode_select_type_view_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="2" action="voxel_mode_select_type_draw" caption="voxel_mode_select_type_draw_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="5" action="voxel_mode_select_type_floodfill_tool" caption="voxel_mode_select_type_floodfill_tool_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="6" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="7" action="voxel_mode_select_type_select_tool" caption="voxel_mode_select_type_select_tool_caption" />
         <shortcut action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
         <!--Selection Interaction-->
         <shortcut ctrl="yes" alt="no" shift="no" key="X" action="selection_tool_cut" caption="selection_tool_cut_caption" />
@@ -46,6 +48,12 @@
 
         <shortcut ctrl="no" alt="no" shift="no" key="ENTER" action="selection_tool_finalize_shifting" caption="selection_tool_finalize_shifting_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="ENTER" action="selection_tool_finalize_shifting_as_copy" caption="selection_tool_finalize_shifting_as_copy_caption" />
+
+        <!--Color Palette-->
+        <shortcut ctrl="no" alt="no" shift="no" key="A" action="color-palette_color_left" caption="color-palette_color_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="D" action="color-palette_color_right" caption="color-palette_color_right_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="W" action="color-palette_color_up" caption="color-palette_color_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="S" action="color-palette_color_down" caption="color-palette_color_down_caption" />
 
         <!--Custom-->
         <shortcut action="swap_mainView_with_xyView" caption="swap_mainView_with_xyView_caption" />
@@ -130,5 +138,8 @@
     </frame>
 
     <frame name="hexPicker">
+    </frame>
+
+    <frame name="colorPalette">
     </frame>
 </head>
