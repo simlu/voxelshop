@@ -877,22 +877,24 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         actionManager.registerAction("fill_voxels_action", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
-                // compute the hull manager
-                HullManagerExt<String> hullManager = new HullManagerExt<String>();
-                for (Voxel voxel : data.getVisibleLayerVoxel()) {
-                    hullManager.update(voxel.posId, null);
+                synchronized (VitcoSettings.SYNC) {
+                    // compute the hull manager
+                    HullManagerExt<String> hullManager = new HullManagerExt<String>();
+                    for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                        hullManager.update(voxel.posId, null);
+                    }
+                    hullManager.computeExterior();
+                    // fetch the empty interior
+                    int[] emptyInterior = hullManager.getEmptyInterior();
+                    // create and add the missing voxels
+                    Voxel[] voxels = new Voxel[emptyInterior.length];
+                    Color color = ColorTools.hsbToColor((float[]) preferences.loadObject("currently_used_color"));
+                    for (int i = 0; i < emptyInterior.length; i++) {
+                        short[] pos = CubeIndexer.getPos(emptyInterior[i]);
+                        voxels[i] = new Voxel(-1, new int[]{pos[0], pos[1], pos[2]}, color, false, null, data.getSelectedLayer());
+                    }
+                    data.massAddVoxel(voxels);
                 }
-                hullManager.computeExterior();
-                // fetch the empty interior
-                int[] emptyInterior = hullManager.getEmptyInterior();
-                // create and add the missing voxels
-                Voxel[] voxels = new Voxel[emptyInterior.length];
-                Color color = ColorTools.hsbToColor((float[]) preferences.loadObject("currently_used_color"));
-                for (int i = 0; i < emptyInterior.length; i++) {
-                    short[] pos = CubeIndexer.getPos(emptyInterior[i]);
-                    voxels[i] = new Voxel(-1, new int[] {pos[0], pos[1], pos[2]}, color, false, null, data.getSelectedLayer());
-                }
-                data.massAddVoxel(voxels);
             }
 
             @Override
@@ -904,24 +906,26 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         actionManager.registerAction("hollow_voxels_action", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
-                // compute the hull manager
-                HullManagerExt<String> hullManager = new HullManagerExt<String>();
-                for (Voxel voxel : data.getVisibleLayerVoxel()) {
-                    hullManager.update(voxel.posId, null);
+                synchronized (VitcoSettings.SYNC) {
+                    // compute the hull manager
+                    HullManagerExt<String> hullManager = new HullManagerExt<String>();
+                    for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                        hullManager.update(voxel.posId, null);
+                    }
+                    hullManager.computeExterior();
+                    // fetch the filled interior
+                    int[] filledInterior = hullManager.getFilledInterior();
+                    // search for the interior voxels and remove
+                    Integer[] voxelIds = new Integer[filledInterior.length];
+                    // todo: This will only remove the top voxel, change it so that it removes all voxels in all layers at this position
+                    for (int i = 0; i < filledInterior.length; i++) {
+                        short[] pos = CubeIndexer.getPos(filledInterior[i]);
+                        Voxel voxel = data.searchVoxel(new int[]{pos[0], pos[1], pos[2]}, false);
+                        assert voxel != null;
+                        voxelIds[i] = voxel.id;
+                    }
+                    data.massRemoveVoxel(voxelIds);
                 }
-                hullManager.computeExterior();
-                // fetch the filled interior
-                int[] filledInterior = hullManager.getFilledInterior();
-                // search for the interior voxels and remove
-                Integer[] voxelIds = new Integer[filledInterior.length];
-                // todo: This will only remove the top voxel, change it so that it removes all voxels in all layers at this position
-                for (int i = 0; i < filledInterior.length; i++) {
-                    short[] pos = CubeIndexer.getPos(filledInterior[i]);
-                    Voxel voxel = data.searchVoxel(new int[] {pos[0], pos[1], pos[2]}, false);
-                    assert voxel != null;
-                    voxelIds[i] = voxel.id;
-                }
-                data.massRemoveVoxel(voxelIds);
             }
 
             @Override
