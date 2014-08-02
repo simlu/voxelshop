@@ -209,6 +209,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("vox", "Voxlap Engine File");
         fc_import.addFileType("vox", "MagicaVoxel File");
         fc_import.addFileType("vox", "Vox Game File");
+        fc_import.addFileType("vxl", "C&C File Format");
         fc_import.addFileType("rawvox", "Raw Voxel Format");
 
         // import file
@@ -327,6 +328,18 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new RawVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, true);
+                                        return null;
+                                    }
+                                });
+                            } else if ("vxl".equals(ext)) {
+                                // ----------------
+                                // import .vxl files (C&C)
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new CCVxlImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
                                         importVoxelData(importer, true);
                                         return null;
                                     }

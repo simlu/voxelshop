@@ -36,6 +36,10 @@ public class FileIn  {
         return in.readByte();
     }
 
+    public int read(byte[] b) throws IOException {
+        return in.read(b);
+    }
+
     public int readInt() throws IOException {
         return in.readInt();
     }

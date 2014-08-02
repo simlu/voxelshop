@@ -32,6 +32,7 @@ public class ImporterTest {
 
     @Test
     public void testAllImporter() throws Exception {
+        doTest("C:\\Users\\flux\\Desktop\\vxl (2)", "vxl", CCVxlImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\rawvox", "rawvox", RawVoxImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\vox", "vox", VoxImporter.class);
         doTest("C:\\Users\\flux\\Desktop\\binvox", "binvox", BinVoxImporter.class);
@@ -42,7 +43,7 @@ public class ImporterTest {
 
     @Test
     public void testNewImporter() throws Exception {
-        AbstractImporter importer = new RawVoxImporter(new File("C:\\Users\\flux\\Desktop\\rawvox\\nerds.rawvox"), "Import");
+        AbstractImporter importer = new CCVxlImporter(new File("C:\\Users\\flux\\Desktop\\vxl (2)\\abrams.vxl"), "Import");
         if (importer.hasLoaded()) {
             System.out.println("Loading finished.");
         }
