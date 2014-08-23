@@ -5,6 +5,7 @@ import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.Kv6Exporter;
+import com.vitco.export.PnxExporter;
 import com.vitco.export.VoxGameExporter;
 import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.collada.ColladaFile;
@@ -204,6 +205,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("gif", "Animated Image");
         fc_import.addFileType("binvox");
         fc_import.addFileType("kv6");
+        fc_import.addFileType("pnx", "Pnx Exchange File");
         fc_import.addFileType("kvx");
         fc_import.addFileType("qb", "Qubicle Binary");
         fc_import.addFileType("vox", "Voxlap Engine File");
@@ -281,6 +283,18 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new Kv6Importer(toOpen, FileTools.extractNameWithoutExtension(toOpen));
                                         importVoxelData(importer, false);
+                                        return null;
+                                    }
+                                });
+                            } else if ("pnx".equals(ext)) {
+                                // ----------------
+                                // import .pnx files
+                                dialog.start(new ProgressWorker() {
+                                    @Override
+                                    protected Object doInBackground() throws Exception {
+                                        dialog.setActivity("Importing File...", true);
+                                        AbstractImporter importer = new PnxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
+                                        importVoxelData(importer, true);
                                         return null;
                                     }
                                 });
@@ -472,8 +486,18 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // ---------------
 
+        // add "pnx" exporter
+        FieldSet pnxExporter = new FieldSet("pnx_format", "Pnx Format (*.pnx)");
+
+        // add information for voxel format
+        LabelModule label_pnx = new LabelModule("Highly compressed and flexible format that is easy to import.");
+        label_pnx.setVisibleLookup("export_type=pnx_format");
+        pnxExporter.addComponent(label_pnx);
+
+        // ---------------
+
         // add all formats
-        dialog.addComboBox("export_type", new FieldSet[] {collada, voxExporter, kv6Exporter, imageRenderer}, 0);
+        dialog.addComboBox("export_type", new FieldSet[] {collada, voxExporter, kv6Exporter, pnxExporter, imageRenderer}, 0);
 
         // ---------------
 
@@ -686,7 +710,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         // create progress dialog
                         final ProgressDialog progressDialog = new ProgressDialog(frame);
 
-                        // do the importing
+                        // do the exporting
                         progressDialog.start(new ProgressWorker() {
                             @Override
                             protected Object doInBackground() throws Exception {
@@ -734,7 +758,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         // create progress dialog
                         final ProgressDialog progressDialog = new ProgressDialog(frame);
 
-                        // do the importing
+                        // do the exporting
                         progressDialog.start(new ProgressWorker() {
                             @Override
                             protected Object doInBackground() throws Exception {
@@ -757,6 +781,54 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 try {
                                     Kv6Exporter exporter = new Kv6Exporter(exportTo, data, progressDialog);
                                     exporter.setUseWeightedCenter(dialog.is("kv6_format.use_weighted_center=true"));
+                                    success = exporter.writeData();
+                                } catch (IOException ignored) {
+                                    success = false;
+                                }
+                                if (success) {
+                                    console.addLine(
+                                            String.format(langSelector.getString("export_file_successful"),
+                                                    System.currentTimeMillis() - time)
+                                    );
+                                } else {
+                                    console.addLine(langSelector.getString("export_file_error"));
+                                }
+
+                                return null;
+                            }
+                        });
+
+                        // ===========
+                    } else if (dialog.is("export_type=pnx_format")) {
+
+                        // ===========
+                        // -- handle pnx file format
+
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+
+                        // do the exporting
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // extract file name
+                                final File exportTo = new File(baseName + (baseName.endsWith(".pnx") ? "" : ".pnx"));
+                                // check if file exists
+                                if (exportTo.exists()) {
+                                    if (JOptionPane.showConfirmDialog(frame,
+                                            exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                        return false;
+                                    }
+                                }
+
+                                // export pnx file format
+                                boolean success;
+                                long time = System.currentTimeMillis();
+                                try {
+                                    PnxExporter exporter = new PnxExporter(exportTo, data, progressDialog);
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;

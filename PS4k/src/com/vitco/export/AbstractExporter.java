@@ -61,8 +61,12 @@ public abstract class AbstractExporter extends ProgressReporter {
     // compute and write the file content
     public final boolean writeData() throws IOException {
         fileOut = new FileOut(exportTo.getAbsolutePath());
-        boolean wasWritten = writeFile();
-        fileOut.finish();
+        boolean wasWritten = false;
+        try {
+            wasWritten = writeFile();
+        } finally {
+            fileOut.finish();
+        }
         return wasWritten;
     }
 

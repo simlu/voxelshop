@@ -1,5 +1,9 @@
 package com.vitco.util.file;
 
+import com.googlecode.pngtastic.core.PngChunk;
+import com.googlecode.pngtastic.core.PngImage;
+import com.googlecode.pngtastic.core.PngOptimizer;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -54,6 +58,7 @@ public class FileOut {
         // get the size
         ByteArrayOutputStream tmp = new ByteArrayOutputStream();
         ImageIO.write(img, "png", tmp);
+
         tmp.close();
         Integer contentLength = tmp.size();
         // write the size
@@ -76,6 +81,46 @@ public class FileOut {
         this.writeIntRev(contentLength);
         // write the data
         p.write(bytes);
+    }
+
+    // write an image file compressed
+    public void writeImageCompressed(BufferedImage img) throws IOException {
+
+        // convert to png
+        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
+        ImageIO.write(img, "png", tmp);
+        tmp.close();
+
+        // compress
+        PngImage pngImage = new PngOptimizer().optimize(
+                new PngImage(new ByteArrayInputStream(tmp.toByteArray())),
+                9
+        );
+
+        // extract compressed data as png
+        ByteArrayOutputStream compressedPngData = new ByteArrayOutputStream();
+        DataOutputStream outputStreamWrapper = new DataOutputStream(compressedPngData);
+        outputStreamWrapper.writeLong(PngImage.SIGNATURE);
+        for (PngChunk chunk : pngImage.getChunks())
+        {
+            outputStreamWrapper.writeInt(chunk.getLength());
+            outputStreamWrapper.write(chunk.getType());
+            outputStreamWrapper.write(chunk.getData());
+            int i = (int)chunk.getCRC();
+            outputStreamWrapper.writeInt(i);
+        }
+        outputStreamWrapper.close();
+        compressedPngData.close();
+
+        // convert to png byte array
+        byte[] data = compressedPngData.toByteArray();
+        int contentLength = data.length;
+
+        // write the size
+        this.writeIntRev(contentLength);
+
+        // write the data
+        p.write(data);
     }
 
     // finalize
