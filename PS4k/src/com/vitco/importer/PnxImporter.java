@@ -3,14 +3,12 @@ package com.vitco.importer;
 import com.vitco.util.file.FileIn;
 import com.vitco.util.file.RandomAccessFileIn;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
 /**
- * *.qb importer
+ * *.pnx importer
  */
 public class PnxImporter extends AbstractImporter {
 
@@ -21,17 +19,40 @@ public class PnxImporter extends AbstractImporter {
 
     @Override
     protected boolean read(FileIn fileIn, RandomAccessFileIn raf) throws IOException {
-        int[] size = new int[]{fileIn.readIntRev(), fileIn.readIntRev(), fileIn.readIntRev()};
 
-        for (int x = 0; x < size[0]; x++) {
-            byte[] data = new byte[fileIn.readIntRev()];
-            fileIn.read(data);
-            BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
-            for (int y = 0; y < size[1]; y++) {
-                for (int z = 0; z < size[2]; z++) {
-                    int rgb = img.getRGB(y, z);
-                    if ((rgb >> 24) != 0x00) {
-                        addVoxel(x, y, z, rgb);
+        // read overall size
+        fileIn.readIntRev(); fileIn.readIntRev(); fileIn.readIntRev();
+
+        int layerCount = fileIn.readIntRev();
+
+        for (int i = 0; i < layerCount; i++) {
+            // read layer name
+            int layerNameLength = fileIn.readIntRev();
+            String layerName = fileIn.readUTF8String(layerNameLength);
+            prependLayer(layerName);
+
+            // read layer visibility
+            boolean visible = fileIn.readByte() == 1;
+            setLayerVisibility(visible);
+
+            // read layer locked state
+            fileIn.readByte(); // boolean locked = fileIn.readByte() == 0;
+
+            // read layer size and corner
+            int[] size = new int[]{fileIn.readIntRev(), fileIn.readIntRev(), fileIn.readIntRev()};
+            int[] min = new int[]{fileIn.readIntRev(), fileIn.readIntRev(), fileIn.readIntRev()};
+
+            // read layer slice by slice
+            for (int x = size[0] + min[0] - 1; x > min[0] - 1; x--) {
+                // read image for slice
+                BufferedImage img = fileIn.readImage();
+                for (int y = 0; y < size[1]; y++) {
+                    for (int z = 0; z < size[2]; z++) {
+                        //noinspection SuspiciousNameCombination
+                        int rgb = img.getRGB(y, z);
+                        if ((rgb >> 24) != 0x00) {
+                            addVoxel(x, y + min[1], z + min[2], rgb);
+                        }
                     }
                 }
             }

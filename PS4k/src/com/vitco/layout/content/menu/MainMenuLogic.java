@@ -153,7 +153,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 int[] center = importer.getWeightedCenter();
                 int[] highest = importer.getHighest();
                 for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                    data.selectLayer(data.createLayer(layer.name));
+                    int layerId = data.createLayer(layer.name);
+                    data.selectLayer(layerId);
+                    data.setVisible(layerId, layer.isVisible());
                     for (int[] vox; layer.hasNext();) {
                         vox = layer.next();
                         data.addVoxelDirect(new Color(vox[3]),
@@ -162,7 +164,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 }
             } else {
                 for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                    data.selectLayer(data.createLayer(layer.name));
+                    int layerId = data.createLayer(layer.name);
+                    data.selectLayer(layerId);
+                    data.setVisible(layerId, layer.isVisible());
                     for (int[] vox; layer.hasNext();) {
                         vox = layer.next();
                         data.addVoxelDirect(new Color(vox[3]),new int[] {vox[0], vox[1], vox[2]});
@@ -294,7 +298,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new PnxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importVoxelData(importer, false);
                                         return null;
                                     }
                                 });
@@ -365,8 +369,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         }
 
                         // force a refresh of the data (redraw)
-                        data.setVisible(data.getSelectedLayer(), false);
-                        data.setVisible(data.getSelectedLayer(), true);
+                        // todo: do this properly
+                        int layerId = data.getSelectedLayer();
+                        boolean vis = data.getLayerVisible(layerId);
+                        data.setVisible(layerId, !vis);
+                        data.setVisible(layerId, vis);
                         data.clearHistoryV();
                     }
                 }

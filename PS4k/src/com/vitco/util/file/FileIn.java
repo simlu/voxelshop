@@ -1,9 +1,8 @@
 package com.vitco.util.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 /**
  * To read a file (binary or not)
@@ -60,6 +59,14 @@ public class FileIn  {
 
     public double readDouble() throws IOException {
         return in.readDouble();
+    }
+
+    public String readUTF8String(int length) throws IOException {
+        byte[] bytes = new byte[length];
+        if (length != in.read(bytes)) {
+            return null;
+        }
+        return new String(bytes, "UTF-8");
     }
 
     public String readASCIIString(int length) throws IOException {
@@ -129,5 +136,14 @@ public class FileIn  {
 
     public boolean skipBytes(int mainContentSize) throws IOException {
         return mainContentSize == in.skip(mainContentSize);
+    }
+
+    public BufferedImage readImage() throws IOException {
+        int length = readIntRev();
+        byte[] bytes = new byte[length];
+        if (length != in.read(bytes)) {
+            return null;
+        }
+        return ImageIO.read(new ByteArrayInputStream(bytes));
     }
 }

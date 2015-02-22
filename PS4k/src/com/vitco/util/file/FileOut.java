@@ -16,9 +16,28 @@ public class FileOut {
         p = new DataOutputStream(new FileOutputStream(filename));
     }
 
+    // alternative constructor
+    public FileOut(ByteArrayOutputStream b) {
+        this.p = new DataOutputStream(b);
+    }
+
+    // attach another ByteArrayOutputStream
+    public void writeBytes(byte[] bytes) throws IOException {
+        p.write(bytes);
+    }
+
     // write text
-    public void writeString(String text) throws IOException {
-        p.writeBytes(text);
+    public void writeASCIIString(String text) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(p, "ASCII"));
+        bw.write(text);
+        bw.flush();
+    }
+
+    // write text
+    public void writeUTF8String(String text) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(p, "UTF8"));
+        bw.write(text);
+        bw.flush();
     }
 
     // write a line of text

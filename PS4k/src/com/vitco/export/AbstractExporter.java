@@ -95,4 +95,9 @@ public abstract class AbstractExporter extends ProgressReporter {
         return new float[] {centerSum[0]/count, centerSum[1]/count, centerSum[2]/count};
     }
 
+    // helper - get the amount of voxels
+    protected final int getCount() {
+        return (int) count;
+    }
+
 }

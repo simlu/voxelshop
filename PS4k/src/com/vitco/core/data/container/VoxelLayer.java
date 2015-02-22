@@ -2,6 +2,7 @@ package com.vitco.core.data.container;
 
 import com.vitco.low.CubeIndexer;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.awt.*;
 import java.io.IOException;
@@ -207,6 +208,15 @@ public final class VoxelLayer implements Serializable {
     public final Voxel[] getVoxels() {
         Voxel[] result = new Voxel[voxelList.size()];
         voxelList.toArray(result);
+        return result;
+    }
+
+    // get all voxel colors of this layer
+    public final TIntHashSet getVoxelColors() {
+        TIntHashSet result = new TIntHashSet();
+        for (Voxel voxel : voxelList) {
+            result.add(voxel.getColor().getRGB());
+        }
         return result;
     }
 

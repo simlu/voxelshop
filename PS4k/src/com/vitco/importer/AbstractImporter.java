@@ -58,6 +58,14 @@ public abstract class AbstractImporter {
         public final void reset() {
             i = 0;
         }
+
+        private boolean visible = true;
+        public void setVisible(boolean flag) {
+            this.visible = flag;
+        }
+        public boolean isVisible() {
+            return visible;
+        }
     }
 
     // the currently active layer
@@ -92,6 +100,19 @@ public abstract class AbstractImporter {
         }
         activeLayer = new Layer(name);
         layerList.add(activeLayer);
+    }
+    // prepend a new layer that the voxels are now added to
+    protected final void prependLayer(String name) {
+        if (activeLayer.isEmpty()) {
+            layerList.remove(activeLayer);
+        }
+        activeLayer = new Layer(name);
+        layerList.add(0, activeLayer);
+    }
+
+    // set visibility of current layer
+    protected final void setLayerVisibility(boolean flag) {
+        activeLayer.setVisible(flag);
     }
 
 

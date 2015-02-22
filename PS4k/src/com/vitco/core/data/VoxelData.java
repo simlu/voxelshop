@@ -2105,6 +2105,36 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    @Override
+    public final Voxel[] getVoxelsXY(int z, int layerId) {
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.layers.containsKey(layerId)) {
+                return dataContainer.layers.get(layerId).getZPlane(z);
+            }
+            return null;
+        }
+    }
+
+    @Override
+    public final Voxel[] getVoxelsXZ(int y, int layerId) {
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.layers.containsKey(layerId)) {
+                return dataContainer.layers.get(layerId).getYPlane(y);
+            }
+            return null;
+        }
+    }
+
+    @Override
+    public final Voxel[] getVoxelsYZ(int x, int layerId) {
+        synchronized (VitcoSettings.SYNC) {
+            if (dataContainer.layers.containsKey(layerId)) {
+                return dataContainer.layers.get(layerId).getXPlane(x);
+            }
+            return null;
+        }
+    }
+
     int lastVoxelXYBufferZValue;
     boolean layerVoxelXYBufferValid = false;
     Voxel[] layerVoxelXYBuffer = new Voxel[0];
@@ -2514,6 +2544,17 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         synchronized (VitcoSettings.SYNC) {
             Integer[] result = new Integer[dataContainer.textures.size()];
             dataContainer.textures.keySet().toArray(result);
+            return result;
+        }
+    }
+
+    @Override
+    public final TIntHashSet getVoxelColorList() {
+        synchronized (VitcoSettings.SYNC) {
+            TIntHashSet result = new TIntHashSet();
+            for (Integer layerId : getLayers()) {
+                result.addAll(dataContainer.layers.get(layerId).getVoxelColors());
+            }
             return result;
         }
     }

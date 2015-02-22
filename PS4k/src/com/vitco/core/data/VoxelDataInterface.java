@@ -1,6 +1,7 @@
 package com.vitco.core.data;
 
 import com.vitco.core.data.container.Voxel;
+import gnu.trove.set.hash.TIntHashSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,6 +50,10 @@ public interface VoxelDataInterface {
     void invalidateSideViewBuffer(String requestId, Integer side, Integer plane);
     // get changed side view voxels since last call
     Voxel[][] getNewSideVoxel(String requestId, Integer side, Integer plane);
+    // get voxel range (plane) of specific layer (not buffered!)
+    Voxel[] getVoxelsXY(int z, int layerId);
+    Voxel[] getVoxelsXZ(int y, int layerId);
+    Voxel[] getVoxelsYZ(int x, int layerId);
     // get voxel range (plane) of current layer
     Voxel[] getVoxelsXY(int z);
     Voxel[] getVoxelsXZ(int y);
@@ -135,6 +140,8 @@ public interface VoxelDataInterface {
     boolean replaceTexture(int textureId, ImageIcon texture);
 
     Integer[] getTextureList();
+
+    TIntHashSet getVoxelColorList();
 
     ImageIcon getTexture(Integer textureId);
 
