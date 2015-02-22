@@ -6,6 +6,7 @@ import com.vitco.util.file.RandomAccessFileIn;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * *.pnx importer
@@ -24,6 +25,13 @@ public class PnxImporter extends AbstractImporter {
         fileIn.readIntRev(); fileIn.readIntRev(); fileIn.readIntRev();
 
         int layerCount = fileIn.readIntRev();
+
+        // read all images
+        int imageCount = fileIn.readIntRev();
+        ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
+        for (int i = 0; i < imageCount; i++) {
+            images.add(fileIn.readImage());
+        }
 
         for (int i = 0; i < layerCount; i++) {
             // read layer name
@@ -45,7 +53,7 @@ public class PnxImporter extends AbstractImporter {
             // read layer slice by slice
             for (int x = size[0] + min[0] - 1; x > min[0] - 1; x--) {
                 // read image for slice
-                BufferedImage img = fileIn.readImage();
+                BufferedImage img = images.get(fileIn.readIntRev());
                 for (int y = 0; y < size[1]; y++) {
                     for (int z = 0; z < size[2]; z++) {
                         //noinspection SuspiciousNameCombination

@@ -3,11 +3,16 @@ package com.vitco.export;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.file.FileOut;
+import com.vitco.util.graphic.GraphicTools;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Exporter for *.pnx voxel format
@@ -38,18 +43,26 @@ public class PnxExporter extends AbstractExporter {
         // write amount of layers
         fileOut.writeIntRev(layers.length);
 
+        // data cache
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        FileOut fileOutBuffer = new FileOut(baos);
+
+        // holds unique images
+        HashMap<String, BufferedImage> images = new HashMap<String, BufferedImage>();
+        ArrayList<String> imageOrder = new ArrayList<String>();
+
         for (int layerId : layers) {
 
             // write layer name
             String layerName = data.getLayerName(layerId);
-            fileOut.writeIntRev(layerName.length());
-            fileOut.writeUTF8String(layerName);
+            fileOutBuffer.writeIntRev(layerName.length());
+            fileOutBuffer.writeUTF8String(layerName);
 
             // write visible flag
-            fileOut.writeByte((byte) (data.getLayerVisible(layerId)?1:0));
+            fileOutBuffer.writeByte((byte) (data.getLayerVisible(layerId)?1:0));
 
             // write locked flag (not implemented yet)
-            fileOut.writeByte((byte) 1);
+            fileOutBuffer.writeByte((byte) 1);
 
             // get min and max of layer
             int[] min = new int[] {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
@@ -70,14 +83,14 @@ public class PnxExporter extends AbstractExporter {
             }
 
             // write size
-            fileOut.writeIntRev(size[0]);
-            fileOut.writeIntRev(size[1]);
-            fileOut.writeIntRev(size[2]);
+            fileOutBuffer.writeIntRev(size[0]);
+            fileOutBuffer.writeIntRev(size[1]);
+            fileOutBuffer.writeIntRev(size[2]);
 
             // write minimum
-            fileOut.writeIntRev(min[0]);
-            fileOut.writeIntRev(min[1]);
-            fileOut.writeIntRev(min[2]);
+            fileOutBuffer.writeIntRev(min[0]);
+            fileOutBuffer.writeIntRev(min[1]);
+            fileOutBuffer.writeIntRev(min[2]);
 
             // write image for layer
             for (int x = max[0]; x > min[0] - 1; x--) {
@@ -88,10 +101,24 @@ public class PnxExporter extends AbstractExporter {
                     Color color = voxel.getColor();
                     img.setRGB(voxel.y - min[1], voxel.z - min[2], color.getRGB());
                 }
-                fileOut.writeImageCompressed(img);
+                // hash and store if necessary
+                String md5 = GraphicTools.getHash(img);
+                if (!images.containsKey(md5)) {
+                    images.put(md5, img);
+                    imageOrder.add(md5);
+                }
+                fileOutBuffer.writeIntRev(imageOrder.indexOf(md5));
             }
-
         }
+
+        // write images
+        fileOut.writeIntRev(imageOrder.size());
+        for (String md5 : imageOrder) {
+            fileOut.writeImageCompressed(images.get(md5));
+        }
+
+        // write data cache
+        fileOut.writeBytes(baos.toByteArray());
 
         // success
         return true;
