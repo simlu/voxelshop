@@ -6,6 +6,7 @@ import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.Kv6Exporter;
 import com.vitco.export.PnxExporter;
+import com.vitco.export.QbExporter;
 import com.vitco.export.VoxGameExporter;
 import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.collada.ColladaFile;
@@ -503,8 +504,20 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // ---------------
 
+        // add "qb" exporter
+        FieldSet qbExporter = new FieldSet("qb_format", "QB Format (*.qb)");
+
+        // add information for voxel format
+        LabelModule label_qb = new LabelModule("Qubicle 1.0 exchange format.");
+        label_qb.setVisibleLookup("export_type=qb_format");
+        qbExporter.addComponent(label_qb);
+
+        // ---------------
+
         // add all formats
-        dialog.addComboBox("export_type", new FieldSet[] {collada, voxExporter, kv6Exporter, pnxExporter, imageRenderer}, 0);
+        dialog.addComboBox("export_type", new FieldSet[] {
+                collada, voxExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
+        }, 0);
 
         // ---------------
 
@@ -836,6 +849,54 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 long time = System.currentTimeMillis();
                                 try {
                                     PnxExporter exporter = new PnxExporter(exportTo, data, progressDialog);
+                                    success = exporter.writeData();
+                                } catch (IOException ignored) {
+                                    success = false;
+                                }
+                                if (success) {
+                                    console.addLine(
+                                            String.format(langSelector.getString("export_file_successful"),
+                                                    System.currentTimeMillis() - time)
+                                    );
+                                } else {
+                                    console.addLine(langSelector.getString("export_file_error"));
+                                }
+
+                                return null;
+                            }
+                        });
+
+                        // ===========
+                    } else if (dialog.is("export_type=qb_format")) {
+
+                        // ===========
+                        // -- handle qb file format
+
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+
+                        // do the exporting
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // extract file name
+                                final File exportTo = new File(baseName + (baseName.endsWith(".qb") ? "" : ".qb"));
+                                // check if file exists
+                                if (exportTo.exists()) {
+                                    if (JOptionPane.showConfirmDialog(frame,
+                                            exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                        return false;
+                                    }
+                                }
+
+                                // export qb file format
+                                boolean success;
+                                long time = System.currentTimeMillis();
+                                try {
+                                    QbExporter exporter = new QbExporter(exportTo, data, progressDialog);
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;

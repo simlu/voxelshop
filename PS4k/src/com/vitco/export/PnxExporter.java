@@ -29,8 +29,6 @@ public class PnxExporter extends AbstractExporter {
     protected boolean writeFile() throws IOException {
         // for progress display
         setActivity("Exporting to file...", false);
-        int count = getCount();
-        int currentCount = 0;
 
         // write dimension information
         int[] overallSize = getSize();
@@ -94,10 +92,8 @@ public class PnxExporter extends AbstractExporter {
 
             // write image for layer
             for (int x = max[0]; x > min[0] - 1; x--) {
-                setProgress((currentCount / (float) count) * 100);
                 BufferedImage img = new BufferedImage(size[1], size[2], BufferedImage.TYPE_INT_ARGB);
                 for (Voxel voxel : data.getVoxelsYZ(x, layerId)) {
-                    currentCount++;
                     Color color = voxel.getColor();
                     img.setRGB(voxel.y - min[1], voxel.z - min[2], color.getRGB());
                 }
@@ -112,9 +108,13 @@ public class PnxExporter extends AbstractExporter {
         }
 
         // write images
-        fileOut.writeIntRev(imageOrder.size());
+        int count = imageOrder.size();
+        int currentCount = 0;
+        fileOut.writeIntRev(count);
         for (String md5 : imageOrder) {
+            setProgress((currentCount / (float) count) * 100);
             fileOut.writeImageCompressed(images.get(md5));
+            currentCount++;
         }
 
         // write data cache

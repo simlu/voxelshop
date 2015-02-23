@@ -1765,6 +1765,13 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
     }
 
     @Override
+    public final Voxel searchVoxel(int[] pos, int layerId) {
+        synchronized (VitcoSettings.SYNC) {
+            return dataContainer.layers.get(layerId).search(pos);
+        }
+    }
+
+    @Override
     public final Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer) {
         synchronized (VitcoSettings.SYNC) {
             if (onlyCurrentLayer) { // search only the current layers

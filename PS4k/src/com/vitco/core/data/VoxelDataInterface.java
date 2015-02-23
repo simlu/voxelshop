@@ -34,7 +34,10 @@ public interface VoxelDataInterface {
     int getLayer(int voxelId);
     // delete all voxels in layer
     boolean clearV(int layerId);
+    // search for voxel in specific layer (no matter if visible or not)
+    Voxel searchVoxel(int[] pos, int layerId);
     // returns a voxel if the current layer has a voxel at the position
+    // layer needs to be visible
     Voxel searchVoxel(int[] pos, boolean onlyCurrentLayer);
     // get all voxels in current layer
     Voxel[] getLayerVoxels(int layerId);
