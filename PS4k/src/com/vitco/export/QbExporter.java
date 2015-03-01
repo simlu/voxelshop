@@ -10,13 +10,19 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Exporter into *.kv6 (Ace of Spades Game)
+ * Exporter into *.qb (Qubicle 1.0)
  */
 public class QbExporter extends AbstractExporter {
 
     // constructor
     public QbExporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
         super(exportTo, data, dialog);
+    }
+
+    // decide whether to use weighted center or origin (default)
+    private boolean useCompression = true;
+    public void setUseCompression(boolean flag) {
+        useCompression = flag;
     }
 
     private static final int CODE_FLAG = 2;
@@ -26,7 +32,112 @@ public class QbExporter extends AbstractExporter {
     // write the file
     @Override
     protected boolean writeFile() throws IOException {
+        if (useCompression) {
+            return writeCompressed();
+        } else {
+            return writeUncompressed();
+        }
+    }
 
+    // stone-hearth compatible
+    private boolean writeUncompressed() throws IOException {
+        // version
+        fileOut.writeIntRev(257);
+
+        // color format
+        fileOut.writeIntRev(0);
+
+        // z axis orientation
+        fileOut.writeIntRev(1);
+
+        // compressed
+        fileOut.writeIntRev(0);
+
+        // vis mask encoding
+        fileOut.writeIntRev(1);
+
+        Integer[]  layers = data.getLayers();
+
+        // num matrices
+        fileOut.writeIntRev(layers.length);
+
+        for (int i = layers.length - 1; i >= 0; i--) {
+            Integer layerId = layers[i];
+
+            // write layer name
+            String layerName = data.getLayerName(layerId);
+            fileOut.writeByte((byte) layerName.length());
+            fileOut.writeASCIIString(layerName);
+
+            // get min and max of layer
+            int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+            int[] max = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
+            int[] size = new int[]{0, 0, 0};
+            boolean hasVoxel = false;
+            for (Voxel voxel : data.getLayerVoxels(layerId)) {
+                min[0] = Math.min(voxel.x, min[0]);
+                min[1] = Math.min(voxel.y, min[1]);
+                min[2] = Math.min(voxel.z, min[2]);
+                max[0] = Math.max(voxel.x, max[0]);
+                max[1] = Math.max(voxel.y, max[1]);
+                max[2] = Math.max(voxel.z, max[2]);
+                hasVoxel = true;
+            }
+            if (hasVoxel) {
+                size = new int[]{max[0] - min[0] + 1, max[1] - min[1] + 1, max[2] - min[2] + 1};
+            }
+
+            // write size
+            fileOut.writeIntRev(size[2]);
+            fileOut.writeIntRev(size[1]);
+            fileOut.writeIntRev(size[0]);
+
+            // write minimum
+            fileOut.writeIntRev(min[2]);
+            fileOut.writeIntRev(-max[1]);
+            fileOut.writeIntRev(min[0]);
+
+            for (int x = min[0]; x <= max[0]; x++) {
+                for (int y = max[1]; y > min[1] - 1; y--) {
+                    for (int z = min[2]; z <= max[2]; z++) {
+                        Voxel voxel = data.searchVoxel(new int[]{z, y, x}, layerId);
+                        byte visible = 1;
+                        if (data.searchVoxel(new int[]{z, y, x-1}, layerId) == null) {
+                            visible = ByteHelper.setBit(visible, 2);
+                        }
+                        if (data.searchVoxel(new int[]{z, y, x+1}, layerId) == null) {
+                            visible = ByteHelper.setBit(visible, 1);
+                        }
+                        if (data.searchVoxel(new int[]{z, y+1, x}, layerId) == null) {
+                            visible = ByteHelper.setBit(visible, 3);
+                        }
+                        if (data.searchVoxel(new int[]{z, y-1, x}, layerId) == null) {
+                            visible = ByteHelper.setBit(visible, 4);
+                        }
+                        if (data.searchVoxel(new int[]{z-1, y, x}, layerId) == null) {
+                            visible = ByteHelper.setBit(visible, 5);
+                        }
+                        if (data.searchVoxel(new int[]{z+1, y, x}, layerId) == null) {
+                            visible = ByteHelper.setBit(visible, 6);
+                        }
+                        if (voxel == null) {
+                            fileOut.writeIntRev(TRANSPARENT_VOXEL);
+                        } else {
+                            int color = voxel.getColor().getRGB();
+                            color = (visible << 24) | (color & 0x000000FF) << 16 | (color & 0x0000FF00) | (color & 0x00FF0000) >> 16;
+                            fileOut.writeIntRev(color);
+                        }
+                    }
+                }
+            }
+        }
+        // success
+        return true;
+    }
+
+    // ========================
+
+    private boolean writeCompressed() throws IOException {
         // version
         fileOut.writeIntRev(257);
 

@@ -512,6 +512,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         label_qb.setVisibleLookup("export_type=qb_format");
         qbExporter.addComponent(label_qb);
 
+        // add option to set weighted center
+        final CheckBoxModule use_compression = new CheckBoxModule("use_compression", "Use compression", true);
+        qbExporter.addComponent(use_compression);
+
+        LabelModule compression_info = new LabelModule("Info: Compression saves a lot of space and makes opening and " +
+                "saving the file faster. Disable compression if you want to use the qb file for StoneHearth.");
+        compression_info.setVisibleLookup("export_type=qb_format");
+        qbExporter.addComponent(compression_info);
+
         // ---------------
 
         // add all formats
@@ -897,6 +906,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 long time = System.currentTimeMillis();
                                 try {
                                     QbExporter exporter = new QbExporter(exportTo, data, progressDialog);
+                                    exporter.setUseCompression(dialog.is("qb_format.use_compression=true"));
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;

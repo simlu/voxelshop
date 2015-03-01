@@ -15,8 +15,8 @@ import java.io.File;
 
 public class ExporterTest {
 
-    private final static String input_file = "C:\\Users\\flux\\Desktop\\nerds_zach.qb";
-    private final static String output_file = "C:\\Users\\flux\\Desktop\\nerds_zach_out.qb";
+    private final static String input_file = "C:\\Users\\flux\\Desktop\\gold_3.qb";
+    private final static String output_file = "C:\\Users\\flux\\Desktop\\gold_3_out.qb";
 
     @Test
     public void testQBExporter() throws Exception {
@@ -37,7 +37,8 @@ public class ExporterTest {
             }
         }
 
-        AbstractExporter exporter = new QbExporter(new File(output_file), data, new ProgressDialog(null));
+        QbExporter exporter = new QbExporter(new File(output_file), data, new ProgressDialog(null));
+        exporter.setUseCompression(false);
         exporter.writeData();
 
         new QbImporter(new File(output_file), "Import");
