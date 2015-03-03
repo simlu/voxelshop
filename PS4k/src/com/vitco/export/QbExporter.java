@@ -88,36 +88,35 @@ public class QbExporter extends AbstractExporter {
             }
 
             // write size
-            fileOut.writeIntRev(size[2]);
-            fileOut.writeIntRev(size[1]);
             fileOut.writeIntRev(size[0]);
+            fileOut.writeIntRev(size[1]);
+            fileOut.writeIntRev(size[2]);
 
             // write minimum
-            fileOut.writeIntRev(min[2]);
-            fileOut.writeIntRev(-max[1]);
             fileOut.writeIntRev(min[0]);
-
-            for (int x = min[0]; x <= max[0]; x++) {
+            fileOut.writeIntRev(-max[1]);
+            fileOut.writeIntRev(min[2]);
+            for (int z = min[2]; z <= max[2]; z++) {
                 for (int y = max[1]; y > min[1] - 1; y--) {
-                    for (int z = min[2]; z <= max[2]; z++) {
-                        Voxel voxel = data.searchVoxel(new int[]{z, y, x}, layerId);
+                    for (int x = min[0]; x <= max[0]; x++) {
+                        Voxel voxel = data.searchVoxel(new int[]{x, y, z}, layerId);
                         byte visible = 1;
-                        if (data.searchVoxel(new int[]{z, y, x-1}, layerId) == null) {
+                        if (data.searchVoxel(new int[]{x, y, z-1}, layerId) == null) {
                             visible = ByteHelper.setBit(visible, 2);
                         }
-                        if (data.searchVoxel(new int[]{z, y, x+1}, layerId) == null) {
+                        if (data.searchVoxel(new int[]{x, y, z+1}, layerId) == null) {
                             visible = ByteHelper.setBit(visible, 1);
                         }
-                        if (data.searchVoxel(new int[]{z, y+1, x}, layerId) == null) {
+                        if (data.searchVoxel(new int[]{x, y+1, z}, layerId) == null) {
                             visible = ByteHelper.setBit(visible, 3);
                         }
-                        if (data.searchVoxel(new int[]{z, y-1, x}, layerId) == null) {
+                        if (data.searchVoxel(new int[]{x, y-1, z}, layerId) == null) {
                             visible = ByteHelper.setBit(visible, 4);
                         }
-                        if (data.searchVoxel(new int[]{z-1, y, x}, layerId) == null) {
+                        if (data.searchVoxel(new int[]{x-1, y, z}, layerId) == null) {
                             visible = ByteHelper.setBit(visible, 5);
                         }
-                        if (data.searchVoxel(new int[]{z+1, y, x}, layerId) == null) {
+                        if (data.searchVoxel(new int[]{x+1, y, z}, layerId) == null) {
                             visible = ByteHelper.setBit(visible, 6);
                         }
                         if (voxel == null) {

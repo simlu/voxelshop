@@ -15,8 +15,8 @@ import java.io.File;
 
 public class ExporterTest {
 
-    private final static String input_file = "C:\\Users\\flux\\Desktop\\gold_3.qb";
-    private final static String output_file = "C:\\Users\\flux\\Desktop\\gold_3_out.qb";
+    private final static String input_file = "C:\\Users\\flux\\Desktop\\untitled.qb";
+    private final static String output_file = "C:\\Users\\flux\\Desktop\\untitled_out.qb";
 
     @Test
     public void testQBExporter() throws Exception {
