@@ -512,7 +512,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         label_qb.setVisibleLookup("export_type=qb_format");
         qbExporter.addComponent(label_qb);
 
-        // add option to set weighted center
         final CheckBoxModule use_compression = new CheckBoxModule("use_compression", "Use compression", true);
         qbExporter.addComponent(use_compression);
 
@@ -520,6 +519,16 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 "saving the file faster. Disable compression if you want to use the qb file for StoneHearth.");
         compression_info.setVisibleLookup("export_type=qb_format");
         qbExporter.addComponent(compression_info);
+
+        final CheckBoxModule use_box_as_matrix = new CheckBoxModule("use_box_as_matrix", "Use bounding box as matrix", false);
+        qbExporter.addComponent(use_box_as_matrix);
+
+        LabelModule box_as_matrix_info = new LabelModule(
+                "Warning: This option can result in loss of information or larger file size. " +
+                "Use this setting to gain control over the matrix size."
+        );
+        box_as_matrix_info.setVisibleLookup("export_type=qb_format");
+        qbExporter.addComponent(box_as_matrix_info);
 
         // ---------------
 
@@ -907,6 +916,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 try {
                                     QbExporter exporter = new QbExporter(exportTo, data, progressDialog);
                                     exporter.setUseCompression(dialog.is("qb_format.use_compression=true"));
+                                    exporter.setUseBoxAsMatrix(dialog.is("qb_format.use_box_as_matrix=true"));
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;

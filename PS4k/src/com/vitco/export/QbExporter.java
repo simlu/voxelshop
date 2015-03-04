@@ -2,6 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.settings.DynamicSettings;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.file.FileOut;
 import com.vitco.util.misc.ByteHelper;
@@ -25,6 +26,11 @@ public class QbExporter extends AbstractExporter {
         useCompression = flag;
     }
 
+    private boolean useBoxAsMatrix = false;
+    public void setUseBoxAsMatrix(boolean useBoxAsMatrix) {
+        this.useBoxAsMatrix = useBoxAsMatrix;
+    }
+
     private static final int CODE_FLAG = 2;
     private static final int NEXT_SLICE_FLAG = 6;
     private static final int TRANSPARENT_VOXEL = 0x00000000;
@@ -37,6 +43,50 @@ public class QbExporter extends AbstractExporter {
         } else {
             return writeUncompressed();
         }
+    }
+
+    private int[][] get_meta(int layerId) {
+        int[] min, max, size;
+        if (!useBoxAsMatrix) { // determine actual size by using the voxels
+            min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
+            max = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
+            size = new int[]{0, 0, 0};
+            boolean hasVoxel = false;
+            for (Voxel voxel : data.getLayerVoxels(layerId)) {
+                min[0] = Math.min(voxel.x, min[0]);
+                min[1] = Math.min(voxel.y, min[1]);
+                min[2] = Math.min(voxel.z, min[2]);
+                max[0] = Math.max(voxel.x, max[0]);
+                max[1] = Math.max(voxel.y, max[1]);
+                max[2] = Math.max(voxel.z, max[2]);
+                hasVoxel = true;
+            }
+            if (hasVoxel) {
+                size = new int[]{max[0] - min[0] + 1, max[1] - min[1] + 1, max[2] - min[2] + 1};
+            }
+        } else { // use the bounding box as size
+            min = new int[] {
+                    DynamicSettings.VOXEL_PLANE_RANGE_X_NEG + 1,
+                    -DynamicSettings.VOXEL_PLANE_SIZE_Y + 1,
+                    DynamicSettings.VOXEL_PLANE_RANGE_Z_NEG + 1
+            };
+//            System.out.println(min[0] + ", " + min[1] + ", " + min[2]);
+            max = new int[] {
+                    DynamicSettings.VOXEL_PLANE_RANGE_X_POS - 1,
+                    0,
+                    DynamicSettings.VOXEL_PLANE_RANGE_Z_POS - 1
+            };
+//            System.out.println(max[0] + ", " + max[1] + ", " + max[2]);
+            size = new int[]{
+                    DynamicSettings.VOXEL_PLANE_SIZE_X,
+                    DynamicSettings.VOXEL_PLANE_SIZE_Y,
+                    DynamicSettings.VOXEL_PLANE_SIZE_Z
+            };
+//            System.out.println(size[0] + ", " + size[1] + ", " + size[2]);
+        }
+        return new int[][] {
+                min, max, size
+        };
     }
 
     // stone-hearth compatible
@@ -69,23 +119,10 @@ public class QbExporter extends AbstractExporter {
             fileOut.writeByte((byte) layerName.length());
             fileOut.writeASCIIString(layerName);
 
-            // get min and max of layer
-            int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
-            int[] max = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
-            int[] size = new int[]{0, 0, 0};
-            boolean hasVoxel = false;
-            for (Voxel voxel : data.getLayerVoxels(layerId)) {
-                min[0] = Math.min(voxel.x, min[0]);
-                min[1] = Math.min(voxel.y, min[1]);
-                min[2] = Math.min(voxel.z, min[2]);
-                max[0] = Math.max(voxel.x, max[0]);
-                max[1] = Math.max(voxel.y, max[1]);
-                max[2] = Math.max(voxel.z, max[2]);
-                hasVoxel = true;
-            }
-            if (hasVoxel) {
-                size = new int[]{max[0] - min[0] + 1, max[1] - min[1] + 1, max[2] - min[2] + 1};
-            }
+            int[][] meta = get_meta(layerId);
+            int[] min = meta[0];
+            int[] max = meta[1];
+            int[] size = meta[2];
 
             // write size
             fileOut.writeIntRev(size[0]);
@@ -165,23 +202,10 @@ public class QbExporter extends AbstractExporter {
             fileOut.writeByte((byte) layerName.length());
             fileOut.writeASCIIString(layerName);
 
-            // get min and max of layer
-            int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
-            int[] max = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
-            int[] size = new int[]{0, 0, 0};
-            boolean hasVoxel = false;
-            for (Voxel voxel : data.getLayerVoxels(layerId)) {
-                min[0] = Math.min(voxel.x, min[0]);
-                min[1] = Math.min(voxel.y, min[1]);
-                min[2] = Math.min(voxel.z, min[2]);
-                max[0] = Math.max(voxel.x, max[0]);
-                max[1] = Math.max(voxel.y, max[1]);
-                max[2] = Math.max(voxel.z, max[2]);
-                hasVoxel = true;
-            }
-            if (hasVoxel) {
-                size = new int[]{max[0] - min[0] + 1, max[1] - min[1] + 1, max[2] - min[2] + 1};
-            }
+            int[][] meta = get_meta(layerId);
+            int[] min = meta[0];
+            int[] max = meta[1];
+            int[] size = meta[2];
 
             // write size
             fileOut.writeIntRev(size[2]);
