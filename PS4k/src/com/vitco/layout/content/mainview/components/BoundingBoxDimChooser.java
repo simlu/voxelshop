@@ -36,9 +36,9 @@ public abstract class BoundingBoxDimChooser extends JPanel {
         mainPanel.setBackground(VitcoSettings.DEFAULT_BG_COLOR);
 
         // one number box for each dimension
-        final NumberBox bX = new NumberBox(4, 128, X);
-        final NumberBox bY = new NumberBox(4, 128, Y);
-        final NumberBox bZ = new NumberBox(4, 128, Z);
+        final NumberBox bX = new NumberBox(1, 128, X);
+        final NumberBox bY = new NumberBox(1, 128, Y);
+        final NumberBox bZ = new NumberBox(1, 128, Z);
 
         // listen to changes
         bX.addTextChangeListener(new TextChangeListener() {
