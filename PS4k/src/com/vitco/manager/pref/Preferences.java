@@ -1,5 +1,6 @@
 package com.vitco.manager.pref;
 
+import com.vitco.Main;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
@@ -123,12 +124,21 @@ public class Preferences implements PreferencesInterface {
         }
     }
 
+    private static String getUserDataDirectory() {
+        return System.getProperty("user.home") + File.separator + ".voxelshop" + File.separator;
+    }
+
     // var % setter
     private String storageFileName;
     @Override
     public final void setStorageFile(String filename) {
         synchronized (VitcoSettings.SYNC) {
-            storageFileName = filename;
+            if (Main.isDebugMode()) {
+                storageFileName = filename;
+            } else {
+                // use user directory to store configuration
+                storageFileName = getUserDataDirectory() + File.separator + filename;
+            }
         }
     }
 
