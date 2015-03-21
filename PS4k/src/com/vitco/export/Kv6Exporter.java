@@ -84,8 +84,9 @@ public class Kv6Exporter extends AbstractExporter {
         fileOut.writeIntRev(size[2]);
         fileOut.writeIntRev(size[1]);
 
-        // obtain minimum
+        // obtain min and max
         int[] min = getMin();
+        int[] max = getMax();
 
         // write center
         if (useWeightedCenter) {
@@ -95,7 +96,7 @@ public class Kv6Exporter extends AbstractExporter {
             fileOut.writeFloatRev(center[1] - min[1]);
         } else {
             fileOut.writeFloatRev(- min[0]);
-            fileOut.writeFloatRev(- min[2]);
+            fileOut.writeFloatRev(max[2]);
             fileOut.writeFloatRev(- min[1]);
         }
 
