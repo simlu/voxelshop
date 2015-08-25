@@ -460,7 +460,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // option: export with y-up or z-up
         CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis.", false);
         useYup.setInvisibleLookup("collada.type=legacy");
-        useYup.setStrikeThrough(true);
         collada.addComponent(useYup);
 
         // ---------------
