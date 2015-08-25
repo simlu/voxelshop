@@ -35,6 +35,9 @@ public class ExportDataManager extends ProgressReporter {
     // true if holes are removed
     private final boolean removeHoles;
 
+    // false if z axis is up
+    private final boolean useYUP;
+
     // -------------
     // Data Structure that manages the triangles
     private final TexTriangleManager triangleManager = new TexTriangleManager();
@@ -60,7 +63,7 @@ public class ExportDataManager extends ProgressReporter {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, boolean removeHoles, int algorithm) {
+    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP) {
         super(dialog);
 
         // create hull manager that exposes hull information
@@ -76,6 +79,7 @@ public class ExportDataManager extends ProgressReporter {
         this.data = data;
         this.usePadding = usePadding;
         this.removeHoles = removeHoles;
+        this.useYUP = useYUP;
 
         // pre-compute exterior hole if necessary
         if (removeHoles) {
@@ -290,6 +294,10 @@ public class ExportDataManager extends ProgressReporter {
                     texTri.invert(0);
                     texTri.invert(1);
                     texTri.invert(2);
+                    if (useYUP) {
+                        texTri.swap(1, 2);
+                    }
+
 
                     // move one up
                     texTri.move(0.5f,0.5f,0.5f);

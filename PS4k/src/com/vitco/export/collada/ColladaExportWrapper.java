@@ -65,6 +65,12 @@ public class ColladaExportWrapper extends ProgressReporter {
         algorithm = id;
     }
 
+    // setter for Y-UP instead of Z-UP
+    private boolean useYUP = false;
+    public final void setUseYUP(boolean useYUP) {
+        this.useYUP = useYUP;
+    }
+
     // do the exporting
     public final boolean export(Data data, ErrorHandlerInterface errorHandler, File colladaFile) {
         boolean result = true;
@@ -73,8 +79,8 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, removeHoles, algorithm);
-        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), exportDataManager, prefix, objectName);
+        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, removeHoles, algorithm, useYUP);
+        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), exportDataManager, prefix, objectName, useYUP);
 
         setActivity("Writing Data File...", true);
         // write the dae file

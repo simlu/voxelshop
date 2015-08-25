@@ -32,13 +32,13 @@ public class ColladaFileExporter extends ProgressReporter {
     private final String texturePrefix;
 
     // constructor
-    public ColladaFileExporter(ProgressDialog dialog, ExportDataManager exportDataManager, String texturePrefix, String name) {
+    public ColladaFileExporter(ProgressDialog dialog, ExportDataManager exportDataManager, String texturePrefix, String name, boolean useYUP) {
         super(dialog);
         this.exportDataManager = exportDataManager;
         this.texturePrefix = texturePrefix;
         // initialize the xml file
         setActivity("Creating File Data...", true);
-        initXmlFile();
+        initXmlFile(useYUP);
         // create the object in the scene
         setActivity("Creating Objects...", true);
         writeObject(name);
@@ -236,7 +236,7 @@ public class ColladaFileExporter extends ProgressReporter {
     // -----------------------
 
     // initialize the XML file
-    private void initXmlFile() {
+    private void initXmlFile(boolean useYUP) {
         // basic information
         xmlFile.addAttributes("", new String[] {
                 "xmlns=http://www.collada.org/2005/11/COLLADASchema",
@@ -251,7 +251,12 @@ public class ColladaFileExporter extends ProgressReporter {
         xmlFile.addTextContent("modified", now);
         xmlFile.addAttributes("unit", new String[] {"name=meter","meter=1"});
         // blender default (can not be changed since blender ignores it!)
-        xmlFile.addTextContent("up_axis", "Z_UP");
+        if (useYUP) {
+            xmlFile.addTextContent("up_axis", "Y_UP");
+        } else {
+            xmlFile.addTextContent("up_axis", "Z_UP");
+        }
+
 
         // =========================
 

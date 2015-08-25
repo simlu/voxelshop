@@ -457,6 +457,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useBlackOutline.setStrikeThrough(true);
         collada.addComponent(useBlackOutline);
 
+        // option: export with y-up or z-up
+        CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis.", false);
+        useYup.setInvisibleLookup("collada.type=legacy");
+        useYup.setStrikeThrough(true);
+        collada.addComponent(useYup);
+
         // ---------------
 
         // add "render" export
@@ -712,6 +718,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setUseBlackOutline(dialog.is("collada.use_black_edges=true"));
                                     // set the file name (only used if the layers are not used)
                                     colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
+                                    // set the YUP flag (whether to use z-up or y-up)
+                                    colladaExportWrapper.setUseYUP(dialog.is("collada.use_yup=true"));
 
                                     // set the algorithm type
                                     if (dialog.is("collada.type=minimal")) {
