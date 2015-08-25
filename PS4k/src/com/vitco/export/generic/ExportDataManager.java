@@ -296,7 +296,7 @@ public class ExportDataManager extends ProgressReporter {
                     texTri.invert(2);
                     if (useYUP) {
                         texTri.swap(1, 2);
-                        texTri.invert();
+                        texTri.invert(2);
                     }
 
 
