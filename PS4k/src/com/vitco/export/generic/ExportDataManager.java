@@ -2,12 +2,14 @@ package com.vitco.export.generic;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.generic.container.*;
 import com.vitco.low.hull.HullManagerExt;
 import com.vitco.low.triangulate.Grid2TriGreedyOptimal;
 import com.vitco.low.triangulate.Grid2TriNaive;
 import com.vitco.low.triangulate.Grid2TriPolyFast;
 import com.vitco.low.triangulate.util.Grid2PolyHelper;
+import com.vitco.settings.DynamicSettings;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.components.progressbar.ProgressReporter;
 import gnu.trove.list.array.TShortArrayList;
@@ -38,6 +40,12 @@ public class ExportDataManager extends ProgressReporter {
     // false if z axis is up
     private final boolean useYUP;
 
+    // the origin mode
+    private final int originMode;
+
+    // center of this object
+    private final float[] center;
+
     // -------------
     // Data Structure that manages the triangles
     private final TexTriangleManager triangleManager = new TexTriangleManager();
@@ -63,16 +71,34 @@ public class ExportDataManager extends ProgressReporter {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP) {
+    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP, int originMode) {
         super(dialog);
 
         // create hull manager that exposes hull information
         setActivity("Computing Hull...", true);
         Voxel[] voxels = data.getVisibleLayerVoxel();
         HullManagerExt<Voxel> hullManager = new HullManagerExt<Voxel>();
+        int minx = Integer.MAX_VALUE;
+        int maxx = Integer.MIN_VALUE;
+        int miny = Integer.MAX_VALUE;
+        int maxy = Integer.MIN_VALUE;
+        int minz = Integer.MAX_VALUE;
+        int maxz = Integer.MIN_VALUE;
+
         for (Voxel voxel : voxels) {
             hullManager.update(voxel.posId, voxel);
+            minx = Math.min(minx, voxel.x);
+            maxx = Math.max(maxx, voxel.x);
+            miny = Math.min(miny, voxel.y);
+            maxy = Math.max(maxy, voxel.y);
+            minz = Math.min(minz, voxel.z);
+            maxz = Math.max(maxz, voxel.z);
         }
+        center = new float[] {
+            (minx + maxx) / 2f,
+            (miny + maxy) / 2f,
+            (minz + maxz) / 2f
+        };
 
         // store references
         this.hullManager = hullManager;
@@ -80,6 +106,7 @@ public class ExportDataManager extends ProgressReporter {
         this.usePadding = usePadding;
         this.removeHoles = removeHoles;
         this.useYUP = useYUP;
+        this.originMode = originMode;
 
         // pre-compute exterior hole if necessary
         if (removeHoles) {
@@ -299,9 +326,25 @@ public class ExportDataManager extends ProgressReporter {
                         texTri.invert(2);
                     }
 
-
-                    // move one up
-                    texTri.move(0.5f,0.5f,0.5f);
+                    if (this.originMode == ColladaExportWrapper.ORIGIN_CROSS) {
+                        texTri.move(0.5f, 0.5f, -0.5f); // move one up
+                    } else if (this.originMode == ColladaExportWrapper.ORIGIN_CENTER) {
+                        texTri.move(center[0] + 0.5f, center[1] + 0.5f, -center[2] - 0.5f);
+                    } else if (this.originMode == ColladaExportWrapper.ORIGIN_PLANE_CENTER) {
+                        texTri.move(center[0] + 0.5f, 1f, -center[2] - 0.5f);
+                    } else if (this.originMode == ColladaExportWrapper.ORIGIN_BOX_CENTER) {
+                        texTri.move(
+                            DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? 0f : 0.5f,
+                            1f - DynamicSettings.VOXEL_PLANE_RANGE_Y,
+                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : -0.5f
+                        );
+                    } else if (this.originMode == ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER) {
+                        texTri.move(
+                            DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? 0f : 0.5f,
+                            1f,
+                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : -0.5f
+                        );
+                    }
 
                     // scale to create integers
                     texTri.scale(2);

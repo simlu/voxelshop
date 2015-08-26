@@ -71,6 +71,18 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.useYUP = useYUP;
     }
 
+    // the origin mode
+    public static final int ORIGIN_CROSS = 0;
+    public static final int ORIGIN_CENTER = 1;
+    public static final int ORIGIN_PLANE_CENTER = 2;
+    public static final int ORIGIN_BOX_CENTER = 3;
+    public static final int ORIGIN_BOX_PLANE_CENTER = 4;
+    // setter for origin mode
+    private int originMode = ORIGIN_CROSS;
+    public final void setOriginMode(int originMode) {
+        this.originMode = originMode;
+    }
+
     // do the exporting
     public final boolean export(Data data, ErrorHandlerInterface errorHandler, File colladaFile) {
         boolean result = true;
@@ -79,7 +91,7 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, removeHoles, algorithm, useYUP);
+        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, removeHoles, algorithm, useYUP, originMode);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), exportDataManager, prefix, objectName, useYUP);
 
         setActivity("Writing Data File...", true);

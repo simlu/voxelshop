@@ -462,6 +462,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useYup.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(useYup);
 
+        collada.addComponent(new LabelModule("Select Origin Mode:"));
+        collada.addComponent(new ComboBoxModule("origin_mode", new String[][] {
+                new String[] {"cross", "Use Cross"},
+                new String[] {"center", "Use Object Center"},
+                new String[] {"plane_center", "Use Object Center Projected onto Plane"},
+                new String[] {"box_center", "Use Bounding Box Center"},
+                new String[] {"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
+        }, 0));
+
         // ---------------
 
         // add "render" export
@@ -719,6 +728,19 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
                                     // set the YUP flag (whether to use z-up or y-up)
                                     colladaExportWrapper.setUseYUP(dialog.is("collada.use_yup=true"));
+
+                                    // set the center mode
+                                    if (dialog.is("collada.origin_mode=cross")) {
+                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CROSS);
+                                    } else if (dialog.is("collada.origin_mode=center")) {
+                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CENTER);
+                                    } else if (dialog.is("collada.origin_mode=plane_center")) {
+                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_PLANE_CENTER);
+                                    } else if (dialog.is("collada.origin_mode=box_center")) {
+                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_CENTER);
+                                    } else if (dialog.is("collada.origin_mode=box_plane_center")) {
+                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER);
+                                    }
 
                                     // set the algorithm type
                                     if (dialog.is("collada.type=minimal")) {
