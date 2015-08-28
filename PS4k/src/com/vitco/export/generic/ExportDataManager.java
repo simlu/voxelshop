@@ -321,29 +321,30 @@ public class ExportDataManager extends ProgressReporter {
                     texTri.invert(0);
                     texTri.invert(1);
                     texTri.invert(2);
-                    if (useYUP) {
-                        texTri.swap(1, 2);
-                        texTri.invert(2);
-                    }
 
                     if (this.originMode == ColladaExportWrapper.ORIGIN_CROSS) {
-                        texTri.move(0.5f, 0.5f, -0.5f); // move one up
+                        texTri.move(0.5f, 0.5f, 0.5f); // move one up
                     } else if (this.originMode == ColladaExportWrapper.ORIGIN_CENTER) {
-                        texTri.move(center[0] + 0.5f, center[1] + 0.5f, -center[2] - 0.5f);
+                        texTri.move(center[0] + 0.5f, center[2] + 0.5f, center[1] + 0.5f);
                     } else if (this.originMode == ColladaExportWrapper.ORIGIN_PLANE_CENTER) {
-                        texTri.move(center[0] + 0.5f, 1f, -center[2] - 0.5f);
+                        texTri.move(center[0] + 0.5f, center[2] + 0.5f, 1f);
                     } else if (this.originMode == ColladaExportWrapper.ORIGIN_BOX_CENTER) {
                         texTri.move(
                             DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? 0f : 0.5f,
-                            1f - DynamicSettings.VOXEL_PLANE_RANGE_Y,
-                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : -0.5f
+                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : 0.5f,
+                            1f - DynamicSettings.VOXEL_PLANE_RANGE_Y
                         );
                     } else if (this.originMode == ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER) {
                         texTri.move(
                             DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? 0f : 0.5f,
-                            1f,
-                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : -0.5f
+                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : 0.5f,
+                            1f
                         );
+                    }
+
+                    if (useYUP) {
+                        texTri.swap(1, 2);
+                        texTri.invert(2);
                     }
 
                     // scale to create integers
