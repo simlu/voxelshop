@@ -28,6 +28,21 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         this.actionManager = actionManager;
     }
 
+    private void setMaximized(Frame frame, boolean state) {
+        if (state) {
+            Rectangle maxBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+            frame.setMaximizedBounds(maxBounds);
+            frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
+        } else {
+            frame.setExtendedState(JFrame.NORMAL);
+        }
+    }
+
+    private boolean isMaximized(Frame frame) {
+        int state = frame.getExtendedState();
+        return (state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+    }
+
     @Override
     public CommandMenuBar buildBar(String key, final Frame frame) {
         final CommandMenuBar bar = new CommandMenuBar(key);
@@ -58,13 +73,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         maximize.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int state = frame.getExtendedState();
-                if((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
-                    frame.setExtendedState(JFrame.NORMAL);
-                }
-                else {
-                    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                }
+                setMaximized(frame, !isMaximized(frame));
             }
         });
         panel.add(maximize, BorderLayout.CENTER);
@@ -102,7 +111,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         frame.addComponentListener(
                 new ComponentAdapter() {
                     public void componentResized(ComponentEvent e) {
-                        if (frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+                        if (isMaximized(frame)) {
                             ((JFrame)frame).getRootPane().setBorder(BorderFactory.createEmptyBorder());
                             maximized = true;
                         } else {
@@ -352,19 +361,15 @@ public class MainMenuLinkage extends BarLinkagePrototype {
         public void mouseReleased(MouseEvent e) {
             // change maximized state on dbl click
             if (e.getClickCount()%2 == 0) {
-                if ((frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
-                    frame.setExtendedState(JFrame.NORMAL);
-                } else {
-                    frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
-                }
+                setMaximized(frame, !isMaximized(frame));
             }
         }
 
         // update frame
         public void mouseDragged(MouseEvent e) {
             // no longer maximised
-            if ((frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
-                frame.setExtendedState(JFrame.NORMAL);
+            if (isMaximized(frame)) {
+                setMaximized(frame, false);
             }
             // update position
             Point current = this.getScreenLocation(e);
