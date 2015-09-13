@@ -38,7 +38,7 @@ public class VoxVoxLapExporter extends AbstractExporter {
         int[] max = getMax();
 
         // current position in palette
-        Byte count = 1;  // color 0 is reserved for background color in slab6
+        Byte count = 0;
         BiMap<Color, Byte> palette = new BiMap<Color, Byte>();
 
         // write the voxel data
@@ -55,7 +55,7 @@ public class VoxVoxLapExporter extends AbstractExporter {
                             palette.put(color, count);
                             id = count;
                             if (id > 254) { // color 255 is reserved for empty block
-                                console.addLine("Error: More than 253 colors not allowed for selected format.");
+                                console.addLine("Error: More than 254 colors not allowed for selected format.");
                                 return false;
                             }
                             count++;
