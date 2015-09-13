@@ -3,6 +3,7 @@ package com.vitco.export.collada;
 import com.vitco.Main;
 import com.vitco.core.data.Data;
 import com.vitco.export.generic.ExportDataManager;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.components.progressbar.ProgressReporter;
@@ -21,8 +22,8 @@ public class ColladaExportWrapper extends ProgressReporter {
     private String objectName = "modelTEX";
 
     // constructor
-    public ColladaExportWrapper(ProgressDialog dialog) {
-        super(dialog);
+    public ColladaExportWrapper(ProgressDialog dialog, ConsoleInterface console) {
+        super(dialog, console);
     }
 
     public void setObjectName(String objectName) {
@@ -91,8 +92,8 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), data, padTextures, removeHoles, algorithm, useYUP, originMode);
-        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), exportDataManager, prefix, objectName, useYUP);
+        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode);
+        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP);
 
         setActivity("Writing Data File...", true);
         // write the dae file

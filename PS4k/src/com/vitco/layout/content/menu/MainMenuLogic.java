@@ -4,10 +4,7 @@ import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.core.data.container.Voxel;
-import com.vitco.export.Kv6Exporter;
-import com.vitco.export.PnxExporter;
-import com.vitco.export.QbExporter;
-import com.vitco.export.VoxGameExporter;
+import com.vitco.export.*;
 import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.collada.ColladaFile;
 import com.vitco.export.generic.ExportDataManager;
@@ -508,6 +505,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // ---------------
 
+        // add "vox (voxlap)" exporter
+        FieldSet voxVoxLapExporter = new FieldSet("voxlap_format", "VoxLap Format (*.vox)");
+
+        // ---------------
+
         // add "pnx" exporter
         FieldSet pnxExporter = new FieldSet("pnx_format", "Pnx Format (*.pnx)");
 
@@ -548,7 +550,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // add all formats
         dialog.addComboBox("export_type", new FieldSet[] {
-                collada, voxExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
+                collada, voxExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
         }, 0);
 
         // ---------------
@@ -712,7 +714,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 @Override
                                 protected Object doInBackground() throws Exception {
 
-                                    ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper(progressDialog);
+                                    ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper(progressDialog, console);
 
                                     // set the "use layers" flag
                                     colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
@@ -798,7 +800,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                    VoxGameExporter exporter = new VoxGameExporter(exportTo, data, progressDialog);
+                                    VoxGameExporter exporter = new VoxGameExporter(exportTo, data, progressDialog, console);
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
@@ -846,8 +848,56 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                    Kv6Exporter exporter = new Kv6Exporter(exportTo, data, progressDialog);
+                                    Kv6Exporter exporter = new Kv6Exporter(exportTo, data, progressDialog, console);
                                     exporter.setUseWeightedCenter(dialog.is("kv6_format.use_weighted_center=true"));
+                                    success = exporter.writeData();
+                                } catch (IOException ignored) {
+                                    success = false;
+                                }
+                                if (success) {
+                                    console.addLine(
+                                            String.format(langSelector.getString("export_file_successful"),
+                                                    System.currentTimeMillis() - time)
+                                    );
+                                } else {
+                                    console.addLine(langSelector.getString("export_file_error"));
+                                }
+
+                                return null;
+                            }
+                        });
+
+                        // ===========
+                    } else if (dialog.is("export_type=voxlap_format")) {
+
+                        // ===========
+                        // -- handle vox voxlap file format
+
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+
+                        // do the exporting
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // extract file name
+                                final File exportTo = new File(baseName + (baseName.endsWith(".vox") ? "" : ".vox"));
+                                // check if file exists
+                                if (exportTo.exists()) {
+                                    if (JOptionPane.showConfirmDialog(frame,
+                                            exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                        return false;
+                                    }
+                                }
+
+                                // export vox voxlap format
+                                boolean success;
+                                long time = System.currentTimeMillis();
+                                try {
+                                    VoxVoxLapExporter exporter = new VoxVoxLapExporter(exportTo, data, progressDialog, console);
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
@@ -895,7 +945,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                    PnxExporter exporter = new PnxExporter(exportTo, data, progressDialog);
+                                    PnxExporter exporter = new PnxExporter(exportTo, data, progressDialog, console);
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
@@ -943,7 +993,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                    QbExporter exporter = new QbExporter(exportTo, data, progressDialog);
+                                    QbExporter exporter = new QbExporter(exportTo, data, progressDialog, console);
                                     exporter.setUseCompression(dialog.is("qb_format.use_compression=true"));
                                     exporter.setUseBoxAsMatrix(dialog.is("qb_format.use_box_as_matrix=true"));
                                     success = exporter.writeData();

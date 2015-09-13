@@ -2,7 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.importer.AbstractImporter;
-import com.vitco.importer.QbImporter;
+import com.vitco.importer.VoxImporter;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import org.junit.Test;
 
@@ -15,14 +15,14 @@ import java.io.File;
 
 public class ExporterTest {
 
-    private final static String input_file = "C:\\Users\\flux\\Desktop\\untitled.qb";
-    private final static String output_file = "C:\\Users\\flux\\Desktop\\untitled_out.qb";
+    private final static String input_file = "C:\\Users\\flux\\Desktop\\Troll_VOX\\troll_armright.vox";
+    private final static String output_file = "C:\\Users\\flux\\Desktop\\Troll_VOX\\troll_armright_export.vox";
 
     @Test
-    public void testQBExporter() throws Exception {
+    public void testVoxExporter() throws Exception {
         Data data = new Data();
         data.deleteLayer(data.getLayers()[0]);
-        AbstractImporter importer = new QbImporter(new File(input_file), "Import");
+        AbstractImporter importer = new VoxImporter(new File(input_file), "Import");
         if (importer.hasLoaded()) {
             System.out.println("Loading finished.");
         }
@@ -37,11 +37,10 @@ public class ExporterTest {
             }
         }
 
-        QbExporter exporter = new QbExporter(new File(output_file), data, new ProgressDialog(null));
-        exporter.setUseCompression(false);
+        VoxVoxLapExporter exporter = new VoxVoxLapExporter(new File(output_file), data, new ProgressDialog(null), null);
         exporter.writeData();
 
-        new QbImporter(new File(output_file), "Import");
+        new VoxImporter(new File(output_file), "Import");
     }
 
 }

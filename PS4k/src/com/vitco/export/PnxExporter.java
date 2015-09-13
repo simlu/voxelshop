@@ -2,6 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.file.FileOut;
 import com.vitco.util.graphic.GraphicTools;
@@ -20,8 +21,8 @@ import java.util.HashMap;
 public class PnxExporter extends AbstractExporter {
 
     // constructor
-    public PnxExporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
-        super(exportTo, data, dialog);
+    public PnxExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
+        super(exportTo, data, dialog, console);
     }
 
     // write the file

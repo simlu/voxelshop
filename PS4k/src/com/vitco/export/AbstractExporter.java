@@ -2,6 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.components.progressbar.ProgressReporter;
 import com.vitco.util.file.FileOut;
@@ -31,8 +32,8 @@ public abstract class AbstractExporter extends ProgressReporter {
     private float count = 0;
 
     // constructor
-    public AbstractExporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
-        super(dialog);
+    public AbstractExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
+        super(dialog, console);
         this.exportTo = exportTo;
         this.data = data;
 

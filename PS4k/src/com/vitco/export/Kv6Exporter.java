@@ -3,6 +3,7 @@ package com.vitco.export;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.dataStatic.Kv6Static;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.low.CubeIndexer;
 import com.vitco.low.hull.HullManager;
 import com.vitco.util.components.progressbar.ProgressDialog;
@@ -24,8 +25,8 @@ import java.util.Comparator;
 public class Kv6Exporter extends AbstractExporter {
 
     // constructor
-    public Kv6Exporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
-        super(exportTo, data, dialog);
+    public Kv6Exporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
+        super(exportTo, data, dialog, console);
     }
 
     // decide whether to use weighted center or origin (default)

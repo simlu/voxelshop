@@ -173,7 +173,7 @@ public class VoxImporter extends AbstractImporter {
                         int paletteEntry = fileIn.readByteUnsigned();
                         if (paletteEntry != 255) {
                             //noinspection SuspiciousNameCombination
-                            addVoxel(y, z, x, colPalette[paletteEntry]);
+                            addVoxel(x, z, -y, colPalette[paletteEntry]);
                         }
                     }
                 }

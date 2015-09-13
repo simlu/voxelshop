@@ -2,6 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.settings.DynamicSettings;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.file.FileOut;
@@ -16,8 +17,8 @@ import java.io.IOException;
 public class QbExporter extends AbstractExporter {
 
     // constructor
-    public QbExporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
-        super(exportTo, data, dialog);
+    public QbExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
+        super(exportTo, data, dialog, console);
     }
 
     // decide whether to use weighted center or origin (default)

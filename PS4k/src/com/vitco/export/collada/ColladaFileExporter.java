@@ -4,6 +4,7 @@ import com.vitco.export.generic.ExportDataManager;
 import com.vitco.export.generic.container.TexTriangleManager;
 import com.vitco.export.generic.container.TriTexture;
 import com.vitco.export.generic.container.TriTextureManager;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.components.progressbar.ProgressDialog;
@@ -32,8 +33,8 @@ public class ColladaFileExporter extends ProgressReporter {
     private final String texturePrefix;
 
     // constructor
-    public ColladaFileExporter(ProgressDialog dialog, ExportDataManager exportDataManager, String texturePrefix, String name, boolean useYUP) {
-        super(dialog);
+    public ColladaFileExporter(ProgressDialog dialog, ConsoleInterface console, ExportDataManager exportDataManager, String texturePrefix, String name, boolean useYUP) {
+        super(dialog, console);
         this.exportDataManager = exportDataManager;
         this.texturePrefix = texturePrefix;
         // initialize the xml file

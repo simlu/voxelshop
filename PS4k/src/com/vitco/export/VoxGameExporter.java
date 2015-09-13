@@ -2,6 +2,7 @@ package com.vitco.export;
 
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.util.components.progressbar.ProgressDialog;
 
 import java.awt.*;
@@ -18,8 +19,8 @@ import java.util.Locale;
 public class VoxGameExporter extends AbstractExporter {
 
     // constructor
-    public VoxGameExporter(File exportTo, Data data, ProgressDialog dialog) throws IOException {
-        super(exportTo, data, dialog);
+    public VoxGameExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
+        super(exportTo, data, dialog, console);
     }
 
     // write the file

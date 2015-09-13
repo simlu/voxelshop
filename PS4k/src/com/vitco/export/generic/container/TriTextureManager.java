@@ -1,5 +1,6 @@
 package com.vitco.export.generic.container;
 
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.components.progressbar.ProgressReporter;
 
@@ -25,8 +26,8 @@ public class TriTextureManager extends ProgressReporter {
     private boolean outdated = false;
 
     // constructor
-    public TriTextureManager(ProgressDialog dialog) {
-        super(dialog);
+    public TriTextureManager(ProgressDialog dialog, ConsoleInterface console) {
+        super(dialog, console);
     }
 
     // invalidate the texture list

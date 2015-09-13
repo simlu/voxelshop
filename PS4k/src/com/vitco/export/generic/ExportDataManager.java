@@ -4,6 +4,7 @@ import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.collada.ColladaExportWrapper;
 import com.vitco.export.generic.container.*;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.low.hull.HullManagerExt;
 import com.vitco.low.triangulate.Grid2TriGreedyOptimal;
 import com.vitco.low.triangulate.Grid2TriNaive;
@@ -56,7 +57,7 @@ public class ExportDataManager extends ProgressReporter {
     }
 
     // Data Structure that manages the textures
-    private final TriTextureManager textureManager = new TriTextureManager(getProgressDialog());
+    private final TriTextureManager textureManager = new TriTextureManager(getProgressDialog(), getConsole());
 
     // getter for the texture manager
     public final TriTextureManager getTextureManager() {
@@ -71,8 +72,8 @@ public class ExportDataManager extends ProgressReporter {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(ProgressDialog dialog, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP, int originMode) {
-        super(dialog);
+    public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP, int originMode) {
+        super(dialog, console);
 
         // create hull manager that exposes hull information
         setActivity("Computing Hull...", true);
