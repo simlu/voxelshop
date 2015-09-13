@@ -21,6 +21,16 @@ public class MainMenuLinkage extends BarLinkagePrototype {
     // true if the frame is currently maximized
     private boolean maximized = false;
 
+    // fullscreen button
+    private JideButton fullscreenButton;
+
+    private final Icon enable_fullscreen = new SaveResourceLoader(
+            "resource/img/icons/application/enable_fullscreen.png"
+    ).asIconImage();
+    private final Icon disable_fullscreen = new SaveResourceLoader(
+            "resource/img/icons/application/disable_fullscreen.png"
+    ).asIconImage();
+
     // var & setter
     private ActionManager actionManager;
     @Autowired
@@ -88,17 +98,15 @@ public class MainMenuLinkage extends BarLinkagePrototype {
             }
         });
         panel.add(minimize, BorderLayout.WEST);
-        JideButton maximize = new JideButton(new SaveResourceLoader(
-                "resource/img/icons/application/maximize.png"
-        ).asIconImage());
-        maximize.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-        maximize.addActionListener(new AbstractAction() {
+        fullscreenButton = new JideButton();
+        fullscreenButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        fullscreenButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setMaximized(frame, !isMaximized(frame));
             }
         });
-        panel.add(maximize, BorderLayout.CENTER);
+        panel.add(fullscreenButton, BorderLayout.CENTER);
         JideButton close = new JideButton(new SaveResourceLoader(
                 "resource/img/icons/application/close.png"
         ).asIconImage());
@@ -135,9 +143,11 @@ public class MainMenuLinkage extends BarLinkagePrototype {
                     public void componentResized(ComponentEvent e) {
                         if (isMaximized(frame)) {
                             ((JFrame)frame).getRootPane().setBorder(BorderFactory.createEmptyBorder());
+                            fullscreenButton.setIcon(disable_fullscreen);
                             maximized = true;
                         } else {
                             ((JFrame)frame).getRootPane().setBorder(VitcoSettings.FRAME_BORDER);
+                            fullscreenButton.setIcon(enable_fullscreen);
                             maximized = false;
                         }
                     }
