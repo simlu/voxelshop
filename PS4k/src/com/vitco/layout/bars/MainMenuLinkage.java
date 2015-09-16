@@ -41,7 +41,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
     private void setMaximized(Frame frame, boolean state) {
         if (state) {
             // find out which screen we have the most overlap
-            Rectangle restrictTo = null;
+            Rectangle maximizedBounds = null;
             int overlap = -1;
             Rectangle frameBounds = frame.getBounds();
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -49,21 +49,21 @@ public class MainMenuLinkage extends BarLinkagePrototype {
                 GraphicsConfiguration defaultConfiguration = gd.getDefaultConfiguration();
                 Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(defaultConfiguration);
                 Rectangle usableScreenArea = defaultConfiguration.getBounds();
-                Rectangle withoutTaskBar = new Rectangle(
-                        usableScreenArea.x + screenInsets.left,
-                        usableScreenArea.y + screenInsets.top,
-                        usableScreenArea.width - (screenInsets.left + screenInsets.right),
-                        usableScreenArea.height - (screenInsets.top + screenInsets.bottom)
+                Rectangle withoutTaskBarOnScreen = new Rectangle(
+                        screenInsets.left,
+                        screenInsets.top,
+                        usableScreenArea.width - screenInsets.right,
+                        usableScreenArea.height - screenInsets.bottom
                 );
                 Rectangle overlapRect = usableScreenArea.intersection(frameBounds);
                 int cOverlap = overlapRect.width * overlapRect.height;
                 if (overlap < cOverlap) {
-                    restrictTo = withoutTaskBar;
+                    maximizedBounds = withoutTaskBarOnScreen;
                     overlap = cOverlap;
                 }
             }
-            // restrict maximize to that screen
-            frame.setMaximizedBounds(restrictTo);
+            // restrict maximize to that screen (coordinates on the particular screen!)
+            frame.setMaximizedBounds(maximizedBounds);
             frame.setExtendedState(frame.getExtendedState()|JFrame.MAXIMIZED_BOTH);
         } else {
             frame.setExtendedState(JFrame.NORMAL);
