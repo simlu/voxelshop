@@ -345,6 +345,24 @@ public class TriTexture {
         }
     }
 
+    // alternative constructor that forces power of two texture
+    public TriTexture(TriTexture tex, TriTextureManager textureManager) {
+        // set final variables
+        this.textureManager = textureManager;
+        // has no corresponding triangle
+        this.hasTriangle = false;
+
+        int powOfTwoDim = (int)Math.pow(2, Math.ceil(Math.log(Math.max(tex.width, tex.height) + 2)/Math.log(2)));
+        this.width = powOfTwoDim;
+        this.height = powOfTwoDim;
+
+        pixels.putAll(tex.pixels);
+        imageComparator = new ImageComparator(pixels.valueCollection());
+        // make child
+        this.makeChild(tex);
+        assert tex.hasParent();
+    }
+
     // alternative constructor that merges two textures
     public TriTexture(TriTexture one, TriTexture two, TriTextureManager textureManager) {
         assert !one.hasParent();

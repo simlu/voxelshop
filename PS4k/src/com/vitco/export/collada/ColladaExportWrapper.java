@@ -60,6 +60,12 @@ public class ColladaExportWrapper extends ProgressReporter {
         useBlackOutline = state;
     }
 
+    // true if textures are forced to be power of two dimensions
+    private boolean forcePOT = false;
+    public final void setForcePOT(boolean state) {
+        forcePOT = state;
+    }
+
     // setter for algorithm that is used
     private int algorithm = ExportDataManager.POLY2TRI_ALGORITHM;
     public final void setAlgorithm(int id) {
@@ -92,7 +98,7 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode);
+        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP);
 
         setActivity("Writing Data File...", true);

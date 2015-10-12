@@ -72,7 +72,7 @@ public class ExportDataManager extends ProgressReporter {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP, int originMode) {
+    public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP, int originMode, boolean forcePOT) {
         super(dialog, console);
 
         // create hull manager that exposes hull information
@@ -119,6 +119,10 @@ public class ExportDataManager extends ProgressReporter {
 
         // combine the textures
         textureManager.combine();
+
+        if (forcePOT) { // make textures power of two
+            textureManager.resizeToPowOfTwo();
+        }
 
         // validate uv mappings
         setActivity("Validating UV Mappings...", true);

@@ -84,6 +84,15 @@ public class TriTextureManager extends ProgressReporter {
 
     // ########################
 
+    // pad textures to the next power of two size
+    public final void resizeToPowOfTwo() {
+        for (TriTexture tex : new ArrayList<TriTexture>(this.textures)) {
+            if (!tex.hasParent()) {
+                addTexture(new TriTexture(tex, this));
+            }
+        }
+    }
+
     // combine the textures in this manager
     public final void combine() {
         // -- find textures that are "inside" other textures

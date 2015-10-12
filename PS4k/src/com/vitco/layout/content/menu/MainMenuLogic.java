@@ -436,7 +436,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         collada.addComponent(layersAsObjects);
 
         // option: make texture edges save (pad textures)
-        CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", false);
+        CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", true);
         padTextures.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(padTextures);
 
@@ -453,6 +453,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useBlackOutline.setVisibleLookup("collada.use_vertex_coloring=false");
         useBlackOutline.setStrikeThrough(true);
         collada.addComponent(useBlackOutline);
+
+        // option: force power of two textures
+        CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
+        forcePOT.setInvisibleLookup("collada.type=legacy");
+        forcePOT.setVisibleLookup("collada.use_vertex_coloring=false");
+        collada.addComponent(forcePOT);
 
         // option: export with y-up or z-up
         CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis.", false);
@@ -726,6 +732,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setUseColoredVertices(dialog.is("collada.use_vertex_coloring=true"));
                                     // set use black outline
                                     colladaExportWrapper.setUseBlackOutline(dialog.is("collada.use_black_edges=true"));
+                                    // set force power of two force textures
+                                    colladaExportWrapper.setForcePOT(dialog.is("collada.force_pot=true"));
                                     // set the file name (only used if the layers are not used)
                                     colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
                                     // set the YUP flag (whether to use z-up or y-up)
