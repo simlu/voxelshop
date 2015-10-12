@@ -258,7 +258,12 @@ public abstract class AbstractDrawContainer extends JPanel {
             new SimpleVector(0.5, 0, 0.5), new SimpleVector(0.5, 0, -0.5),
             new SimpleVector(0.5, -1, -0.5), new SimpleVector(0.5, -1, 0.5),
             new SimpleVector(-0.5, 0, 0.5), new SimpleVector(-0.5, 0, -0.5),
-            new SimpleVector(-0.5, -1, -0.5), new SimpleVector(-0.5, -1, 0.5)
+            new SimpleVector(-0.5, -1, -0.5), new SimpleVector(-0.5, -1, 0.5),
+
+            // center points for bounding box
+            new SimpleVector(-0.5, -0.5, 0), new SimpleVector(0.5, -0.5, 0),
+            new SimpleVector(0, -1, 0), new SimpleVector(0, 0, 0),
+            new SimpleVector(0, -0.5, -0.5), new SimpleVector(0, -0.5, 0.5)
     };
     public static SimpleVector getVectorsStatic(int i) {
         return new SimpleVector(vectorsStatic[i]);

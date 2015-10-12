@@ -692,7 +692,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
             // draw the bounding box in 3D view
             default: {
                 // get an instance that we can modify
-                SimpleVector[] vectors = new SimpleVector[8];
+                SimpleVector[] vectors = new SimpleVector[14];
 
                 boolean valid = true;
                 for (int i = 0; i < vectors.length; i++) {
@@ -732,6 +732,13 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                         drawFadingLine(gr, vectors, i, (i + 1) % 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
                         drawFadingLine(gr, vectors, i + 4, (i + 1) % 4 + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
                         drawFadingLine(gr, vectors, i, i + 4, VitcoSettings.BOUNDING_BOX_COLOR, distance, zRange);
+                    }
+
+                    // draw center dots for bounding box
+                    gr.setColor(Color.WHITE);
+                    gr.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // line size
+                    for (int i = 0; i < 6; i++) {
+                        gr.drawLine(Math.round(vectors[8+i].x), Math.round(vectors[8+i].y), Math.round(vectors[8+i].x), Math.round(vectors[8+i].y));
                     }
                 }
             }
