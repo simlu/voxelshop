@@ -12,13 +12,12 @@ import java.net.URL;
 public class SaveResourceLoader {
     private final String resourceName;
     private final URL resource;
+    public final boolean error;
 
     public SaveResourceLoader(String resourceName) {
         this.resourceName = resourceName;
         resource = ClassLoader.getSystemResource(resourceName);
-        if (resource == null) {
-            System.err.println("Resource \"" + resourceName + "\" is undefined.");
-        }
+        error = resource == null;
     }
 
     public Image asImage() {
@@ -41,5 +40,14 @@ public class SaveResourceLoader {
             System.err.println("Resource \"" + resourceName + "\" is undefined.");
         }
         return stream;
+    }
+
+    public String asString() {
+        java.util.Scanner s = new java.util.Scanner(asInputStream()).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+    public String[] asLines() {
+        return asString().split("\n");
     }
 }

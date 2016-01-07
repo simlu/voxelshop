@@ -6,6 +6,7 @@ import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.error.ErrorHandler;
 import com.vitco.manager.pref.Preferences;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.SaveResourceLoader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -43,7 +44,13 @@ public class Main {
         }
 
         // the JIDE license
-        com.jidesoft.utils.Lm.verifyLicense("Pixelated Games", "PS4K", "__JIDE_PASSWORD__");
+        SaveResourceLoader saveResourceLoader = new SaveResourceLoader("resource/jidelicense.txt");
+        if (!saveResourceLoader.error) {
+            String[] jidelicense = saveResourceLoader.asLines();
+            if (jidelicense.length == 3) {
+                com.jidesoft.utils.Lm.verifyLicense(jidelicense[0], jidelicense[1], jidelicense[2]);
+            }
+        }
 
         // check if we are in debug mode
         if ((args.length > 0) && args[0].equals("debug")) {
