@@ -1,11 +1,9 @@
-PS4k.iml
 VoxelShop.log
 VoxelShop.prj
 build_VoxelShop.bat
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries
-*.iml
 out
 VoxelShop_jetpdb
 settings
