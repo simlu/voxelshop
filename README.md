@@ -13,7 +13,8 @@ This README would normally document whatever steps are necessary to get your app
 * Install GIT
 * Install IntelliJ
 * Open Terminal and go to project location. Type:
-> ~~~~
+> 
+~~~~
 > git init
 > git remote add origin [FORK_HTTPS_URL]
 > git pull origin master
