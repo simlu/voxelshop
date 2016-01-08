@@ -9,7 +9,7 @@ This README would normally document whatever steps are necessary to get your app
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### Required Tools###
-Git and IntelliJ
+Git, IntelliJ and JDK7
 
 ### Git ###
 Fork the git repository, open a terminal, go to the desired project location and type:
@@ -21,8 +21,12 @@ Fork the git repository, open a terminal, go to the desired project location and
 then enter your password and wait until command completes
 
 ### IntelliJ ###
-
-...
+- Click "Import Project"
+- Select the PS4k folder and Create project from existing sources
+- When prompted for SDK select the SDK7 that you installed
+- Once the program is loaded enable version control under "VCS"
+- Right click on PS4k/src/com/vitco/Main and click "Run"
+- When prompted with errors got to missing junit
 
 ### How do I get set up? ###
 
