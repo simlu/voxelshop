@@ -8,11 +8,12 @@ This README would normally document whatever steps are necessary to get your app
 * Version
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### Getting started ###
-* Fork Repository
+### Tools ###
 * Install GIT
 * Install IntelliJ
-* Open Terminal and go to project location. Type:
+
+### Git ###
+Fork the git repository, open a terminal, go to the desired project location and type:
 ~~~~
 > git init
 > git remote add origin [FORK_HTTPS_URL]
@@ -20,6 +21,9 @@ This README would normally document whatever steps are necessary to get your app
 ~~~~
 then enter your password and wait until command completes
 
+### IntelliJ ###
+
+...
 
 ### How do I get set up? ###
 
