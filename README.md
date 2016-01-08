@@ -22,7 +22,7 @@ then enter your password and wait until command completes
 ### IntelliJ ###
 - Click Open and select PS4k Folder (within the folder you selected as root)
 - Ensure the jdk6 is selected under File > Project Structure > Project
-- Right click on PS4k > src > com vitco > Main and "Run" to start VoxelShop
+- Right click on PS4k > src > com > vitco > Main and "Run" to start VoxelShop
 
 ### Build Distributable ###
 - Click Build > Build Artifacts > All Artifacts
