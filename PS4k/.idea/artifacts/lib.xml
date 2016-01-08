@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact name="lib">
+    <output-path>$PROJECT_DIR$/out/artifacts/PS4k_jar/lib</output-path>
+    <root id="root">
+      <element id="library" level="project" name="spring" />
+      <element id="library" level="project" name="apachehttp" />
+      <element id="library" level="project" name="render" />
+      <element id="library" level="project" name="jide" />
+      <element id="library" level="project" name="converter" />
+      <element id="library" level="project" name="misc" />
+    </root>
+  </artifact>
+</component>

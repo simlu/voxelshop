@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PS4k:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PS4k_jar</output-path>
+    <properties id="ant-preprocessing">
+      <options enabled="true" />
+    </properties>
+    <root id="archive" name="main.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="PS4k" />
+      <element id="directory" name="resource">
+        <element id="dir-copy" path="$PROJECT_DIR$/resource" />
+      </element>
+    </root>
+  </artifact>
+</component>
