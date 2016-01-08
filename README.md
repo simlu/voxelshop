@@ -9,7 +9,7 @@ This README would normally document whatever steps are necessary to get your app
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### Required Tools###
-* GIT and IntelliJ
+GIT and IntelliJ
 
 ### Git ###
 Fork the git repository, open a terminal, go to the desired project location and type:
