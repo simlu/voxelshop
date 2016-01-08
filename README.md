@@ -26,7 +26,6 @@ then enter your password and wait until command completes
 - When prompted for SDK select the SDK7 that you installed
 - Once the program is loaded enable version control under "VCS"
 - Right click on PS4k/src/com/vitco/Main and click "Run"
-- When prompted with errors got to missing junit
 
 ### How do I get set up? ###
 
