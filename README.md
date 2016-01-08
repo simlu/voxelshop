@@ -9,7 +9,7 @@ This README would normally document whatever steps are necessary to get your app
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### Required Tools###
-Git, IntelliJ and JDK6
+Git, IntelliJ and JDK6 (e.g. http://downloads.puresoftware.org/files/android/JDK/)
 
 ### Git ###
 Fork the git repository, open a terminal, go to the desired project location and type:
