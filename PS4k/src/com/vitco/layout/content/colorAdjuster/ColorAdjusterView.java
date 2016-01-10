@@ -28,14 +28,16 @@ public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterVie
 
     private final HSBTab hsb = new HSBTab();
 
+    private Integer[] selectedVoxelIds = null;
+
     private boolean active = false;
     private void setActive(boolean flag) {
         if (flag != active) {
             active = flag;
             apply.refresh();
             cancel.refresh();
-            data.setFrozen(flag);
         }
+        data.setFrozen(active);
         if (!active) {
             hsb.setColor(ColorTools.hsbToColor(new float[]{0.5f, 0.5f, 0.5f}));
         }
@@ -66,6 +68,7 @@ public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterVie
         public void action(ActionEvent e) {
             setActive(false);
             data.undoV();
+            data.undoV();
         }
     };
 
@@ -89,16 +92,22 @@ public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterVie
             @Override
             public void colorChanged(float[] hsb) {
                 data.setFrozen(false);
-                if (isActive()) {
+                boolean active = isActive();
+                if (active) { // undo previous color selection
                     data.undoV();
+                } else { // check if voxels are selected, memorize and deselect them
+                    selectedVoxelIds = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
+                    active = selectedVoxelIds.length > 0;
+                    if (active) {
+                        data.massSetVoxelSelected(selectedVoxelIds, false);
+                    }
                 }
-                boolean anyVoxelSelected = data.anyVoxelSelected();
-                if (anyVoxelSelected) {
-                    data.massShiftColor(Voxel.convertVoxelsToIdArray(data.getSelectedVoxels()), new float[]{
+                if (active) { // apply the color shift
+                    data.massShiftColor(selectedVoxelIds, new float[]{
                             hsb[0] * 2 - 1f, hsb[1] * 2 - 1f, hsb[2] * 2 - 1f
                     });
                 }
-                setActive(anyVoxelSelected);
+                setActive(active);
             }
         });
         wrapper.add(hsb, BorderLayout.CENTER);
