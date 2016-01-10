@@ -5,13 +5,13 @@ import com.vitco.core.data.container.Voxel;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
 import com.vitco.layout.content.colorchooser.components.colorslider.HSBTab;
 import com.vitco.manager.lang.LangSelectorInterface;
+import com.vitco.settings.VitcoSettings;
+import com.vitco.util.components.button.FrameButton;
 import com.vitco.util.misc.ColorTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * Content for the color adjuster frame.
@@ -33,15 +33,25 @@ public class ColorAdjuster implements ColorAdjusterInterface {
     }
 
     private final HSBTab hsb = new HSBTab();
-    private final JButton apply = new JButton();
-    private final JButton cancel = new JButton();
+    private final FrameButton apply = new FrameButton() {
+        @Override
+        public void onClick() {
+            setActive(false);
+        }
+    };
+    private final FrameButton cancel = new FrameButton() {
+        @Override
+        public void onClick() {
+            setActive(false);
+            data.undoV();
+        }
+    };
 
     private boolean active = false;
     private void setActive(boolean flag) {
         active = flag;
-        apply.setEnabled(flag);
-        apply.setBackground(flag ? Color.red : Color.gray);
-        cancel.setEnabled(flag);
+        apply.setVisible(flag);
+        cancel.setVisible(flag);
         if (!active) {
             hsb.setColor(ColorTools.hsbToColor(new float[]{0.5f, 0.5f, 0.5f}));
         }
@@ -63,25 +73,11 @@ public class ColorAdjuster implements ColorAdjusterInterface {
 
         final JPanel action = new JPanel();
         action.setLayout(new GridLayout());
+        action.setOpaque(true);
+        action.setBackground(VitcoSettings.TEXTURE_WINDOW_BG_COLOR);
         wrapper.add(action, BorderLayout.SOUTH);
 
-        apply.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                setActive(false);
-            }
-        });
         action.add(apply);
-
-        cancel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                setActive(false);
-                data.undoV();
-            }
-        });
         action.add(cancel);
 
         hsb.addColorChangeListener(new ColorChangeListener() {
@@ -91,10 +87,13 @@ public class ColorAdjuster implements ColorAdjusterInterface {
                 if (isActive()) {
                     data.undoV();
                 }
-                data.massShiftColor(Voxel.convertVoxelsToIdArray(data.getSelectedVoxels()), new float[] {
-                        hsb[0] * 2 - 1f, hsb[1] * 2 - 1f, hsb[2] * 2 - 1f
-                });
-                setActive(true);
+                boolean anyVoxelSelected = data.anyVoxelSelected();
+                if (anyVoxelSelected) {
+                    data.massShiftColor(Voxel.convertVoxelsToIdArray(data.getSelectedVoxels()), new float[]{
+                            hsb[0] * 2 - 1f, hsb[1] * 2 - 1f, hsb[2] * 2 - 1f
+                    });
+                }
+                setActive(anyVoxelSelected);
             }
         });
         wrapper.add(hsb, BorderLayout.CENTER);

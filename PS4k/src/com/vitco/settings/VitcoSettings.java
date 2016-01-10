@@ -40,6 +40,9 @@ public final class VitcoSettings {
     public static final Color BUTTON_BACKGROUND_PRESSED = new Color(83, 83, 83);
     public static final Color BUTTON_BORDER_COLOR = new Color(39, 39, 39);
 
+    public static final Color BUTTON_ENABLED = new Color(120, 20, 20);
+    public static final Color BUTTON_ENABLED_OVER = new Color(160, 30, 30);
+
     // texture window settings
     public static final Color TEXTURE_WINDOW_BG_COLOR = new Color(80, 80, 80);
     public static final Color TEXTURE_BORDER = Color.BLACK;
