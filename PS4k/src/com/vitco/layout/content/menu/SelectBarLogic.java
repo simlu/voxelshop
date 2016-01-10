@@ -29,14 +29,6 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
     // true iff there are voxels in layer
     private boolean voxelsAreInLayer = false;
 
-    private Integer[] convertVoxelsToIdArray(Voxel[] voxels) {
-        Integer[] voxelIds = new Integer[voxels.length];
-        for (int i = 0; i < voxels.length; i++) {
-            voxelIds[i] = voxels[i].id;
-        }
-        return voxelIds;
-    }
-
     public void registerLogic(Frame frame) {
         // stores the current position (keeps current)
         // (used to shift copy + paste correctly in side view)
@@ -68,7 +60,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                     storedPos[2] = currentPos[2];
 
                     // fetch voxel ids for cut
-                    Integer[] voxelIds = convertVoxelsToIdArray(voxels);
+                    Integer[] voxelIds = Voxel.convertVoxelsToIdArray(voxels);
                     // mass delete
                     data.massRemoveVoxel(voxelIds);
                     // refresh status
@@ -149,7 +141,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                         data.setVoxelSelectionShift(0,0,0);
                     } else {
                         // mass deselect
-                        Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
+                        Integer[] voxelIds = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
                         data.massSetVoxelSelected(voxelIds, false);
                     }
                 }
@@ -165,7 +157,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
                     // mass delete
-                    Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
+                    Integer[] voxelIds = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
                     data.massRemoveVoxel(voxelIds);
                 }
             }
@@ -183,8 +175,8 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 if (getStatus()) {
                     // todo make this an intent (select layer) -> to prevent two history entries
                     // deselect voxels (this is necessary if there are voxel selected that are not in the current layer)
-                    Integer[] selected = convertVoxelsToIdArray(data.getSelectedVoxels());
-                    Integer[] toSelect = convertVoxelsToIdArray(data.getLayerVoxels(data.getSelectedLayer()));
+                    Integer[] selected = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
+                    Integer[] toSelect = Voxel.convertVoxelsToIdArray(data.getLayerVoxels(data.getSelectedLayer()));
                     if (selected.length > 0) {
                         HashSet<Integer> toDeselectList = new HashSet<Integer>(Arrays.asList(selected));
                         HashSet<Integer> toSelectList = new HashSet<Integer>(Arrays.asList(toSelect));
@@ -233,7 +225,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
                     if (preferences.contains("currently_used_color")) {
-                        Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
+                        Integer[] voxelIds = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
                         Color color = ColorTools.hsbToColor((float[])preferences.loadObject("currently_used_color"));
                         data.massSetColor(voxelIds, color);
                     }
@@ -249,7 +241,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
-                    Integer[] voxelIds = convertVoxelsToIdArray(data.getSelectedVoxels());
+                    Integer[] voxelIds = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
                     data.massSetTexture(voxelIds, data.getSelectedTexture());
                 }
             }

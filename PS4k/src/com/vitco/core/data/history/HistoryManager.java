@@ -12,6 +12,7 @@ public class HistoryManager<T extends BasicActionIntent> {
     private ArrayList<T> history = new ArrayList<T>();
 
     public void clear() {
+        if (frozen) {return;}
         historyPosition = -1;
         history = new ArrayList<T>();
         // invalidate the cache
@@ -19,11 +20,11 @@ public class HistoryManager<T extends BasicActionIntent> {
     }
 
     public final boolean canUndo() {
-        return (historyPosition > -1);
+        return !frozen && (historyPosition > -1);
     }
 
     public final boolean canRedo() {
-        return (history.size() > historyPosition + 1);
+        return !frozen && (history.size() > historyPosition + 1);
     }
 
     public ArrayList<T> getHistory() {
@@ -35,15 +36,28 @@ public class HistoryManager<T extends BasicActionIntent> {
     }
 
     public final void setHistory(ArrayList<T> history) {
+        if (frozen) {return;}
         this.history = new ArrayList<T>(history);
     }
 
     public final void setHistoryPosition(int historyPosition) {
+        if (frozen) {return;}
         this.historyPosition = historyPosition;
+    }
+
+    private boolean frozen = false;
+    public final void setFrozen(boolean flag) {
+        frozen = flag;
     }
 
     // adds a new intent to the history and executes it
     public final void applyIntent(T actionIntent) {
+        if (frozen) {
+            for (HistoryChangeListener<T> hcl : listeners) {
+                hcl.onFrozenIntent(actionIntent);
+            }
+            return;
+        }
         // delete all "re-dos"
         while (history.size() > historyPosition + 1) {
             history.remove(historyPosition + 1);
@@ -62,6 +76,12 @@ public class HistoryManager<T extends BasicActionIntent> {
 
     // apply the next history intent
     public final void apply() {
+        if (frozen) {
+            for (HistoryChangeListener<T> hcl : listeners) {
+                hcl.onFrozenApply();
+            }
+            return;
+        }
         if (history.size() > historyPosition + 1) { // we can still "redo"
             historyPosition++; // move one "up"
             history.get(historyPosition).apply(); // redo action
@@ -77,6 +97,12 @@ public class HistoryManager<T extends BasicActionIntent> {
 
     // apply the last history intent
     public final void unapply() {
+        if (frozen) {
+            for (HistoryChangeListener<T> hcl : listeners) {
+                hcl.onFrozenUnapply();
+            }
+            return;
+        }
         if (historyPosition > -1) { // we can still undo
             T mainAction = history.get(historyPosition);
             _unapply();

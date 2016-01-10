@@ -28,6 +28,14 @@ public final class Voxel implements Serializable {
     private int[] sideRotation = null;
     private boolean[] sideFlip = null;
 
+    public static Integer[] convertVoxelsToIdArray(Voxel[] voxels) {
+        Integer[] voxelIds = new Integer[voxels.length];
+        for (int i = 0; i < voxels.length; i++) {
+            voxelIds[i] = voxels[i].id;
+        }
+        return voxelIds;
+    }
+
     // constructor (with texture)
     public Voxel(int id, int[] pos, Color color, boolean selected, int[] textureIds, int layerId) {
         this.id = id;

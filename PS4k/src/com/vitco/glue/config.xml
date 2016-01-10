@@ -69,6 +69,11 @@
     <!-- handles texture manager -->
     <bean id="TextureManager" class="com.vitco.layout.content.texture.TextureManager"/>
 
+    <!-- allows color adjusting -->
+    <bean id="ColorAdjuster" class="com.vitco.layout.content.coloradjuster.ColorAdjusterView">
+        <property name="langSelector" ref="LangSelector"/>
+    </bean>
+
     <!-- create ShortcutManager -->
     <!-- allow registering the windows with the shortcuts -->
     <bean id="ShortcutManager" class="com.vitco.layout.content.shortcut.ShortcutManager">
@@ -242,6 +247,12 @@
                 <entry>
                     <key><value>colorPalette</value></key>
                     <bean id="ColorPaletteLinkage" class="com.vitco.layout.frames.ColorPaletteLinkage" />
+                </entry>
+                <entry>
+                    <key><value>colorAdjuster</value></key>
+                    <bean id="ColorAdjusterLinkage" class="com.vitco.layout.frames.ColorAdjusterLinkage">
+                        <property name="colorAdjuster" ref="ColorAdjuster"/>
+                    </bean>
                 </entry>
             </map>
         </property>

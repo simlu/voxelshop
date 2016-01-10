@@ -31,4 +31,13 @@ public abstract class DataChangeAdapter implements DataChangeListener {
 
     @Override
     public void onLayerStateChanged() {}
+
+    @Override
+    public void onFrozenUndo() {}
+
+    @Override
+    public void onFrozenRedo() {}
+
+    @Override
+    public void onFrozenAction() {}
 }

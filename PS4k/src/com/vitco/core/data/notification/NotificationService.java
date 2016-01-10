@@ -83,4 +83,25 @@ public final class NotificationService implements NotificationServiceInterface {
             listener.onLayerStateChanged();
         }
     }
+
+    @Override
+    public void onFrozenUndo() {
+        for (DataChangeListener listener : listeners) {
+            listener.onFrozenUndo();
+        }
+    }
+
+    @Override
+    public void onFrozenRedo() {
+        for (DataChangeListener listener : listeners) {
+            listener.onFrozenRedo();
+        }
+    }
+
+    @Override
+    public void onFrozenAction() {
+        for (DataChangeListener listener : listeners) {
+            listener.onFrozenAction();
+        }
+    }
 }

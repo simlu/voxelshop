@@ -29,6 +29,11 @@ public final class Data extends VoxelHighlighting implements DataInterface {
         }
     }
 
+    public final void setFrozen(boolean flag) {
+        historyManagerA.setFrozen(flag);
+        historyManagerV.setFrozen(flag);
+    }
+
     // var & setter
     private ErrorHandlerInterface errorHandler;
     @Autowired(required=true)
