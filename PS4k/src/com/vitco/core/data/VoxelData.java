@@ -9,6 +9,7 @@ import com.vitco.low.CubeIndexer;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.GraphicTools;
 import com.vitco.util.misc.ArrayUtil;
+import com.vitco.util.misc.ColorTools;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.TIntHashSet;
@@ -508,6 +509,41 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             this.voxel = dataContainer.voxels.get(voxelId);
             this.oldColor = voxel.getColor();
             this.newColor = newColor;
+            this.effected = new int[][]{voxel.getPosAsInt()};
+        }
+
+        @Override
+        protected void applyAction() {
+            voxel.setColor(newColor);
+        }
+
+        @Override
+        protected void unapplyAction() {
+            voxel.setColor(oldColor);
+        }
+
+        private int[][] effected = null;
+        @Override
+        public int[][] effected() {
+            return effected;
+        }
+    }
+
+    private final class ColorShiftVoxelIntent extends VoxelActionIntent {
+        private final Voxel voxel;
+        private final Color newColor;
+        private final Color oldColor;
+
+        protected ColorShiftVoxelIntent(int voxelId, float[] hsbOffset, boolean attach) {
+            super(attach);
+            this.voxel = dataContainer.voxels.get(voxelId);
+            this.oldColor = voxel.getColor();
+            float[] currentHSB = ColorTools.colorToHSB(this.oldColor);
+            this.newColor = ColorTools.hsbToColor(new float[] {
+                    Math.max(0, Math.min(1, currentHSB[0] + hsbOffset[0])),
+                    Math.max(0, Math.min(1, currentHSB[1] + hsbOffset[1])),
+                    Math.max(0, Math.min(1, currentHSB[2] + hsbOffset[2]))
+            });
             this.effected = new int[][]{voxel.getPosAsInt()};
         }
 
@@ -1240,6 +1276,44 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
+    private final class MassColorShiftVoxelIntent extends VoxelActionIntent  {
+        private final Integer[] voxelIds;
+        private final float[] hsbOffset;
+
+        protected MassColorShiftVoxelIntent(Integer[] voxelIds, float[] hsbOffset, boolean attach) {
+            super(attach);
+
+            // what is effected (there could be duplicate positions here)
+            effected = new int[voxelIds.length][];
+            for (int i = 0; i < effected.length; i++) {
+                effected[i] = dataContainer.voxels.get(voxelIds[i]).getPosAsInt();
+            }
+
+            this.voxelIds = voxelIds;
+            this.hsbOffset = hsbOffset;
+        }
+
+        @Override
+        protected void applyAction() {
+            if (isFirstCall()) {
+                for (Integer voxelId : voxelIds) {
+                    historyManagerV.applyIntent(new ColorShiftVoxelIntent(voxelId, hsbOffset, true));
+                }
+            }
+        }
+
+        @Override
+        protected void unapplyAction() {
+            // nothing to do
+        }
+
+        private int[][] effected = null;
+        @Override
+        public int[][] effected() {
+            return effected;
+        }
+    }
+
     private final class MassMoveVoxelIntent extends VoxelActionIntent  {
         private final Voxel[] voxels;
         private final int[] shift;
@@ -1698,6 +1772,27 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                 Integer[] valid = new Integer[validVoxel.size()];
                 validVoxel.toArray(valid);
                 historyManagerV.applyIntent(new MassColorVoxelIntent(valid, color, false));
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    @Override
+    public final boolean massShiftColor(Integer[] voxelIds, float[] hsbOffset) {
+        synchronized (VitcoSettings.SYNC) {
+            ArrayList<Integer> validVoxel = new ArrayList<Integer>();
+            for (int voxelId : voxelIds) {
+                Voxel voxel = dataContainer.voxels.get(voxelId);
+                if (voxel != null) {
+                    validVoxel.add(voxelId);
+                }
+            }
+            if (validVoxel.size() > 0) {
+                Integer[] valid = new Integer[validVoxel.size()];
+                validVoxel.toArray(valid);
+                historyManagerV.applyIntent(new MassColorShiftVoxelIntent(valid, hsbOffset, false));
                 return true;
             } else {
                 return false;

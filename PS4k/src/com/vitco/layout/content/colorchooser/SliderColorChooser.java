@@ -48,9 +48,9 @@ public class SliderColorChooser extends ColorChooserPrototype {
     private Color color = Color.WHITE;
     public final void setColor(float[] hsb) {
         Color color = ColorTools.hsbToColor(hsb);
-        rgbTab.update(color, true, false);
-        hsbTab.update(color, true, false);
-        cmykTab.update(color, true, false);
+        rgbTab.setColor(color);
+        hsbTab.setColor(color);
+        cmykTab.setColor(color);
         if (!this.color.equals(color)) {
             // none of the above might be visible
             this.color = color;

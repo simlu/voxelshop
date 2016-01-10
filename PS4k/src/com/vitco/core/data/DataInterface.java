@@ -13,6 +13,9 @@ public interface DataInterface {
     // delete all history
     void clearHistoryA();
     void clearHistoryV();
+
+    void freeze(boolean flag);
+
     // erase everything and start fresh
     void freshStart();
 }

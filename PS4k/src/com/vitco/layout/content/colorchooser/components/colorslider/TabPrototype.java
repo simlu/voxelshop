@@ -48,6 +48,10 @@ abstract class TabPrototype extends ColorChooserPrototype {
         }
     }
 
+    public void setColor(Color color) {
+        update(color, true, false);
+    }
+
     // update displayed values
     protected final void setValues(int[] values) {
         for (int i = 0; i < values.length; i++) {
