@@ -142,4 +142,7 @@
 
     <frame name="colorPalette">
     </frame>
+
+    <frame name="colorAdjuster">
+    </frame>
 </head>
