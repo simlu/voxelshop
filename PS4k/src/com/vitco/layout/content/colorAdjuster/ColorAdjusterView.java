@@ -1,22 +1,23 @@
-package com.vitco.layout.content.colorAdjuster;
+package com.vitco.layout.content.coloradjuster;
 
+import com.jidesoft.action.CommandMenuBar;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.layout.content.ViewPrototype;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
 import com.vitco.layout.content.colorchooser.components.colorslider.HSBTab;
-import com.vitco.manager.lang.LangSelectorInterface;
-import com.vitco.settings.VitcoSettings;
-import com.vitco.util.components.button.FrameButton;
+import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.util.misc.ColorTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Content for the color adjuster frame.
  */
-public class ColorAdjuster implements ColorAdjusterInterface {
+public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterViewInterface {
 
     // var & setter (can not be interface!!)
     protected Data data;
@@ -25,61 +26,65 @@ public class ColorAdjuster implements ColorAdjusterInterface {
         this.data = data;
     }
 
-    // var & setter
-    protected LangSelectorInterface langSelector;
-    @Override
-    public final void setLangSelector(LangSelectorInterface langSelector) {
-        this.langSelector = langSelector;
-    }
-
     private final HSBTab hsb = new HSBTab();
-    private final FrameButton apply = new FrameButton() {
-        @Override
-        public void onClick() {
-            setActive(false);
-        }
-    };
-    private final FrameButton cancel = new FrameButton() {
-        @Override
-        public void onClick() {
-            setActive(false);
-            data.undoV();
-        }
-    };
 
     private boolean active = false;
     private void setActive(boolean flag) {
-        active = flag;
-        apply.setVisible(flag);
-        cancel.setVisible(flag);
+        if (flag != active) {
+            active = flag;
+            apply.refresh();
+            cancel.refresh();
+            data.freeze(flag);
+        }
         if (!active) {
             hsb.setColor(ColorTools.hsbToColor(new float[]{0.5f, 0.5f, 0.5f}));
         }
-        data.freeze(flag);
     }
     private boolean isActive() {
         return active;
     }
 
+    // define the actions
+    StateActionPrototype apply = new StateActionPrototype() {
+        @Override
+        public boolean getStatus() {
+            return isActive();
+        }
+
+        @Override
+        public void action(ActionEvent e) {
+            setActive(false);
+        }
+    };
+    StateActionPrototype cancel = new StateActionPrototype() {
+        @Override
+        public boolean getStatus() {
+            return isActive();
+        }
+
+        @Override
+        public void action(ActionEvent e) {
+            setActive(false);
+            data.undoV();
+        }
+    };
+
     @Override
     public JComponent build(Frame frame) {
         setActive(false);
 
-        apply.setText(langSelector.getString("apply"));
-        cancel.setText(langSelector.getString("cancel"));
-
         JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
 
-        final JPanel action = new JPanel();
-        action.setLayout(new GridLayout());
-        action.setOpaque(true);
-        action.setBackground(VitcoSettings.TEXTURE_WINDOW_BG_COLOR);
-        wrapper.add(action, BorderLayout.SOUTH);
+        // define the menu
+        CommandMenuBar menuPanel = new CommandMenuBar();
+        menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/layout/content/coloradjuster/toolbar.xml");
+        wrapper.add(menuPanel, BorderLayout.SOUTH);
 
-        action.add(apply);
-        action.add(cancel);
+        actionManager.registerAction("color_adjuster_apply", apply);
+        actionManager.registerAction("color_adjuster_cancel", cancel);
 
+        // define the sliders and action
         hsb.addColorChangeListener(new ColorChangeListener() {
             @Override
             public void colorChanged(float[] hsb) {

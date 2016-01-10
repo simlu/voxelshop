@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<head xmlns="http://www.unfine.de/schema/menu">
+    <icon-item src="resource/img/framebars/coloradjuster/apply.png"
+               tool-tip="color_adjuster_apply_tooltip"
+               action="color_adjuster_apply" grayable="true"/>
+    <icon-item src="resource/img/framebars/coloradjuster/cancel.png"
+               tool-tip="color_adjuster_cancel_tooltip"
+               action="color_adjuster_cancel" grayable="true"/>
+</head>

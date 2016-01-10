@@ -63,10 +63,14 @@ http://www.jidesoft.com/
 
 #### Adding Content to the Frame
 - Create a new package "[FRAME_ID]" under PS4k > src > com > vitco > layout > content
-- Create a Class "[FRAME_ID]" and an implemented Interface "[FRAME_ID]Interface" that contains a method "JComponent build(Frame frame)"
+- Create a Class "[FRAME_ID]View" extending ViewPrototype and an implemented Interface "[FRAME_ID]ViewInterface" that contains a method "JComponent build(Frame frame)"
 - In the Linkage class define a setter method for the Interface (we will inject the class shortly) and after updating the title, call frame.add([INJECTED_VARIABLE].build(mainFrame));
 - Now we need to inject the class into the Linkage Class. Open PS4k > src > com > vitco > glue > config.xml and create a new bean from the class we just defined with the build method. Then inject the property into the frame bean we defined previously.
 - Now we can start working on our GUI in the build method.
+
+#### Adding a Tool Bar
+- Define an xml file, load it and attach it to the layout
+- Define actions and link to them in the xml file
 
 -----------
 *-- Below is auto generated*

@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.docking.DockableFrame;
-import com.vitco.layout.content.colorAdjuster.ColorAdjusterInterface;
+import com.vitco.layout.content.coloradjuster.ColorAdjusterViewInterface;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.util.misc.SaveResourceLoader;
 
@@ -13,8 +13,8 @@ import java.awt.event.ActionEvent;
  */
 public class ColorAdjusterLinkage extends FrameLinkagePrototype {
 
-    private ColorAdjusterInterface colorAdjuster;
-    public void setColorAdjuster(ColorAdjusterInterface colorAdjuster) {
+    private ColorAdjusterViewInterface colorAdjuster;
+    public void setColorAdjuster(ColorAdjusterViewInterface colorAdjuster) {
         this.colorAdjuster = colorAdjuster;
     }
 
