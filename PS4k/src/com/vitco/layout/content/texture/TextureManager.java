@@ -145,7 +145,7 @@ public class TextureManager extends ViewPrototype implements TextureManagerInter
         panel.setLayout(new BorderLayout());
         final JPanel textureWrapperPanel = new JPanel();
         textureWrapperPanel.setLayout(new WrapLayout(FlowLayout.CENTER, 3, 3));
-        textureWrapperPanel.setBackground(VitcoSettings.TEXTURE_WINDOW_BG_COLOR);
+        textureWrapperPanel.setBackground(VitcoSettings.FRAME_BG_COLOR);
         final JideScrollPane scrollPane = new JideScrollPane(textureWrapperPanel);
         scrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, VitcoSettings.DEFAULT_BORDER_COLOR));
         panel.add(scrollPane, BorderLayout.CENTER);

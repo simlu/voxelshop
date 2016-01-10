@@ -49,6 +49,21 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
                     notifier.onTextureDataChanged();
                 }
             }
+
+            @Override
+            public void onFrozenIntent(VoxelActionIntent actionIntent) {
+                notifier.onFrozenAction();
+            }
+
+            @Override
+            public void onFrozenApply() {
+                notifier.onFrozenRedo();
+            }
+
+            @Override
+            public void onFrozenUnapply() {
+                notifier.onFrozenUndo();
+            }
         });
     }
 

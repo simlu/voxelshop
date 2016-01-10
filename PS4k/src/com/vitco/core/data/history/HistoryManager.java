@@ -52,7 +52,12 @@ public class HistoryManager<T extends BasicActionIntent> {
 
     // adds a new intent to the history and executes it
     public final void applyIntent(T actionIntent) {
-        if (frozen) {return;}
+        if (frozen) {
+            for (HistoryChangeListener<T> hcl : listeners) {
+                hcl.onFrozenIntent(actionIntent);
+            }
+            return;
+        }
         // delete all "re-dos"
         while (history.size() > historyPosition + 1) {
             history.remove(historyPosition + 1);
@@ -71,7 +76,12 @@ public class HistoryManager<T extends BasicActionIntent> {
 
     // apply the next history intent
     public final void apply() {
-        if (frozen) {return;}
+        if (frozen) {
+            for (HistoryChangeListener<T> hcl : listeners) {
+                hcl.onFrozenApply();
+            }
+            return;
+        }
         if (history.size() > historyPosition + 1) { // we can still "redo"
             historyPosition++; // move one "up"
             history.get(historyPosition).apply(); // redo action
@@ -87,7 +97,12 @@ public class HistoryManager<T extends BasicActionIntent> {
 
     // apply the last history intent
     public final void unapply() {
-        if (frozen) {return;}
+        if (frozen) {
+            for (HistoryChangeListener<T> hcl : listeners) {
+                hcl.onFrozenUnapply();
+            }
+            return;
+        }
         if (historyPosition > -1) { // we can still undo
             T mainAction = history.get(historyPosition);
             _unapply();

@@ -25,6 +25,21 @@ public abstract class AnimationData extends GeneralData implements AnimationData
             public final void onChange(BasicActionIntent action) {
                 invalidateA();
             }
+
+            @Override
+            public void onFrozenIntent(BasicActionIntent actionIntent) {
+                notifier.onFrozenAction();
+            }
+
+            @Override
+            public void onFrozenApply() {
+                notifier.onFrozenRedo();
+            }
+
+            @Override
+            public void onFrozenUnapply() {
+                notifier.onFrozenUndo();
+            }
         });
     }
 

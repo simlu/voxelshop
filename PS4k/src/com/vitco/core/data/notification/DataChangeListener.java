@@ -13,4 +13,7 @@ public interface DataChangeListener {
     void onOutlineBoxesChanged();
     void onSelectionRectChanged();
     void onLayerStateChanged();
+    void onFrozenUndo();
+    void onFrozenRedo();
+    void onFrozenAction();
 }
