@@ -34,7 +34,7 @@ public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterVie
             active = flag;
             apply.refresh();
             cancel.refresh();
-            data.freeze(flag);
+            data.setFrozen(flag);
         }
         if (!active) {
             hsb.setColor(ColorTools.hsbToColor(new float[]{0.5f, 0.5f, 0.5f}));
@@ -88,7 +88,7 @@ public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterVie
         hsb.addColorChangeListener(new ColorChangeListener() {
             @Override
             public void colorChanged(float[] hsb) {
-                data.freeze(false);
+                data.setFrozen(false);
                 if (isActive()) {
                     data.undoV();
                 }

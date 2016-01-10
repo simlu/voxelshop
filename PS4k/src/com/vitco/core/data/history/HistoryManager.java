@@ -46,7 +46,7 @@ public class HistoryManager<T extends BasicActionIntent> {
     }
 
     private boolean frozen = false;
-    public final void freeze(boolean flag) {
+    public final void setFrozen(boolean flag) {
         frozen = flag;
     }
 

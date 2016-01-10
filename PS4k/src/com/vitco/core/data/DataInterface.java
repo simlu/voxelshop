@@ -14,7 +14,7 @@ public interface DataInterface {
     void clearHistoryA();
     void clearHistoryV();
 
-    void freeze(boolean flag);
+    void setFrozen(boolean flag);
 
     // erase everything and start fresh
     void freshStart();
