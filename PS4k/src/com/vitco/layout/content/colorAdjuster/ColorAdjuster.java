@@ -4,6 +4,7 @@ import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
 import com.vitco.layout.content.colorchooser.components.colorslider.HSBTab;
+import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.util.misc.ColorTools;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,9 +25,16 @@ public class ColorAdjuster implements ColorAdjusterInterface {
         this.data = data;
     }
 
+    // var & setter
+    protected LangSelectorInterface langSelector;
+    @Override
+    public final void setLangSelector(LangSelectorInterface langSelector) {
+        this.langSelector = langSelector;
+    }
+
     private final HSBTab hsb = new HSBTab();
-    private final JButton apply = new JButton("Apply");
-    private final JButton cancel = new JButton("Cancel");
+    private final JButton apply = new JButton();
+    private final JButton cancel = new JButton();
 
     private boolean active = false;
     private void setActive(boolean flag) {
@@ -46,6 +54,9 @@ public class ColorAdjuster implements ColorAdjusterInterface {
     @Override
     public JComponent build(Frame frame) {
         setActive(false);
+
+        apply.setText(langSelector.getString("apply"));
+        cancel.setText(langSelector.getString("cancel"));
 
         JPanel wrapper = new JPanel();
         wrapper.setLayout(new BorderLayout());
