@@ -3,6 +3,7 @@ package com.vitco.layout.content.coloradjuster;
 import com.jidesoft.action.CommandMenuBar;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
+import com.vitco.core.data.notification.DataChangeAdapter;
 import com.vitco.layout.content.ViewPrototype;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
 import com.vitco.layout.content.colorchooser.components.colorslider.HSBTab;
@@ -28,16 +29,22 @@ public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterVie
 
     private final HSBTab hsb = new HSBTab();
 
+    private final CommandMenuBar menuPanel = new CommandMenuBar();
+
     private Integer[] selectedVoxelIds = null;
 
     private boolean active = false;
     private void setActive(boolean flag) {
-        if (flag != active) {
+        boolean changed = flag != active;
+        if (changed) {
             active = flag;
             apply.refresh();
             cancel.refresh();
         }
         data.setFrozen(active);
+        if (changed) {  // disable undo/redo buttons correctly
+            actionGroupManager.refreshGroup("history_actions");
+        }
         if (!active) {
             hsb.setColor(ColorTools.hsbToColor(new float[]{0.5f, 0.5f, 0.5f}));
         }
@@ -80,12 +87,37 @@ public class ColorAdjusterView extends ViewPrototype implements ColorAdjusterVie
         wrapper.setLayout(new BorderLayout());
 
         // define the menu
-        CommandMenuBar menuPanel = new CommandMenuBar();
         menuGenerator.buildMenuFromXML(menuPanel, "com/vitco/layout/content/coloradjuster/toolbar.xml");
         wrapper.add(menuPanel, BorderLayout.SOUTH);
 
         actionManager.registerAction("color_adjuster_apply", apply);
         actionManager.registerAction("color_adjuster_cancel", cancel);
+
+        data.addDataChangeListener(new DataChangeAdapter() {
+            private void abort() {
+                if (isActive()) {
+                    cancel.actionPerformed(null);
+                }
+            }
+
+            @Override
+            public void onFrozenAction() {
+                super.onFrozenAction();
+                abort();
+            }
+
+            @Override
+            public void onFrozenRedo() {
+                super.onFrozenRedo();
+                abort();
+            }
+
+            @Override
+            public void onFrozenUndo() {
+                super.onFrozenUndo();
+                abort();
+            }
+        });
 
         // define the sliders and action
         hsb.addColorChangeListener(new ColorChangeListener() {

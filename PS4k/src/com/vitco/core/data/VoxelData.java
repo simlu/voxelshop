@@ -555,7 +555,7 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             this.oldColor = voxel.getColor();
             float[] currentHSB = ColorTools.colorToHSB(this.oldColor);
             this.newColor = ColorTools.hsbToColor(new float[] {
-                    Math.max(0, Math.min(1, currentHSB[0] + hsbOffset[0])),
+                    (currentHSB[0] + hsbOffset[0] + 2) % 1,
                     Math.max(0, Math.min(1, currentHSB[1] + hsbOffset[1])),
                     Math.max(0, Math.min(1, currentHSB[2] + hsbOffset[2]))
             });
