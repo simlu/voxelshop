@@ -175,6 +175,13 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
     }
     // ======================================
 
+    public final void openFile(File file) {
+        if (!data.loadFromFile(file)) {
+            console.addLine(langSelector.getString("error_on_file_load"));
+        }
+        save_location[0] = file.getPath(); // remember load location
+    }
+
     public final void registerLogic(final Frame frame) {
         // initialize the filter
         fc_vsd.addFileType("vsd", "PS4k File");
@@ -194,10 +201,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 if (checkUnsavedChanges(frame)) {
                     File toOpen = fc_vsd.openFile(frame);
                     if (toOpen != null) {
-                        if (!data.loadFromFile(toOpen)) {
-                            console.addLine(langSelector.getString("error_on_file_load"));
-                        }
-                        save_location[0] = toOpen.getPath(); // remember load location
+                        openFile(toOpen);
                     }
                 }
             }

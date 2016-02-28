@@ -1,5 +1,6 @@
 package com.vitco;
 
+import com.vitco.layout.content.menu.MainMenuLogic;
 import com.vitco.layout.content.shortcut.ShortcutManager;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ComplexActionManager;
@@ -11,6 +12,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.awt.*;
+import java.io.File;
 
 /**
  * Initially executed class
@@ -66,6 +68,19 @@ public class Main {
             ((ActionManager) context.getBean("ActionManager")).performValidityCheck();
             ((ComplexActionManager) context.getBean("ComplexActionManager")).performValidityCheck();
         }
+
+        // open vsd file when program is started with "open with"
+        MainMenuLogic mainMenuLogic = ((MainMenuLogic) context.getBean("MainMenuLogic"));
+        for (String arg : args) {
+            if (arg.endsWith(".vsd")) {
+                File file = new File(arg);
+                if (file.exists() && !file.isDirectory()) {
+                    mainMenuLogic.openFile(file);
+                    break;
+                }
+            }
+        }
+
         // perform shortcut check
         ((ShortcutManager) context.getBean("ShortcutManager")).doSanityCheck(debug);
 //        // test console
