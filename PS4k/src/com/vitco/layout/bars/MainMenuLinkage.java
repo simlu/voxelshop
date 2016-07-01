@@ -392,7 +392,7 @@ public class MainMenuLinkage extends BarLinkagePrototype {
 
         public void mouseReleased(MouseEvent e) {
             // change maximized state on dbl click
-            if (e.getClickCount()%2 == 0) {
+            if (e.getClickCount() == 2) {
                 setMaximized(frame, !isMaximized(frame));
             }
         }
