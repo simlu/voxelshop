@@ -1012,7 +1012,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                 skipNextWorldRender = false;
             }
             buffer.clear(bgColor);
-            if (drawWorld) {
+            if (drawWorld && world != null) {
                 refreshVoxels(false);
                 world.renderScene(buffer);
                 if (useWireFrame) {
