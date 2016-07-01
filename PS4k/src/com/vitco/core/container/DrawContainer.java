@@ -1027,7 +1027,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
                 }
             }
             buffer.update();
-            if (drawOverlay) { // overlay part 1
+            if (drawOverlay && camera != null) { // overlay part 1
                 drawLinkedOverlay((Graphics2D) buffer.getGraphics()); // refreshes with OpenGL
             }
             // draw the shader if enabled
@@ -1043,7 +1043,7 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         if (drawGhostOverlay) {
             drawGhostOverlay(gr, cameraChanged, hasResized);
         }
-        if (drawOverlay && drawAnimationOverlay) { // overlay part 2
+        if (drawOverlay && drawAnimationOverlay && data != null) { // overlay part 2
             drawAnimationOverlay(gr); // refreshes with animation data
         }
         if (drawOverlay && drawVoxelOverlay) {
