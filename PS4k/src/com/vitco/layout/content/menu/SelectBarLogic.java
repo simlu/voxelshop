@@ -10,6 +10,7 @@ import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.pref.PrefChangeListener;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.ColorTools;
+import gnu.trove.set.hash.THashSet;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
@@ -168,7 +169,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             }
         });
 
-        // select all, move to new layer, recolor
+        // select all, expand selection, move to new layer, recolor
         actionGroupManager.addAction("selection_interaction", "selection_tool_select_all", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
@@ -203,6 +204,35 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             @Override
             public boolean getStatus() {
                 return !isAnimate && voxelsAreInLayer;
+            }
+        });
+        actionGroupManager.addAction("selection_interaction", "selection_tool_expand_selection", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    // extract colors from selected voxels
+                    THashSet<Color> colors = new THashSet<Color>();
+                    for (Voxel voxel : data.getSelectedVoxels()) {
+                        colors.add(voxel.getColor());
+                    }
+                    // identify which voxels to select
+                    ArrayList<Integer> toSelect = new ArrayList<Integer>();
+                    for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                        if (colors.contains(voxel.getColor())) {
+                            toSelect.add(voxel.id);
+                        }
+                    }
+                    // select voxels
+                    if (toSelect.size() != 0) {
+                        Integer[] toSelectArray = new Integer[toSelect.size()];
+                        toSelect.toArray(toSelectArray);
+                        data.massSetVoxelSelected(toSelectArray, true);
+                    }
+                }
+            }
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreSelected;
             }
         });
         actionGroupManager.addAction("selection_interaction", "selection_tool_as_new_layer", new StateActionPrototype() {

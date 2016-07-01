@@ -34,11 +34,15 @@
                action="selection_tool_delete"/>
     <separator/>
 
-    <!--select all, move to new layer, recolor, retexture-->
+    <!--select all, expand selection, move to new layer, recolor, retexture-->
     <icon-item src="resource/img/bars/select_bar/select_layer.png"
                tool-tip="selection_tool_select_all_tooltip"
                grayable="true"
                action="selection_tool_select_all"/>
+    <icon-item src="resource/img/bars/select_bar/expand_selection.png"
+               tool-tip="selection_tool_expand_selection_tooltip"
+               grayable="true"
+               action="selection_tool_expand_selection"/>
     <icon-item src="resource/img/bars/select_bar/as_new_layer.png"
                tool-tip="selection_tool_as_new_layer_tooltip"
                grayable="true"
