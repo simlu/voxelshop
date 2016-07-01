@@ -26,12 +26,16 @@ public class LayoutLoader {
         UIManager.put("Menu.disabledForeground", VitcoSettings.MAIN_MENU_DISABLED_COLOR);
         UIManager.put("Menu.foreground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("Menu.selectionForeground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
+        UIManager.put("Menu.background", VitcoSettings.MAIN_MENU_BACKGROUND);
+        UIManager.put("Menu.disabledBackground", VitcoSettings.MAIN_MENU_BACKGROUND);
 
         UIManager.put("MenuBar.background", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("MenuBar.disabledForeground", VitcoSettings.MAIN_MENU_DISABLED_COLOR);
         UIManager.put("MenuBar.foreground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("MenuBar.highlight", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("MenuBar.selectionForeground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
+        UIManager.put("MenuBar.background", VitcoSettings.MAIN_MENU_BACKGROUND);
+        UIManager.put("MenuBar.disabledBackground", VitcoSettings.MAIN_MENU_BACKGROUND);
 
         UIManager.put("MenuItem.disabledForeground", VitcoSettings.MAIN_MENU_DISABLED_COLOR);
         UIManager.put("MenuItem.acceleratorForeground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
@@ -39,12 +43,20 @@ public class LayoutLoader {
         UIManager.put("MenuItem.disabledForeground", VitcoSettings.MAIN_MENU_DISABLED_COLOR);
         UIManager.put("MenuItem.foreground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("MenuItem.selectionForeground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
+        UIManager.put("MenuItem.background", VitcoSettings.MAIN_MENU_BACKGROUND);
+        UIManager.put("MenuItem.disabledBackground", VitcoSettings.MAIN_MENU_BACKGROUND);
 
         UIManager.put("CheckBoxMenuItem.acceleratorForeground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("CheckBoxMenuItem.acceleratorSelectionForeground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("CheckBoxMenuItem.disabledForeground", VitcoSettings.MAIN_MENU_DISABLED_COLOR);
         UIManager.put("CheckBoxMenuItem.foreground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
         UIManager.put("CheckBoxMenuItem.selectionForeground", VitcoSettings.MAIN_MENU_ENABLED_COLOR);
+        UIManager.put("CheckBoxMenuItem.background", VitcoSettings.MAIN_MENU_BACKGROUND);
+        UIManager.put("CheckBoxMenuItem.disabledBackground", VitcoSettings.MAIN_MENU_BACKGROUND);
+        UIManager.put("CheckBoxMenuItem.checkIcon", new SaveResourceLoader(
+                "resource/img/icons/checkmark.png"
+        ).asIconImage());
+
 
         // --set tabbed pane settings
         // outline color of tabs ("none")

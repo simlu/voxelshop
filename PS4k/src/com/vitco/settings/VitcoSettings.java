@@ -26,6 +26,7 @@ public final class VitcoSettings {
     public static final Border FRAME_BORDER = BorderFactory.createLineBorder(new Color(20, 20, 20), FRAME_BORDER_SIZE);
     public final static Color MAIN_MENU_ENABLED_COLOR = new Color(230, 230, 230);
     public final static Color MAIN_MENU_DISABLED_COLOR = new Color(170, 170, 170);
+    public final static Color MAIN_MENU_BACKGROUND = new Color(83, 83, 83);
     // soft black color
     public final static Color SOFT_BLACK = new Color(38, 38, 38);
     public final static Color SOFT_WHITE = new Color(230, 230, 230);
@@ -49,7 +50,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
-    public static final String VERSION_ID = "1.5.06";
+    public static final String VERSION_ID = "1.5.07";
     // version id
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
 
