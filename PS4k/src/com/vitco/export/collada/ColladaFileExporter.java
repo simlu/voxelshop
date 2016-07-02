@@ -103,7 +103,7 @@ public class ColladaFileExporter extends ProgressReporter {
                 "id=" + texturePrefix + id + "-image",
                 "name=" + texturePrefix + id + "-image"
         });
-        xmlFile.addTextContent("init_from",  texturePrefix + id + ".png");
+        xmlFile.addTextContent("init_from",  "file://" + texturePrefix + id + ".png");
 
         TexTriangleManager[] triangleManager = exportDataManager.getTriangleManager();
         for (int layerRef = 0; layerRef < triangleManager.length; layerRef++) {
@@ -148,6 +148,10 @@ public class ColladaFileExporter extends ProgressReporter {
         xmlFile.setTopNode("newparam[-1]");
         xmlFile.addAttributes("", new String[]{"sid=" + texturePrefix + id + "-sampler"});
         xmlFile.addTextContent("sampler2D/source", texturePrefix + id + "-surface");
+        xmlFile.addTextContent("sampler2D/wrap_s", "WRAP");
+        xmlFile.addTextContent("sampler2D/wrap_t", "WRAP");
+        xmlFile.addTextContent("sampler2D/minfilter", "NEAREST");
+        xmlFile.addTextContent("sampler2D/magfilter", "NEAREST");
         // ----
         xmlFile.goUp();
         xmlFile.setTopNode("technique[-1]");
