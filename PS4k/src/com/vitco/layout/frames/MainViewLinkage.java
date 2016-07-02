@@ -7,7 +7,6 @@ import com.vitco.util.misc.SaveResourceLoader;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseListener;
 
 /**
  * construct the main view
@@ -28,11 +27,6 @@ public class MainViewLinkage extends FrameLinkagePrototype {
                 langSelector
         );
         updateTitle(); // update the title
-        // remove all existing mouse listeners (no idea why there exist any.. jide?!)
-        // prevent stupid popup
-        for (MouseListener ml : frame.getMouseListeners()) {
-            frame.removeMouseListener(ml);
-        }
 
         frame.add(mainView.build());
 
