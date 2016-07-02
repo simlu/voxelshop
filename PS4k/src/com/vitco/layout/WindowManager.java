@@ -12,6 +12,7 @@ import com.vitco.core.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
 import com.vitco.layout.content.shortcut.ShortcutManagerInterface;
 import com.vitco.layout.frames.FrameLinkagePrototype;
+import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
@@ -118,8 +119,8 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
 
     // prepare all frames
     @Override
-    public final DockableFrame prepareFrame(final String key) {
-        DockableFrame frame = null;
+    public final CDockableFrame prepareFrame(final String key) {
+        CDockableFrame frame = null;
         if (frameLinkageMap.containsKey(key)) {
             frame = frameLinkageMap.get(key).buildFrame(key, thisFrame);
             // add help overlay (this is only used if this frame is floated!)
@@ -146,6 +147,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
                     }
                 }
             };
+            frame.setHelpAction(action);
             action.putValue(AbstractAction.SHORT_DESCRIPTION, "Help"); // tooltip
             frame.addAdditionalButtonActions(action);
             // register the shortcuts for this frame

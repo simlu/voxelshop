@@ -98,6 +98,9 @@ public class LayoutLoader {
         UIManager.put("DockableFrameTitlePane.floatIcon", new SaveResourceLoader(
                 "resource/img/icons/frame_maximize_button_icon.png"
         ).asIconImage());
+        UIManager.put("DockableFrameTitlePane.helpIcon", new SaveResourceLoader(
+                "resource/img/icons/frame_help_button_icon.png"
+        ).asIconImage());
 
         // allow cursor changes
         UIManager.put("DockingFramework.changeCursor", true);

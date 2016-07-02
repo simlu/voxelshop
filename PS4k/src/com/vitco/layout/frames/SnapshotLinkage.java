@@ -1,6 +1,6 @@
 package com.vitco.layout.frames;
 
-import com.jidesoft.docking.DockableFrame;
+import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.util.misc.SaveResourceLoader;
 
@@ -12,10 +12,11 @@ import java.awt.event.ActionEvent;
  */
 public class SnapshotLinkage extends FrameLinkagePrototype {
     @Override
-    public DockableFrame buildFrame(String key, Frame mainFrame) {
+    public CDockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key,
-                new SaveResourceLoader("resource/img/icons/frames/snapshot.png").asIconImage()
+        frame = new CDockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/snapshot.png").asIconImage(),
+                langSelector
         );
         updateTitle(); // update the title
 

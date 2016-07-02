@@ -2,13 +2,13 @@ package com.vitco.manager.help;
 
 import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.docking.FrameContainer;
-import com.jidesoft.plaf.basic.BasicDockableFrameTitlePane;
 import com.jidesoft.plaf.basic.BasicJideTabbedPaneUI;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideSplitButton;
 import com.jidesoft.swing.JideTabbedPane;
 import com.vitco.Main;
+import com.vitco.layout.frames.custom.FrameGenericJideButton;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.lang.LangSelectorInterface;
@@ -276,7 +276,7 @@ public class FrameHelpOverlay extends JComponent {
                                 rects.add(0, new CRectangle(xn, yn, w, h, "action_" + actionKeys[0]));
                                 break;
                             } else {
-                                if (comp instanceof BasicDockableFrameTitlePane.NoFocusButton) {
+                                if (comp instanceof FrameGenericJideButton) {
                                     int xn = x + comp.getX();
                                     int yn = y + comp.getY();
                                     int w = comp.getWidth();

@@ -1,7 +1,7 @@
 package com.vitco.layout.frames;
 
-import com.jidesoft.docking.DockableFrame;
 import com.vitco.layout.content.mainview.MainViewInterface;
+import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.util.misc.SaveResourceLoader;
 
@@ -21,10 +21,11 @@ public class MainViewLinkage extends FrameLinkagePrototype {
     }
 
     @Override
-    public DockableFrame buildFrame(String key, Frame mainFrame) {
+    public CDockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key,
-                new SaveResourceLoader("resource/img/icons/frames/mainview.png").asIconImage()
+        frame = new CDockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/mainview.png").asIconImage(),
+                langSelector
         );
         updateTitle(); // update the title
         // remove all existing mouse listeners (no idea why there exist any.. jide?!)

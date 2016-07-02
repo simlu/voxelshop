@@ -1,8 +1,8 @@
 package com.vitco.layout.frames;
 
-import com.jidesoft.docking.DockableFrame;
 import com.vitco.layout.content.colorchooser.HexColorChooser;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
+import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.pref.PrefChangeListener;
 import com.vitco.util.misc.SaveResourceLoader;
@@ -16,10 +16,11 @@ import java.awt.event.ActionEvent;
 public class HexPickerLinkage extends FrameLinkagePrototype {
 
     @Override
-    public DockableFrame buildFrame(String key, Frame mainFrame) {
+    public CDockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key,
-                new SaveResourceLoader("resource/img/icons/frames/hexpicker.png").asIconImage()
+        frame = new CDockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/hexpicker.png").asIconImage(),
+                langSelector
         );
         updateTitle(); // update the title
 

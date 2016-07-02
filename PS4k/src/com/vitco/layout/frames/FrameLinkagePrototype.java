@@ -1,6 +1,6 @@
 package com.vitco.layout.frames;
 
-import com.jidesoft.docking.DockableFrame;
+import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
@@ -84,8 +84,8 @@ public abstract class FrameLinkagePrototype {
     }
 
     // holds the reference of the actual frame container
-    protected DockableFrame frame;
+    protected CDockableFrame frame;
     // constructs the frame (with content)
-    public abstract DockableFrame buildFrame(String key, Frame mainFrame);
+    public abstract CDockableFrame buildFrame(String key, Frame mainFrame);
 }
 

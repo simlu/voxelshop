@@ -1,8 +1,8 @@
 package com.vitco.layout.frames;
 
-import com.jidesoft.docking.DockableFrame;
 import com.vitco.layout.content.colorchooser.HSBPanelSliderChooser;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
+import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.pref.PrefChangeListener;
@@ -29,10 +29,11 @@ public class ColorPickerLinkage extends FrameLinkagePrototype {
     final HSBPanelSliderChooser pcc = new HSBPanelSliderChooser();
 
     @Override
-    public DockableFrame buildFrame(String key, Frame mainFrame) {
+    public CDockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key,
-                new SaveResourceLoader("resource/img/icons/frames/colorpicker.png").asIconImage()
+        frame = new CDockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/colorpicker.png").asIconImage(),
+                langSelector
         );
         updateTitle(); // update the title
 

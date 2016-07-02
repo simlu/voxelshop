@@ -1,13 +1,13 @@
 package com.vitco.layout.frames;
 
 import com.jidesoft.action.CommandMenuBar;
-import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.swing.JideToggleButton;
 import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.layout.content.colorchooser.ColorPaletteChooser;
 import com.vitco.layout.content.colorchooser.basic.ColorChangeListener;
 import com.vitco.layout.content.console.ConsoleInterface;
+import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.error.ErrorHandlerInterface;
@@ -79,10 +79,11 @@ public class ColorPaletteLinkage extends FrameLinkagePrototype {
     }
 
     @Override
-    public DockableFrame buildFrame(String key, final Frame mainFrame) {
+    public CDockableFrame buildFrame(String key, final Frame mainFrame) {
         // construct frame
-        frame = new DockableFrame(key,
-                new SaveResourceLoader("resource/img/icons/frames/colorpalette.png").asIconImage()
+        frame = new CDockableFrame(key,
+                new SaveResourceLoader("resource/img/icons/frames/colorpalette.png").asIconImage(),
+                langSelector
         );
         updateTitle(); // update the title
 
@@ -114,7 +115,6 @@ public class ColorPaletteLinkage extends FrameLinkagePrototype {
         // set border
         colorPaletteChooser.setBorder(BorderFactory.createMatteBorder(1,1,0,1, VitcoSettings.DEFAULT_BORDER_COLOR));
 
-        frame.setLayout(new BorderLayout());
         frame.add(colorPaletteChooser, BorderLayout.CENTER);
 
         // --------------
