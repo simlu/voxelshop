@@ -434,9 +434,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         collada.addComponent(removeEnclosed);
 
         // option: layer as object
-        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new object for every layer", false);
+        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new object for every layer", true);
         layersAsObjects.setInvisibleLookup("collada.type=legacy");
-        layersAsObjects.setStrikeThrough(true);
         collada.addComponent(layersAsObjects);
 
         // option: make texture edges save (pad textures)
