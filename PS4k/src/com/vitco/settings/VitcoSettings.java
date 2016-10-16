@@ -50,7 +50,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
-    public static final String VERSION_ID = "1.7.01";
+    public static final String VERSION_ID = "1.7.02";
     // version id
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
 
@@ -134,6 +134,7 @@ public final class VitcoSettings {
     // general
     public static final Color DEFAULT_BORDER_COLOR = new Color(60, 60, 60);
     public static final Color DEFAULT_BORDER_COLOR_LIGHT = new Color(130, 135, 144);
+    public static final Color DEFAULT_BORDER_COLOR_HIGHLIGHTED = new Color(189, 58, 12);
 
     // layer
     public static final Color VISIBLE_LAYER_BG = new Color(95, 95, 95);

@@ -15,6 +15,7 @@ import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ComplexActionManager;
+import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.help.FrameHelpOverlay;
 import com.vitco.manager.lang.LangSelectorInterface;
@@ -34,6 +35,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -216,7 +219,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
     }
 
     // handle borderless logic (make floated windows borderless)
-    private void handleBorderLess(DockingManager dockingManager) {
+    private void handleBorderLess(final DockingManager dockingManager) {
         // list of managed floating containers
         final HashSet<DialogFloatingContainer> containers = new HashSet<DialogFloatingContainer>();
         // the last mouse position (used to determine which container(s) need borders)
@@ -333,6 +336,23 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             }
         });
 
+        // toggle "highlight active window" setting
+        actionManager.registerAction("toggle_active_window_highlighted", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                CDockableFrame.setActiveWindowHighlighted(!CDockableFrame.isActiveWindowHighlighted());
+                preferences.storeBoolean("use_highlight_active_window", CDockableFrame.isActiveWindowHighlighted());
+                for (String frame : dockingManager.getAllFrames()) {
+                    dockingManager.getFrame(frame).setBorder(null);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return CDockableFrame.isActiveWindowHighlighted();
+            }
+        });
+
         // remove extra spacing of frames
         UIManager.getDefaults().put("FrameContainer.contentBorderInsets", new InsetsUIResource(0, 0, 0, 0));
 
@@ -373,9 +393,28 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         });
     }
 
+    // set the divider size for any ContainerContainerDivider contained in hierarchy
+    private static void setDividerSizeDeep(Container component, int value) {
+        ArrayList<Component> components = new ArrayList<Component>();
+        components.add(component);
+        while (!components.isEmpty()) {
+            Component com = components.remove(0);
+            if (com instanceof ContainerContainerDivider) {
+                ((ContainerContainerDivider)com).setDividerSize(value);
+            }
+            if (com instanceof Container) {
+                Collections.addAll(components, ((Container) com).getComponents());
+            }
+        }
+    }
+
     @PostConstruct
     @Override
     public final void init() {
+        if (preferences.contains("use_highlight_active_window")) {
+            // load active window highlighted setting
+            CDockableFrame.setActiveWindowHighlighted(preferences.loadBoolean("use_highlight_active_window"));
+        }
 
         if (preferences.contains("program_boundary_rect")) {
             // load the boundary of the program (current window position)
@@ -452,6 +491,8 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             // set the grid snap size, e.g. when dragging
             dockingManager.setSnapGridSize(5);
 
+            // set the draggable size between frames
+            setDividerSizeDeep(dockingManager.getDockedFrameContainer(), 2);
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
         } catch (SAXException e) {

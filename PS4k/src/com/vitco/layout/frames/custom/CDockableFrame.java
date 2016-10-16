@@ -5,8 +5,11 @@ import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.settings.VitcoSettings;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 
 class TitlePane extends JPanel {
@@ -86,9 +89,43 @@ public class CDockableFrame extends DockableFrame {
     }
 
     private final TitlePane titlePane;
+    private static final Border highlightedBorder = BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR_HIGHLIGHTED);
+    private static final Border defaultBorder = BorderFactory.createLineBorder(VitcoSettings.DEFAULT_BORDER_COLOR);
+    private static final Border emptyBorder = BorderFactory.createEmptyBorder();
+
+    @Override
+    public void setBorder(Border border) {
+        if (activeWindowHighlighted) {
+            super.setBorder(this.isActive() ? highlightedBorder : defaultBorder);
+        } else {
+            super.setBorder(emptyBorder);
+        }
+    }
+
+    // whether to highlight active windows or not
+    private static boolean activeWindowHighlighted = true;
+    public static void setActiveWindowHighlighted(boolean value) {
+        if (activeWindowHighlighted != value) {
+            activeWindowHighlighted = value;
+        }
+    }
+    public static boolean isActiveWindowHighlighted() {
+        return activeWindowHighlighted;
+    }
 
     public CDockableFrame(String key, ImageIcon imageIcon, LangSelectorInterface langSelector) {
         super(key, imageIcon);
+
+        // listen to changes that might affect the border of this frame
+        this.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals("active") || evt.getPropertyName().equals("docked") || evt.getPropertyName().equals("floated")) {
+                    setBorder(null);
+                }
+            }
+        });
+
         titlePane = new TitlePane(this.getFloatingAction(), this.getCloseAction(), langSelector);
         // this assumes we don't have anything in the north of any frame (!)
         this.add(titlePane, BorderLayout.NORTH);

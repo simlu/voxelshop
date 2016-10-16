@@ -318,6 +318,18 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
         consoleAction.put("/shader", "toggle_shader_enabled");
         consoleAction.put("/check deadlock", "check_for_deadlock_toggle");
         consoleAction.put("/study holes", "study_holes_print_info");
+        consoleAction.put("/help", "display_console_commands");
+
+        actionManager.registerAction("display_console_commands", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                console.addLine("Available Commands:");
+                for (String action : consoleAction.keySet()) {
+                    console.addLine("  " + action);
+                }
+                console.addLine("-------------------");
+            }
+        });
 
         // check current content for holes and print info
         actionManager.registerAction("study_holes_print_info", new AbstractAction() {

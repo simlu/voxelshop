@@ -16,6 +16,7 @@
     </menu>
 
     <menu caption="view_btn">
+        <item caption="toggle_active_window_highlighted_caption" action="toggle_active_window_highlighted" checkable="true"/>
         <menu caption="tool_windows_btn">
             <item caption="console_caption" action="console_state-action_show" checkable="true"/>
             <item caption="shortcutManager_caption" action="shortcut-mg_state-action_show" checkable="true"/>
