@@ -42,6 +42,11 @@ public class QbExporter extends AbstractExporter {
         this.useVisMaskEncoding = useVisMaskEncoding;
     }
 
+    private boolean useRightHandedZAxisOrientation = true;
+    public void setUseRightHandedZAxisOrientation(boolean useRightHandedZAxisOrientation) {
+        this.useRightHandedZAxisOrientation = useRightHandedZAxisOrientation;
+    }
+
     private static final int CODE_FLAG = 2;
     private static final int NEXT_SLICE_FLAG = 6;
     private static final int TRANSPARENT_VOXEL = 0x00000000;
@@ -49,11 +54,110 @@ public class QbExporter extends AbstractExporter {
     // write the file
     @Override
     protected boolean writeFile() throws IOException {
-        if (useCompression) {
-            return writeCompressed();
-        } else {
-            return writeUncompressed();
+        // version
+        fileOut.writeIntRev(257);
+
+        // color format
+        fileOut.writeIntRev(0);
+
+        // z axis orientation
+        fileOut.writeIntRev(this.useRightHandedZAxisOrientation ? 1 : 0);
+        int ax1 = this.useRightHandedZAxisOrientation ? 0 : 2;
+        int ax2 = this.useRightHandedZAxisOrientation ? 2 : 0;
+
+        // compressed
+        fileOut.writeIntRev(this.useCompression ? 1 : 0);
+
+        // vis mask encoding
+        fileOut.writeIntRev(this.useVisMaskEncoding ? 1 : 0);
+
+        Integer[]  layers = data.getLayers();
+
+        // num matrices
+        fileOut.writeIntRev(layers.length);
+
+        for (int i = layers.length - 1; i >= 0; i--) {
+            Integer layerId = layers[i];
+
+            // write layer name
+            String layerName = data.getLayerName(layerId);
+            fileOut.writeByte((byte) layerName.length());
+            fileOut.writeASCIIString(layerName);
+
+            int[][] meta = get_meta(layerId);
+            int[] min = meta[0];
+            int[] max = meta[1];
+            int[] size = meta[2];
+
+            // write size
+            fileOut.writeIntRev(size[ax1]);
+            fileOut.writeIntRev(size[1]);
+            fileOut.writeIntRev(size[ax2]);
+
+            // write minimum
+            fileOut.writeIntRev(this.useOriginAsZero ? min[ax1] : 0);
+            fileOut.writeIntRev(this.useOriginAsZero ? -max[1] : 0);
+            fileOut.writeIntRev(this.useOriginAsZero ? min[ax2] : 0);
+
+            int currentColor = TRANSPARENT_VOXEL;
+            int count = 0;
+
+            for (int c1 = min[ax2]; c1 <= max[ax2]; c1++) {
+                for (int y = max[1]; y >= min[1]; y--) {
+                    for (int c2 = min[ax1]; c2 <= max[ax1]; c2++) {
+                        int x = this.useRightHandedZAxisOrientation ? c2 : c1;
+                        int z = this.useRightHandedZAxisOrientation ? c1 : c2;
+                        Voxel voxel = data.searchVoxel(new int[]{x, y, z}, layerId);
+                        int newColor;
+                        if (voxel == null) {
+                            newColor = TRANSPARENT_VOXEL;
+                        } else {
+                            byte visible = 1;
+                            if (this.useVisMaskEncoding) {
+                                if (data.searchVoxel(new int[]{x - 1, y, z}, layerId) == null) {
+                                    visible = ByteHelper.setBit(visible, this.useRightHandedZAxisOrientation ? 5 : 1);
+                                }
+                                if (data.searchVoxel(new int[]{x + 1, y, z}, layerId) == null) {
+                                    visible = ByteHelper.setBit(visible, this.useRightHandedZAxisOrientation ? 6 : 2);
+                                }
+                                if (data.searchVoxel(new int[]{x, y + 1, z}, layerId) == null) {
+                                    visible = ByteHelper.setBit(visible, 3);
+                                }
+                                if (data.searchVoxel(new int[]{x, y - 1, z}, layerId) == null) {
+                                    visible = ByteHelper.setBit(visible, 4);
+                                }
+                                if (data.searchVoxel(new int[]{x, y, z - 1}, layerId) == null) {
+                                    visible = ByteHelper.setBit(visible, this.useRightHandedZAxisOrientation ? 2 : 5);
+                                }
+                                if (data.searchVoxel(new int[]{x, y, z + 1}, layerId) == null) {
+                                    visible = ByteHelper.setBit(visible, this.useRightHandedZAxisOrientation ? 1 : 6);
+                                }
+                            }
+                            newColor = voxel.getColor().getRGB();
+                            newColor = ((this.useVisMaskEncoding ? visible : 0xFF) << 24) | (newColor & 0x000000FF) << 16 | (newColor & 0x0000FF00) | (newColor & 0x00FF0000) >> 16;
+                        }
+
+                        if (this.useCompression) {
+                            if (newColor != currentColor) {
+                                this.writeColor(fileOut, count, currentColor);
+                                count = 0;
+                            }
+                            currentColor = newColor;
+                            count++;
+                        } else {
+                            fileOut.writeIntRev(newColor);
+                        }
+                    }
+                }
+                if (this.useCompression) {
+                    this.writeColor(fileOut, count, currentColor);
+                    count = 0;
+                    fileOut.writeIntRev(NEXT_SLICE_FLAG);
+                }
+            }
         }
+        // success
+        return true;
     }
 
     private int[][] get_meta(int layerId) {
@@ -94,185 +198,6 @@ public class QbExporter extends AbstractExporter {
         return new int[][] {
                 min, max, size
         };
-    }
-
-    // stone-hearth compatible
-    private boolean writeUncompressed() throws IOException {
-        // version
-        fileOut.writeIntRev(257);
-
-        // color format
-        fileOut.writeIntRev(0);
-
-        // z axis orientation
-        fileOut.writeIntRev(1);
-
-        // compressed
-        fileOut.writeIntRev(0);
-
-        // vis mask encoding
-        fileOut.writeIntRev(this.useVisMaskEncoding ? 1 : 0);
-
-        Integer[]  layers = data.getLayers();
-
-        // num matrices
-        fileOut.writeIntRev(layers.length);
-
-        for (int i = layers.length - 1; i >= 0; i--) {
-            Integer layerId = layers[i];
-
-            // write layer name
-            String layerName = data.getLayerName(layerId);
-            fileOut.writeByte((byte) layerName.length());
-            fileOut.writeASCIIString(layerName);
-
-            int[][] meta = get_meta(layerId);
-            int[] min = meta[0];
-            int[] max = meta[1];
-            int[] size = meta[2];
-
-            // write size
-            fileOut.writeIntRev(size[0]);
-            fileOut.writeIntRev(size[1]);
-            fileOut.writeIntRev(size[2]);
-
-            // write minimum
-            fileOut.writeIntRev(this.useOriginAsZero ? min[0] : 0);
-            fileOut.writeIntRev(this.useOriginAsZero ? -max[1] : 0);
-            fileOut.writeIntRev(this.useOriginAsZero ? min[2] : 0);
-            for (int z = min[2]; z <= max[2]; z++) {
-                for (int y = max[1]; y >= min[1]; y--) {
-                    for (int x = min[0]; x <= max[0]; x++) {
-                        Voxel voxel = data.searchVoxel(new int[]{x, y, z}, layerId);
-                        byte visible = 1;
-                        if (data.searchVoxel(new int[]{x, y, z-1}, layerId) == null) {
-                            visible = ByteHelper.setBit(visible, 2);
-                        }
-                        if (data.searchVoxel(new int[]{x, y, z+1}, layerId) == null) {
-                            visible = ByteHelper.setBit(visible, 1);
-                        }
-                        if (data.searchVoxel(new int[]{x, y+1, z}, layerId) == null) {
-                            visible = ByteHelper.setBit(visible, 3);
-                        }
-                        if (data.searchVoxel(new int[]{x, y-1, z}, layerId) == null) {
-                            visible = ByteHelper.setBit(visible, 4);
-                        }
-                        if (data.searchVoxel(new int[]{x-1, y, z}, layerId) == null) {
-                            visible = ByteHelper.setBit(visible, 5);
-                        }
-                        if (data.searchVoxel(new int[]{x+1, y, z}, layerId) == null) {
-                            visible = ByteHelper.setBit(visible, 6);
-                        }
-                        if (voxel == null) {
-                            fileOut.writeIntRev(TRANSPARENT_VOXEL);
-                        } else {
-                            int color = voxel.getColor().getRGB();
-                            color = ((this.useVisMaskEncoding ? visible : 0xFF) << 24) | (color & 0x000000FF) << 16 | (color & 0x0000FF00) | (color & 0x00FF0000) >> 16;
-                            fileOut.writeIntRev(color);
-                        }
-                    }
-                }
-            }
-        }
-        // success
-        return true;
-    }
-
-    // ========================
-
-    private boolean writeCompressed() throws IOException {
-        // version
-        fileOut.writeIntRev(257);
-
-        // color format
-        fileOut.writeIntRev(0);
-
-        // z axis orientation
-        fileOut.writeIntRev(0);
-
-        // compressed
-        fileOut.writeIntRev(1);
-
-        // vis mask encoding
-        fileOut.writeIntRev(this.useVisMaskEncoding ? 1 : 0);
-
-        Integer[]  layers = data.getLayers();
-
-        // num matrices
-        fileOut.writeIntRev(layers.length);
-
-        for (int i = layers.length - 1; i >= 0; i--) {
-            Integer layerId = layers[i];
-
-            // write layer name
-            String layerName = data.getLayerName(layerId);
-            fileOut.writeByte((byte) layerName.length());
-            fileOut.writeASCIIString(layerName);
-
-            int[][] meta = get_meta(layerId);
-            int[] min = meta[0];
-            int[] max = meta[1];
-            int[] size = meta[2];
-
-            // write size
-            fileOut.writeIntRev(size[2]);
-            fileOut.writeIntRev(size[1]);
-            fileOut.writeIntRev(size[0]);
-
-            // write minimum
-            fileOut.writeIntRev(this.useOriginAsZero ? min[2] : 0);
-            fileOut.writeIntRev(this.useOriginAsZero ? -max[1] : 0);
-            fileOut.writeIntRev(this.useOriginAsZero ? min[0] : 0);
-
-            int currentColor = TRANSPARENT_VOXEL;
-            int count = 0;
-
-            for (int x = min[0]; x <= max[0]; x++) {
-                for (int y = max[1]; y >= min[1]; y--) {
-                    for (int z = min[2]; z <= max[2]; z++) {
-                        Voxel voxel = data.searchVoxel(new int[]{x, y, z}, layerId);
-                        int newColor;
-                        if (voxel == null) {
-                            newColor = TRANSPARENT_VOXEL;
-                        } else {
-                            newColor = voxel.getColor().getRGB();
-                            byte visible = 1;
-                            if (data.searchVoxel(new int[]{x-1, y, z}, layerId) == null) {
-                                visible = ByteHelper.setBit(visible, 1);
-                            }
-                            if (data.searchVoxel(new int[]{x+1, y, z}, layerId) == null) {
-                                visible = ByteHelper.setBit(visible, 2);
-                            }
-                            if (data.searchVoxel(new int[]{x, y+1, z}, layerId) == null) {
-                                visible = ByteHelper.setBit(visible, 3);
-                            }
-                            if (data.searchVoxel(new int[]{x, y-1, z}, layerId) == null) {
-                                visible = ByteHelper.setBit(visible, 4);
-                            }
-                            if (data.searchVoxel(new int[]{x, y, z-1}, layerId) == null) {
-                                visible = ByteHelper.setBit(visible, 5);
-                            }
-                            if (data.searchVoxel(new int[]{x, y, z+1}, layerId) == null) {
-                                visible = ByteHelper.setBit(visible, 6);
-                            }
-                            newColor = ((this.useVisMaskEncoding ? visible : 0xFF) << 24) | (newColor & 0x000000FF) << 16 | (newColor & 0x0000FF00) | (newColor & 0x00FF0000) >> 16;
-                        }
-
-                        if (newColor != currentColor) {
-                            this.writeColor(fileOut, count, currentColor);
-                            count = 0;
-                        }
-                        currentColor = newColor;
-                        count++;
-                    }
-                }
-                this.writeColor(fileOut, count, currentColor);
-                count = 0;
-                fileOut.writeIntRev(NEXT_SLICE_FLAG);
-            }
-        }
-        // success
-        return true;
     }
 
     // Helper to write color information

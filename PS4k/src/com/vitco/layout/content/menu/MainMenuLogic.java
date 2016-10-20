@@ -554,6 +554,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         final CheckBoxModule use_vis_mask_encoding = new CheckBoxModule("use_vis_mask_encoding", "Use visibility mask encoding.", true);
         qbExporter.addComponent(use_vis_mask_encoding);
 
+        final CheckBoxModule use_right_handed_z_axis_orientation = new CheckBoxModule("use_right_handed_z_axis_orientation", "Use right handed z-axis orientation.", true);
+        qbExporter.addComponent(use_right_handed_z_axis_orientation);
+
         LabelModule box_as_matrix_info = new LabelModule(
                 "Warning: This option can result in loss of information or larger file size. " +
                 "Use this setting to gain control over the matrix size."
@@ -1015,6 +1018,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     exporter.setUseBoxAsMatrix(dialog.is("qb_format.use_box_as_matrix=true"));
                                     exporter.setUseOriginAsZero(dialog.is("qb_format.use_origin_as_zero=true"));
                                     exporter.setUseVisMaskEncoding(dialog.is("qb_format.use_vis_mask_encoding=true"));
+                                    exporter.setUseRightHandedZAxisOrientation(dialog.is("qb_format.use_right_handed_z_axis_orientation=true"));
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
