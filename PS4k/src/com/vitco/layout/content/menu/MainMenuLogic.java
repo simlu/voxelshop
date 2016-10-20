@@ -541,28 +541,44 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         qbExporter.addComponent(use_compression);
 
         LabelModule compression_info = new LabelModule("Info: Compression saves a lot of space and makes opening and " +
-                "saving the file faster. Disable compression if you want to use the qb file for StoneHearth.");
-        compression_info.setVisibleLookup("export_type=qb_format");
+                "saving the file faster. Un-check for StoneHearth.");
         qbExporter.addComponent(compression_info);
 
         final CheckBoxModule use_box_as_matrix = new CheckBoxModule("use_box_as_matrix", "Use bounding box as matrix", false);
         qbExporter.addComponent(use_box_as_matrix);
 
-        final CheckBoxModule use_origin_as_zero = new CheckBoxModule("use_origin_as_zero", "Use origin as zero. Un-checking will move exported voxel into positive space.", true);
+        LabelModule box_as_matrix_info = new LabelModule(
+                "Warning: This option will result in loss of information for voxels outside the bounding box. " +
+                "Use this setting to gain control over the matrix size. " +
+                "Check for StoneHearth and set bounding box to 31 41 31."
+        );
+        qbExporter.addComponent(box_as_matrix_info);
+
+        final CheckBoxModule use_origin_as_zero = new CheckBoxModule("use_origin_as_zero", "Use origin as zero", true);
         qbExporter.addComponent(use_origin_as_zero);
+
+        LabelModule origin_as_zero_info = new LabelModule(
+                "Info: Un-checking will move exported voxel into positive space. This means voxels are " +
+                "shifted when re-importing the exported file. Un-check for StoneHearth."
+        );
+        qbExporter.addComponent(origin_as_zero_info);
 
         final CheckBoxModule use_vis_mask_encoding = new CheckBoxModule("use_vis_mask_encoding", "Use visibility mask encoding.", true);
         qbExporter.addComponent(use_vis_mask_encoding);
 
+        LabelModule vis_mask_encoding_info = new LabelModule(
+                "Info: This will encode voxel side visibility information, which can " +
+                "result in faster load time. Un-check for StoneHearth."
+        );
+        qbExporter.addComponent(vis_mask_encoding_info);
+
         final CheckBoxModule use_right_handed_z_axis_orientation = new CheckBoxModule("use_right_handed_z_axis_orientation", "Use right handed z-axis orientation.", true);
         qbExporter.addComponent(use_right_handed_z_axis_orientation);
 
-        LabelModule box_as_matrix_info = new LabelModule(
-                "Warning: This option can result in loss of information or larger file size. " +
-                "Use this setting to gain control over the matrix size."
+        LabelModule right_handed_z_axis_orientation_info = new LabelModule(
+                "Info: This option can affect file size. Check for StoneHearth."
         );
-        box_as_matrix_info.setVisibleLookup("export_type=qb_format");
-        qbExporter.addComponent(box_as_matrix_info);
+        qbExporter.addComponent(right_handed_z_axis_orientation_info);
 
         // ---------------
 
