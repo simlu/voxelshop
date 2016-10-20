@@ -32,6 +32,16 @@ public class QbExporter extends AbstractExporter {
         this.useBoxAsMatrix = useBoxAsMatrix;
     }
 
+    private boolean useOriginAsZero = true;
+    public void setUseOriginAsZero(boolean useOriginAsZero) {
+        this.useOriginAsZero = useOriginAsZero;
+    }
+
+    private boolean useVisMaskEncoding = true;
+    public void setUseVisMaskEncoding(boolean useVisMaskEncoding) {
+        this.useVisMaskEncoding = useVisMaskEncoding;
+    }
+
     private static final int CODE_FLAG = 2;
     private static final int NEXT_SLICE_FLAG = 6;
     private static final int TRANSPARENT_VOXEL = 0x00000000;
@@ -78,11 +88,7 @@ public class QbExporter extends AbstractExporter {
                     DynamicSettings.VOXEL_PLANE_RANGE_Z_POS - 1
             };
 //            System.out.println(max[0] + ", " + max[1] + ", " + max[2]);
-            size = new int[]{
-                    DynamicSettings.VOXEL_PLANE_SIZE_X,
-                    DynamicSettings.VOXEL_PLANE_SIZE_Y,
-                    DynamicSettings.VOXEL_PLANE_SIZE_Z
-            };
+            size = new int[]{max[0] - min[0] + 1, max[1] - min[1] + 1, max[2] - min[2] + 1};
 //            System.out.println(size[0] + ", " + size[1] + ", " + size[2]);
         }
         return new int[][] {
@@ -105,7 +111,7 @@ public class QbExporter extends AbstractExporter {
         fileOut.writeIntRev(0);
 
         // vis mask encoding
-        fileOut.writeIntRev(1);
+        fileOut.writeIntRev(this.useVisMaskEncoding ? 1 : 0);
 
         Integer[]  layers = data.getLayers();
 
@@ -131,11 +137,11 @@ public class QbExporter extends AbstractExporter {
             fileOut.writeIntRev(size[2]);
 
             // write minimum
-            fileOut.writeIntRev(min[0]);
-            fileOut.writeIntRev(-max[1]);
-            fileOut.writeIntRev(min[2]);
+            fileOut.writeIntRev(this.useOriginAsZero ? min[0] : 0);
+            fileOut.writeIntRev(this.useOriginAsZero ? -max[1] : 0);
+            fileOut.writeIntRev(this.useOriginAsZero ? min[2] : 0);
             for (int z = min[2]; z <= max[2]; z++) {
-                for (int y = max[1]; y > min[1] - 1; y--) {
+                for (int y = max[1]; y >= min[1]; y--) {
                     for (int x = min[0]; x <= max[0]; x++) {
                         Voxel voxel = data.searchVoxel(new int[]{x, y, z}, layerId);
                         byte visible = 1;
@@ -161,7 +167,7 @@ public class QbExporter extends AbstractExporter {
                             fileOut.writeIntRev(TRANSPARENT_VOXEL);
                         } else {
                             int color = voxel.getColor().getRGB();
-                            color = (visible << 24) | (color & 0x000000FF) << 16 | (color & 0x0000FF00) | (color & 0x00FF0000) >> 16;
+                            color = ((this.useVisMaskEncoding ? visible : 0xFF) << 24) | (color & 0x000000FF) << 16 | (color & 0x0000FF00) | (color & 0x00FF0000) >> 16;
                             fileOut.writeIntRev(color);
                         }
                     }
@@ -188,7 +194,7 @@ public class QbExporter extends AbstractExporter {
         fileOut.writeIntRev(1);
 
         // vis mask encoding
-        fileOut.writeIntRev(1);
+        fileOut.writeIntRev(this.useVisMaskEncoding ? 1 : 0);
 
         Integer[]  layers = data.getLayers();
 
@@ -214,15 +220,15 @@ public class QbExporter extends AbstractExporter {
             fileOut.writeIntRev(size[0]);
 
             // write minimum
-            fileOut.writeIntRev(min[2] - 1);
-            fileOut.writeIntRev(-max[1] - 1);
-            fileOut.writeIntRev(min[0] - 1);
+            fileOut.writeIntRev(this.useOriginAsZero ? min[2] : 0);
+            fileOut.writeIntRev(this.useOriginAsZero ? -max[1] : 0);
+            fileOut.writeIntRev(this.useOriginAsZero ? min[0] : 0);
 
             int currentColor = TRANSPARENT_VOXEL;
             int count = 0;
 
             for (int x = min[0]; x <= max[0]; x++) {
-                for (int y = max[1]; y > min[1] - 1; y--) {
+                for (int y = max[1]; y >= min[1]; y--) {
                     for (int z = min[2]; z <= max[2]; z++) {
                         Voxel voxel = data.searchVoxel(new int[]{x, y, z}, layerId);
                         int newColor;
@@ -249,7 +255,7 @@ public class QbExporter extends AbstractExporter {
                             if (data.searchVoxel(new int[]{x, y, z+1}, layerId) == null) {
                                 visible = ByteHelper.setBit(visible, 6);
                             }
-                            newColor = (visible << 24) | (newColor & 0x000000FF) << 16 | (newColor & 0x0000FF00) | (newColor & 0x00FF0000) >> 16;
+                            newColor = ((this.useVisMaskEncoding ? visible : 0xFF) << 24) | (newColor & 0x000000FF) << 16 | (newColor & 0x0000FF00) | (newColor & 0x00FF0000) >> 16;
                         }
 
                         if (newColor != currentColor) {

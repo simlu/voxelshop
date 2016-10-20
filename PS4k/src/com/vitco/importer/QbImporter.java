@@ -83,9 +83,7 @@ public class QbImporter extends AbstractImporter {
                 int z = 0;
 
                 while (z < sz) {
-                    z++;
-                    int index = 0;
-
+                    int index = -1;
                     while (true) {
                         int data = fileIn.readIntRev();
                         if (data == NEXT_SLICE_FLAG) {
@@ -95,8 +93,8 @@ public class QbImporter extends AbstractImporter {
                             data = fileIn.readIntRev();
 
                             for (int j = 0; j < count; j++) {
-                                int x = index%sx + 1; // mod = modulo e.g. 12 mod 8 = 4
-                                int y = index/sx + 1; // div = integer division e.g. 12 div 8 = 1
+                                int x = (index + 1)%sx;
+                                int y = (index + 1)/sx;
                                 index++;
                                 byteBuffer.position(0);
                                 byteBuffer.putInt(data);
@@ -114,8 +112,8 @@ public class QbImporter extends AbstractImporter {
                                 }
                             }
                         } else {
-                            int x = index%sx + 1;
-                            int y = index/sx + 1;
+                            int x = (index + 1)%sx;
+                            int y = (index + 1)/sx;
                             index++;
                             byteBuffer.position(0);
                             byteBuffer.putInt(data);
@@ -133,6 +131,7 @@ public class QbImporter extends AbstractImporter {
                             }
                         }
                     }
+                    z++;
                 }
 
             }

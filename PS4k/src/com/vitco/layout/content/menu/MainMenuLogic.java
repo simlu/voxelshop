@@ -548,6 +548,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         final CheckBoxModule use_box_as_matrix = new CheckBoxModule("use_box_as_matrix", "Use bounding box as matrix", false);
         qbExporter.addComponent(use_box_as_matrix);
 
+        final CheckBoxModule use_origin_as_zero = new CheckBoxModule("use_origin_as_zero", "Use origin as zero. Un-checking will move exported voxel into positive space.", true);
+        qbExporter.addComponent(use_origin_as_zero);
+
+        final CheckBoxModule use_vis_mask_encoding = new CheckBoxModule("use_vis_mask_encoding", "Use visibility mask encoding.", true);
+        qbExporter.addComponent(use_vis_mask_encoding);
+
         LabelModule box_as_matrix_info = new LabelModule(
                 "Warning: This option can result in loss of information or larger file size. " +
                 "Use this setting to gain control over the matrix size."
@@ -1007,6 +1013,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     QbExporter exporter = new QbExporter(exportTo, data, progressDialog, console);
                                     exporter.setUseCompression(dialog.is("qb_format.use_compression=true"));
                                     exporter.setUseBoxAsMatrix(dialog.is("qb_format.use_box_as_matrix=true"));
+                                    exporter.setUseOriginAsZero(dialog.is("qb_format.use_origin_as_zero=true"));
+                                    exporter.setUseVisMaskEncoding(dialog.is("qb_format.use_vis_mask_encoding=true"));
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
