@@ -62,9 +62,9 @@ public class TexTriangleManager {
                     first = false;
                 }
                 TexTriUV[] uvs = tri.getUVs();
-                stringBuilder.append(tri.getPoint(0).getId()).append(" ").append(uvs[0].getId()).append(" ");
-                stringBuilder.append(tri.getPoint(1).getId()).append(" ").append(uvs[1].getId()).append(" ");
-                stringBuilder.append(tri.getPoint(2).getId()).append(" ").append(uvs[2].getId());
+                stringBuilder.append(tri.getPoint(0).getId()).append(" ").append(tri.getOrientation()).append(" ").append(uvs[0].getId()).append(" ");
+                stringBuilder.append(tri.getPoint(1).getId()).append(" ").append(tri.getOrientation()).append(" ").append(uvs[1].getId()).append(" ");
+                stringBuilder.append(tri.getPoint(2).getId()).append(" ").append(tri.getOrientation()).append(" ").append(uvs[2].getId());
             }
         }
         return stringBuilder.toString();

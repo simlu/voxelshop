@@ -215,24 +215,46 @@ public class ColladaFileExporter extends ProgressReporter {
             xmlFile.addAttributes("source[0]/technique_common/accessor/param[-1]",
                     new String[]{"name=Z", "type=float"});
 
+            // -- write the normals
+            xmlFile.addAttributes("source[-1]", new String[]{
+                    "id=" + gId + "-normals"
+            });
+            xmlFile.addAttrAndTextContent("source[1]/float_array",
+                    new String[]{"id=" + gId + "-normals-array", "count=18"},
+                    "-1 0 0 1 0 0 " +
+                    "0 0 -1 0 0 1 " +
+                    "0 -1 0 0 1 0 "
+            );
+            xmlFile.addAttributes("source[1]/technique_common/accessor", new String[]{
+                    "source=#" + gId + "-normals-array",
+                    "count=6",
+                    "stride=3"
+            });
+            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
+                    new String[]{"name=X", "type=float"});
+            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
+                    new String[]{"name=Y", "type=float"});
+            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
+                    new String[]{"name=Z", "type=float"});
+
             // --- write the uvs
             xmlFile.addAttributes("source[-1]", new String[]{
                     "id=" + gId + "-uvs"
             });
-            xmlFile.addAttrAndTextContent("source[1]/float_array",
+            xmlFile.addAttrAndTextContent("source[2]/float_array",
                     new String[]{
                             "id=" + gId + "-uvs-array",
                             "count=" + (texTriangleManager.getUniqueUVCount() * 2)},
                     texTriangleManager.getUniqueUVString(false));
 
-            xmlFile.addAttributes("source[1]/technique_common/accessor", new String[]{
+            xmlFile.addAttributes("source[2]/technique_common/accessor", new String[]{
                     "source=#" + gId + "-uvs-array",
                     "count=" + texTriangleManager.getUniqueUVCount(),
                     "stride=2"
             });
-            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
+            xmlFile.addAttributes("source[2]/technique_common/accessor/param[-1]",
                     new String[]{"name=S", "type=float"});
-            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
+            xmlFile.addAttributes("source[2]/technique_common/accessor/param[-1]",
                     new String[]{"name=T", "type=float"});
 
             // vertices (generic information)
@@ -259,9 +281,14 @@ public class ColladaFileExporter extends ProgressReporter {
                         "offset=0"
                 });
                 xmlFile.addAttributes("input[-1]", new String[]{
+                        "semantic=NORMAL",
+                        "source=#" + gId + "-normals",
+                        "offset=1"
+                });
+                xmlFile.addAttributes("input[-1]", new String[]{
                         "semantic=TEXCOORD",
                         "source=#" + gId + "-uvs",
-                        "offset=1",
+                        "offset=2",
                         "set=0"
                 });
                 // fill with 3s (each triangle consists of three points)
