@@ -51,7 +51,7 @@ public class ColladaFileExporter extends ProgressReporter {
         writeTextures();
         // write the mesh + uv of the object (triangles)
         setActivity("Creating Coordinates and UVs...", true);
-        writeCoordinates();
+        writeCoordinates(useYUP);
     }
 
     // create the object in the scene
@@ -180,7 +180,7 @@ public class ColladaFileExporter extends ProgressReporter {
     }
 
     // write the coordinates
-    private void writeCoordinates() {
+    private void writeCoordinates(boolean useYUP) {
         TexTriangleManager[] triangleManager = exportDataManager.getTriangleManager();
         for (int layerRef = 0; layerRef < triangleManager.length; layerRef++) {
             TexTriangleManager texTriangleManager = triangleManager[layerRef];
@@ -221,9 +221,7 @@ public class ColladaFileExporter extends ProgressReporter {
             });
             xmlFile.addAttrAndTextContent("source[1]/float_array",
                     new String[]{"id=" + gId + "-normals-array", "count=18"},
-                    "-1 0 0 1 0 0 " +
-                    "0 0 -1 0 0 1 " +
-                    "0 -1 0 0 1 0 "
+                    useYUP ? "-1 0 0 1 0 0 0 -1 0 0 1 0 0 0 1 0 0 -1 " : "-1 0 0 1 0 0 0 0 -1 0 0 1 0 -1 0 0 1 0 "
             );
             xmlFile.addAttributes("source[1]/technique_common/accessor", new String[]{
                     "source=#" + gId + "-normals-array",
