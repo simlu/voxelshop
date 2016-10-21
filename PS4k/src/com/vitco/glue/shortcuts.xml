@@ -61,12 +61,8 @@
         <shortcut action="swap_mainView_with_xzView" caption="swap_mainView_with_xzView_caption" />
         <shortcut action="swap_mainView_with_yzView" caption="swap_mainView_with_yzView_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="P" action="pick_color_under_mouse_as_current_color" caption="pick_color_under_mouse_as_current_color_caption" />
-    </global>
 
-    <frame name="mainView">
-        <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
+        <!--Move Selection-->
         <shortcut ctrl="no" alt="no" shift="no" key="UP" action="shift_selected_voxels_up" caption="shift_selected_voxels_up_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="DOWN" action="shift_selected_voxels_down" caption="shift_selected_voxels_down_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="LEFT" action="shift_selected_voxels_left" caption="shift_selected_voxels_left_caption" />
@@ -74,12 +70,18 @@
         <shortcut ctrl="no" alt="no" shift="no" key="PAGE_DOWN" action="shift_selected_voxels_in" caption="shift_selected_voxels_in_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="PAGE_UP" action="shift_selected_voxels_out" caption="shift_selected_voxels_out_caption" />
 
+    </global>
+
+    <frame name="mainView">
+        <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
     </frame>
 
     <frame name="xyView">
         <shortcut action="sideview_set_plane_to_zero1" caption="sideview_set_plane_to_zero_caption" />
-        <shortcut key="UP" action="sideview_move_plane_in1" caption="sideview_move_plane_in_caption" />
-        <shortcut key="DOWN" action="sideview_move_plane_out1" caption="sideview_move_plane_out_caption" />
+        <shortcut ctrl="yes" key="UP" action="sideview_move_plane_in1" caption="sideview_move_plane_in_caption" />
+        <shortcut ctrl="yes" key="DOWN" action="sideview_move_plane_out1" caption="sideview_move_plane_out_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="sideview_reset_view1" caption="sideview_reset_view_tooltip" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb1" caption="sideview_zoom_out" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb1" caption="sideview_zoom_in" />
@@ -87,8 +89,8 @@
 
     <frame name="xzView">
         <shortcut action="sideview_set_plane_to_zero2" caption="sideview_set_plane_to_zero_caption" />
-        <shortcut key="UP" action="sideview_move_plane_in2" caption="sideview_move_plane_in_caption" />
-        <shortcut key="DOWN" action="sideview_move_plane_out2" caption="sideview_move_plane_out_caption" />
+        <shortcut ctrl="yes" key="UP" action="sideview_move_plane_in2" caption="sideview_move_plane_in_caption" />
+        <shortcut ctrl="yes" key="DOWN" action="sideview_move_plane_out2" caption="sideview_move_plane_out_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="sideview_reset_view2" caption="sideview_reset_view_tooltip" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb2" caption="sideview_zoom_out" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb2" caption="sideview_zoom_in" />
@@ -96,8 +98,8 @@
 
     <frame name="yzView">
         <shortcut action="sideview_set_plane_to_zero3" caption="sideview_set_plane_to_zero_caption" />
-        <shortcut key="UP" action="sideview_move_plane_in3" caption="sideview_move_plane_in_caption" />
-        <shortcut key="DOWN" action="sideview_move_plane_out3" caption="sideview_move_plane_out_caption" />
+        <shortcut ctrl="yes" key="UP" action="sideview_move_plane_in3" caption="sideview_move_plane_in_caption" />
+        <shortcut ctrl="yes" key="DOWN" action="sideview_move_plane_out3" caption="sideview_move_plane_out_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="sideview_reset_view3" caption="sideview_reset_view_tooltip" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb3" caption="sideview_zoom_out" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb3" caption="sideview_zoom_in" />

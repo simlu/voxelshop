@@ -467,6 +467,35 @@ public class ShortcutManager implements ShortcutManagerInterface {
         preferences.storeObject("global_shortcuts_as_map", global);
     }
 
+
+    // check if a keystroke exists
+    private boolean isShortcutSet(KeyStroke keyStroke, String frame) {
+        // check if exists in global shortcuts
+        for (ShortcutObject so : global) {
+            if (so.keyStroke != null && so.keyStroke.equals(keyStroke)) {
+                return true;
+            }
+        }
+        if (frame != null) {
+            // check if this is a shortcut in provided frame
+            for (ShortcutObject so : map.get(frame)) {
+                if (so.keyStroke != null && so.keyStroke.equals(keyStroke)) {
+                    return true;
+                }
+            }
+        } else {
+            // check if this is a shortcut in any frame
+            for (String key : map.keySet()) {
+                for (ShortcutObject so : map.get(key)) {
+                    if (so.keyStroke != null && so.keyStroke.equals(keyStroke)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     // load the xml files that maps (shortcut, action)
     // and then load custom user defined shortcuts
     @PostConstruct
@@ -502,6 +531,22 @@ public class ShortcutManager implements ShortcutManagerInterface {
             errorHandler.handle(e); // should not happen
         }
 
+        // check if we have global shortcuts stored
+        if (preferences.contains("global_shortcuts_as_map")) {
+            ArrayList tmp = (ArrayList)preferences.loadObject("global_shortcuts_as_map");
+            for (ShortcutObject so1 : global) {
+                for (Object so2 : tmp) {
+                    // only update existing actions
+                    if (so1.actionName.equals(((ShortcutObject)so2).actionName)) {
+                        // check if there is a collision
+                        if (!isShortcutSet(((ShortcutObject)so2).keyStroke, null)) {
+                            so1.keyStroke = ((ShortcutObject)so2).keyStroke;
+                        }
+                    }
+                }
+            }
+        }
+
         // check if we have frame shortcuts stored
         if (preferences.contains("all_shortcuts_as_map")) {
             Map<String, ArrayList> tmp = FileTools.castHash(
@@ -515,22 +560,12 @@ public class ShortcutManager implements ShortcutManagerInterface {
                         for (Object so2 : tmp.get(key)) {
                             // only update existing actions
                             if (so1.actionName.equals(((ShortcutObject)so2).actionName)) {
-                                so1.keyStroke = ((ShortcutObject)so2).keyStroke;
+                                // check if there is a collision
+                                if (!isShortcutSet(((ShortcutObject)so2).keyStroke, key)) {
+                                    so1.keyStroke = ((ShortcutObject) so2).keyStroke;
+                                }
                             }
                         }
-                    }
-                }
-            }
-        }
-
-        // check if we have global shortcuts stored
-        if (preferences.contains("global_shortcuts_as_map")) {
-            ArrayList tmp = (ArrayList)preferences.loadObject("global_shortcuts_as_map");
-            for (ShortcutObject so1 : global) {
-                for (Object so2 : tmp) {
-                    // only update existing actions
-                    if (so1.actionName.equals(((ShortcutObject)so2).actionName)) {
-                        so1.keyStroke = ((ShortcutObject)so2).keyStroke;
                     }
                 }
             }
