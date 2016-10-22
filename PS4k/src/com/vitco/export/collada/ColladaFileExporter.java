@@ -36,7 +36,8 @@ public class ColladaFileExporter extends ProgressReporter {
     private final String texturePrefix;
 
     // constructor
-    public ColladaFileExporter(ProgressDialog dialog, ConsoleInterface console, ExportDataManager exportDataManager, String texturePrefix, String name, boolean useYUP) {
+    public ColladaFileExporter(ProgressDialog dialog, ConsoleInterface console, ExportDataManager exportDataManager,
+                               String texturePrefix, String name, boolean useYUP, boolean exportOrthogonalVertexNormals) {
         super(dialog, console);
         this.exportDataManager = exportDataManager;
         this.texturePrefix = texturePrefix;
@@ -51,7 +52,7 @@ public class ColladaFileExporter extends ProgressReporter {
         writeTextures();
         // write the mesh + uv of the object (triangles)
         setActivity("Creating Coordinates and UVs...", true);
-        writeCoordinates(useYUP);
+        writeCoordinates(useYUP, exportOrthogonalVertexNormals);
     }
 
     // create the object in the scene
@@ -180,7 +181,7 @@ public class ColladaFileExporter extends ProgressReporter {
     }
 
     // write the coordinates
-    private void writeCoordinates(boolean useYUP) {
+    private void writeCoordinates(boolean useYUP, boolean exportOrthogonalVertexNormals) {
         TexTriangleManager[] triangleManager = exportDataManager.getTriangleManager();
         for (int layerRef = 0; layerRef < triangleManager.length; layerRef++) {
             TexTriangleManager texTriangleManager = triangleManager[layerRef];
@@ -215,45 +216,47 @@ public class ColladaFileExporter extends ProgressReporter {
             xmlFile.addAttributes("source[0]/technique_common/accessor/param[-1]",
                     new String[]{"name=Z", "type=float"});
 
-            // -- write the normals
-            xmlFile.addAttributes("source[-1]", new String[]{
-                    "id=" + gId + "-normals"
-            });
-            xmlFile.addAttrAndTextContent("source[1]/float_array",
-                    new String[]{"id=" + gId + "-normals-array", "count=18"},
-                    useYUP ? "-1 0 0 1 0 0 0 -1 0 0 1 0 0 0 1 0 0 -1 " : "-1 0 0 1 0 0 0 0 -1 0 0 1 0 -1 0 0 1 0 "
-            );
-            xmlFile.addAttributes("source[1]/technique_common/accessor", new String[]{
-                    "source=#" + gId + "-normals-array",
-                    "count=6",
-                    "stride=3"
-            });
-            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
-                    new String[]{"name=X", "type=float"});
-            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
-                    new String[]{"name=Y", "type=float"});
-            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
-                    new String[]{"name=Z", "type=float"});
-
             // --- write the uvs
             xmlFile.addAttributes("source[-1]", new String[]{
                     "id=" + gId + "-uvs"
             });
-            xmlFile.addAttrAndTextContent("source[2]/float_array",
+            xmlFile.addAttrAndTextContent("source[1]/float_array",
                     new String[]{
                             "id=" + gId + "-uvs-array",
                             "count=" + (texTriangleManager.getUniqueUVCount() * 2)},
                     texTriangleManager.getUniqueUVString(false));
 
-            xmlFile.addAttributes("source[2]/technique_common/accessor", new String[]{
+            xmlFile.addAttributes("source[1]/technique_common/accessor", new String[]{
                     "source=#" + gId + "-uvs-array",
                     "count=" + texTriangleManager.getUniqueUVCount(),
                     "stride=2"
             });
-            xmlFile.addAttributes("source[2]/technique_common/accessor/param[-1]",
+            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
                     new String[]{"name=S", "type=float"});
-            xmlFile.addAttributes("source[2]/technique_common/accessor/param[-1]",
+            xmlFile.addAttributes("source[1]/technique_common/accessor/param[-1]",
                     new String[]{"name=T", "type=float"});
+
+            if (exportOrthogonalVertexNormals) {
+                // -- write the normals
+                xmlFile.addAttributes("source[-1]", new String[]{
+                        "id=" + gId + "-normals"
+                });
+                xmlFile.addAttrAndTextContent("source[2]/float_array",
+                        new String[]{"id=" + gId + "-normals-array", "count=18"},
+                        useYUP ? "-1 0 0 1 0 0 0 -1 0 0 1 0 0 0 1 0 0 -1 " : "-1 0 0 1 0 0 0 0 -1 0 0 1 0 -1 0 0 1 0 "
+                );
+                xmlFile.addAttributes("source[2]/technique_common/accessor", new String[]{
+                        "source=#" + gId + "-normals-array",
+                        "count=6",
+                        "stride=3"
+                });
+                xmlFile.addAttributes("source[2]/technique_common/accessor/param[-1]",
+                        new String[]{"name=X", "type=float"});
+                xmlFile.addAttributes("source[2]/technique_common/accessor/param[-1]",
+                        new String[]{"name=Y", "type=float"});
+                xmlFile.addAttributes("source[2]/technique_common/accessor/param[-1]",
+                        new String[]{"name=Z", "type=float"});
+            }
 
             // vertices (generic information)
             xmlFile.addAttributes("vertices", new String[]{
@@ -279,19 +282,21 @@ public class ColladaFileExporter extends ProgressReporter {
                         "offset=0"
                 });
                 xmlFile.addAttributes("input[-1]", new String[]{
-                        "semantic=NORMAL",
-                        "source=#" + gId + "-normals",
-                        "offset=1"
-                });
-                xmlFile.addAttributes("input[-1]", new String[]{
                         "semantic=TEXCOORD",
                         "source=#" + gId + "-uvs",
-                        "offset=2",
+                        "offset=1",
                         "set=0"
                 });
+                if (exportOrthogonalVertexNormals) {
+                    xmlFile.addAttributes("input[-1]", new String[]{
+                            "semantic=NORMAL",
+                            "source=#" + gId + "-normals",
+                            "offset=2"
+                    });
+                }
                 // fill with 3s (each triangle consists of three points)
                 xmlFile.addTextContent("vcount", new String(new char[groupId[1]]).replace("\0", " 3").substring(1));
-                xmlFile.addTextContent("p", texTriangleManager.getTrianglePolygonList(groupId[0]));
+                xmlFile.addTextContent("p", texTriangleManager.getTrianglePolygonList(groupId[0], exportOrthogonalVertexNormals));
 
             }
         }

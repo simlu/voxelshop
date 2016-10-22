@@ -50,7 +50,7 @@ public class TexTriangleManager {
 
     // get the triangle coordinate list
     // (i.e. "[p1_ uv1 p2 uv2 p3 uv3]_tri1 [p1_ uv1 p2 uv2 p3 uv3]_tri2 ...")
-    public final String getTrianglePolygonList(int groupId) {
+    public final String getTrianglePolygonList(int groupId, boolean exportOrthogonalVertexNormals) {
         StringBuilder stringBuilder = new StringBuilder();
         boolean first = true;
         for (TexTriangle tri : triangles) {
@@ -62,9 +62,18 @@ public class TexTriangleManager {
                     first = false;
                 }
                 TexTriUV[] uvs = tri.getUVs();
-                stringBuilder.append(tri.getPoint(0).getId()).append(" ").append(tri.getOrientation()).append(" ").append(uvs[0].getId()).append(" ");
-                stringBuilder.append(tri.getPoint(1).getId()).append(" ").append(tri.getOrientation()).append(" ").append(uvs[1].getId()).append(" ");
-                stringBuilder.append(tri.getPoint(2).getId()).append(" ").append(tri.getOrientation()).append(" ").append(uvs[2].getId());
+                stringBuilder.append(tri.getPoint(0).getId()).append(" ").append(uvs[0].getId()).append(" ");
+                if (exportOrthogonalVertexNormals) {
+                    stringBuilder.append(tri.getOrientation()).append(" ");
+                }
+                stringBuilder.append(tri.getPoint(1).getId()).append(" ").append(uvs[1].getId()).append(" ");
+                if (exportOrthogonalVertexNormals) {
+                    stringBuilder.append(tri.getOrientation()).append(" ");
+                }
+                stringBuilder.append(tri.getPoint(2).getId()).append(" ").append(uvs[2].getId());
+                if (exportOrthogonalVertexNormals) {
+                    stringBuilder.append(" ").append(tri.getOrientation());
+                }
             }
         }
         return stringBuilder.toString();

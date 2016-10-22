@@ -443,6 +443,18 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         padTextures.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(padTextures);
 
+        // option: export orthogonal vertex normals
+        CheckBoxModule exportOrthogonalVertexNormals = new CheckBoxModule(
+                "export_orthogonal_vertex_normals", "Export orthogonal vertex normals", false);
+        exportOrthogonalVertexNormals.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(exportOrthogonalVertexNormals);
+        LabelModule exportOrthogonalVertexNormalsInfo = new LabelModule(
+                "Info: Exporting orthogonal vertex normals can help with flat shading, but significantly increases vertex count. " +
+                "Usually the preferred way is to instead enable flat shading for the engine itself. No normals are exported when unchecked."
+        );
+        exportOrthogonalVertexNormalsInfo.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(exportOrthogonalVertexNormalsInfo);
+
         // option: use vertex colors
         CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
@@ -464,18 +476,22 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         collada.addComponent(forcePOT);
 
         // option: export with y-up or z-up
-        CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis.", false);
+        CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis", false);
         useYup.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(useYup);
 
-        collada.addComponent(new LabelModule("Select Origin Mode:"));
-        collada.addComponent(new ComboBoxModule("origin_mode", new String[][] {
-                new String[] {"cross", "Use Cross"},
-                new String[] {"center", "Use Object Center"},
-                new String[] {"plane_center", "Use Object Center Projected onto Plane"},
-                new String[] {"box_center", "Use Bounding Box Center"},
-                new String[] {"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
-        }, 0));
+        LabelModule setOriginModeText = new LabelModule("Select Origin Mode:");
+        setOriginModeText.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(setOriginModeText);
+        ComboBoxModule setOriginModeSelect = new ComboBoxModule("origin_mode", new String[][]{
+                new String[]{"cross", "Use Cross"},
+                new String[]{"center", "Use Object Center"},
+                new String[]{"plane_center", "Use Object Center Projected onto Plane"},
+                new String[]{"box_center", "Use Bounding Box Center"},
+                new String[]{"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
+        }, 0);
+        setOriginModeSelect.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(setOriginModeSelect);
 
         // ---------------
 
@@ -766,6 +782,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
                                     // set the YUP flag (whether to use z-up or y-up)
                                     colladaExportWrapper.setUseYUP(dialog.is("collada.use_yup=true"));
+                                    // set "export exportOrthogonalVertexNormals vertex normals" flag
+                                    colladaExportWrapper.setExportOrthogonalVertexNormals(dialog.is("collada.export_orthogonal_vertex_normals=true"));
 
                                     // set the center mode
                                     if (dialog.is("collada.origin_mode=cross")) {

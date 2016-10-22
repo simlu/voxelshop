@@ -78,6 +78,11 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.useYUP = useYUP;
     }
 
+    private boolean exportOrthogonalVertexNormals = false;
+    public void setExportOrthogonalVertexNormals(boolean exportOrthogonalVertexNormals) {
+        this.exportOrthogonalVertexNormals = exportOrthogonalVertexNormals;
+    }
+
     // the origin mode
     public static final int ORIGIN_CROSS = 0;
     public static final int ORIGIN_CENTER = 1;
@@ -99,7 +104,7 @@ public class ColladaExportWrapper extends ProgressReporter {
 
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT, useLayers);
-        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP);
+        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals);
 
         setActivity("Writing Data File...", true);
         // write the dae file
