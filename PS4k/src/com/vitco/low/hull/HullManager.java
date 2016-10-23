@@ -96,6 +96,11 @@ public class HullManager<T> implements HullManagerInterface<T>, Serializable {
     }
 
     @Override
+    public T get(short[] pos) {
+        return id2obj.get(CubeIndexer.getId(pos));
+    }
+
+    @Override
     public final void update(short[] pos, T object) {
         //System.out.println("U " + pos[0] + "," + pos[1] + "," + pos[2]);
         update(CubeIndexer.getId(pos), object);

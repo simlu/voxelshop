@@ -48,10 +48,9 @@ public class ColladaExportWrapper extends ProgressReporter {
         padTextures = state;
     }
 
-    // true if colored vertices should be used
-    private boolean useColoredVertices = false;
-    public final void setUseColoredVertices(boolean state) {
-        useColoredVertices = state;
+    private boolean useVertexColoring;
+    public void setUseVertexColoring(boolean useVertexColoring) {
+        this.useVertexColoring = useVertexColoring;
     }
 
     // true if the export should have the "black outline"
@@ -103,8 +102,10 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT, useLayers);
-        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals);
+        ExportDataManager exportDataManager = new ExportDataManager(
+                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT, useLayers, useVertexColoring);
+        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
+                getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);
 
         setActivity("Writing Data File...", true);
         // write the dae file
@@ -112,11 +113,13 @@ public class ColladaExportWrapper extends ProgressReporter {
             result = false;
         }
 
-        setActivity("Writing Textures...", true);
-        // write the texture files
-        File folder = colladaFile.getParentFile();
-        if (!colladaFileExporter.writeTexturesToFolder(folder, errorHandler)) {
-            result = false;
+        if (!useVertexColoring) {
+            setActivity("Writing Textures...", true);
+            // write the texture files
+            File folder = colladaFile.getParentFile();
+            if (!colladaFileExporter.writeTexturesToFolder(folder, errorHandler)) {
+                result = false;
+            }
         }
 
         // validation - only check in debug mode

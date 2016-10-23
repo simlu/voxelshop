@@ -25,6 +25,9 @@ public interface HullManagerInterface<T> {
 
     int[] getPosIds();
 
+    // obtain object by position
+    T get(short[] pos);
+
     // add an object to the hull finder
     public void update(short[] pos, T object);
 

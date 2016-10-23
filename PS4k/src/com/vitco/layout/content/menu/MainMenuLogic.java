@@ -441,6 +441,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // option: make texture edges save (pad textures)
         CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", true);
         padTextures.setInvisibleLookup("collada.type=legacy");
+        padTextures.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(padTextures);
 
         // option: export orthogonal vertex normals
@@ -458,21 +459,19 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // option: use vertex colors
         CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
-        useVertexColors.setVisibleLookup("collada.use_black_edges=false");
-        useVertexColors.setStrikeThrough(true);
         collada.addComponent(useVertexColors);
 
         // option: export with black outline
         CheckBoxModule useBlackOutline = new CheckBoxModule("use_black_edges", "Use black edges", false);
         useBlackOutline.setInvisibleLookup("collada.type=legacy");
-        useBlackOutline.setVisibleLookup("collada.use_vertex_coloring=false");
+        useBlackOutline.setEnabledLookup("collada.use_vertex_coloring=false");
         useBlackOutline.setStrikeThrough(true);
         collada.addComponent(useBlackOutline);
 
         // option: force power of two textures
         CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
         forcePOT.setInvisibleLookup("collada.type=legacy");
-        forcePOT.setVisibleLookup("collada.use_vertex_coloring=false");
+        forcePOT.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(forcePOT);
 
         // option: export with y-up or z-up
@@ -772,8 +771,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
                                     // set pad textures flag
                                     colladaExportWrapper.setPadTextures(dialog.is("collada.pad_textures=true"));
-                                    // set use vertex colors flag
-                                    colladaExportWrapper.setUseColoredVertices(dialog.is("collada.use_vertex_coloring=true"));
+                                    // set use vertex coloring
+                                    colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
                                     // set use black outline
                                     colladaExportWrapper.setUseBlackOutline(dialog.is("collada.use_black_edges=true"));
                                     // set force power of two force textures

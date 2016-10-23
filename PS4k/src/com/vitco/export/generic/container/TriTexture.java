@@ -60,6 +60,13 @@ public class TriTexture {
 
     // #################################
 
+    // get a random rgb from this texture
+    public final int getSampleRGB() {
+        TIntObjectIterator<int[]> it = pixels.iterator();
+        it.advance();
+        return it.value()[2];
+    }
+
     // set parent texture for this texture
     // Note: A parent texture is a texture that contains this texture
     public final void setParentTexture(TriTexture parentTexture, int[] leftTop, int orientationFlag) {
