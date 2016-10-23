@@ -51,6 +51,8 @@ public class FolderSelectModule extends BlankDialogModule {
                         // listen to changes
                         notifyContentChanged();
                     }
+                } else {
+                    fileDialog.setCurrentDirectory(new File(label.getText()));
                 }
             }
         });
