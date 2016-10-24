@@ -179,12 +179,12 @@ public class ExportDataManager extends ProgressReporter {
     }
 
     // make sure that the polygon has no 3D t-junction problems
-    private short[][][] fix3DTJunctionProblems(HullManagerExt<Voxel> hullManager, short[][][] polys, int planeAbove, int id1, int id2, int minA, int minB) {
+    private short[][][] fix3DTJunctionProblems(HullManagerExt<Voxel> hullManager, short[][][] polys, short plane, short planeAbove, int id1, int id2, int id3, int minA, int minB) {
         // result array
         short[][][] result = new short[polys.length][][];
         // temporary arrays to do comparisons
-        short[] pos1 = new short[] {(short) planeAbove, (short) planeAbove, (short) planeAbove};
-        short[] pos2 = new short[] {(short) planeAbove, (short) planeAbove, (short) planeAbove};
+        short[] pos1 = new short[] {planeAbove, planeAbove, planeAbove};
+        short[] pos2 = new short[] {planeAbove, planeAbove, planeAbove};
         // loop over all polygons
         for (int i1 = 0; i1 < polys.length; i1++) {
             // create corresponding result part
@@ -211,10 +211,30 @@ public class ExportDataManager extends ProgressReporter {
                             pos1[id2] = (short) (y + minB);
                             pos2[id1] = x;
                             pos2[id2] = (short) (y-1 + minB);
-                            if (hullManager.contains(pos1) != hullManager.contains(pos2)) {
+                            Voxel obj1 = hullManager.get(pos1);
+                            Voxel obj2 = hullManager.get(pos2);
+                            if ((obj1 == null) != (obj2 == null) || (
+                                useVertexColoring && obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
+                            )) {
                                 // the "in between" point needs to be used for triangle generation
                                 list.add(outline[i]);
                                 list.add(y);
+                            } else
+                            // fix t-junction issues for vertex coloring
+                            if (useVertexColoring) {
+                                pos1[id3] = plane;
+                                pos2[id3] = plane;
+                                obj1 = hullManager.get(pos1);
+                                obj2 = hullManager.get(pos2);
+                                if ((obj1 == null) != (obj2 == null) || (
+                                    obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
+                                )) {
+                                    // the "in between" point needs to be used for triangle generation
+                                    list.add(outline[i]);
+                                    list.add(y);
+                                }
+                                pos1[id3] = planeAbove;
+                                pos2[id3] = planeAbove;
                             }
                         }
                     } else { // y values are equal
@@ -227,10 +247,30 @@ public class ExportDataManager extends ProgressReporter {
                             pos1[id2] = y;
                             pos2[id1] = (short) (x - 1 + minA);
                             pos2[id2] = y;
-                            if (hullManager.contains(pos1) != hullManager.contains(pos2)) {
+                            Voxel obj1 = hullManager.get(pos1);
+                            Voxel obj2 = hullManager.get(pos2);
+                            if ((obj1 == null) != (obj2 == null) || (
+                                useVertexColoring && obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
+                            )) {
                                 // the "in between" point needs to be used for triangle generation
                                 list.add(x);
                                 list.add(outline[i + 1]);
+                            } else
+                            // fix t-junction issues for vertex coloring
+                            if (useVertexColoring) {
+                                pos1[id3] = plane;
+                                pos2[id3] = plane;
+                                obj1 = hullManager.get(pos1);
+                                obj2 = hullManager.get(pos2);
+                                if ((obj1 == null) != (obj2 == null) || (
+                                    obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
+                                )) {
+                                    // the "in between" point needs to be used for triangle generation
+                                    list.add(x);
+                                    list.add(outline[i + 1]);
+                                }
+                                pos1[id3] = planeAbove;
+                                pos2[id3] = planeAbove;
                             }
                         }
                     }
@@ -281,18 +321,22 @@ public class ExportDataManager extends ProgressReporter {
                 // select the corresponding ids for the orientation
                 final int id1;
                 final int id2;
+                final int id3;
                 switch (directionId) {
                     case 0:
                         id1 = 1;
                         id2 = 2;
+                        id3 = 0;
                         break;
                     case 1:
                         id1 = 0;
                         id2 = 2;
+                        id3 = 1;
                         break;
                     default: //case 2
                         id1 = 0;
                         id2 = 1;
+                        id3 = 2;
                         break;
                 }
 
@@ -361,7 +405,7 @@ public class ExportDataManager extends ProgressReporter {
                                     // fix 3D t-junction problems
                                     int planeAbove = entries.getKey() + (finalSide % 2 == 0 ? 1 : -1);
                                     // Note: This *should* work the same if only outside is used (i.e. holes are removed)
-                                    polys = fix3DTJunctionProblems(hullManager, polys, planeAbove, id1, id2, minMax[0], minMax[1]);
+                                    polys = fix3DTJunctionProblems(hullManager, polys, entries.getKey(), (short) planeAbove, id1, id2, id3, minMax[0], minMax[1]);
                                     // extract triangles
                                     tris = Grid2TriPolyFast.triangulate(polys);
                                     break;
