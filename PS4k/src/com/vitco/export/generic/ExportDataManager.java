@@ -51,6 +51,9 @@ public class ExportDataManager extends ProgressReporter {
     // whether to use vertex coloring
     private final boolean triangulateByColor;
 
+    // whether to fix tjunction problems
+    private final boolean fixTJunctions;
+
     // center of this object
     private final float[] center;
 
@@ -91,8 +94,8 @@ public class ExportDataManager extends ProgressReporter {
     public static final int NAIVE_ALGORITHM = 2;
 
     // constructor
-    public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm,
-                             boolean useYUP, int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring) {
+    public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP,
+                             int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions) {
         super(dialog, console);
 
         // create hull manager that exposes hull information
@@ -153,6 +156,7 @@ public class ExportDataManager extends ProgressReporter {
         this.useYUP = useYUP;
         this.originMode = originMode;
         this.triangulateByColor = triangulateByColor;
+        this.fixTJunctions = fixTJunctions;
 
         // pre-compute exterior hole if necessary
         if (removeHoles) {
@@ -402,10 +406,12 @@ public class ExportDataManager extends ProgressReporter {
                                 default:
                                     // generate triangles
                                     short[][][] polys = Grid2PolyHelper.convert(data);
-                                    // fix 3D t-junction problems
-                                    int planeAbove = entries.getKey() + (finalSide % 2 == 0 ? 1 : -1);
-                                    // Note: This *should* work the same if only outside is used (i.e. holes are removed)
-                                    polys = fix3DTJunctionProblems(hullManager, polys, entries.getKey(), (short) planeAbove, id1, id2, id3, minMax[0], minMax[1]);
+                                    if (fixTJunctions) {
+                                        // fix 3D t-junction problems
+                                        int planeAbove = entries.getKey() + (finalSide % 2 == 0 ? 1 : -1);
+                                        // Note: This *should* work the same if only outside is used (i.e. holes are removed)
+                                        polys = fix3DTJunctionProblems(hullManager, polys, entries.getKey(), (short) planeAbove, id1, id2, id3, minMax[0], minMax[1]);
+                                    }
                                     // extract triangles
                                     tris = Grid2TriPolyFast.triangulate(polys);
                                     break;

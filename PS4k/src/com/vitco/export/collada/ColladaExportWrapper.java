@@ -82,6 +82,11 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.exportOrthogonalVertexNormals = exportOrthogonalVertexNormals;
     }
 
+    private boolean fixTJunctions;
+    public void setFixTJunctions(boolean fixTJunctions) {
+        this.fixTJunctions = fixTJunctions;
+    }
+
     // the origin mode
     public static final int ORIGIN_CROSS = 0;
     public static final int ORIGIN_CENTER = 1;
@@ -103,7 +108,8 @@ public class ColladaExportWrapper extends ProgressReporter {
 
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(
-                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT, useLayers, triangulateByColor, useVertexColoring);
+                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode,
+                forcePOT, useLayers, triangulateByColor, useVertexColoring, fixTJunctions);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
                 getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);
 

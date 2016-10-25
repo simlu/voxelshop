@@ -478,6 +478,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useYup.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(useYup);
 
+        // option: fix t junction problems
+        CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
+        fixTJunctions.setInvisibleLookup("collada.type=legacy");
+        fixTJunctions.setEnabledLookup("collada.type=poly2tri");
+        collada.addComponent(fixTJunctions);
+
         LabelModule setOriginModeText = new LabelModule("Select Origin Mode:");
         setOriginModeText.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(setOriginModeText);
@@ -780,6 +786,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
                                     // set the YUP flag (whether to use z-up or y-up)
                                     colladaExportWrapper.setUseYUP(dialog.is("collada.use_yup=true"));
+                                    // set the YUP flag (whether to use z-up or y-up)
+                                    colladaExportWrapper.setFixTJunctions(dialog.is("collada.fix_tjunctions=true"));
                                     // set "export exportOrthogonalVertexNormals vertex normals" flag
                                     colladaExportWrapper.setExportOrthogonalVertexNormals(dialog.is("collada.export_orthogonal_vertex_normals=true"));
 
