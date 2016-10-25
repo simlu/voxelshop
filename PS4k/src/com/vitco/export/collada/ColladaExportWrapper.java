@@ -53,12 +53,6 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.useVertexColoring = useVertexColoring;
     }
 
-    // true if the export should have the "black outline"
-    private boolean useBlackOutline = false;
-    public final void setUseBlackOutline(boolean state) {
-        useBlackOutline = state;
-    }
-
     // true if textures are forced to be power of two dimensions
     private boolean forcePOT = false;
     public final void setForcePOT(boolean state) {

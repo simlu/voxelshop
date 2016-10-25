@@ -461,13 +461,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useVertexColors.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(useVertexColors);
 
-        // option: export with black outline
-        CheckBoxModule useBlackOutline = new CheckBoxModule("use_black_edges", "Use black edges", false);
-        useBlackOutline.setInvisibleLookup("collada.type=legacy");
-        useBlackOutline.setEnabledLookup("collada.use_vertex_coloring=false");
-        useBlackOutline.setStrikeThrough(true);
-        collada.addComponent(useBlackOutline);
-
         // option: force power of two textures
         CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
         forcePOT.setInvisibleLookup("collada.type=legacy");
@@ -773,8 +766,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setPadTextures(dialog.is("collada.pad_textures=true"));
                                     // set use vertex coloring
                                     colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
-                                    // set use black outline
-                                    colladaExportWrapper.setUseBlackOutline(dialog.is("collada.use_black_edges=true"));
                                     // set force power of two force textures
                                     colladaExportWrapper.setForcePOT(dialog.is("collada.force_pot=true"));
                                     // set the file name (only used if the layers are not used)
