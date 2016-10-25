@@ -42,7 +42,7 @@ public class ImageComparator {
     public final int pixelCount;
 
     // amount of different colors in this image
-    private final int colorCount;
+    public final int colorCount;
 
     // helper class - array list that has an init action executed on initialization
     private static abstract class InitArrayList extends ArrayList<int[]> {

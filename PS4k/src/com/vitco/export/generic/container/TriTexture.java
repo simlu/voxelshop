@@ -563,6 +563,13 @@ public class TriTexture {
             uvPoints[1][1] = 0;
             uvPoints[2][0] = 0;
             uvPoints[2][1] = 1;
+        } else if (imageComparator.colorCount == 1 && usePadding) {
+            uvPoints[0][0] = 1/3f;
+            uvPoints[0][1] = 1/3f;
+            uvPoints[1][0] = 2/3f;
+            uvPoints[1][1] = 1/3f;
+            uvPoints[2][0] = 1/3f;
+            uvPoints[2][1] = 2/3f;
         }
 
         // finalize width and height
