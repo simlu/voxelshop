@@ -27,6 +27,11 @@ public class TexTriangleManager {
         return result;
     }
 
+    // get the triangle count
+    public final int getTriangleCount() {
+        return triangles.size();
+    }
+
     // return random sample color from each texture, int[] {rgb, count}
     public final int[][] getSampleRgbs() {
         // sample colors, obtain at least one color from every texture
@@ -70,44 +75,33 @@ public class TexTriangleManager {
 
     // get the triangle coordinate list
     // (i.e. "[p1_ uv1 p2 uv2 p3 uv3]_tri1 [p1_ uv1 p2 uv2 p3 uv3]_tri2 ...")
-    public final String getTrianglePolygonList(Integer groupId, Integer rgb, boolean exportOrthogonalVertexNormals, boolean useVertexColoring) {
+    public final String getTrianglePolygonList(Integer groupId, TIntIntHashMap colorMap, boolean exportOrthogonalVertexNormals, boolean useVertexColoring) {
         StringBuilder stringBuilder = new StringBuilder();
         boolean first = true;
         for (TexTriangle tri : triangles) {
             // only consider triangles with the specific texture id
-            if (
-                (groupId == null || tri.getTexture().getId() == groupId) &&
-                (rgb == null || tri.getTexture().getSampleRGB() == rgb)
-            ) {
+            if ((groupId == null || tri.getTexture().getId() == groupId)) {
                 if (!first) {
                     stringBuilder.append(" ");
                 } else {
                     first = false;
                 }
-                TexTriUV[] uvs = null;
+                int[] colTexInfo;
                 if (!useVertexColoring) {
-                    uvs = tri.getUVs();
+                    TexTriUV[] uvs = tri.getUVs();
+                    colTexInfo = new int[] {uvs[0].getId(), uvs[1].getId(), uvs[2].getId()};
+                } else {
+                    int colorPos = colorMap.get(tri.getTexture().getSampleRGB());
+                    colTexInfo = new int[] {colorPos, colorPos, colorPos};
                 }
-                stringBuilder.append(tri.getPoint(0).getId()).append(" ");
-                if (!useVertexColoring) {
-                   stringBuilder.append(uvs[0].getId()).append(" ");
-                }
-                if (exportOrthogonalVertexNormals) {
-                    stringBuilder.append(tri.getOrientation()).append(" ");
-                }
-                stringBuilder.append(tri.getPoint(1).getId()).append(" ");
-                if (!useVertexColoring) {
-                    stringBuilder.append(uvs[1].getId()).append(" ");
-                }
-                if (exportOrthogonalVertexNormals) {
-                    stringBuilder.append(tri.getOrientation()).append(" ");
-                }
-                stringBuilder.append(tri.getPoint(2).getId());
-                if (!useVertexColoring) {
-                    stringBuilder.append(" ").append(uvs[2].getId());
-                }
-                if (exportOrthogonalVertexNormals) {
-                    stringBuilder.append(" ").append(tri.getOrientation());
+                for (int i = 0; i < 3; i++) {
+                    stringBuilder.append(tri.getPoint(i).getId()).append(" ").append(colTexInfo[i]);
+                    if (exportOrthogonalVertexNormals) {
+                        stringBuilder.append(" ").append(tri.getOrientation());
+                    }
+                    if (i < 2) {
+                        stringBuilder.append(" ");
+                    }
                 }
             }
         }
