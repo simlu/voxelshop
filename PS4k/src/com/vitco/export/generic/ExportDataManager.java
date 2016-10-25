@@ -49,7 +49,7 @@ public class ExportDataManager extends ProgressReporter {
     private final int originMode;
 
     // whether to use vertex coloring
-    private final boolean useVertexColoring;
+    private final boolean triangulateByColor;
 
     // center of this object
     private final float[] center;
@@ -92,7 +92,7 @@ public class ExportDataManager extends ProgressReporter {
 
     // constructor
     public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm,
-                             boolean useYUP, int originMode, boolean forcePOT, boolean useLayers, boolean useVertexColoring) {
+                             boolean useYUP, int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring) {
         super(dialog, console);
 
         // create hull manager that exposes hull information
@@ -152,7 +152,7 @@ public class ExportDataManager extends ProgressReporter {
         this.removeHoles = removeHoles;
         this.useYUP = useYUP;
         this.originMode = originMode;
-        this.useVertexColoring = useVertexColoring;
+        this.triangulateByColor = triangulateByColor;
 
         // pre-compute exterior hole if necessary
         if (removeHoles) {
@@ -214,14 +214,14 @@ public class ExportDataManager extends ProgressReporter {
                             Voxel obj1 = hullManager.get(pos1);
                             Voxel obj2 = hullManager.get(pos2);
                             if ((obj1 == null) != (obj2 == null) || (
-                                useVertexColoring && obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
+                                triangulateByColor && obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
                             )) {
                                 // the "in between" point needs to be used for triangle generation
                                 list.add(outline[i]);
                                 list.add(y);
                             } else
                             // fix t-junction issues for vertex coloring
-                            if (useVertexColoring) {
+                            if (triangulateByColor) {
                                 pos1[id3] = plane;
                                 pos2[id3] = plane;
                                 obj1 = hullManager.get(pos1);
@@ -250,14 +250,14 @@ public class ExportDataManager extends ProgressReporter {
                             Voxel obj1 = hullManager.get(pos1);
                             Voxel obj2 = hullManager.get(pos2);
                             if ((obj1 == null) != (obj2 == null) || (
-                                useVertexColoring && obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
+                                triangulateByColor && obj1 != null && obj1.getColor().getRGB() != obj2.getColor().getRGB()
                             )) {
                                 // the "in between" point needs to be used for triangle generation
                                 list.add(x);
                                 list.add(outline[i + 1]);
                             } else
                             // fix t-junction issues for vertex coloring
-                            if (useVertexColoring) {
+                            if (triangulateByColor) {
                                 pos1[id3] = plane;
                                 pos2[id3] = plane;
                                 obj1 = hullManager.get(pos1);
@@ -315,7 +315,7 @@ public class ExportDataManager extends ProgressReporter {
                     }
 
                     // if we use textures we use "0" as placeholder for all colors
-                    plane.put(border, useVertexColoring ? hullManager.get(border).getColor().getRGB() : 0);
+                    plane.put(border, triangulateByColor ? hullManager.get(border).getColor().getRGB() : 0);
                 }
 
                 // select the corresponding ids for the orientation

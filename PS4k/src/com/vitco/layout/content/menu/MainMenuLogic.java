@@ -456,9 +456,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         exportOrthogonalVertexNormalsInfo.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(exportOrthogonalVertexNormalsInfo);
 
+        // option: triangulate by color
+        CheckBoxModule triangulateByColor = new CheckBoxModule("triangulate_by_color", "Triangulate by Color (higher triangle count)", false);
+        triangulateByColor.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(triangulateByColor);
+
         // option: use vertex colors
-        CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring (higher triangle count)", false);
+        CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
+        useVertexColors.setEnabledLookup("collada.triangulate_by_color=true");
         collada.addComponent(useVertexColors);
 
         // option: force power of two textures
@@ -764,8 +770,10 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
                                     // set pad textures flag
                                     colladaExportWrapper.setPadTextures(dialog.is("collada.pad_textures=true"));
+                                    // set triangulate by color
+                                    colladaExportWrapper.setTriangulateByColor(dialog.is("collada.triangulate_by_color=true"));
                                     // set use vertex coloring
-                                    colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
+                                    colladaExportWrapper.setUseVertexColoring(dialog.is("collada.triangulate_by_color=true") && dialog.is("collada.use_vertex_coloring=true"));
                                     // set force power of two force textures
                                     colladaExportWrapper.setForcePOT(dialog.is("collada.force_pot=true"));
                                     // set the file name (only used if the layers are not used)

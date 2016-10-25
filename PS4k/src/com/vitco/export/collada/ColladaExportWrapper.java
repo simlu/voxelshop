@@ -48,8 +48,14 @@ public class ColladaExportWrapper extends ProgressReporter {
         padTextures = state;
     }
 
+    private boolean triangulateByColor;
+    public void setTriangulateByColor(boolean triangulateByColor) {
+        this.triangulateByColor = triangulateByColor;
+    }
+
     private boolean useVertexColoring;
     public void setUseVertexColoring(boolean useVertexColoring) {
+        // this should only be set to true if triangulateByColor = true
         this.useVertexColoring = useVertexColoring;
     }
 
@@ -97,7 +103,7 @@ public class ColladaExportWrapper extends ProgressReporter {
 
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(
-                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT, useLayers, useVertexColoring);
+                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT, useLayers, triangulateByColor, useVertexColoring);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
                 getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);
 
