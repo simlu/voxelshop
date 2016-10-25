@@ -428,25 +428,19 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         legacyInfo.setVisibleLookup("collada.type=legacy");
         collada.addComponent(legacyInfo);
 
-        // option: remove holes
-        CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed holes", true);
-        removeEnclosed.setInvisibleLookup("collada.type=legacy");
-        collada.addComponent(removeEnclosed);
-
         // option: layer as object
-        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new object for every layer", true);
+        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new Object for every Layer", true);
         layersAsObjects.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(layersAsObjects);
 
-        // option: make texture edges save (pad textures)
-        CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", true);
-        padTextures.setInvisibleLookup("collada.type=legacy");
-        padTextures.setEnabledLookup("collada.use_vertex_coloring=false");
-        collada.addComponent(padTextures);
+        // option: remove holes
+        CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed Holes", true);
+        removeEnclosed.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(removeEnclosed);
 
         // option: export orthogonal vertex normals
         CheckBoxModule exportOrthogonalVertexNormals = new CheckBoxModule(
-                "export_orthogonal_vertex_normals", "Export orthogonal vertex normals", false);
+                "export_orthogonal_vertex_normals", "Export orthogonal Vertex Normals", false);
         exportOrthogonalVertexNormals.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(exportOrthogonalVertexNormals);
         LabelModule exportOrthogonalVertexNormalsInfo = new LabelModule(
@@ -462,10 +456,16 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         collada.addComponent(triangulateByColor);
 
         // option: use vertex colors
-        CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use vertex coloring", false);
+        CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use Vertex Coloring", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
         useVertexColors.setEnabledLookup("collada.triangulate_by_color=true");
         collada.addComponent(useVertexColors);
+
+        // option: make texture edges save (pad textures)
+        CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", true);
+        padTextures.setInvisibleLookup("collada.type=legacy");
+        padTextures.setEnabledLookup("collada.use_vertex_coloring=false");
+        collada.addComponent(padTextures);
 
         // option: force power of two textures
         CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
