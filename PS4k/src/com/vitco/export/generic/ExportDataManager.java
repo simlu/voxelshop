@@ -48,6 +48,9 @@ public class ExportDataManager extends ProgressReporter {
     // the origin mode
     private final int originMode;
 
+    // whether to export textured voxels
+    private final boolean exportTexturedVoxels;
+
     // whether to use vertex coloring
     private final boolean triangulateByColor;
 
@@ -95,7 +98,8 @@ public class ExportDataManager extends ProgressReporter {
 
     // constructor
     public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP,
-                             int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions) {
+                             int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
+                             boolean exportTexturedVoxels) {
         super(dialog, console);
 
         // create hull manager that exposes hull information
@@ -157,6 +161,7 @@ public class ExportDataManager extends ProgressReporter {
         this.originMode = originMode;
         this.triangulateByColor = triangulateByColor;
         this.fixTJunctions = fixTJunctions;
+        this.exportTexturedVoxels = exportTexturedVoxels;
 
         // pre-compute exterior hole if necessary
         if (removeHoles) {
@@ -439,10 +444,12 @@ public class ExportDataManager extends ProgressReporter {
                                         uvs[0], Math.round(minMax[0] + tri.points[0].getXf()), Math.round(minMax[1] + tri.points[0].getYf()),
                                         uvs[1], Math.round(minMax[0] + tri.points[1].getXf()), Math.round(minMax[1] + tri.points[1].getYf()),
                                         uvs[2], Math.round(minMax[0] + tri.points[2].getXf()), Math.round(minMax[1] + tri.points[2].getYf()),
+                                        finalSide,
                                         entries.getKey(),
                                         usePadding,
                                         texTri, data,
-                                        textureManager
+                                        textureManager,
+                                        exportTexturedVoxels
                                 );
 
                                 // set the texture for this triangle

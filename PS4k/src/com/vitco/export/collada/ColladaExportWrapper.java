@@ -59,6 +59,11 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.useVertexColoring = useVertexColoring;
     }
 
+    private boolean exportTexturedVoxels = false;
+    public void setExportTexturedVoxels(boolean exportTexturedVoxels) {
+        this.exportTexturedVoxels = exportTexturedVoxels;
+    }
+
     // true if textures are forced to be power of two dimensions
     private boolean forcePOT = false;
     public final void setForcePOT(boolean state) {
@@ -109,7 +114,7 @@ public class ColladaExportWrapper extends ProgressReporter {
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(
                 getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode,
-                forcePOT, useLayers, triangulateByColor, useVertexColoring, fixTJunctions);
+                forcePOT, useLayers, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
                 getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);
 

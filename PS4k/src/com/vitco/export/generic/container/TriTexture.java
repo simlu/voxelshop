@@ -8,7 +8,9 @@ import com.vitco.util.graphic.TextureTools;
 import com.vitco.util.misc.IntegerTools;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.procedure.TIntObjectProcedure;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -464,10 +466,12 @@ public class TriTexture {
             TexTriUV uv1, int xf1, int yf1,
             TexTriUV uv2, int xf2, int yf2,
             TexTriUV uv3, int xf3, int yf3,
+            final int side,
             int depth,
             boolean usePadding,
-            TexTriangle texTri, Data data,
-            TriTextureManager textureManager
+            TexTriangle texTri, final Data data,
+            TriTextureManager textureManager,
+            boolean exportTexturedVoxels
     ) {
         // store variables internally
         uvPoints[0][0] = xf1;
@@ -523,7 +527,8 @@ public class TriTexture {
         int height = maxY - minY + 1;
 
         // get orientation
-        int axis = texTri.getOrientation()/2;
+        final int axis = texTri.getOrientation()/2;
+        final TIntObjectHashMap<Voxel> texels = new TIntObjectHashMap<Voxel>();
 
         // fetch colors
         for (int[] point : points) {
@@ -538,8 +543,75 @@ public class TriTexture {
                     axis == 2 ? depth : point[1],
             }, false);
             assert voxel != null;
+            if (exportTexturedVoxels && voxel.getTexture() != null) {
+                texels.put(p, voxel);
+            }
             // add the pixel
             pixels.put(p, new int[] {x, y, voxel.getColor().getRGB()});
+        }
+
+        if (exportTexturedVoxels && texels.size() > 0) {
+            final TIntObjectHashMap<int[]> remapped = new TIntObjectHashMap<int[]>();
+            // enlarge pixel and fill with textures when appropriate
+            pixels.forEachEntry(new TIntObjectProcedure<int[]>() {
+                @Override
+                public boolean execute(int p, int[] info) {
+                    Voxel voxel = texels.get(p);
+                    BufferedImage tex = null;
+                    int rotation = 0;
+                    boolean flip = false;
+                    int[] pos = new int[] {0, 0};
+                    if (voxel != null) {
+                        //noinspection ConstantConditions
+                        ImageIcon imageIcon = data.getTexture(voxel.getTexture()[side]);
+                        tex = new BufferedImage(imageIcon.getIconWidth(), imageIcon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                        tex.getGraphics().drawImage(imageIcon.getImage(), 0, 0, null);
+                        //noinspection ConstantConditions
+                        rotation = voxel.getRotation() != null ? voxel.getRotation()[side] : 0;
+                        //noinspection ConstantConditions
+                        flip = voxel.getFlip() != null && voxel.getFlip()[side];
+                    }
+
+                    int offset;
+                    switch (side) {
+                        case 0: offset = flip ? 1 : 7; break;
+                        case 1: offset = flip ? 7 : 1; break;
+                        case 2: offset = flip ? 6 : 2; break;
+                        case 3: offset = flip ? 2 : 6; break;
+                        case 4: offset = flip ? 0 : 4; break;
+                        default: offset = flip ? 4 : 0; break;
+                    }
+                    offset = (((offset % 4 + (flip ? rotation : 4 - rotation)) % 4) + (offset / 4) * 4) % 8;
+
+                    for (int x = 0; x < 32; x++) {
+                        for (int y = 0; y < 32; y++) {
+                            if (tex != null) {
+                                switch (offset) {
+                                    // 0 - original, 1 - rotated x 1, 2 - rotated x 2, 3 - rotated x 3,
+                                    // 4 - flipped, 5 - flipped & rotated x 1, 6 - flipped & rotated x 2, 7 - flipped & rotated x 3
+                                    case 0: pos[0] = x; pos[1] = y; break;
+                                    case 4: pos[0] = 31 - x; pos[1] = y; break;
+                                    case 2: pos[0] = 31 - x; pos[1] = 31 - y; break;
+                                    case 6: pos[0] = x; pos[1] = 31 - y; break;
+                                    case 7: pos[0] = y; pos[1] = x; break;
+                                    case 1: pos[0] = 31 - y; pos[1] = x; break;
+                                    case 3: pos[0] = y; pos[1] = 31 - x; break;
+                                    default: pos[0] = 31 - y; pos[1] = 31 - x; break; // case 5
+                                }
+                            }
+                            remapped.put(
+                                    IntegerTools.makeInt(info[0] * 32 + x, info[1] * 32 + y),
+                                    new int[] {info[0] * 32 + x, info[1] * 32 + y, tex == null ? info[2] : tex.getRGB(pos[0], pos[1])}
+                            );
+                        }
+                    }
+                    return true;
+                }
+            });
+            pixels.clear();
+            pixels.putAll(remapped);
+            width = width * 32;
+            height = height * 32;
         }
 
         // compress textures (scale if this can be done loss-less)

@@ -438,6 +438,17 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         removeEnclosed.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(removeEnclosed);
 
+        // option: export with y-up or z-up
+        CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis", false);
+        useYup.setInvisibleLookup("collada.type=legacy");
+        collada.addComponent(useYup);
+
+        // option: fix t junction problems
+        CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
+        fixTJunctions.setInvisibleLookup("collada.type=legacy");
+        fixTJunctions.setEnabledLookup("collada.type=poly2tri");
+        collada.addComponent(fixTJunctions);
+
         // option: export orthogonal vertex normals
         CheckBoxModule exportOrthogonalVertexNormals = new CheckBoxModule(
                 "export_orthogonal_vertex_normals", "Export orthogonal Vertex Normals", false);
@@ -453,13 +464,20 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // option: triangulate by color
         CheckBoxModule triangulateByColor = new CheckBoxModule("triangulate_by_color", "Triangulate by Color (higher triangle count)", false);
         triangulateByColor.setInvisibleLookup("collada.type=legacy");
+        triangulateByColor.setEnabledLookup("collada.export_textured_voxels=false");
         collada.addComponent(triangulateByColor);
 
         // option: use vertex colors
         CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use Vertex Coloring", false);
         useVertexColors.setInvisibleLookup("collada.type=legacy");
-        useVertexColors.setEnabledLookup("collada.triangulate_by_color=true");
+        useVertexColors.setEnabledLookup("collada.triangulate_by_color=true&collada.export_textured_voxels=false");
         collada.addComponent(useVertexColors);
+
+        // option: exported textured voxels
+        CheckBoxModule exportTexturedVoxels = new CheckBoxModule("export_textured_voxels", "Export textured Voxels", false);
+        exportTexturedVoxels.setInvisibleLookup("collada.type=legacy");
+        exportTexturedVoxels.setEnabledLookup("collada.triangulate_by_color=false");
+        collada.addComponent(exportTexturedVoxels);
 
         // option: make texture edges save (pad textures)
         CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", true);
@@ -472,17 +490,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         forcePOT.setInvisibleLookup("collada.type=legacy");
         forcePOT.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(forcePOT);
-
-        // option: export with y-up or z-up
-        CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis", false);
-        useYup.setInvisibleLookup("collada.type=legacy");
-        collada.addComponent(useYup);
-
-        // option: fix t junction problems
-        CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
-        fixTJunctions.setInvisibleLookup("collada.type=legacy");
-        fixTJunctions.setEnabledLookup("collada.type=poly2tri");
-        collada.addComponent(fixTJunctions);
 
         LabelModule setOriginModeText = new LabelModule("Select Origin Mode:");
         setOriginModeText.setInvisibleLookup("collada.type=legacy");
@@ -779,7 +786,9 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     // set triangulate by color
                                     colladaExportWrapper.setTriangulateByColor(dialog.is("collada.triangulate_by_color=true"));
                                     // set use vertex coloring
-                                    colladaExportWrapper.setUseVertexColoring(dialog.is("collada.triangulate_by_color=true") && dialog.is("collada.use_vertex_coloring=true"));
+                                    colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
+                                    // set export textured voxels
+                                    colladaExportWrapper.setExportTexturedVoxels(dialog.is("collada.export_textured_voxels=true"));
                                     // set force power of two force textures
                                     colladaExportWrapper.setForcePOT(dialog.is("collada.force_pot=true"));
                                     // set the file name (only used if the layers are not used)
