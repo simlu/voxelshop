@@ -185,7 +185,7 @@ public class TriTextureManager extends ProgressReporter {
             }
             // check if we can make this a child
             // otherwise we combine the textures
-            // todo: these two makeChild ever triggered?!?!
+            // todo: why do these two makeChild ever succeed?
             if (texture.makeChild(mergeTo, null)) {
                 textures.remove(mergeToId);
             } else if (mergeTo.makeChild(texture, null)) {
