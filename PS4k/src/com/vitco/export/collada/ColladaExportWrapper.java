@@ -87,6 +87,12 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.exportOrthogonalVertexNormals = exportOrthogonalVertexNormals;
     }
 
+    // make uvs overlapping
+    private boolean useOverlappingUvs;
+    public void setUseOverlappingUvs(boolean useOverlappingUvs) {
+        this.useOverlappingUvs = useOverlappingUvs;
+    }
+
     private boolean fixTJunctions;
     public void setFixTJunctions(boolean fixTJunctions) {
         this.fixTJunctions = fixTJunctions;
@@ -114,7 +120,7 @@ public class ColladaExportWrapper extends ProgressReporter {
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(
                 getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode,
-                forcePOT, useLayers, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels);
+                forcePOT, useLayers, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels, useOverlappingUvs);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
                 getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);
 

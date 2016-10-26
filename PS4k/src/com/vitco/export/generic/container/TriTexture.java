@@ -157,7 +157,7 @@ public class TriTexture {
 
     // make the passed texture a child (if possible)
     // return true on success
-    public final boolean makeChild(TriTexture child) {
+    public final boolean makeChild(TriTexture child, int pos[]) {
         // -- can only make child if it has no parent
         if (child.hasParent()) {
             return false;
@@ -169,7 +169,7 @@ public class TriTexture {
         }
 
         // -- check for containment position
-        int[] pos = imageComparator.getPosition(child.imageComparator, null);
+        pos = pos == null ? imageComparator.getPosition(child.imageComparator, null) : pos;
         if (pos != null) {
             child.setParentTexture(this,
                     new int[] {pos[0], pos[1]},
@@ -368,8 +368,85 @@ public class TriTexture {
         pixels.putAll(tex.pixels);
         imageComparator = new ImageComparator(pixels.valueCollection());
         // make child
-        this.makeChild(tex);
+        this.makeChild(tex, new int[] {0, 0, 0});
         assert tex.hasParent();
+    }
+
+    // action to notify listener of progression
+    public abstract static class TickAction {
+        abstract void onTick(int current, int target);
+    }
+
+    // alternative constructor that merges multiple textures
+    public TriTexture(ArrayList<TriTexture> textures, TickAction tickAction, TriTextureManager textureManager) {
+        int texCount = textures.size();
+        assert texCount >= 2;
+        for (TriTexture tex : textures) {
+            assert !tex.hasParent();
+        }
+        // set final variables
+        this.textureManager = textureManager;
+        // has no corresponding triangle
+        this.hasTriangle = false;
+
+        TriTexture main = textures.remove(0);
+        this.pixels.putAll(main.pixels);
+        int width = main.width;
+        int height = main.height;
+        this.makeChild(main, new int[] {0, 0, 0});
+        assert main.hasParent();
+
+        while (!textures.isEmpty()) {
+            TriTexture sec = textures.remove(0);
+
+            int[] merge = null;
+            for (int y = 0; y <= height && merge == null; y++) {
+                for (int x = 0; x <= width && merge == null; x++) {
+                    // ensure the generate texture is square
+                    if (x + sec.width > height && height < width && x > 0) {
+                        break;
+                    }
+                    boolean works = true;
+                    // check if it fits
+                    for (TIntObjectIterator<int[]> it = sec.pixels.iterator(); it.hasNext() && works; ) {
+                        it.advance();
+                        int[] val = it.value();
+                        works = !pixels.containsKey(IntegerTools.makeInt(x + val[0], y + val[1]));
+                    }
+                    if (works) {
+                        merge = new int[]{x, y};
+                    }
+                }
+            }
+            assert merge != null;
+
+            // merge pixels into this TriTexture
+            for (TIntObjectIterator<int[]> it = sec.pixels.iterator(); it.hasNext(); ) {
+                it.advance();
+                int[] val = it.value();
+                this.pixels.put(
+                        IntegerTools.makeInt(merge[0] + val[0], merge[1] + val[1]),
+                        new int[]{merge[0] + val[0], merge[1] + val[1], val[2]}
+                );
+            }
+
+            width = Math.max(width, merge[0] + sec.width);
+            height = Math.max(height, merge[1] + sec.height);
+
+            // -----------
+
+            // make child
+            this.makeChild(sec, new int[] {merge[0], merge[1], 0});
+            assert sec.hasParent();
+
+            tickAction.onTick(texCount - textures.size(), texCount);
+        }
+
+        // set the image comparator
+        imageComparator = new ImageComparator(this.pixels.valueCollection());
+
+        this.width = width;
+        this.height = height;
     }
 
     // alternative constructor that merges two textures
@@ -404,39 +481,39 @@ public class TriTexture {
             int y;
             switch (mergePos[2]) {
                 case 1: // 1 : check for "rotation 1" (1)
-                    x = (two.height - 1 - pixel[1]) + maxX;
-                    y = pixel[0] + maxY;
+                    x = (two.height - 1 - pixel[1]);
+                    y = pixel[0];
                     break;
                 case 3: // 3 : check for "rotation 3" (3)
-                    x = pixel[1] + maxX;
-                    y = (two.width - 1 - pixel[0]) + maxY;
+                    x = pixel[1];
+                    y = (two.width - 1 - pixel[0]);
                     break;
                 case 5: // 5 : check for "flipped and rotation 1" (5)
-                    x = (two.height - 1 - pixel[1]) + maxX;
-                    y = (two.width - 1 - pixel[0]) + maxY;
+                    x = (two.height - 1 - pixel[1]);
+                    y = (two.width - 1 - pixel[0]);
                     break;
                 case 7: // 7 : check for "flipped and rotation 3" (7)
-                    x = pixel[1] + maxX;
-                    y = pixel[0] + maxY;
+                    x = pixel[1];
+                    y = pixel[0];
                     break;
                 case 2: // 2 : check for "twice rotated" (2)
-                    x = (two.width - 1 - pixel[0]) + maxX;
-                    y = (two.height - 1 - pixel[1]) + maxY;
+                    x = (two.width - 1 - pixel[0]);
+                    y = (two.height - 1 - pixel[1]);
                     break;
                 case 4: // 4 : check for "flipped" (4)
-                    x = (two.width - 1 - pixel[0]) + maxX;
-                    y = pixel[1] + maxY;
+                    x = (two.width - 1 - pixel[0]);
+                    y = pixel[1];
                     break;
                 case 6: // 6 : check for "flipped and twice rotated" (6)
-                    x = pixel[0] + maxX;
-                    y = (two.height - 1 - pixel[1]) + maxY;
+                    x = pixel[0];
+                    y = (two.height - 1 - pixel[1]);
                     break;
                 default: // 0 : check for "default orientation" (0)
-                    x = pixel[0] + maxX;
-                    y = pixel[1] + maxY;
+                    x = pixel[0];
+                    y = pixel[1];
                     break;
             }
-            pixels.put(IntegerTools.makeInt(x, y), new int[] {x,y,pixel[2]});
+            pixels.put(IntegerTools.makeInt(x + maxX, y + maxY), new int[] {x + maxX,y + maxY,pixel[2]});
         }
 
         // set the image comparator
@@ -455,8 +532,8 @@ public class TriTexture {
         // -----------
 
         // make children
-        this.makeChild(one);
-        this.makeChild(two);
+        this.makeChild(one, new int[] {-minX, -minY, 0});
+        this.makeChild(two, new int[] {maxX, maxY, mergePos[2]});
         assert one.hasParent();
         assert two.hasParent();
     }
@@ -551,6 +628,9 @@ public class TriTexture {
         }
 
         if (exportTexturedVoxels && texels.size() > 0) {
+            int[][] enlargedPoints = G2DUtil.getTriangleGridIntersection(
+                    xf1 * 32, yf1 * 32, xf2 * 32, yf2 * 32, xf3 * 32, yf3 * 32
+            );
             final TIntObjectHashMap<int[]> remapped = new TIntObjectHashMap<int[]>();
             // enlarge pixel and fill with textures when appropriate
             pixels.forEachEntry(new TIntObjectProcedure<int[]>() {
@@ -609,7 +689,13 @@ public class TriTexture {
                 }
             });
             pixels.clear();
-            pixels.putAll(remapped);
+            for (int[] point : enlargedPoints) {
+                int x = point[0] - minX * 32;
+                int y = point[1] - minY * 32;
+                int pos = IntegerTools.makeInt(x, y);
+                assert remapped.containsKey(pos);
+                pixels.put(pos, remapped.get(pos));
+            }
             width = width * 32;
             height = height * 32;
         }

@@ -99,7 +99,7 @@ public class ExportDataManager extends ProgressReporter {
     // constructor
     public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP,
                              int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
-                             boolean exportTexturedVoxels) {
+                             boolean exportTexturedVoxels, boolean useOverlappingUvs) {
         super(dialog, console);
 
         // create hull manager that exposes hull information
@@ -175,7 +175,11 @@ public class ExportDataManager extends ProgressReporter {
 
         if (!useVertexColoring) {
             // combine the textures
-            textureManager.combine();
+            if (useOverlappingUvs) {
+                textureManager.combine();
+            } else {
+                textureManager.combineNonOverlapping();
+            }
 
             if (forcePOT) { // make textures power of two
                 textureManager.resizeToPowOfTwo();

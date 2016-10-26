@@ -93,6 +93,34 @@ public class TriTextureManager extends ProgressReporter {
         }
     }
 
+    // combine the textures in this manager (but don't overlap uvs)
+    public final void combineNonOverlapping() {
+        // create dummy list that we can delete from
+        ArrayList<TriTexture> textures = new ArrayList<TriTexture>(this.textures);
+
+        // sort by pixel used (largest first)
+        Collections.sort(textures, new Comparator<TriTexture>() {
+            @Override
+            public int compare(TriTexture o1, TriTexture o2) {
+                return o2.getPixelCount() - o1.getPixelCount();
+            }
+        });
+
+        setActivity("Combining Textures...", false);
+        // generate the new TriTexture
+        TriTexture main = new TriTexture(textures, new TriTexture.TickAction() {
+            @Override
+            void onTick(int current, int target) {
+                setProgress((float)current/target * 100);
+            }
+        },  this);
+        // register texture
+        this.addTexture(main);
+
+        // invalidate texture list (for id generation)
+        invalidate();
+    }
+
     // combine the textures in this manager
     public final void combine() {
         // -- find textures that are "inside" other textures
@@ -113,11 +141,11 @@ public class TriTextureManager extends ProgressReporter {
                 if (len%100 == 0) {setProgress(((originalLength - len - i)/(float)originalLength)*100);}
                 TriTexture tex1 = textures.get(i);
                 TriTexture tex2 = textures.get(j);
-                if (tex1.makeChild(tex2)) {
+                if (tex1.makeChild(tex2, null)) {
                     textures.remove(j);
                     j--;
                     len--;
-                } else if (tex2.makeChild(tex1)) {
+                } else if (tex2.makeChild(tex1, null)) {
                     textures.remove(i);
                     i--;
                     len--;
@@ -157,9 +185,10 @@ public class TriTextureManager extends ProgressReporter {
             }
             // check if we can make this a child
             // otherwise we combine the textures
-            if (texture.makeChild(mergeTo)) {
+            // todo: these two makeChild ever triggered?!?!
+            if (texture.makeChild(mergeTo, null)) {
                 textures.remove(mergeToId);
-            } else if (mergeTo.makeChild(texture)) {
+            } else if (mergeTo.makeChild(texture, null)) {
                 textures.remove(0);
             } else {
                 // generate the new TriTexture
