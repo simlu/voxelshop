@@ -185,11 +185,11 @@ public class TriTextureManager extends ProgressReporter {
             }
             // check if we can make this a child
             // otherwise we combine the textures
-            // todo: why do these two makeChild ever succeed?
+            // Note: this can succeed b/c once merged textures might allow new children
             if (texture.makeChild(mergeTo, null)) {
                 textures.remove(mergeToId);
             } else if (mergeTo.makeChild(texture, null)) {
-                textures.remove(0);
+                textures.remove(0); // can this succeed? probably not
             } else {
                 // generate the new TriTexture
                 TriTexture parentTexture = new TriTexture(texture, mergeTo, this);
