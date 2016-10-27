@@ -398,7 +398,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // set up Collada format
         final FieldSet collada = new FieldSet("collada", "Collada (*.dae)");
-        collada.addComponent(new LabelModule("Select Export Options:"));
+        collada.addComponent(new SeparatorModule("Algorithm"));
         collada.addComponent(new ComboBoxModule("type", new String[][] {
                 new String[] {"poly2tri", "Optimal (Poly2Tri)"},
                 new String[] {"minimal", "Low Poly (Rectangular)"},
@@ -406,7 +406,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         }, 0));
         // add information for "poly2tri"
         LabelModule poly2triInfo = new LabelModule("Info: This is the preferred exporter. The mesh is highly " +
-                "optimized and no rendering artifacts can appear.");
+                "optimized and no rendering artifacts can appear if T-Junction problems are fixed.");
         poly2triInfo.setVisibleLookup("collada.type=poly2tri");
         collada.addComponent(poly2triInfo);
         // add information for "optimalGreedy"
@@ -420,32 +420,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         naiveInfo.setVisibleLookup("collada.type=naive");
         collada.addComponent(naiveInfo);
 
-        // option: layer as object
-        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new Object for every Layer", true);
-        collada.addComponent(layersAsObjects);
+        collada.addComponent(new SeparatorModule("Textures"));
 
-        // option: remove holes
-        CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed Holes", true);
-        collada.addComponent(removeEnclosed);
-
-        // option: export with y-up or z-up
-        CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis", false);
-        collada.addComponent(useYup);
-
-        // option: fix t junction problems
-        CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
-        fixTJunctions.setEnabledLookup("collada.type=poly2tri");
-        collada.addComponent(fixTJunctions);
-
-        // option: export orthogonal vertex normals
-        CheckBoxModule exportOrthogonalVertexNormals = new CheckBoxModule(
-                "export_orthogonal_vertex_normals", "Export orthogonal Vertex Normals", false);
-        collada.addComponent(exportOrthogonalVertexNormals);
-        LabelModule exportOrthogonalVertexNormalsInfo = new LabelModule(
-                "Info: Exporting orthogonal vertex normals can help with flat shading, but significantly increases vertex count. " +
-                "Usually the preferred way is to instead enable flat shading for the engine itself. No normals are exported when unchecked."
-        );
-        collada.addComponent(exportOrthogonalVertexNormalsInfo);
+        // option: exported textured voxels
+        CheckBoxModule exportTexturedVoxels = new CheckBoxModule("export_textured_voxels", "Export textured Voxels", false);
+        exportTexturedVoxels.setEnabledLookup("collada.triangulate_by_color=false");
+        collada.addComponent(exportTexturedVoxels);
 
         // option: triangulate by color
         CheckBoxModule triangulateByColor = new CheckBoxModule("triangulate_by_color", "Triangulate by Color (higher triangle count)", false);
@@ -457,16 +437,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useVertexColors.setEnabledLookup("collada.triangulate_by_color=true&collada.export_textured_voxels=false");
         collada.addComponent(useVertexColors);
 
-        // option: exported textured voxels
-        CheckBoxModule exportTexturedVoxels = new CheckBoxModule("export_textured_voxels", "Export textured Voxels", false);
-        exportTexturedVoxels.setEnabledLookup("collada.triangulate_by_color=false");
-        collada.addComponent(exportTexturedVoxels);
-
-        // option: make texture edges save (pad textures)
-        CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", true);
-        padTextures.setEnabledLookup("collada.use_vertex_coloring=false");
-        collada.addComponent(padTextures);
-
         // option: make uvs overlapping
         CheckBoxModule useOverlappingUvs = new CheckBoxModule("use_overlapping_uvs", "Use overlapping UVs", true);
         useOverlappingUvs.setEnabledLookup("collada.use_vertex_coloring=false");
@@ -477,13 +447,43 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useSkewedUvs.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(useSkewedUvs);
 
+        // option: make texture edges save (pad textures)
+        CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Texture Padding", true);
+        padTextures.setEnabledLookup("collada.use_vertex_coloring=false");
+        collada.addComponent(padTextures);
+
         // option: force power of two textures
         CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
         forcePOT.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(forcePOT);
 
-        LabelModule setOriginModeText = new LabelModule("Select Origin Mode:");
-        collada.addComponent(setOriginModeText);
+        collada.addComponent(new SeparatorModule("Misc"));
+
+        // option: fix t junction problems
+        CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
+        fixTJunctions.setEnabledLookup("collada.type=poly2tri");
+        collada.addComponent(fixTJunctions);
+
+        // option: layer as object
+        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new Object for every Layer", true);
+        collada.addComponent(layersAsObjects);
+
+        // option: remove holes
+        CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed Holes", true);
+        collada.addComponent(removeEnclosed);
+
+        collada.addComponent(new SeparatorModule("Format"));
+
+        // option: export with y-up or z-up
+        CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis", false);
+        collada.addComponent(useYup);
+
+        // option: export orthogonal vertex normals
+        CheckBoxModule exportOrthogonalVertexNormals = new CheckBoxModule(
+                "export_orthogonal_vertex_normals", "Export orthogonal Vertex Normals", false);
+        collada.addComponent(exportOrthogonalVertexNormals);
+
+        collada.addComponent(new SeparatorModule("Origin"));
         ComboBoxModule setOriginModeSelect = new ComboBoxModule("origin_mode", new String[][]{
                 new String[]{"cross", "Use Cross"},
                 new String[]{"center", "Use Object Center"},
