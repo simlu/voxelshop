@@ -6,7 +6,6 @@ import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.*;
 import com.vitco.export.collada.ColladaExportWrapper;
-import com.vitco.export.collada.ColladaFile;
 import com.vitco.export.generic.ExportDataManager;
 import com.vitco.importer.*;
 import com.vitco.layout.content.mainview.MainView;
@@ -403,8 +402,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         collada.addComponent(new ComboBoxModule("type", new String[][] {
                 new String[] {"poly2tri", "Optimal (Poly2Tri)"},
                 new String[] {"minimal", "Low Poly (Rectangular)"},
-                new String[] {"naive", "Naive (Unoptimized)"},
-                new String[] {"legacy", "Legacy (Unoptimized)"}
+                new String[] {"naive", "Naive (Unoptimized)"}
         }, 0));
         // add information for "poly2tri"
         LabelModule poly2triInfo = new LabelModule("Info: This is the preferred exporter. The mesh is highly " +
@@ -421,90 +419,70 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 "This might be useful if the voxel mesh needs further processing.");
         naiveInfo.setVisibleLookup("collada.type=naive");
         collada.addComponent(naiveInfo);
-        // add information for "legacy"
-        LabelModule legacyInfo = new LabelModule("Info: Unoptimized legacy exporter. Useful if you want to " +
-                "process the mesh further. Suitable for 3D printing (uses vertex coloring). Also currently the " +
-                "only exporter that correctly exports textured voxels (will change in the future).");
-        legacyInfo.setVisibleLookup("collada.type=legacy");
-        collada.addComponent(legacyInfo);
 
         // option: layer as object
         CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new Object for every Layer", true);
-        layersAsObjects.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(layersAsObjects);
 
         // option: remove holes
         CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed Holes", true);
-        removeEnclosed.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(removeEnclosed);
 
         // option: export with y-up or z-up
         CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis", false);
-        useYup.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(useYup);
 
         // option: fix t junction problems
         CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
-        fixTJunctions.setInvisibleLookup("collada.type=legacy");
         fixTJunctions.setEnabledLookup("collada.type=poly2tri");
         collada.addComponent(fixTJunctions);
 
         // option: export orthogonal vertex normals
         CheckBoxModule exportOrthogonalVertexNormals = new CheckBoxModule(
                 "export_orthogonal_vertex_normals", "Export orthogonal Vertex Normals", false);
-        exportOrthogonalVertexNormals.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(exportOrthogonalVertexNormals);
         LabelModule exportOrthogonalVertexNormalsInfo = new LabelModule(
                 "Info: Exporting orthogonal vertex normals can help with flat shading, but significantly increases vertex count. " +
                 "Usually the preferred way is to instead enable flat shading for the engine itself. No normals are exported when unchecked."
         );
-        exportOrthogonalVertexNormalsInfo.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(exportOrthogonalVertexNormalsInfo);
 
         // option: triangulate by color
         CheckBoxModule triangulateByColor = new CheckBoxModule("triangulate_by_color", "Triangulate by Color (higher triangle count)", false);
-        triangulateByColor.setInvisibleLookup("collada.type=legacy");
         triangulateByColor.setEnabledLookup("collada.export_textured_voxels=false");
         collada.addComponent(triangulateByColor);
 
         // option: use vertex colors
         CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use Vertex Coloring", false);
-        useVertexColors.setInvisibleLookup("collada.type=legacy");
         useVertexColors.setEnabledLookup("collada.triangulate_by_color=true&collada.export_textured_voxels=false");
         collada.addComponent(useVertexColors);
 
         // option: exported textured voxels
         CheckBoxModule exportTexturedVoxels = new CheckBoxModule("export_textured_voxels", "Export textured Voxels", false);
-        exportTexturedVoxels.setInvisibleLookup("collada.type=legacy");
         exportTexturedVoxels.setEnabledLookup("collada.triangulate_by_color=false");
         collada.addComponent(exportTexturedVoxels);
 
         // option: make texture edges save (pad textures)
         CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Textures Padding", true);
-        padTextures.setInvisibleLookup("collada.type=legacy");
         padTextures.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(padTextures);
 
         // option: make uvs overlapping
         CheckBoxModule useOverlappingUvs = new CheckBoxModule("use_overlapping_uvs", "Use overlapping UVs", true);
-        useOverlappingUvs.setInvisibleLookup("collada.type=legacy");
         useOverlappingUvs.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(useOverlappingUvs);
 
         // option: use skewed uvs
         CheckBoxModule useSkewedUvs = new CheckBoxModule("use_skewed_uvs", "Use skewed UVs", true);
-        useSkewedUvs.setInvisibleLookup("collada.type=legacy");
         useSkewedUvs.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(useSkewedUvs);
 
         // option: force power of two textures
         CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
-        forcePOT.setInvisibleLookup("collada.type=legacy");
         forcePOT.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(forcePOT);
 
         LabelModule setOriginModeText = new LabelModule("Select Origin Mode:");
-        setOriginModeText.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(setOriginModeText);
         ComboBoxModule setOriginModeSelect = new ComboBoxModule("origin_mode", new String[][]{
                 new String[]{"cross", "Use Cross"},
@@ -513,7 +491,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 new String[]{"box_center", "Use Bounding Box Center"},
                 new String[]{"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
         }, 0);
-        setOriginModeSelect.setInvisibleLookup("collada.type=legacy");
         collada.addComponent(setOriginModeSelect);
 
         // ---------------
@@ -743,8 +720,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 return false;
                             }
                         }
-                        // extract texture name (this is only actually used by the legacy
-                        // exporter and to query the user if the file should be overwritten)
+                        // extract texture name and query the user if the file should be overwritten
                         final File exportTextureTo = new File(FileTools.changeExtension(exportColladaTo.getPath(), "_texture0.png"));
                         // check if file exists
                         if (exportTextureTo.exists()) {
@@ -756,103 +732,77 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             }
                         }
 
-                        // -- do the actual exporting
-                        if (dialog.is("collada.type=legacy")) {
-                            // -- export legacy (todo: remove when other is strictly better)
-                            final ProgressDialog progressDialog = new ProgressDialog(frame);
+                        // -- default export
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+                        // do the exporting
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
 
-                            progressDialog.start(new ProgressWorker() {
-                                @Override
-                                protected Object doInBackground() throws Exception {
-                                    progressDialog.setActivity("Writing Legacy Format...", true);
-                                    long time = System.currentTimeMillis();
-                                    if (ColladaFile.exportLegacy(data, errorHandler, exportColladaTo, exportTextureTo)) {
-                                        console.addLine(
-                                                String.format(langSelector.getString("export_file_successful"),
-                                                        System.currentTimeMillis() - time)
-                                        );
-                                    } else {
-                                        console.addLine(langSelector.getString("export_file_error"));
-                                    }
-                                    return null;
+                                ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper(progressDialog, console);
+
+                                // set the "use layers" flag
+                                colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
+                                // set remove holes flag
+                                colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
+                                // set pad textures flag
+                                colladaExportWrapper.setPadTextures(dialog.is("collada.pad_textures=true"));
+                                // set triangulate by color
+                                colladaExportWrapper.setTriangulateByColor(dialog.is("collada.triangulate_by_color=true"));
+                                // set use vertex coloring
+                                colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
+                                // set export textured voxels
+                                colladaExportWrapper.setExportTexturedVoxels(dialog.is("collada.export_textured_voxels=true"));
+                                // set force power of two force textures
+                                colladaExportWrapper.setForcePOT(dialog.is("collada.force_pot=true"));
+                                // set the file name (only used if the layers are not used)
+                                colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
+                                // set the YUP flag (whether to use z-up or y-up)
+                                colladaExportWrapper.setUseYUP(dialog.is("collada.use_yup=true"));
+                                // set the YUP flag (whether to use z-up or y-up)
+                                colladaExportWrapper.setFixTJunctions(dialog.is("collada.fix_tjunctions=true"));
+                                // set "export exportOrthogonalVertexNormals vertex normals" flag
+                                colladaExportWrapper.setExportOrthogonalVertexNormals(dialog.is("collada.export_orthogonal_vertex_normals=true"));
+                                // set "use overlapping uvs" option
+                                colladaExportWrapper.setUseOverlappingUvs(dialog.is("collada.use_overlapping_uvs=true"));
+                                // set "use skewed uvs" option
+                                colladaExportWrapper.setUseSkewedUvs(dialog.is("collada.use_skewed_uvs=true"));
+
+                                // set the center mode
+                                if (dialog.is("collada.origin_mode=cross")) {
+                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CROSS);
+                                } else if (dialog.is("collada.origin_mode=center")) {
+                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CENTER);
+                                } else if (dialog.is("collada.origin_mode=plane_center")) {
+                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_PLANE_CENTER);
+                                } else if (dialog.is("collada.origin_mode=box_center")) {
+                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_CENTER);
+                                } else if (dialog.is("collada.origin_mode=box_plane_center")) {
+                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER);
                                 }
-                            });
-                            // ----
-                        } else {
-                            // -- default export
-                            // create progress dialog
-                            final ProgressDialog progressDialog = new ProgressDialog(frame);
-                            // do the exporting
-                            progressDialog.start(new ProgressWorker() {
-                                @Override
-                                protected Object doInBackground() throws Exception {
 
-                                    ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper(progressDialog, console);
-
-                                    // set the "use layers" flag
-                                    colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
-                                    // set remove holes flag
-                                    colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
-                                    // set pad textures flag
-                                    colladaExportWrapper.setPadTextures(dialog.is("collada.pad_textures=true"));
-                                    // set triangulate by color
-                                    colladaExportWrapper.setTriangulateByColor(dialog.is("collada.triangulate_by_color=true"));
-                                    // set use vertex coloring
-                                    colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
-                                    // set export textured voxels
-                                    colladaExportWrapper.setExportTexturedVoxels(dialog.is("collada.export_textured_voxels=true"));
-                                    // set force power of two force textures
-                                    colladaExportWrapper.setForcePOT(dialog.is("collada.force_pot=true"));
-                                    // set the file name (only used if the layers are not used)
-                                    colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
-                                    // set the YUP flag (whether to use z-up or y-up)
-                                    colladaExportWrapper.setUseYUP(dialog.is("collada.use_yup=true"));
-                                    // set the YUP flag (whether to use z-up or y-up)
-                                    colladaExportWrapper.setFixTJunctions(dialog.is("collada.fix_tjunctions=true"));
-                                    // set "export exportOrthogonalVertexNormals vertex normals" flag
-                                    colladaExportWrapper.setExportOrthogonalVertexNormals(dialog.is("collada.export_orthogonal_vertex_normals=true"));
-                                    // set "use overlapping uvs" option
-                                    colladaExportWrapper.setUseOverlappingUvs(dialog.is("collada.use_overlapping_uvs=true"));
-                                    // set "use skewed uvs" option
-                                    colladaExportWrapper.setUseSkewedUvs(dialog.is("collada.use_skewed_uvs=true"));
-
-                                    // set the center mode
-                                    if (dialog.is("collada.origin_mode=cross")) {
-                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CROSS);
-                                    } else if (dialog.is("collada.origin_mode=center")) {
-                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CENTER);
-                                    } else if (dialog.is("collada.origin_mode=plane_center")) {
-                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_PLANE_CENTER);
-                                    } else if (dialog.is("collada.origin_mode=box_center")) {
-                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_CENTER);
-                                    } else if (dialog.is("collada.origin_mode=box_plane_center")) {
-                                        colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER);
-                                    }
-
-                                    // set the algorithm type
-                                    if (dialog.is("collada.type=minimal")) {
-                                        colladaExportWrapper.setAlgorithm(ExportDataManager.MINIMAL_RECT_ALGORITHM);
-                                    } else if (dialog.is("collada.type=poly2tri")) {
-                                        colladaExportWrapper.setAlgorithm(ExportDataManager.POLY2TRI_ALGORITHM);
-                                    } else if (dialog.is("collada.type=naive")) {
-                                        colladaExportWrapper.setAlgorithm(ExportDataManager.NAIVE_ALGORITHM);
-                                    }
-
-                                    long time = System.currentTimeMillis();
-                                    if (colladaExportWrapper.export(data, errorHandler, exportColladaTo)) {
-                                        console.addLine(
-                                                String.format(langSelector.getString("export_file_successful"),
-                                                        System.currentTimeMillis() - time)
-                                        );
-                                    } else {
-                                        console.addLine(langSelector.getString("export_file_error"));
-                                    }
-                                    return null;
+                                // set the algorithm type
+                                if (dialog.is("collada.type=minimal")) {
+                                    colladaExportWrapper.setAlgorithm(ExportDataManager.MINIMAL_RECT_ALGORITHM);
+                                } else if (dialog.is("collada.type=poly2tri")) {
+                                    colladaExportWrapper.setAlgorithm(ExportDataManager.POLY2TRI_ALGORITHM);
+                                } else if (dialog.is("collada.type=naive")) {
+                                    colladaExportWrapper.setAlgorithm(ExportDataManager.NAIVE_ALGORITHM);
                                 }
-                            });
-                            // ------------
 
-                        }
+                                long time = System.currentTimeMillis();
+                                if (colladaExportWrapper.export(data, errorHandler, exportColladaTo)) {
+                                    console.addLine(
+                                            String.format(langSelector.getString("export_file_successful"),
+                                                    System.currentTimeMillis() - time)
+                                    );
+                                } else {
+                                    console.addLine(langSelector.getString("export_file_error"));
+                                }
+                                return null;
+                            }
+                        });
 
                         // ===========
 
