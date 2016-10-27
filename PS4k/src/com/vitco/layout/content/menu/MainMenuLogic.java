@@ -491,6 +491,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         useOverlappingUvs.setEnabledLookup("collada.use_vertex_coloring=false");
         collada.addComponent(useOverlappingUvs);
 
+        // option: use skewed uvs
+        CheckBoxModule useSkewedUvs = new CheckBoxModule("use_skewed_uvs", "Use skewed UVs", true);
+        useSkewedUvs.setInvisibleLookup("collada.type=legacy");
+        useSkewedUvs.setEnabledLookup("collada.use_vertex_coloring=false");
+        collada.addComponent(useSkewedUvs);
+
         // option: force power of two textures
         CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
         forcePOT.setInvisibleLookup("collada.type=legacy");
@@ -807,6 +813,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     colladaExportWrapper.setExportOrthogonalVertexNormals(dialog.is("collada.export_orthogonal_vertex_normals=true"));
                                     // set "use overlapping uvs" option
                                     colladaExportWrapper.setUseOverlappingUvs(dialog.is("collada.use_overlapping_uvs=true"));
+                                    // set "use skewed uvs" option
+                                    colladaExportWrapper.setUseSkewedUvs(dialog.is("collada.use_skewed_uvs=true"));
 
                                     // set the center mode
                                     if (dialog.is("collada.origin_mode=cross")) {

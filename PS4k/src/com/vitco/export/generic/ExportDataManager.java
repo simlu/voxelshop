@@ -39,6 +39,9 @@ public class ExportDataManager extends ProgressReporter {
     // true if texture padding is enabled
     private final boolean usePadding;
 
+    // allow skewed uvs
+    private final boolean useSkewedUvs;
+
     // true if holes are removed
     private final boolean removeHoles;
 
@@ -99,7 +102,7 @@ public class ExportDataManager extends ProgressReporter {
     // constructor
     public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP,
                              int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
-                             boolean exportTexturedVoxels, boolean useOverlappingUvs) {
+                             boolean exportTexturedVoxels, boolean useOverlappingUvs, boolean useSkewedUvs) {
         super(dialog, console);
 
         // create hull manager that exposes hull information
@@ -162,6 +165,7 @@ public class ExportDataManager extends ProgressReporter {
         this.triangulateByColor = triangulateByColor;
         this.fixTJunctions = fixTJunctions;
         this.exportTexturedVoxels = exportTexturedVoxels;
+        this.useSkewedUvs = useSkewedUvs;
 
         // pre-compute exterior hole if necessary
         if (removeHoles) {
@@ -453,7 +457,8 @@ public class ExportDataManager extends ProgressReporter {
                                         usePadding,
                                         texTri, data,
                                         textureManager,
-                                        exportTexturedVoxels
+                                        exportTexturedVoxels,
+                                        useSkewedUvs
                                 );
 
                                 // set the texture for this triangle

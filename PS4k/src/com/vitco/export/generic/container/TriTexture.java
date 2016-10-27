@@ -547,7 +547,8 @@ public class TriTexture {
             boolean usePadding,
             TexTriangle texTri, final Data data,
             TriTextureManager textureManager,
-            boolean exportTexturedVoxels
+            boolean exportTexturedVoxels,
+            boolean useSkewedUvs
     ) {
         // store variables internally
         uvPoints[0][0] = xf1;
@@ -699,9 +700,14 @@ public class TriTexture {
             height = height * 32;
         }
 
-        // compress textures (scale if this can be done loss-less)
-        // Note: Doing this several times should not make any sense
-        int[] newSize = compress(width, height, pixels, uvPoints);
+        // might now change depending on options
+        int[] newSize = new int[] {width, height};
+
+        if (useSkewedUvs) {
+            // compress textures (scale if this can be done loss-less)
+            // Note: Doing this several times should not make any sense
+            newSize = compress(newSize[0], newSize[1], pixels, uvPoints);
+        }
 
         // do texture padding (if enabled)
         if (usePadding) {
@@ -711,22 +717,24 @@ public class TriTexture {
         // set the image comparator
         imageComparator = new ImageComparator(pixels.valueCollection());
 
-        // overwrite uv to prevent unnecessary unique uv coordinates.
-        // Note: this enables better compression for COLLADA
-        if (imageComparator.pixelCount == 1) {
-            uvPoints[0][0] = 0;
-            uvPoints[0][1] = 0;
-            uvPoints[1][0] = 1;
-            uvPoints[1][1] = 0;
-            uvPoints[2][0] = 0;
-            uvPoints[2][1] = 1;
-        } else if (imageComparator.colorCount == 1 && usePadding) {
-            uvPoints[0][0] = 1/3f;
-            uvPoints[0][1] = 1/3f;
-            uvPoints[1][0] = 2/3f;
-            uvPoints[1][1] = 1/3f;
-            uvPoints[2][0] = 1/3f;
-            uvPoints[2][1] = 2/3f;
+        if (useSkewedUvs) {
+            // overwrite uv to prevent unnecessary unique uv coordinates.
+            // Note: this enables better compression for COLLADA
+            if (imageComparator.pixelCount == 1) {
+                uvPoints[0][0] = 0;
+                uvPoints[0][1] = 0;
+                uvPoints[1][0] = 1;
+                uvPoints[1][1] = 0;
+                uvPoints[2][0] = 0;
+                uvPoints[2][1] = 1;
+            } else if (imageComparator.colorCount == 1 && usePadding) {
+                uvPoints[0][0] = 1 / 3f;
+                uvPoints[0][1] = 1 / 3f;
+                uvPoints[1][0] = 2 / 3f;
+                uvPoints[1][1] = 1 / 3f;
+                uvPoints[2][0] = 1 / 3f;
+                uvPoints[2][1] = 2 / 3f;
+            }
         }
 
         // finalize width and height
