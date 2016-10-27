@@ -397,6 +397,7 @@ public class TriTexture {
         assert main.hasParent();
 
         while (!textures.isEmpty()) {
+            tickAction.onTick(texCount - textures.size(), texCount);
             TriTexture sec = textures.remove(0);
 
             int[] merge = null;
@@ -438,8 +439,6 @@ public class TriTexture {
             // make child
             this.makeChild(sec, new int[] {merge[0], merge[1], 0});
             assert sec.hasParent();
-
-            tickAction.onTick(texCount - textures.size(), texCount);
         }
 
         // set the image comparator
