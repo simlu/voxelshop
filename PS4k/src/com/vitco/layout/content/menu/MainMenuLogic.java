@@ -1081,18 +1081,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // =========================
 
         // quick save
-        actionManager.registerAction("quick_save_file_action", new StateActionPrototype() {
+        actionManager.registerAction("quick_save_file_action", new AbstractAction() {
             @Override
-            public void action(ActionEvent actionEvent) {
-                if (getStatus()) { // make sure we can save
+            public void actionPerformed(ActionEvent e) {
+                if (save_location[0] != null) { // make sure we can save
                     File file = new File(save_location[0]);
                     data.saveToFile(file);
+                } else {
+                   actionManager.getAction("save_file_action").actionPerformed(e);
                 }
-            }
-
-            @Override
-            public boolean getStatus() {
-                return save_location[0] != null;
             }
         });
 

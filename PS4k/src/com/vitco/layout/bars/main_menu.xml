@@ -7,7 +7,7 @@
         <item caption="import_file_caption" action="import_file_action"/>
         <item caption="export_file_caption" action="export_file_action" grayable="true"/>
         <separator/>
-        <item caption="quick_save_file_caption" action="quick_save_file_action" grayable="true"/>
+        <item caption="quick_save_file_caption" action="quick_save_file_action"/>
         <item caption="save_file_caption" action="save_file_action"/>
         <separator/>
         <item caption="close_program_caption" action="close_program_action"/>
