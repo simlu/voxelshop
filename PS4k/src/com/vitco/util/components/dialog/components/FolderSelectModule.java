@@ -20,29 +20,16 @@ public class FolderSelectModule extends BlankDialogModule {
     // the label that displays the folder
     private final JLabel label;
 
-    @Override
-    protected final void refreshState(BlankDialogModule topLevelParent) {
-        super.refreshState(topLevelParent);
-        // ensure a correct folder is set when the dialog is refreshed
-        setSelectedFolder(getSelectedFolder());
-    }
-
     // set the folder for this module
     private void setSelectedFolder(String path) {
         File file = new File(FileTools.ensureTrailingSeparator(path));
         File dir = file.isFile() ? file.getParentFile() : file;
         dir = dir != null && dir.exists() ? dir : null;
 
-        final File finalDir = dir;
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                // set the information in the correct event queue
-                fileDialog.setSelectedFile(finalDir);
-                fileDialog.setCurrentDirectory(finalDir);
-                label.setText(FileTools.shortenPath(getSelectedFolder(), 50));
-            }
-        });
+        // set the information in the correct event queue
+        fileDialog.setSelectedFile(dir);
+        fileDialog.setCurrentDirectory(dir);
+        label.setText(FileTools.shortenPath(getSelectedFolder(), 50));
     }
 
     // obtain the currently selected folder
