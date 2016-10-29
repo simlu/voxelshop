@@ -215,6 +215,11 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                     for (Voxel voxel : data.getSelectedVoxels()) {
                         colors.add(voxel.getColor());
                     }
+                    // add the currently selected color if no color is present
+                    if (colors.isEmpty()) {
+                        Color color = ColorTools.hsbToColor((float[])preferences.loadObject("currently_used_color"));
+                        colors.add(color);
+                    }
                     // identify which voxels to select
                     ArrayList<Integer> toSelect = new ArrayList<Integer>();
                     for (Voxel voxel : data.getVisibleLayerVoxel()) {
