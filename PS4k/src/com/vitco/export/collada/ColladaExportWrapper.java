@@ -48,16 +48,20 @@ public class ColladaExportWrapper extends ProgressReporter {
         padTextures = state;
     }
 
-    // true if colored vertices should be used
-    private boolean useColoredVertices = false;
-    public final void setUseColoredVertices(boolean state) {
-        useColoredVertices = state;
+    private boolean triangulateByColor;
+    public void setTriangulateByColor(boolean triangulateByColor) {
+        this.triangulateByColor = triangulateByColor;
     }
 
-    // true if the export should have the "black outline"
-    private boolean useBlackOutline = false;
-    public final void setUseBlackOutline(boolean state) {
-        useBlackOutline = state;
+    private boolean useVertexColoring;
+    public void setUseVertexColoring(boolean useVertexColoring) {
+        // this should only be set to true if triangulateByColor = true
+        this.useVertexColoring = useVertexColoring;
+    }
+
+    private boolean exportTexturedVoxels = false;
+    public void setExportTexturedVoxels(boolean exportTexturedVoxels) {
+        this.exportTexturedVoxels = exportTexturedVoxels;
     }
 
     // true if textures are forced to be power of two dimensions
@@ -83,6 +87,22 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.exportOrthogonalVertexNormals = exportOrthogonalVertexNormals;
     }
 
+    // make uvs overlapping
+    private boolean useOverlappingUvs = true;
+    public void setUseOverlappingUvs(boolean useOverlappingUvs) {
+        this.useOverlappingUvs = useOverlappingUvs;
+    }
+
+    private boolean useSkewedUvs = true;
+    public void setUseSkewedUvs(boolean useSkewedUvs) {
+        this.useSkewedUvs = useSkewedUvs;
+    }
+
+    private boolean fixTJunctions;
+    public void setFixTJunctions(boolean fixTJunctions) {
+        this.fixTJunctions = fixTJunctions;
+    }
+
     // the origin mode
     public static final int ORIGIN_CROSS = 0;
     public static final int ORIGIN_CENTER = 1;
@@ -103,8 +123,12 @@ public class ColladaExportWrapper extends ProgressReporter {
         String prefix = FileTools.extractNameWithoutExtension(colladaFile) + "_texture";
 
         // create data export objects
-        ExportDataManager exportDataManager = new ExportDataManager(getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, forcePOT, useLayers);
-        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals);
+        ExportDataManager exportDataManager = new ExportDataManager(
+                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode,
+                forcePOT, useLayers, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels, useOverlappingUvs,
+                useSkewedUvs);
+        ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
+                getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);
 
         setActivity("Writing Data File...", true);
         // write the dae file
@@ -112,11 +136,13 @@ public class ColladaExportWrapper extends ProgressReporter {
             result = false;
         }
 
-        setActivity("Writing Textures...", true);
-        // write the texture files
-        File folder = colladaFile.getParentFile();
-        if (!colladaFileExporter.writeTexturesToFolder(folder, errorHandler)) {
-            result = false;
+        if (!useVertexColoring) {
+            setActivity("Writing Textures...", true);
+            // write the texture files
+            File folder = colladaFile.getParentFile();
+            if (!colladaFileExporter.writeTexturesToFolder(folder, errorHandler)) {
+                result = false;
+            }
         }
 
         // validation - only check in debug mode

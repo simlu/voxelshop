@@ -2,13 +2,12 @@ package com.vitco.util.components.dialog.components;
 
 import com.vitco.util.components.dialog.BlankDialogModule;
 import com.vitco.util.components.dialog.DialogModuleChangeAdapter;
+import com.vitco.util.misc.FontUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.font.TextAttribute;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A fieldSet that wraps other fieldSets
@@ -147,11 +146,7 @@ public class FieldSetWrapper extends BlankDialogModule {
         // overwrite background (i.e. the drawn border line)
         label.setOpaque(true);
 
-        // make the font of the label a bit different
-        Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
-        attributes.put(TextAttribute.TRACKING, 0.1);
-        attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
-        label.setFont(label.getFont().deriveFont(attributes));
+        label.setFont(FontUtil.getTitleFont(label.getFont()));
         // compute the top space
         topSpace = label.getPreferredSize().height/2;
         // set drop list to null (unused)

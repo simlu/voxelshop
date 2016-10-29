@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.font.TextAttribute;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,23 @@ public class CheckBoxModule extends BlankDialogModule {
             @Override
             public void actionPerformed(ActionEvent e) {
                 notifyContentChanged();
+            }
+        });
+        // ensure shows as deselected when disabled
+        checkbox.addPropertyChangeListener(new PropertyChangeListener() {
+            boolean checkState = false;
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (evt.getPropertyName().equals("enabled")) {
+                    if (evt.getOldValue() != evt.getNewValue()) {
+                        if ((Boolean)evt.getNewValue()) {
+                            checkbox.setSelected(checkState);
+                        } else {
+                            checkState = checkbox.isSelected();
+                            checkbox.setSelected(false);
+                        }
+                    }
+                }
             }
         });
     }

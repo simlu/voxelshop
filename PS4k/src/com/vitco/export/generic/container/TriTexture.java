@@ -8,7 +8,9 @@ import com.vitco.util.graphic.TextureTools;
 import com.vitco.util.misc.IntegerTools;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.procedure.TIntObjectProcedure;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -59,6 +61,13 @@ public class TriTexture {
     private TriTexture lastTopTexture = null;
 
     // #################################
+
+    // get a random rgb from this texture
+    public final int getSampleRGB() {
+        TIntObjectIterator<int[]> it = pixels.iterator();
+        it.advance();
+        return it.value()[2];
+    }
 
     // set parent texture for this texture
     // Note: A parent texture is a texture that contains this texture
@@ -148,7 +157,7 @@ public class TriTexture {
 
     // make the passed texture a child (if possible)
     // return true on success
-    public final boolean makeChild(TriTexture child) {
+    public final boolean makeChild(TriTexture child, int pos[]) {
         // -- can only make child if it has no parent
         if (child.hasParent()) {
             return false;
@@ -160,7 +169,7 @@ public class TriTexture {
         }
 
         // -- check for containment position
-        int[] pos = imageComparator.getPosition(child.imageComparator, null);
+        pos = pos == null ? imageComparator.getPosition(child.imageComparator, null) : pos;
         if (pos != null) {
             child.setParentTexture(this,
                     new int[] {pos[0], pos[1]},
@@ -359,8 +368,84 @@ public class TriTexture {
         pixels.putAll(tex.pixels);
         imageComparator = new ImageComparator(pixels.valueCollection());
         // make child
-        this.makeChild(tex);
+        this.makeChild(tex, new int[] {0, 0, 0});
         assert tex.hasParent();
+    }
+
+    // action to notify listener of progression
+    public abstract static class TickAction {
+        abstract void onTick(int current, int target);
+    }
+
+    // alternative constructor that merges multiple textures
+    public TriTexture(ArrayList<TriTexture> textures, TickAction tickAction, TriTextureManager textureManager) {
+        int texCount = textures.size();
+        assert texCount >= 2;
+        for (TriTexture tex : textures) {
+            assert !tex.hasParent();
+        }
+        // set final variables
+        this.textureManager = textureManager;
+        // has no corresponding triangle
+        this.hasTriangle = false;
+
+        TriTexture main = textures.remove(0);
+        this.pixels.putAll(main.pixels);
+        int width = main.width;
+        int height = main.height;
+        this.makeChild(main, new int[] {0, 0, 0});
+        assert main.hasParent();
+
+        while (!textures.isEmpty()) {
+            tickAction.onTick(texCount - textures.size(), texCount);
+            TriTexture sec = textures.remove(0);
+
+            int[] merge = null;
+            for (int y = 0; y <= height && merge == null; y++) {
+                for (int x = 0; x <= width && merge == null; x++) {
+                    // ensure the generate texture is square
+                    if (x + sec.width > height && height < width && x > 0) {
+                        break;
+                    }
+                    boolean works = true;
+                    // check if it fits
+                    for (TIntObjectIterator<int[]> it = sec.pixels.iterator(); it.hasNext() && works; ) {
+                        it.advance();
+                        int[] val = it.value();
+                        works = !pixels.containsKey(IntegerTools.makeInt(x + val[0], y + val[1]));
+                    }
+                    if (works) {
+                        merge = new int[]{x, y};
+                    }
+                }
+            }
+            assert merge != null;
+
+            // merge pixels into this TriTexture
+            for (TIntObjectIterator<int[]> it = sec.pixels.iterator(); it.hasNext(); ) {
+                it.advance();
+                int[] val = it.value();
+                this.pixels.put(
+                        IntegerTools.makeInt(merge[0] + val[0], merge[1] + val[1]),
+                        new int[]{merge[0] + val[0], merge[1] + val[1], val[2]}
+                );
+            }
+
+            width = Math.max(width, merge[0] + sec.width);
+            height = Math.max(height, merge[1] + sec.height);
+
+            // -----------
+
+            // make child
+            this.makeChild(sec, new int[] {merge[0], merge[1], 0});
+            assert sec.hasParent();
+        }
+
+        // set the image comparator
+        imageComparator = new ImageComparator(this.pixels.valueCollection());
+
+        this.width = width;
+        this.height = height;
     }
 
     // alternative constructor that merges two textures
@@ -395,39 +480,39 @@ public class TriTexture {
             int y;
             switch (mergePos[2]) {
                 case 1: // 1 : check for "rotation 1" (1)
-                    x = (two.height - 1 - pixel[1]) + maxX;
-                    y = pixel[0] + maxY;
+                    x = (two.height - 1 - pixel[1]);
+                    y = pixel[0];
                     break;
                 case 3: // 3 : check for "rotation 3" (3)
-                    x = pixel[1] + maxX;
-                    y = (two.width - 1 - pixel[0]) + maxY;
+                    x = pixel[1];
+                    y = (two.width - 1 - pixel[0]);
                     break;
                 case 5: // 5 : check for "flipped and rotation 1" (5)
-                    x = (two.height - 1 - pixel[1]) + maxX;
-                    y = (two.width - 1 - pixel[0]) + maxY;
+                    x = (two.height - 1 - pixel[1]);
+                    y = (two.width - 1 - pixel[0]);
                     break;
                 case 7: // 7 : check for "flipped and rotation 3" (7)
-                    x = pixel[1] + maxX;
-                    y = pixel[0] + maxY;
+                    x = pixel[1];
+                    y = pixel[0];
                     break;
                 case 2: // 2 : check for "twice rotated" (2)
-                    x = (two.width - 1 - pixel[0]) + maxX;
-                    y = (two.height - 1 - pixel[1]) + maxY;
+                    x = (two.width - 1 - pixel[0]);
+                    y = (two.height - 1 - pixel[1]);
                     break;
                 case 4: // 4 : check for "flipped" (4)
-                    x = (two.width - 1 - pixel[0]) + maxX;
-                    y = pixel[1] + maxY;
+                    x = (two.width - 1 - pixel[0]);
+                    y = pixel[1];
                     break;
                 case 6: // 6 : check for "flipped and twice rotated" (6)
-                    x = pixel[0] + maxX;
-                    y = (two.height - 1 - pixel[1]) + maxY;
+                    x = pixel[0];
+                    y = (two.height - 1 - pixel[1]);
                     break;
                 default: // 0 : check for "default orientation" (0)
-                    x = pixel[0] + maxX;
-                    y = pixel[1] + maxY;
+                    x = pixel[0];
+                    y = pixel[1];
                     break;
             }
-            pixels.put(IntegerTools.makeInt(x, y), new int[] {x,y,pixel[2]});
+            pixels.put(IntegerTools.makeInt(x + maxX, y + maxY), new int[] {x + maxX,y + maxY,pixel[2]});
         }
 
         // set the image comparator
@@ -446,8 +531,8 @@ public class TriTexture {
         // -----------
 
         // make children
-        this.makeChild(one);
-        this.makeChild(two);
+        this.makeChild(one, new int[] {-minX, -minY, 0});
+        this.makeChild(two, new int[] {maxX, maxY, mergePos[2]});
         assert one.hasParent();
         assert two.hasParent();
     }
@@ -457,10 +542,13 @@ public class TriTexture {
             TexTriUV uv1, int xf1, int yf1,
             TexTriUV uv2, int xf2, int yf2,
             TexTriUV uv3, int xf3, int yf3,
+            final int side,
             int depth,
             boolean usePadding,
-            TexTriangle texTri, Data data,
-            TriTextureManager textureManager
+            TexTriangle texTri, final Data data,
+            TriTextureManager textureManager,
+            boolean exportTexturedVoxels,
+            boolean useSkewedUvs
     ) {
         // store variables internally
         uvPoints[0][0] = xf1;
@@ -516,7 +604,8 @@ public class TriTexture {
         int height = maxY - minY + 1;
 
         // get orientation
-        int axis = texTri.getOrientation()/2;
+        final int axis = texTri.getOrientation()/2;
+        final TIntObjectHashMap<Voxel> texels = new TIntObjectHashMap<Voxel>();
 
         // fetch colors
         for (int[] point : points) {
@@ -531,13 +620,94 @@ public class TriTexture {
                     axis == 2 ? depth : point[1],
             }, false);
             assert voxel != null;
+            if (exportTexturedVoxels && voxel.getTexture() != null) {
+                texels.put(p, voxel);
+            }
             // add the pixel
             pixels.put(p, new int[] {x, y, voxel.getColor().getRGB()});
         }
 
-        // compress textures (scale if this can be done loss-less)
-        // Note: Doing this several times should not make any sense
-        int[] newSize = compress(width, height, pixels, uvPoints);
+        if (exportTexturedVoxels && texels.size() > 0) {
+            int[][] enlargedPoints = G2DUtil.getTriangleGridIntersection(
+                    xf1 * 32, yf1 * 32, xf2 * 32, yf2 * 32, xf3 * 32, yf3 * 32
+            );
+            final TIntObjectHashMap<int[]> remapped = new TIntObjectHashMap<int[]>();
+            // enlarge pixel and fill with textures when appropriate
+            pixels.forEachEntry(new TIntObjectProcedure<int[]>() {
+                @Override
+                public boolean execute(int p, int[] info) {
+                    Voxel voxel = texels.get(p);
+                    BufferedImage tex = null;
+                    int rotation = 0;
+                    boolean flip = false;
+                    int[] pos = new int[] {0, 0};
+                    if (voxel != null) {
+                        //noinspection ConstantConditions
+                        ImageIcon imageIcon = data.getTexture(voxel.getTexture()[side]);
+                        tex = new BufferedImage(imageIcon.getIconWidth(), imageIcon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                        tex.getGraphics().drawImage(imageIcon.getImage(), 0, 0, null);
+                        //noinspection ConstantConditions
+                        rotation = voxel.getRotation() != null ? voxel.getRotation()[side] : 0;
+                        //noinspection ConstantConditions
+                        flip = voxel.getFlip() != null && voxel.getFlip()[side];
+                    }
+
+                    int offset;
+                    switch (side) {
+                        case 0: offset = flip ? 1 : 7; break;
+                        case 1: offset = flip ? 7 : 1; break;
+                        case 2: offset = flip ? 6 : 2; break;
+                        case 3: offset = flip ? 2 : 6; break;
+                        case 4: offset = flip ? 0 : 4; break;
+                        default: offset = flip ? 4 : 0; break;
+                    }
+                    offset = (((offset % 4 + (flip ? rotation : 4 - rotation)) % 4) + (offset / 4) * 4) % 8;
+
+                    for (int x = 0; x < 32; x++) {
+                        for (int y = 0; y < 32; y++) {
+                            if (tex != null) {
+                                switch (offset) {
+                                    // 0 - original, 1 - rotated x 1, 2 - rotated x 2, 3 - rotated x 3,
+                                    // 4 - flipped, 5 - flipped & rotated x 1, 6 - flipped & rotated x 2, 7 - flipped & rotated x 3
+                                    case 0: pos[0] = x; pos[1] = y; break;
+                                    case 4: pos[0] = 31 - x; pos[1] = y; break;
+                                    case 2: pos[0] = 31 - x; pos[1] = 31 - y; break;
+                                    case 6: pos[0] = x; pos[1] = 31 - y; break;
+                                    case 7: pos[0] = y; pos[1] = x; break;
+                                    case 1: pos[0] = 31 - y; pos[1] = x; break;
+                                    case 3: pos[0] = y; pos[1] = 31 - x; break;
+                                    default: pos[0] = 31 - y; pos[1] = 31 - x; break; // case 5
+                                }
+                            }
+                            remapped.put(
+                                    IntegerTools.makeInt(info[0] * 32 + x, info[1] * 32 + y),
+                                    new int[] {info[0] * 32 + x, info[1] * 32 + y, tex == null ? info[2] : tex.getRGB(pos[0], pos[1])}
+                            );
+                        }
+                    }
+                    return true;
+                }
+            });
+            pixels.clear();
+            for (int[] point : enlargedPoints) {
+                int x = point[0] - minX * 32;
+                int y = point[1] - minY * 32;
+                int pos = IntegerTools.makeInt(x, y);
+                assert remapped.containsKey(pos);
+                pixels.put(pos, remapped.get(pos));
+            }
+            width = width * 32;
+            height = height * 32;
+        }
+
+        // might now change depending on options
+        int[] newSize = new int[] {width, height};
+
+        if (useSkewedUvs) {
+            // compress textures (scale if this can be done loss-less)
+            // Note: Doing this several times should not make any sense
+            newSize = compress(newSize[0], newSize[1], pixels, uvPoints);
+        }
 
         // do texture padding (if enabled)
         if (usePadding) {
@@ -547,15 +717,24 @@ public class TriTexture {
         // set the image comparator
         imageComparator = new ImageComparator(pixels.valueCollection());
 
-        // overwrite uv to prevent unnecessary unique uv coordinates.
-        // Note: this enables better compression for COLLADA
-        if (imageComparator.pixelCount == 1) {
-            uvPoints[0][0] = 0;
-            uvPoints[0][1] = 0;
-            uvPoints[1][0] = 1;
-            uvPoints[1][1] = 0;
-            uvPoints[2][0] = 0;
-            uvPoints[2][1] = 1;
+        if (useSkewedUvs) {
+            // overwrite uv to prevent unnecessary unique uv coordinates.
+            // Note: this enables better compression for COLLADA
+            if (imageComparator.pixelCount == 1) {
+                uvPoints[0][0] = 0;
+                uvPoints[0][1] = 0;
+                uvPoints[1][0] = 1;
+                uvPoints[1][1] = 0;
+                uvPoints[2][0] = 0;
+                uvPoints[2][1] = 1;
+            } else if (imageComparator.colorCount == 1 && usePadding) {
+                uvPoints[0][0] = 1 / 3f;
+                uvPoints[0][1] = 1 / 3f;
+                uvPoints[1][0] = 2 / 3f;
+                uvPoints[1][1] = 1 / 3f;
+                uvPoints[2][0] = 1 / 3f;
+                uvPoints[2][1] = 2 / 3f;
+            }
         }
 
         // finalize width and height
