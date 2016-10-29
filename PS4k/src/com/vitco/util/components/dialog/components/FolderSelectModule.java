@@ -20,6 +20,39 @@ public class FolderSelectModule extends BlankDialogModule {
     // the label that displays the folder
     private final JLabel label;
 
+    @Override
+    protected final void refreshState(BlankDialogModule topLevelParent) {
+        super.refreshState(topLevelParent);
+        // ensure a correct folder is set when the dialog is refreshed
+        setSelectedFolder(getSelectedFolder());
+    }
+
+    // set the folder for this module
+    private void setSelectedFolder(String path) {
+        File file = new File(FileTools.ensureTrailingSeparator(path));
+        File dir = file.isFile() ? file.getParentFile() : file;
+        dir = dir != null && dir.exists() ? dir : null;
+
+        final File finalDir = dir;
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                // set the information in the correct event queue
+                fileDialog.setSelectedFile(finalDir);
+                fileDialog.setCurrentDirectory(finalDir);
+                label.setText(FileTools.shortenPath(getSelectedFolder(), 50));
+            }
+        });
+    }
+
+    // obtain the currently selected folder
+    private String getSelectedFolder() {
+        File file = fileDialog.getSelectedFile();
+        file = file == null ? fileDialog.getCurrentDirectory() : file;
+        file = file.isFile() ? file.getParentFile() : file;
+        return FileTools.ensureTrailingSeparator(file.getAbsolutePath());
+    }
+
     // constructor
     public FolderSelectModule(String identifier, final Frame owner, File initTo) {
         super(identifier);
@@ -29,12 +62,14 @@ public class FolderSelectModule extends BlankDialogModule {
         // setup dialog
         fileDialog = new JFileChooser();
         fileDialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileDialog.setCurrentDirectory(initTo);
 
-        // create the label that displays the current folder name
-        label = new JLabel(FileTools.shortenPath(FileTools.ensureTrailingSeparator(fileDialog.getCurrentDirectory().getPath()), 50));
+        // setup label
+        label = new JLabel();
         label.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
         add(label, BorderLayout.CENTER);
+
+        // initialize
+        setSelectedFolder(initTo.getAbsolutePath());
 
         // create the "select folder" button
         DialogButton selectFolderButton = new DialogButton("Select Folder...");
@@ -44,15 +79,12 @@ public class FolderSelectModule extends BlankDialogModule {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // open dialog to select folder location
+                String currentSelectedFolder = getSelectedFolder();
                 if (fileDialog.showDialog(owner, "Select") == JFileChooser.APPROVE_OPTION) {
-                    File folder = fileDialog.getSelectedFile();
-                    if (folder != null) {
-                        label.setText(FileTools.shortenPath(FileTools.ensureTrailingSeparator(folder.getPath()), 50));
-                        // listen to changes
-                        notifyContentChanged();
-                    }
+                    setSelectedFolder(getSelectedFolder());
+                    notifyContentChanged();
                 } else {
-                    fileDialog.setCurrentDirectory(new File(label.getText()));
+                    setSelectedFolder(currentSelectedFolder); // roll back
                 }
             }
         });
@@ -60,13 +92,7 @@ public class FolderSelectModule extends BlankDialogModule {
 
     @Override
     protected String getValue(String identifier) {
-        // return the directory of the selected folder
-        if (fileDialog.getSelectedFile() != null) {
-            return FileTools.ensureTrailingSeparator(fileDialog.getSelectedFile().getPath());
-        } else {
-            // ensures that the path is stored even if it was not changed
-            return FileTools.ensureTrailingSeparator(fileDialog.getCurrentDirectory().getPath());
-        }
+        return getSelectedFolder();
     }
 
     @Override
@@ -79,11 +105,7 @@ public class FolderSelectModule extends BlankDialogModule {
     @Override
     protected boolean loadValue(String[] pair) {
         if (pair[0].equals("")) {
-            // set the path
-            fileDialog.setCurrentDirectory(new File(pair[1]));
-            // update the text label
-            label.setText(FileTools.shortenPath(pair[1], 50));
-            // listen to changes
+            setSelectedFolder(pair[1]);
             notifyContentChanged();
             return true;
         }

@@ -96,7 +96,7 @@ public class BlankDialogModule extends JComponent {
     }
 
     // called to update the state of this component
-    protected final void refreshState(BlankDialogModule topLevelParent) {
+    protected void refreshState(BlankDialogModule topLevelParent) {
         boolean visible = true;
         boolean enabled = true;
         for (int i = 0; i < 4; i++) {
