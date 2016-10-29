@@ -183,6 +183,8 @@ public class FrameHelpOverlay extends JComponent {
         if (active) {
             // request focus if visible
             thisInstance.requestFocusInWindow();
+            // ensure we capture a fresh image
+            image = null;
         }
     }
     public final boolean isActive() {
