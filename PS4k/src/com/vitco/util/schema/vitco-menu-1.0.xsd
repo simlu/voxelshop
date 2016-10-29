@@ -57,11 +57,12 @@
 
     <xs:element name="menu">
         <xs:complexType>
-            <xs:sequence>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
                 <xs:element ref="item" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element ref="icon-item" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element ref="menu" minOccurs="0" maxOccurs="unbounded" />
-            </xs:sequence>
+                <xs:element name="separator" minOccurs="0" maxOccurs="unbounded" />
+            </xs:choice>
             <xs:attribute name="caption" form="unqualified" type="xs:string" />
         </xs:complexType>
     </xs:element>

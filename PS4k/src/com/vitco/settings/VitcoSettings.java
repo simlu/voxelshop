@@ -27,6 +27,7 @@ public final class VitcoSettings {
     public final static Color MAIN_MENU_ENABLED_COLOR = new Color(230, 230, 230);
     public final static Color MAIN_MENU_DISABLED_COLOR = new Color(170, 170, 170);
     public final static Color MAIN_MENU_BACKGROUND = new Color(83, 83, 83);
+    public final static Color MAIN_MENU_SEPARATOR_COLOR = new Color(54, 54, 54);
     // soft black color
     public final static Color SOFT_BLACK = new Color(38, 38, 38);
     public final static Color SOFT_WHITE = new Color(230, 230, 230);

@@ -16,6 +16,7 @@ import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.lang.LangSelectorInterface;
+import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.SaveResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
@@ -28,6 +29,7 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -138,7 +140,20 @@ public class MenuGenerator implements MenuGeneratorInterface {
                         e.hasAttribute("hideable") && e.getAttribute("hideable").equals("true")
                 );
             } else if (name.equals("separator")) {
-                component.add(new CommandBarSeparator());
+                if (component instanceof JideMenu) {
+                    JPanel jPanel = new JPanel();
+                    jPanel.setBackground(VitcoSettings.MAIN_MENU_BACKGROUND);
+                    jPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
+                    jPanel.setLayout(new BorderLayout());
+                    JSeparator jSeparator = new JSeparator();
+                    jSeparator.setBackground(VitcoSettings.MAIN_MENU_SEPARATOR_COLOR);
+                    jSeparator.setForeground(VitcoSettings.MAIN_MENU_SEPARATOR_COLOR);
+                    jSeparator.setPreferredSize(new Dimension(0, 1));
+                    jPanel.add(jSeparator, BorderLayout.CENTER);
+                    component.add(jPanel);
+                } else {
+                    component.add(new CommandBarSeparator());
+                }
             } else if (name.equals("icon-item")) {
                 Element e = (Element) node;
                 addIconItem(component, e,
