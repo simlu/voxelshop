@@ -51,10 +51,18 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="ENTER" action="selection_tool_finalize_shifting_as_copy" caption="selection_tool_finalize_shifting_as_copy_caption" />
 
         <!--Color Palette-->
-        <shortcut ctrl="no" alt="no" shift="no" key="A" action="color-palette_color_left" caption="color-palette_color_left_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="D" action="color-palette_color_right" caption="color-palette_color_right_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="W" action="color-palette_color_up" caption="color-palette_color_up_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="S" action="color-palette_color_down" caption="color-palette_color_down_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="A" action="color-palette_color_left" caption="color-palette_color_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="D" action="color-palette_color_right" caption="color-palette_color_right_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="W" action="color-palette_color_up" caption="color-palette_color_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="S" action="color-palette_color_down" caption="color-palette_color_down_caption" />
+
+        <!--Camera-->
+        <shortcut ctrl="no" alt="no" shift="no" key="W" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="S" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="A" action="mainview_rotate_left" caption="main-view_rotate_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="D" action="mainview_rotate_right" caption="main-view_rotate_right_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="E" action="mainview_rotate_up" caption="main-view_rotate_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="Q" action="mainview_rotate_down" caption="main-view_rotate_down_caption" />
 
         <!--Custom-->
         <shortcut action="swap_mainView_with_xyView" caption="swap_mainView_with_xyView_caption" />
@@ -74,8 +82,6 @@
 
     <frame name="mainView">
         <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
     </frame>
 
     <frame name="xyView">

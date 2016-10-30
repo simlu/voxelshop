@@ -114,16 +114,22 @@ public class ShortcutManager implements ShortcutManagerInterface {
     private final KeyEventDispatcher globalProcessor = new KeyEventDispatcher() {
         @Override
         public boolean dispatchKeyEvent(final KeyEvent e) {
-            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+            final int eventId = e.getID();
+            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(
+                    // always convert into key pressed event so it can be matched
+                    new KeyEvent(e.getComponent(), KeyEvent.KEY_PRESSED, e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation())
+            );
             if (globalByKeyStroke.containsKey(keyStroke)
                     // only fire if all actions are activated
-                    && enableAllActivatableActions) {
+                    && enableAllActivatableActions
+                    // ensure we only consider pressed and released events
+                    && (eventId == KeyEvent.KEY_PRESSED || eventId == KeyEvent.KEY_RELEASED)) {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
                         // fire new action
                         actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                                new ActionEvent(e.getSource(), e.hashCode(), e.toString()) {}
+                                new ActionEvent(e.getSource(), eventId, e.toString(), e.getWhen(), e.getModifiers()) {}
                         );
                     }
                 });

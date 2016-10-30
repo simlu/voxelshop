@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 import java.util.Random;
 
 /**
@@ -384,19 +381,85 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         container.addMouseMotionListener(mouseAdapter);
         container.addMouseListener(mouseAdapter);
 
-        // register zoom buttons
-        actionManager.registerAction("mainview_zoom_in", new AbstractAction() {
+        abstract class CameraAction extends AbstractAction {
+            protected abstract void step();
+            private LifeTimeThread thread = null;
+
+            public void onKeyDown() {
+                if (thread == null) {
+                    thread = new LifeTimeThread() {
+                        @Override
+                        public void loop() throws InterruptedException {
+                            asyncActionManager.addAsyncAction(new AsyncAction() {
+                                @Override
+                                public void performAction() {
+                                    step();
+                                    voxelAdapter.replayHover();
+                                    forceRepaint();
+                                }
+                            });
+                            synchronized (this) {
+                                thread.wait(50);
+                            }
+                        }
+                    };
+                    threadManager.manage(thread);
+                }
+            }
+
+            public void onKeyUp() {
+                if (thread != null) {
+                    threadManager.remove(thread);
+                    thread = null;
+                }
+            }
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                camera.zoomIn(VitcoSettings.MAIN_VIEW_ZOOM_SPEED_FAST);
-                forceRepaint();
+                if (e.getID() == KeyEvent.KEY_PRESSED) {
+                    onKeyDown();
+                } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+                    onKeyUp();
+                }
+            }
+        }
+
+        // register zoom buttons
+        actionManager.registerAction("mainview_zoom_in", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.zoomIn(VitcoSettings.MAIN_VIEW_BUTTON_ZOOM_SPEED);
             }
         });
-        actionManager.registerAction("mainview_zoom_out", new AbstractAction() {
+        actionManager.registerAction("mainview_zoom_out", new CameraAction() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                camera.zoomOut(VitcoSettings.MAIN_VIEW_ZOOM_SPEED_FAST);
-                forceRepaint();
+            protected void step() {
+                camera.zoomOut(VitcoSettings.MAIN_VIEW_BUTTON_ZOOM_SPEED);
+            }
+        });
+        // register rotate buttons
+        actionManager.registerAction("mainview_rotate_left", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.rotate(VitcoSettings.MAIN_VIEW_BUTTON_ROTATE_SIDEWAYS_SPEED, 0);
+            }
+        });
+        actionManager.registerAction("mainview_rotate_right", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.rotate(-VitcoSettings.MAIN_VIEW_BUTTON_ROTATE_SIDEWAYS_SPEED, 0);
+            }
+        });
+        actionManager.registerAction("mainview_rotate_up", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.rotate(0, VitcoSettings.MAIN_VIEW_BUTTON_ROTATE_OVER_SPEED);
+            }
+        });
+        actionManager.registerAction("mainview_rotate_down", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.rotate(0, -VitcoSettings.MAIN_VIEW_BUTTON_ROTATE_OVER_SPEED);
             }
         });
 
