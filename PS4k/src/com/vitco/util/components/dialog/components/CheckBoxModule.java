@@ -5,6 +5,8 @@ import com.vitco.util.components.dialog.BlankDialogModule;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.font.TextAttribute;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -39,19 +41,41 @@ public class CheckBoxModule extends BlankDialogModule {
                 notifyContentChanged();
             }
         });
-        // ensure shows as deselected when disabled
+
+        // file "selected" property change event
+        checkbox.addItemListener(new ItemListener() {
+            private boolean oldValue = checkbox.isSelected();
+
+            public void itemStateChanged(ItemEvent e) {
+                checkbox.firePropertyChange("selected", oldValue, checkbox.isSelected());
+                oldValue = checkbox.isSelected();
+            }
+        });
+
+        // show as deselected when disabled
         checkbox.addPropertyChangeListener(new PropertyChangeListener() {
-            boolean checkState = false;
+
+            private Boolean checkState = null;
+
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals("enabled")) {
-                    if (evt.getOldValue() != evt.getNewValue()) {
-                        if ((Boolean)evt.getNewValue()) {
-                            checkbox.setSelected(checkState);
+                if (evt.getPropertyName().equals("enabled")) { // if enabled state changed
+                    if (evt.getOldValue() != evt.getNewValue()) { // if it actually changes
+                        if ((Boolean)evt.getNewValue()) { // if checkbox is now enabled
+                            if (checkState != null) { // there is a known check state
+                                checkbox.setSelected(checkState); // restore check state
+                            }
                         } else {
-                            checkState = checkbox.isSelected();
-                            checkbox.setSelected(false);
+                            checkState = checkbox.isSelected(); // remember check state
+                            checkbox.setSelected(false); // uncheck b/c disabled
                         }
+                    }
+                }
+                if (!checkbox.isEnabled() && evt.getPropertyName().equals("selected")) { // disabled and the selected state changes
+                    if (evt.getOldValue() != evt.getNewValue()) { // if it actually changes
+                        // this might trigger more events (which is fine b/c we set the checkState second)
+                        checkbox.setSelected(false);  // uncheck b/c disabled
+                        checkState = (Boolean) evt.getNewValue();  // remember the state
                     }
                 }
             }
@@ -68,7 +92,7 @@ public class CheckBoxModule extends BlankDialogModule {
     // get the value of this object
     @Override
     protected String getValue(String identifier) {
-        return String.valueOf(checkbox.isSelected());
+        return String.valueOf(checkbox.isEnabled() && checkbox.isSelected());
     }
 
     @Override
