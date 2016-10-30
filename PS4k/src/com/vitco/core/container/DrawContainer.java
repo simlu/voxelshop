@@ -243,41 +243,45 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         }
 
         if (drawText) {
-            // draw size text
-            ig = (Graphics2D) ig.create();
-            String str1 = String.valueOf(((int) (range[2] * 2)));
-            String str2 = String.valueOf(((int) (range[1] * 2)));
-            String str3 = String.valueOf(((int) (range[0] * 2)));
-
-            ig.setFont(ig.getFont().deriveFont(18f).deriveFont(Font.BOLD));
-
-            float len1 = (float) ig.getFontMetrics().getStringBounds(str1, ig).getWidth();
-            float len2 = (float) ig.getFontMetrics().getStringBounds(str2 + ", " + str1, ig).getWidth();
-            float len3 = (float) ig.getFontMetrics().getStringBounds(str3 + ", " + str2 + ", " + str1, ig).getWidth();
-
-            ig.setColor(Color.BLACK);
-            ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 - 1);
-            ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 - 1);
-            ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 + 1);
-            ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 + 1);
-            ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 - 1);
-            ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 - 1);
-            ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 + 1);
-            ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 + 1);
-            ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 - 1);
-            ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 - 1);
-            ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 + 1);
-            ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 + 1);
-            ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Z);
-            ig.drawString(str1, this.getWidth() - len1 - 14, 28);
-            ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Y);
-            ig.drawString(str2, this.getWidth() - len2 - 14, 28);
-            ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_X);
-            ig.drawString(str3, this.getWidth() - len3 - 14, 28);
-            ig.dispose();
+           drawCoordinates(ig, range[2], range[1], range[0]);
         }
 
         return valid;
+    }
+
+    private void drawCoordinates(Graphics2D ig, float v1, float v2, float v3) {
+        // draw size text
+        ig = (Graphics2D) ig.create();
+        String str1 = String.valueOf(((int) (v1 * 2)));
+        String str2 = String.valueOf(((int) (v2 * 2)));
+        String str3 = String.valueOf(((int) (v3 * 2)));
+
+        ig.setFont(ig.getFont().deriveFont(18f).deriveFont(Font.BOLD));
+
+        float len1 = (float) ig.getFontMetrics().getStringBounds(str1, ig).getWidth();
+        float len2 = (float) ig.getFontMetrics().getStringBounds(str2 + ", " + str1, ig).getWidth();
+        float len3 = (float) ig.getFontMetrics().getStringBounds(str3 + ", " + str2 + ", " + str1, ig).getWidth();
+
+        ig.setColor(Color.BLACK);
+        ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 - 1);
+        ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 - 1);
+        ig.drawString(str1, this.getWidth() - len1 - 14 - 1, 28 + 1);
+        ig.drawString(str1, this.getWidth() - len1 - 14 + 1, 28 + 1);
+        ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 - 1);
+        ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 - 1);
+        ig.drawString(str2, this.getWidth() - len2 - 14 - 1, 28 + 1);
+        ig.drawString(str2, this.getWidth() - len2 - 14 + 1, 28 + 1);
+        ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 - 1);
+        ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 - 1);
+        ig.drawString(str3, this.getWidth() - len3 - 14 - 1, 28 + 1);
+        ig.drawString(str3, this.getWidth() - len3 - 14 + 1, 28 + 1);
+        ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Z);
+        ig.drawString(str1, this.getWidth() - len1 - 14, 28);
+        ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_Y);
+        ig.drawString(str2, this.getWidth() - len2 - 14, 28);
+        ig.setColor(VitcoSettings.ANIMATION_AXIS_COLOR_X);
+        ig.drawString(str3, this.getWidth() - len3 - 14, 28);
+        ig.dispose();
     }
 
     // draw overlay for voxels
@@ -290,6 +294,10 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         if (selectedRect != null) {
             ig.setColor(Color.WHITE);
             ig.drawRect(selectedRect.x, selectedRect.y, selectedRect.width, selectedRect.height);
+        }
+        if (highlighted != null && isActive()) {
+            // draw the highlighted voxel coordinates
+            drawCoordinates(ig, highlighted[2], highlighted[1], highlighted[0]);
         }
 
         for (int[][] outlinedRect : outlineBoxed) {
