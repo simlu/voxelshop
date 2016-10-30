@@ -124,9 +124,9 @@ public final class VitcoSettings {
     // main view
     public static final float MAIN_VIEW_ZOOM_SPEED_SLOW = 15;
     public static final float MAIN_VIEW_ZOOM_SPEED_FAST = 25;
-    public static final float MAIN_VIEW_BUTTON_ZOOM_SPEED = 15;
-    public static final float MAIN_VIEW_BUTTON_ROTATE_SIDEWAYS_SPEED = 5;
-    public static final float MAIN_VIEW_BUTTON_ROTATE_OVER_SPEED = 2;
+    public static final float MAIN_VIEW_BUTTON_ZOOM_SPEED = 7.5f;
+    public static final float MAIN_VIEW_BUTTON_ROTATE_SIDEWAYS_SPEED = 2.5f;
+    public static final float MAIN_VIEW_BUTTON_ROTATE_OVER_SPEED = 1;
     public static final float MAIN_VIEW_ZOOM_OUT_LIMIT = 1500;
     public static final float MAIN_VIEW_ZOOM_IN_LIMIT = 100;
     public static final float MAIN_VIEW_ZOOM_FOV = 1.25f;

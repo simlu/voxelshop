@@ -399,7 +399,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                                 }
                             });
                             synchronized (this) {
-                                thread.wait(50);
+                                thread.wait(25);
                             }
                         }
                     };
