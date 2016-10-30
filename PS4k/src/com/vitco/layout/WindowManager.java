@@ -229,7 +229,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         preferences.storeInteger("program_start_count", start_count+1);
     }
 
-    // handle borderless logic (make floated windows borderless)
+    // handle borderless logic (make floated frames borderless)
     private void handleBorderLess(final DockingManager dockingManager) {
         // list of managed floating containers
         final HashSet<DialogFloatingContainer> containers = new HashSet<DialogFloatingContainer>();
@@ -347,20 +347,39 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             }
         });
 
-        // toggle "highlight active window" setting
-        actionManager.registerAction("toggle_active_window_highlighted", new StateActionPrototype() {
+        // toggle "highlight active frame" setting
+        actionManager.registerAction("toggle_active_frame_highlighted", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
-                CDockableFrame.setActiveWindowHighlighted(!CDockableFrame.isActiveWindowHighlighted());
-                preferences.storeBoolean("use_highlight_active_window", CDockableFrame.isActiveWindowHighlighted());
+                CDockableFrame.setActiveFrameHighlighted(!CDockableFrame.isActiveFrameHighlighted());
+                preferences.storeBoolean("use_highlight_active_frame", CDockableFrame.isActiveFrameHighlighted());
                 for (String frame : dockingManager.getAllFrames()) {
+                    // state "null" is ignored here
                     dockingManager.getFrame(frame).setBorder(null);
                 }
             }
 
             @Override
             public boolean getStatus() {
-                return CDockableFrame.isActiveWindowHighlighted();
+                return CDockableFrame.isActiveFrameHighlighted();
+            }
+        });
+
+        // toggle "floatable frames"
+        actionManager.registerAction("toggle_floatable_frames", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                CDockableFrame.setFramesFloatable(!CDockableFrame.isFramesFloatable());
+                preferences.storeBoolean("enable_frames_floatable", CDockableFrame.isFramesFloatable());
+                for (String frame : dockingManager.getAllFrames()) {
+                    // state "true" is ignored here
+                    dockingManager.getFrame(frame).setFloatable(true);
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return CDockableFrame.isFramesFloatable();
             }
         });
 
@@ -389,14 +408,14 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         // remove extra spacing of frames
         UIManager.getDefaults().put("FrameContainer.contentBorderInsets", new InsetsUIResource(0, 0, 0, 0));
 
-        // listen to main frame resize events and make sure the floated windows do not
-        // disappear outside the frame area (prevent windows from disappearing)
+        // listen to main frame resize events and make sure the floated frames do not
+        // disappear outside the window area (prevent frames from disappearing)
         thisFrame.addComponentListener(new ComponentAdapter() {
             Integer xOld = thisFrame.getX();
             Integer yOld = thisFrame.getY();
 
-            // validate the floated window position to be contained inside main jframe
-            private void validateWindow(DialogFloatingContainer container) {
+            // validate the floated frame position to be contained inside main jframe
+            private void validateFrame(DialogFloatingContainer container) {
                 container.setLocation(
                         Math.max(thisFrame.getX() + 20, Math.min(thisFrame.getX() + thisFrame.getWidth() - container.getWidth() - 20, container.getLocation().x)),
                         Math.max(thisFrame.getY() + 20, Math.min(thisFrame.getY() + thisFrame.getHeight() - container.getHeight() - 20, container.getLocation().y))
@@ -407,7 +426,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             public void componentResized(ComponentEvent e) {
                 // make sure all floating containers are "on main JFrame"
                 for (DialogFloatingContainer container : containers) {
-                    validateWindow(container);
+                    validateFrame(container);
                 }
             }
 
@@ -444,9 +463,14 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
     @PostConstruct
     @Override
     public final void init() {
-        if (preferences.contains("use_highlight_active_window")) {
-            // load active window highlighted setting
-            CDockableFrame.setActiveWindowHighlighted(preferences.loadBoolean("use_highlight_active_window"));
+        if (preferences.contains("use_highlight_active_frame")) {
+            // load active frame highlighted setting
+            CDockableFrame.setActiveFrameHighlighted(preferences.loadBoolean("use_highlight_active_frame"));
+        }
+
+        if (preferences.contains("enable_frames_floatable")) {
+            // load floatable frames setting
+            CDockableFrame.setFramesFloatable(preferences.loadBoolean("enable_frames_floatable"));
         }
 
         if (preferences.contains("program_boundary_rect")) {

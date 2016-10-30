@@ -24,7 +24,12 @@ class TitlePane extends JPanel {
         this.title.setText(title);
     }
 
-    public TitlePane(Action floatingAction, Action closeAction, LangSelectorInterface langSelector) {
+    private final FrameGenericJideButton floating;
+    public final void displayFloatButton(boolean flag) {
+        floating.setVisible(flag);
+    }
+
+    public TitlePane(final DockableFrame frame, LangSelectorInterface langSelector) {
         // define layout
         this.setLayout(new BorderLayout());
         this.setBackground(VitcoSettings.DEFAULT_BG_COLOR);
@@ -40,13 +45,13 @@ class TitlePane extends JPanel {
         // define buttons layout
         help = new FrameGenericJideButton("DockableFrameTitlePane.helpIcon", langSelector.getString("help_frame_button_tooltip"));
         buttons.add(help);
-        FrameGenericJideButton floating = new FrameGenericJideButton("DockableFrameTitlePane.floatIcon", langSelector.getString("toggle_floating_frame_button_tooltip"));
+        floating = new FrameGenericJideButton("DockableFrameTitlePane.floatIcon", langSelector.getString("toggle_floating_frame_button_tooltip"));
         buttons.add(floating);
         FrameGenericJideButton hide = new FrameGenericJideButton("DockableFrameTitlePane.hideIcon", langSelector.getString("close_frame_button_tooltip"));
         buttons.add(hide);
         // define actions
-        floating.addActionListener(floatingAction);
-        hide.addActionListener(closeAction);
+        floating.addActionListener(frame.getFloatingAction());
+        hide.addActionListener(frame.getCloseAction());
     }
 
 }
@@ -94,8 +99,8 @@ public class CDockableFrame extends DockableFrame {
     private static final Border emptyBorder = BorderFactory.createEmptyBorder();
 
     @Override
-    public void setBorder(Border border) {
-        if (activeWindowHighlighted) {
+    public void setBorder(Border ignored) {
+        if (activeFrameHighlighted) {
             super.setBorder(this.isActive() ? highlightedBorder : defaultBorder);
         } else {
             super.setBorder(emptyBorder);
@@ -103,14 +108,30 @@ public class CDockableFrame extends DockableFrame {
     }
 
     // whether to highlight active windows or not
-    private static boolean activeWindowHighlighted = true;
-    public static void setActiveWindowHighlighted(boolean value) {
-        if (activeWindowHighlighted != value) {
-            activeWindowHighlighted = value;
+    private static boolean activeFrameHighlighted = true;
+    public static void setActiveFrameHighlighted(boolean value) {
+        if (activeFrameHighlighted != value) {
+            activeFrameHighlighted = value;
         }
     }
-    public static boolean isActiveWindowHighlighted() {
-        return activeWindowHighlighted;
+    public static boolean isActiveFrameHighlighted() {
+        return activeFrameHighlighted;
+    }
+
+    @Override
+    public void setFloatable(boolean ignored) {
+        super.setFloatable(framesFloatable);
+        titlePane.displayFloatButton(framesFloatable);
+    }
+
+    private static boolean framesFloatable = false;
+    public static void setFramesFloatable(boolean value) {
+        if (framesFloatable != value) {
+            framesFloatable = value;
+        }
+    }
+    public static boolean isFramesFloatable() {
+        return framesFloatable;
     }
 
     public CDockableFrame(String key, ImageIcon imageIcon, LangSelectorInterface langSelector) {
@@ -126,7 +147,7 @@ public class CDockableFrame extends DockableFrame {
             }
         });
 
-        titlePane = new TitlePane(this.getFloatingAction(), this.getCloseAction(), langSelector);
+        titlePane = new TitlePane(this, langSelector);
         // this assumes we don't have anything in the north of any frame (!)
         this.add(titlePane, BorderLayout.NORTH);
     }

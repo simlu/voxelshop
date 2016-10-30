@@ -19,7 +19,8 @@
     </menu>
 
     <menu caption="view_btn">
-        <item caption="toggle_active_window_highlighted_caption" action="toggle_active_window_highlighted" checkable="true"/>
+        <item caption="toggle_active_frame_highlighted_caption" action="toggle_active_frame_highlighted" checkable="true"/>
+        <item caption="toggle_floatable_frames_caption" action="toggle_floatable_frames" checkable="true"/>
         <separator/>
         <item caption="console_caption" action="console_state-action_show" checkable="true"/>
         <item caption="shortcutManager_caption" action="shortcut-mg_state-action_show" checkable="true"/>
