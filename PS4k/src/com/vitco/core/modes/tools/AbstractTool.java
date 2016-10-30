@@ -76,8 +76,7 @@ public abstract class AbstractTool {
         }
     }
 
-    // holds keyboard event listener that are currently active (only active
-    // tool listens to keyboard events)
+    // holds keyboard event listener that are currently active (only active tool listens to keyboard events)
     private static final ArrayList<ActiveEvent> keyboardEventListener = new ArrayList<ActiveEvent>();
 
     // set the async manager
@@ -189,10 +188,16 @@ public abstract class AbstractTool {
     protected abstract void mouseMoved(MouseEvent e);
 
     public final void onMousePressed(MouseEvent e) {
+        if (active) {
+            replayHover();
+        }
         setLastEvent(e);
         mousePressed(e);
     }
     public final void onMouseReleased(MouseEvent e) {
+        if (active) {
+            replayHover();
+        }
         setLastEvent(e);
         mouseReleased(e);
     }

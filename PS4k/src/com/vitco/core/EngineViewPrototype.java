@@ -426,26 +426,26 @@ public abstract class EngineViewPrototype extends ViewPrototype {
 
         // handle mouse events for this container
         container.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
+            private void handleMouseState(final MouseEvent e, final boolean flag) {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        globalMouseDown = true;
-                        localMouseDown = true;
+                        // only consider mouse events that don't involve middle mouse (camera)
+                        if ((e.getModifiers() & MouseEvent.BUTTON2_MASK) == 0) {
+                            localMouseDown = globalMouseDown = flag;
+                        }
                     }
                 });
             }
 
             @Override
+            public void mousePressed(MouseEvent e) {
+                handleMouseState(e, true);
+            }
+
+            @Override
             public void mouseReleased(MouseEvent e) {
-                asyncActionManager.addAsyncAction(new AsyncAction() {
-                    @Override
-                    public void performAction() {
-                        globalMouseDown = false;
-                        localMouseDown = false;
-                    }
-                });
+                handleMouseState(e, false);
             }
         });
 
