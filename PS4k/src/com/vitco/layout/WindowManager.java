@@ -10,6 +10,7 @@ import com.jidesoft.docking.event.DockableFrameEvent;
 import com.jidesoft.swing.LayoutPersistence;
 import com.vitco.core.data.Data;
 import com.vitco.layout.bars.BarLinkagePrototype;
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.layout.content.shortcut.ShortcutManagerInterface;
 import com.vitco.layout.frames.FrameLinkagePrototype;
 import com.vitco.layout.frames.custom.CDockableFrame;
@@ -22,6 +23,7 @@ import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.SaveResourceLoader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -35,6 +37,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -112,6 +116,13 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
     @Override
     public final void setLangSelector(LangSelectorInterface langSelector) {
         this.langSelector = langSelector;
+    }
+
+    // var & setter
+    protected ConsoleInterface console;
+    @Autowired(required=true)
+    public final void setConsole(ConsoleInterface console) {
+        this.console = console;
     }
 
     // reference to this instance
@@ -350,6 +361,28 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             @Override
             public boolean getStatus() {
                 return CDockableFrame.isActiveWindowHighlighted();
+            }
+        });
+
+        // open link to wiki
+        actionManager.registerAction("open_wiki", new AbstractAction() {
+            private String wikiUrl = "https://github.com/simlu/voxelshop/wiki";
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+                if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                    try {
+                        desktop.browse(new URI(wikiUrl));
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    } catch (URISyntaxException e1) {
+                        e1.printStackTrace();
+                    }
+                } else {
+                    console.addLine("Error: Can not find a valid Browser.");
+                    console.addLine("Please visit: " + wikiUrl);
+                }
             }
         });
 
