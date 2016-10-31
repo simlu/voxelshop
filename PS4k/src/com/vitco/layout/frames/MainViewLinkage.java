@@ -5,6 +5,7 @@ import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.util.misc.SaveResourceLoader;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -28,7 +29,9 @@ public class MainViewLinkage extends FrameLinkagePrototype {
         );
         updateTitle(); // update the title
 
-        frame.add(mainView.build());
+        udateTitleWithFileName("NEW MODEL");
+
+        frame.add(mainView.build(this));
 
         // register action to hide/show this frame and get visible state
         actionManager.registerAction("mainview_state-action_show", new StateActionPrototype() {
@@ -44,5 +47,23 @@ public class MainViewLinkage extends FrameLinkagePrototype {
         });
 
         return frame;
+    }
+
+    public void udateTitleWithFileName(final String fileName)
+    {
+        SwingUtilities.invokeLater(new RunnableWithParam(fileName) {
+            public void run() {
+                String title = langSelector.getString(frame.getName() + "_caption") + " - " + fileName;
+                frame.setTitle(title);
+                frame.setTabTitle(title);
+                frame.setSideTitle(title);
+            }
+        });
+    }
+
+    class RunnableWithParam implements Runnable{
+        private String strParam;
+        public RunnableWithParam(String p){ strParam = p; }
+        public void run(){}
     }
 }
