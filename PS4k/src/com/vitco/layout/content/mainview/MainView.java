@@ -9,6 +9,7 @@ import com.vitco.core.CameraChangeListener;
 import com.vitco.core.EngineInteractionPrototype;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.WorldManager;
+import com.vitco.manager.action.types.KeyActionPrototype;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.pref.PrefChangeListener;
@@ -19,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.Random;
 
 /**
@@ -381,10 +385,11 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         container.addMouseMotionListener(mouseAdapter);
         container.addMouseListener(mouseAdapter);
 
-        abstract class CameraAction extends AbstractAction {
+        abstract class CameraAction extends KeyActionPrototype {
             protected abstract void step();
             private LifeTimeThread thread = null;
 
+            @Override
             public void onKeyDown() {
                 if (thread == null) {
                     thread = new LifeTimeThread() {
@@ -407,19 +412,11 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 }
             }
 
+            @Override
             public void onKeyUp() {
                 if (thread != null) {
                     threadManager.remove(thread);
                     thread = null;
-                }
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getID() == KeyEvent.KEY_PRESSED) {
-                    onKeyDown();
-                } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-                    onKeyUp();
                 }
             }
         }
@@ -460,6 +457,31 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             @Override
             protected void step() {
                 camera.rotate(0, -VitcoSettings.MAIN_VIEW_BUTTON_ROTATE_OVER_SPEED);
+            }
+        });
+        // register move buttons
+        actionManager.registerAction("mainview_move_left", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.shift(1, 0, VitcoSettings.MAIN_VIEW_BUTTON_MOVE_SIDEWAYS_SPEED);
+            }
+        });
+        actionManager.registerAction("mainview_move_right", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.shift(-1, 0, VitcoSettings.MAIN_VIEW_BUTTON_MOVE_SIDEWAYS_SPEED);
+            }
+        });
+        actionManager.registerAction("mainview_move_up", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.shift(0, 1, VitcoSettings.MAIN_VIEW_BUTTON_MOVE_OVER_SPEED);
+            }
+        });
+        actionManager.registerAction("mainview_move_down", new CameraAction() {
+            @Override
+            protected void step() {
+                camera.shift(0, -1, VitcoSettings.MAIN_VIEW_BUTTON_MOVE_OVER_SPEED);
             }
         });
 

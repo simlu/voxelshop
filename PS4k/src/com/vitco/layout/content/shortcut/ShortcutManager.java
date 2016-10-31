@@ -2,6 +2,7 @@ package com.vitco.layout.content.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
 import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.action.types.KeyActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
@@ -128,9 +129,18 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     @Override
                     public void performAction() {
                         // fire new action
-                        actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                                new ActionEvent(e.getSource(), eventId, e.toString(), e.getWhen(), e.getModifiers()) {}
-                        );
+                        AbstractAction action = actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName);
+                        if (action instanceof KeyActionPrototype) {
+                            if (eventId == KeyEvent.KEY_PRESSED) {
+                                ((KeyActionPrototype) action).onKeyDown();
+                            } else {
+                                ((KeyActionPrototype) action).onKeyUp();
+                            }
+                        } else {
+                            if (eventId == KeyEvent.KEY_PRESSED) {
+                                action.actionPerformed(new ActionEvent(e.getSource(), eventId, e.toString(), e.getWhen(), e.getModifiers()) {});
+                            }
+                        }
                     }
                 });
                 e.consume(); // no-one else needs to handle this now
