@@ -51,7 +51,7 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
-    public static final String VERSION_ID = "1.7.12";
+    public static final String VERSION_ID = "1.7.13";
     // version id
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
 
