@@ -23,6 +23,7 @@ import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.misc.SaveResourceLoader;
+import com.vitco.util.misc.UrlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -37,8 +38,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -389,19 +388,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-                if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-                    try {
-                        desktop.browse(new URI(wikiUrl));
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    } catch (URISyntaxException e1) {
-                        e1.printStackTrace();
-                    }
-                } else {
-                    console.addLine("Error: Can not find a valid Browser.");
-                    console.addLine("Please visit: " + wikiUrl);
-                }
+                UrlUtil.openURL(console, wikiUrl);
             }
         });
 

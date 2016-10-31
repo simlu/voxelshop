@@ -1,8 +1,7 @@
 package com.vitco.util.components.dialog;
 
-import com.vitco.util.components.dialog.components.DialogButton;
-import com.vitco.util.components.dialog.components.FieldSet;
-import com.vitco.util.components.dialog.components.FieldSetWrapper;
+import com.vitco.layout.content.console.ConsoleInterface;
+import com.vitco.util.components.dialog.components.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +34,9 @@ public class UserInputDialog extends JDialog {
     // right side (where the buttons are)
     private final JPanel buttons = new JPanel();
 
+    // right side (bottom)
+    private final JPanel links = new JPanel();
+
     // main content (where user enters information)
     private final BlankDialogModule content = new BlankDialogModule("root");
 
@@ -66,9 +68,15 @@ public class UserInputDialog extends JDialog {
         JPanel buttonWrapperPanel = new JPanel();
         buttonWrapperPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         buttonWrapperPanel.setLayout(new BorderLayout());
-        buttonWrapperPanel.add(buttons, BorderLayout.NORTH);
-        this.add(buttonWrapperPanel, BorderLayout.EAST);
+        JPanel innerWrapper = new JPanel();
+        innerWrapper.setLayout(new BorderLayout());
+        innerWrapper.add(buttons, BorderLayout.NORTH);
+        innerWrapper.add(links, BorderLayout.SOUTH);
         buttons.setLayout(new GridBagLayout());
+        links.setBorder(BorderFactory.createEmptyBorder(44, 0, 6, 10));
+        links.setLayout(new GridBagLayout());
+        buttonWrapperPanel.add(innerWrapper, BorderLayout.NORTH);
+        this.add(buttonWrapperPanel, BorderLayout.EAST);
 
         // create formatting for and add left side (user content)
         JPanel contentWrapperPanel = new JPanel();
@@ -123,7 +131,7 @@ public class UserInputDialog extends JDialog {
             // minimize the size (especially the height!)
             this.pack();
             // set default size
-            this.setSize(600, getHeight());
+            this.setSize(630, getHeight());
             // set position to center
             this.setLocationRelativeTo(getParent());
             // check if buttons are enabled or not
@@ -186,6 +194,16 @@ public class UserInputDialog extends JDialog {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(5,0,5,0);
         buttons.add(button, gbc);
+    }
+
+    public void addLink(ConsoleInterface console, String caption, String url) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        if (links.getComponents().length == 0) {
+            links.add(new SeparatorModule("Links"), gbc);
+        }
+        links.add(new LinkButton(console, "", caption, url), gbc);
     }
 
     // add a fieldSet to this input dialog (a fieldSet holds a set of components

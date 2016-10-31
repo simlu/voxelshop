@@ -1,13 +1,13 @@
 package com.vitco.util.misc;
 
+import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.manager.error.ErrorHandlerInterface;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ConnectException;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class UrlUtil {
 
@@ -35,5 +35,22 @@ public class UrlUtil {
             // errorHandler.handle(e);
         }
         return result.toString();
+    }
+
+    // open a url
+    public static void openURL(ConsoleInterface console, String url) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(new URI(url));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (URISyntaxException e1) {
+                e1.printStackTrace();
+            }
+        } else {
+            console.addLine("Error: Can not find a valid Browser.");
+            console.addLine("Please visit: " + url);
+        }
     }
 }

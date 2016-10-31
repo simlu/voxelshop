@@ -389,6 +389,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         dialog.addButton("Export", JOptionPane.OK_OPTION);
         dialog.addButton("Cancel", JOptionPane.CANCEL_OPTION);
 
+        // add help links
+        dialog.addLink(console, "Export to Blender", "https://github.com/simlu/voxelshop/wiki/Export-for-Blender");
+        dialog.addLink(console, "Export to Unity", "https://github.com/simlu/voxelshop/wiki/Export-for-Unity");
+        dialog.addLink(console, "Export to Stonehearth", "https://github.com/simlu/voxelshop/wiki/Export-for-Stonehearth");
+
         // add file select
         FieldSet location = new FieldSet("location", "Location");
         location.addComponent(new FileSelectModule("file", new File("exported"), frame));
