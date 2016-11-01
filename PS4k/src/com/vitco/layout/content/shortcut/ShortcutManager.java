@@ -116,35 +116,30 @@ public class ShortcutManager implements ShortcutManagerInterface {
         @Override
         public boolean dispatchKeyEvent(final KeyEvent e) {
             final int eventId = e.getID();
-            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(
-                    // always convert into key pressed event so it can be matched
-                    new KeyEvent(e.getComponent(), KeyEvent.KEY_PRESSED, e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation())
-            );
+            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
             if (globalByKeyStroke.containsKey(keyStroke)
                     // only fire if all actions are activated
-                    && enableAllActivatableActions
-                    // ensure we only consider pressed and released events
-                    && (eventId == KeyEvent.KEY_PRESSED || eventId == KeyEvent.KEY_RELEASED)) {
+                    && enableAllActivatableActions) {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
                         // fire new action
-                        AbstractAction action = actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName);
-                        if (action instanceof KeyActionPrototype) {
-                            if (eventId == KeyEvent.KEY_PRESSED) {
-                                ((KeyActionPrototype) action).onKeyDown();
-                            } else {
-                                ((KeyActionPrototype) action).onKeyUp();
-                            }
-                        } else {
-                            if (eventId == KeyEvent.KEY_PRESSED) {
-                                action.actionPerformed(new ActionEvent(e.getSource(), eventId, e.toString(), e.getWhen(), e.getModifiers()) {});
-                            }
-                        }
+                        actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
+                                new ActionEvent(e.getSource(), e.getID(), e.toString(), e.getWhen(), e.getModifiers()) {}
+                        );
                     }
                 });
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
+            }
+            // ensure the release is triggered if this is a release event
+            if (eventId == KeyEvent.KEY_RELEASED) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        KeyActionPrototype.release();
+                    }
+                });
             }
             // might need further action (but disable if alt key)
             return e.getKeyCode() == 18;
