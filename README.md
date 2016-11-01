@@ -19,6 +19,20 @@ Fork the git repository, open a terminal, go to the desired project location and
 ~~~~
 then enter your password and wait until command completes
 
+### How to Contribute
+
+Create a new feature branch using `develop` as a base for each change set you are planning to do.
+
+    git checkout develop
+    git checkout -b feature-branch-name
+
+Commit and push as you work on your feature branch.
+
+Once you are happy create a pull request from your feature branch against
+the main repo `develop` branch, *referencing the associated issue(s)*.
+
+Make sure you use a different branch for each change set.
+
 ### IntelliJ
 - Click Open and select PS4k Folder (within the folder you selected as root)
 - Ensure the JDK7 is selected under File > Project Structure > Project
@@ -35,7 +49,7 @@ then enter your password and wait until command completes
 Java UI component provider and Window Manager
 http://www.jidesoft.com/
 
-## How to Contribute
+## Doing Things
 
 ### Adding a new JIDE Frame
 #### Adding the Frame to the layout
