@@ -243,7 +243,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         }
 
         if (drawText) {
-           drawCoordinates(ig, range[2], range[1], range[0]);
+            // duplicate since we are drawing the range
+            drawCoordinates(ig, range[2] * 2, range[1] * 2, range[0] * 2);
         }
 
         return valid;
@@ -252,9 +253,9 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     private void drawCoordinates(Graphics2D ig, float v1, float v2, float v3) {
         // draw size text
         ig = (Graphics2D) ig.create();
-        String str1 = String.valueOf(((int) (v1 * 2)));
-        String str2 = String.valueOf(((int) (v2 * 2)));
-        String str3 = String.valueOf(((int) (v3 * 2)));
+        String str1 = String.valueOf(((int) (v1)));
+        String str2 = String.valueOf(((int) (v2)));
+        String str3 = String.valueOf(((int) (v3)));
 
         ig.setFont(ig.getFont().deriveFont(18f).deriveFont(Font.BOLD));
 
