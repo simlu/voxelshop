@@ -390,7 +390,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             private LifeTimeThread thread = null;
 
             @Override
-            public void onKeyDown() {
+            public synchronized void onKeyDown() {
                 if (thread == null) {
                     thread = new LifeTimeThread() {
                         @Override
@@ -413,7 +413,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
 
             @Override
-            public void onKeyUp() {
+            public synchronized void onKeyUp() {
                 if (thread != null) {
                     threadManager.remove(thread);
                     thread = null;

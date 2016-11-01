@@ -2,6 +2,7 @@ package com.vitco.layout.content.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
 import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.action.types.KeyActionEvent;
 import com.vitco.manager.action.types.KeyActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
@@ -86,16 +87,19 @@ public class ShortcutManager implements ShortcutManagerInterface {
     private boolean enableAllActivatableActions = true;
 
     // prototype of an action that can be disabled
-    private final class ActivatableAction extends AbstractAction {
+    private final class ActivatableKeyStrokeAction extends AbstractAction {
         private final AbstractAction action;
-        private ActivatableAction(AbstractAction action) {
+        public final int keyCode;
+
+        private ActivatableKeyStrokeAction(KeyStroke keyStroke, AbstractAction action) {
+            this.keyCode = keyStroke.getKeyCode();
             this.action = action;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (enableAllActivatableActions) {
-                action.actionPerformed(e);
+                action.actionPerformed(new KeyActionEvent(keyCode, e.getSource(), e.getID(), e.paramString(), e.getWhen(), e.getModifiers()));
             }
         }
     }
@@ -116,6 +120,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
         @Override
         public boolean dispatchKeyEvent(final KeyEvent e) {
             final int eventId = e.getID();
+            final int keyCode = e.getKeyCode();
             final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
             if (globalByKeyStroke.containsKey(keyStroke)
                     // only fire if all actions are activated
@@ -124,8 +129,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     @Override
                     public void performAction() {
                         // fire new action
-                        actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName).actionPerformed(
-                                new ActionEvent(e.getSource(), e.getID(), e.toString(), e.getWhen(), e.getModifiers()) {}
+                        new ActivatableKeyStrokeAction(keyStroke, actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName)).actionPerformed(
+                                new KeyActionEvent(keyCode, e.getSource(), eventId, e.paramString(), e.getWhen(), e.getModifiers()) {}
                         );
                     }
                 });
@@ -137,12 +142,12 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        KeyActionPrototype.release();
+                        KeyActionPrototype.release(keyCode);
                     }
                 });
             }
             // might need further action (but disable if alt key)
-            return e.getKeyCode() == 18;
+            return keyCode == 18;
         }
     };
 
@@ -326,7 +331,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                             @Override
                             public void run() {
                                 shortcutObject.linkedFrame.registerKeyboardAction(
-                                        new ActivatableAction(actionManager.getAction(actionName)),
+                                        new ActivatableKeyStrokeAction(shortcutObject.keyStroke, actionManager.getAction(actionName)),
                                         shortcutObject.keyStroke,
                                         JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                                 );
@@ -798,7 +803,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                         @Override
                         public void run() {
                             frame.registerKeyboardAction(
-                                    new ActivatableAction(actionManager.getAction(entry.actionName)),
+                                    new ActivatableKeyStrokeAction(entry.keyStroke, actionManager.getAction(entry.actionName)),
                                     entry.keyStroke,
                                     JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                             );
