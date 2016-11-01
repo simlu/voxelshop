@@ -231,7 +231,7 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public boolean getStatus() {
-                return !isAnimate && voxelsAreInLayer;
+                return !isAnimate;
             }
         });
 
