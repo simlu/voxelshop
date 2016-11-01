@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Defines the voxel data interaction (layer, undo, etc)
@@ -1757,6 +1758,13 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
             }
             return result;
         }
+    }
+
+    public Integer[] getAllVoxelsIds() {
+        Set<Integer> set = dataContainer.voxels.keySet();
+        Integer[] ids = new Integer[set.size()];
+        set.toArray(ids);
+        return ids;
     }
 
     @Override
