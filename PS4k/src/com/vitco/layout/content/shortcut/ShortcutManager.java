@@ -2,6 +2,7 @@ package com.vitco.layout.content.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
 import com.vitco.manager.action.ActionManager;
+import com.vitco.manager.action.types.KeyActionEvent;
 import com.vitco.manager.action.types.KeyActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
@@ -86,16 +87,19 @@ public class ShortcutManager implements ShortcutManagerInterface {
     private boolean enableAllActivatableActions = true;
 
     // prototype of an action that can be disabled
-    private final class ActivatableAction extends AbstractAction {
+    private final class ActivatableKeyStrokeAction extends AbstractAction {
         private final AbstractAction action;
-        private ActivatableAction(AbstractAction action) {
+        public final int keyCode;
+
+        private ActivatableKeyStrokeAction(KeyStroke keyStroke, AbstractAction action) {
+            this.keyCode = keyStroke.getKeyCode();
             this.action = action;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (enableAllActivatableActions) {
-                action.actionPerformed(e);
+                action.actionPerformed(new KeyActionEvent(keyCode, e.getSource(), e.getID(), e.paramString(), e.getWhen(), e.getModifiers()));
             }
         }
     }
@@ -116,38 +120,34 @@ public class ShortcutManager implements ShortcutManagerInterface {
         @Override
         public boolean dispatchKeyEvent(final KeyEvent e) {
             final int eventId = e.getID();
-            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(
-                    // always convert into key pressed event so it can be matched
-                    new KeyEvent(e.getComponent(), KeyEvent.KEY_PRESSED, e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation())
-            );
+            final int keyCode = e.getKeyCode();
+            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
             if (globalByKeyStroke.containsKey(keyStroke)
                     // only fire if all actions are activated
-                    && enableAllActivatableActions
-                    // ensure we only consider pressed and released events
-                    && (eventId == KeyEvent.KEY_PRESSED || eventId == KeyEvent.KEY_RELEASED)) {
+                    && enableAllActivatableActions) {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
                         // fire new action
-                        AbstractAction action = actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName);
-                        if (action instanceof KeyActionPrototype) {
-                            if (eventId == KeyEvent.KEY_PRESSED) {
-                                ((KeyActionPrototype) action).onKeyDown();
-                            } else {
-                                ((KeyActionPrototype) action).onKeyUp();
-                            }
-                        } else {
-                            if (eventId == KeyEvent.KEY_PRESSED) {
-                                action.actionPerformed(new ActionEvent(e.getSource(), eventId, e.toString(), e.getWhen(), e.getModifiers()) {});
-                            }
-                        }
+                        new ActivatableKeyStrokeAction(keyStroke, actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName)).actionPerformed(
+                                new KeyActionEvent(keyCode, e.getSource(), eventId, e.paramString(), e.getWhen(), e.getModifiers()) {}
+                        );
                     }
                 });
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
             }
+            // ensure the release is triggered if this is a release event
+            if (eventId == KeyEvent.KEY_RELEASED) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        KeyActionPrototype.release(keyCode);
+                    }
+                });
+            }
             // might need further action (but disable if alt key)
-            return e.getKeyCode() == 18;
+            return keyCode == 18;
         }
     };
 
@@ -331,7 +331,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                             @Override
                             public void run() {
                                 shortcutObject.linkedFrame.registerKeyboardAction(
-                                        new ActivatableAction(actionManager.getAction(actionName)),
+                                        new ActivatableKeyStrokeAction(shortcutObject.keyStroke, actionManager.getAction(actionName)),
                                         shortcutObject.keyStroke,
                                         JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                                 );
@@ -803,7 +803,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                         @Override
                         public void run() {
                             frame.registerKeyboardAction(
-                                    new ActivatableAction(actionManager.getAction(entry.actionName)),
+                                    new ActivatableKeyStrokeAction(entry.keyStroke, actionManager.getAction(entry.actionName)),
                                     entry.keyStroke,
                                     JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                             );
