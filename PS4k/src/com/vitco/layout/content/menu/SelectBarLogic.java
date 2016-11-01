@@ -206,6 +206,35 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 return !isAnimate && voxelsAreInLayer;
             }
         });
+
+        actionGroupManager.addAction("selection_interaction", "selection_tool_select_all_layers_all", new StateActionPrototype() {
+            @Override
+            public void action(ActionEvent actionEvent) {
+                if (getStatus()) {
+                    // todo make this an intent (select layer) -> to prevent two history entries
+                    Integer[] selected = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
+                    if (selected.length > 0) {
+                        HashSet<Integer> toDeselectList = new HashSet<Integer>(Arrays.asList(selected));
+                        if (!toDeselectList.isEmpty()) {
+                            Integer[] toDeselectArray = new Integer[toDeselectList.size()];
+                            toDeselectList.toArray(toDeselectArray);
+                            data.massSetVoxelSelected(toDeselectArray, false);
+                        }
+                    }
+
+                    Integer[] toSelect = data.getAllVoxelsIds();
+                    if (toSelect.length != 0) {
+                        data.massSetVoxelSelected(toSelect, true);
+                    }
+                }
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate && voxelsAreInLayer;
+            }
+        });
+
         actionGroupManager.addAction("selection_interaction", "selection_tool_expand_selection", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
