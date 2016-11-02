@@ -212,17 +212,38 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             public void action(ActionEvent actionEvent) {
                 if (getStatus()) {
                     // todo make this an intent (select layer) -> to prevent two history entries
+                    // deselect voxels (this is necessary if there are voxel selected that are not in the current layer)
+
                     Integer[] selected = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
+
+                    ArrayList<Voxel> allVisibleVoxels = new ArrayList<Voxel>();
+                    for(Integer i : data.getLayers()) {
+                        if (data.getLayerVisible(i)) {
+                            allVisibleVoxels.addAll(Arrays.asList(data.getLayerVoxels(i)));
+                        }
+                    }
+
+                    Voxel[] all = new Voxel[allVisibleVoxels.size()];
+                    allVisibleVoxels.toArray(all);
+                    Integer[] toSelect = Voxel.convertVoxelsToIdArray(all);
+
                     if (selected.length > 0) {
                         HashSet<Integer> toDeselectList = new HashSet<Integer>(Arrays.asList(selected));
+                        HashSet<Integer> toSelectList = new HashSet<Integer>(Arrays.asList(toSelect));
+                        toSelectList.removeAll(toDeselectList);
+                        toDeselectList.removeAll(Arrays.asList(toSelect));
+
                         if (!toDeselectList.isEmpty()) {
                             Integer[] toDeselectArray = new Integer[toDeselectList.size()];
                             toDeselectList.toArray(toDeselectArray);
                             data.massSetVoxelSelected(toDeselectArray, false);
                         }
+
+                        toSelect = new Integer[toSelectList.size()];
+                        toSelectList.toArray(toSelect);
                     }
 
-                    Integer[] toSelect = data.getAllVoxelsIds();
+                    // select voxels
                     if (toSelect.length != 0) {
                         data.massSetVoxelSelected(toSelect, true);
                     }
