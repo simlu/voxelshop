@@ -1760,13 +1760,6 @@ public abstract class VoxelData extends AnimationHighlight implements VoxelDataI
         }
     }
 
-    public Integer[] getAllVoxelsIds() {
-        Set<Integer> set = dataContainer.voxels.keySet();
-        Integer[] ids = new Integer[set.size()];
-        set.toArray(ids);
-        return ids;
-    }
-
     @Override
     public final boolean setColor(int voxelId, Color color) {
         synchronized (VitcoSettings.SYNC) {
