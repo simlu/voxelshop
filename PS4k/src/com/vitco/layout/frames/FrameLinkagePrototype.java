@@ -68,6 +68,16 @@ public abstract class FrameLinkagePrototype {
         return frame.getDockingManager() != null && frame.getDockingManager().getFrame(frame.getName()).isVisible();
     }
 
+    protected void setTitle(String append) {
+        String title = langSelector.getString(frame.getName() + "_caption");
+        if (append != null) {
+            title += " - " + append;
+        }
+        frame.setTitle(title);
+        frame.setTabTitle(title);
+        frame.setSideTitle(title);
+    }
+
     // updates the title when the frame is ready
     protected void updateTitle() {
         // invoke when ready
@@ -75,10 +85,7 @@ public abstract class FrameLinkagePrototype {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                String title = langSelector.getString(frame.getName() + "_caption");
-                frame.setTitle(title);
-                frame.setTabTitle(title);
-                frame.setSideTitle(title);
+                setTitle(null);
             }
         });
     }

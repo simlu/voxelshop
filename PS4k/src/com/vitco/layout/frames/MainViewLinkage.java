@@ -40,18 +40,10 @@ public class MainViewLinkage extends FrameLinkagePrototype {
 
         // ensure the title is updated correctly
         menuLogic.addSaveLocationListener(new ActionListener() {
-            private void setTitle(String newTitle) {
-                frame.setTitle(newTitle);
-                frame.setTabTitle(newTitle);
-                frame.setSideTitle(newTitle);
-            }
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 String fileName = e.getActionCommand();
-                String newTitle = langSelector.getString(frame.getName() + "_caption") + " - ";
-                newTitle += fileName != null ? fileName : "NEW MODEL";
-                setTitle(newTitle);
+                setTitle(fileName == null ? "NEW MODEL" : fileName);
             }
         });
         SwingUtilities.invokeLater(new Runnable() {
