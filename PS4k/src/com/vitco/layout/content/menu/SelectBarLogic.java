@@ -4,6 +4,7 @@ package com.vitco.layout.content.menu;
  * Handles the select bar logic.
  */
 
+import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.data.notification.DataChangeAdapter;
 import com.vitco.manager.action.types.StateActionPrototype;
@@ -169,36 +170,47 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
             }
         });
 
-        // select all, expand selection, move to new layer, recolor
-        actionGroupManager.addAction("selection_interaction", "selection_tool_select_all", new StateActionPrototype() {
+        abstract class SelectLogicAction extends StateActionPrototype {
+
+            public abstract Integer[] getVoxelsToSelect();
+
             @Override
             public void action(ActionEvent actionEvent) {
-                if (getStatus()) {
-                    // todo make this an intent (select layer) -> to prevent two history entries
-                    // deselect voxels (this is necessary if there are voxel selected that are not in the current layer)
-                    Integer[] selected = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
-                    Integer[] toSelect = Voxel.convertVoxelsToIdArray(data.getLayerVoxels(data.getSelectedLayer()));
-                    if (selected.length > 0) {
-                        HashSet<Integer> toDeselectList = new HashSet<Integer>(Arrays.asList(selected));
-                        HashSet<Integer> toSelectList = new HashSet<Integer>(Arrays.asList(toSelect));
-                        toSelectList.removeAll(toDeselectList);
-                        toDeselectList.removeAll(Arrays.asList(toSelect));
 
-                        if (!toDeselectList.isEmpty()) {
-                            Integer[] toDeselectArray = new Integer[toDeselectList.size()];
-                            toDeselectList.toArray(toDeselectArray);
-                            data.massSetVoxelSelected(toDeselectArray, false);
-                        }
+                // deselect voxels (this is necessary if there are voxel selected that are not in the current layer)
+                Integer[] selected = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
 
-                        toSelect = new Integer[toSelectList.size()];
-                        toSelectList.toArray(toSelect);
+                Integer[] toSelect = getVoxelsToSelect();
+
+                if (selected.length > 0) {
+                    HashSet<Integer> toDeselectList = new HashSet<Integer>(Arrays.asList(selected));
+                    HashSet<Integer> toSelectList = new HashSet<Integer>(Arrays.asList(toSelect));
+                    toSelectList.removeAll(toDeselectList);
+                    toDeselectList.removeAll(Arrays.asList(toSelect));
+
+                    if (!toDeselectList.isEmpty()) {
+                        Integer[] toDeselectArray = new Integer[toDeselectList.size()];
+                        toDeselectList.toArray(toDeselectArray);
+                        data.massSetVoxelSelected(toDeselectArray, false);
                     }
 
-                    // select layer
-                    if (toSelect.length != 0) {
-                        data.massSetVoxelSelected(toSelect, true);
-                    }
+                    toSelect = new Integer[toSelectList.size()];
+                    toSelectList.toArray(toSelect);
                 }
+
+                // select voxels
+                if (toSelect.length != 0) {
+                    data.massSetVoxelSelected(toSelect, true);
+                }
+            }
+        };
+
+        // select all, expand selection, move to new layer, recolor
+        actionGroupManager.addAction("selection_interaction", "selection_tool_select_all", new SelectLogicAction() {
+
+            @Override
+            public Integer[] getVoxelsToSelect() {
+                return Voxel.convertVoxelsToIdArray(data.getLayerVoxels(data.getSelectedLayer()));
             }
 
             @Override
@@ -206,6 +218,19 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
                 return !isAnimate && voxelsAreInLayer;
             }
         });
+
+        actionGroupManager.addAction("selection_interaction", "selection_tool_select_all_layers_all", new SelectLogicAction() {
+
+            public Integer[] getVoxelsToSelect() {
+                return Voxel.convertVoxelsToIdArray(data.getVisibleLayerVoxel());
+            }
+
+            @Override
+            public boolean getStatus() {
+                return !isAnimate;
+            }
+        });
+
         actionGroupManager.addAction("selection_interaction", "selection_tool_expand_selection", new StateActionPrototype() {
             @Override
             public void action(ActionEvent actionEvent) {
@@ -569,6 +594,8 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
 
     }
+
+
 
 }
 

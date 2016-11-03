@@ -42,6 +42,7 @@
         <shortcut ctrl="no" alt="no" shift="no" key="DEL" action="selection_tool_delete" caption="selection_tool_delete_caption" />
 
         <shortcut ctrl="yes" alt="no" shift="no" key="A" action="selection_tool_select_all" caption="selection_tool_select_all_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="A" action="selection_tool_select_all_layers_all" caption="selection_tool_select_all_layers_all_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="W" action="selection_tool_expand_selection" caption="selection_tool_expand_selection_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="N" action="selection_tool_as_new_layer" caption="selection_tool_as_new_layer_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="R" action="selection_tool_recolor" caption="selection_tool_recolor_caption" />
