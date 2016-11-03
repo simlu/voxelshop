@@ -31,6 +31,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -50,7 +51,27 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
     // util for save/load/new file
     // ======================================
     // the location of active file (or null if none active)
-    private final String[] save_location = new String[] {null};
+    private String location = null;
+    public final void setSaveLocation(String location) {
+        this.location = location;
+        for (ActionListener el : saveLocationListener) {
+            el.actionPerformed(new ActionEvent(this, 0, hasSaveLocation() ? getSaveLocation().getName() : null ));
+        }
+    }
+    public final boolean hasSaveLocation() {
+        return this.location != null;
+    }
+    public final File getSaveLocation() {
+        return hasSaveLocation() ? new File(this.location) : null;
+    }
+
+    private ArrayList<ActionListener > saveLocationListener = new ArrayList<ActionListener >();
+    public final void addSaveLocationListener(ActionListener listener) {
+        saveLocationListener.add(listener);
+    }
+    public final void removeSaveLocationListener(ActionListener listener) {
+        saveLocationListener.remove(listener);
+    }
     // the file chooser
     private final CFileDialog fc_vsd = new CFileDialog();
     // import file chooser
@@ -72,7 +93,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 // save file and remember it
                 result = data.saveToFile(saveTo);
                 if (result) {
-                    save_location[0] = dir;
+                    setSaveLocation(dir);
                 }
             }
         }
@@ -88,8 +109,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                     langSelector.getString("save_current_changes_title"),
                     JOptionPane.YES_NO_CANCEL_OPTION)) {
                 case JOptionPane.YES_OPTION: // save changes
-                    if (save_location[0] != null) { // we already know where to save (ok)
-                        File file = new File(save_location[0]);
+                    if (hasSaveLocation()) { // we already know where to save (ok)
+                        File file = getSaveLocation();
                         result = data.saveToFile(file);
                     } else { // we dont know where
                         if (handleSaveDialog(frame)) {
@@ -178,7 +199,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         if (!data.loadFromFile(file)) {
             console.addLine(langSelector.getString("error_on_file_load"));
         }
-        save_location[0] = file.getPath(); // remember load location
+        setSaveLocation(file.getPath()); // remember load location
     }
 
     public final void registerLogic(final Frame frame) {
@@ -1089,8 +1110,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         actionManager.registerAction("quick_save_file_action", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (save_location[0] != null) { // make sure we can save
-                    File file = new File(save_location[0]);
+                if (hasSaveLocation()) { // make sure we can save
+                    File file = getSaveLocation();
                     data.saveToFile(file);
                 } else {
                     actionManager.getAction("save_file_action").actionPerformed(e);
@@ -1104,7 +1125,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             public void actionPerformed(ActionEvent e) {
                 if (checkUnsavedChanges(frame)) {
                     data.freshStart();
-                    save_location[0] = null;
+                    setSaveLocation(null);
                 }
             }
         });
