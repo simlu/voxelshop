@@ -73,7 +73,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 result = data.saveToFile(saveTo);
                 if (result) {
                     save_location[0] = dir;
-                    updateMainViewTitle();
                 }
             }
         }
@@ -92,7 +91,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                     if (save_location[0] != null) { // we already know where to save (ok)
                         File file = new File(save_location[0]);
                         result = data.saveToFile(file);
-                        updateMainViewTitle();
                     } else { // we dont know where
                         if (handleSaveDialog(frame)) {
                             result = true;
@@ -181,7 +179,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
             console.addLine(langSelector.getString("error_on_file_load"));
         }
         save_location[0] = file.getPath(); // remember load location
-        updateMainViewTitle();
     }
 
     public final void registerLogic(final Frame frame) {
@@ -573,8 +570,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         LabelModule box_as_matrix_info = new LabelModule(
                 "Warning: This option will result in loss of information for voxels outside the bounding box. " +
-                "Use this setting to gain control over the matrix size. " +
-                "Check for StoneHearth and set bounding box to 31 41 31."
+                        "Use this setting to gain control over the matrix size. " +
+                        "Check for StoneHearth and set bounding box to 31 41 31."
         );
         qbExporter.addComponent(box_as_matrix_info);
 
@@ -583,7 +580,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         LabelModule origin_as_zero_info = new LabelModule(
                 "Info: Un-checking will move exported voxel into positive space. This means voxels are " +
-                "shifted when re-importing the exported file. Un-check for StoneHearth."
+                        "shifted when re-importing the exported file. Un-check for StoneHearth."
         );
         qbExporter.addComponent(origin_as_zero_info);
 
@@ -592,7 +589,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         LabelModule vis_mask_encoding_info = new LabelModule(
                 "Info: This will encode voxel side visibility information, which can " +
-                "result in faster load time. Un-check for StoneHearth."
+                        "result in faster load time. Un-check for StoneHearth."
         );
         qbExporter.addComponent(vis_mask_encoding_info);
 
@@ -1095,9 +1092,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 if (save_location[0] != null) { // make sure we can save
                     File file = new File(save_location[0]);
                     data.saveToFile(file);
-                    updateMainViewTitle();
                 } else {
-                   actionManager.getAction("save_file_action").actionPerformed(e);
+                    actionManager.getAction("save_file_action").actionPerformed(e);
                 }
             }
         });
@@ -1109,7 +1105,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 if (checkUnsavedChanges(frame)) {
                     data.freshStart();
                     save_location[0] = null;
-                    updateMainViewTitle();
                 }
             }
         });
@@ -1250,16 +1245,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         if (preferences.contains("file_import_dialog_last_directory")) {
             File file = new File(preferences.loadString("file_import_dialog_last_directory"));
             fc_import.setDialogPath(file);
-        }
-    }
-
-    public void updateMainViewTitle() {
-        if (save_location[0] == null || save_location[0].isEmpty()) {
-            mainView.updateTitleWithFileName("NEW MODEL");
-        }
-        else {
-            String[] t = save_location[0].split(File.separator);
-            mainView.updateTitleWithFileName(t[t.length-1]);
         }
     }
 }

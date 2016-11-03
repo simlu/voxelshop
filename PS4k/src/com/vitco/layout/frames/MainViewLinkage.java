@@ -7,7 +7,7 @@ import com.vitco.util.misc.SaveResourceLoader;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import javax.swing.*;
+
 /**
  * construct the main view
  */
@@ -26,10 +26,9 @@ public class MainViewLinkage extends FrameLinkagePrototype {
                 new SaveResourceLoader("resource/img/icons/frames/mainview.png").asIconImage(),
                 langSelector
         );
+        updateTitle(); // update the title
 
-        updateTitleWithFileName("NEW MODEL");
-
-        frame.add(mainView.build(this));
+        frame.add(mainView.build());
 
         // register action to hide/show this frame and get visible state
         actionManager.registerAction("mainview_state-action_show", new StateActionPrototype() {
@@ -46,21 +45,4 @@ public class MainViewLinkage extends FrameLinkagePrototype {
 
         return frame;
     }
-
-    public void updateTitleWithFileName(final String fileName) {
-        SwingUtilities.invokeLater(new RunnableWithParam(fileName) {
-             public void run() {
-                 String title = langSelector.getString(frame.getName() + "_caption") + " - " + fileName;
-                 frame.setTitle(title);
-                 frame.setTabTitle(title);
-                 frame.setSideTitle(title);
-             }
-         });
-    }
-
-    class RunnableWithParam implements Runnable {
-         private String strParam;
-         public RunnableWithParam(String p){ strParam = p; }
-         public void run(){}
-     }
 }

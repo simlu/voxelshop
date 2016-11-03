@@ -25,7 +25,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.Random;
-import com.vitco.layout.frames.MainViewLinkage;
 
 /**
  * Creates the main view instance and attaches the specific user interaction.
@@ -84,16 +83,8 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
     // true if using "bounding box"
     private boolean useBoundingBox = true;
 
-    // linkage to be able to update mainview's title from
-    private MainViewLinkage linkage;
-    public void updateTitleWithFileName(String fileName) {
-        linkage.updateTitleWithFileName(fileName);
-    }
-
     @Override
-    public final JPanel build(MainViewLinkage linkage) {
-
-        this.linkage = linkage;
+    public final JPanel build() {
 
         // make sure we can see into the distance
         world.setClippingPlanes(Config.nearPlane, VitcoSettings.MAIN_VIEW_ZOOM_OUT_LIMIT * 2);
@@ -399,7 +390,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             private LifeTimeThread thread = null;
 
             @Override
-            public synchronized void onKeyDown() {
+            public void onKeyDown() {
                 if (thread == null) {
                     thread = new LifeTimeThread() {
                         @Override
@@ -422,7 +413,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
 
             @Override
-            public synchronized void onKeyUp() {
+            public void onKeyUp() {
                 if (thread != null) {
                     threadManager.remove(thread);
                     thread = null;
