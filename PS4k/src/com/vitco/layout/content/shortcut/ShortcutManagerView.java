@@ -138,7 +138,9 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 }
             });
             component.setHighlighter(null); // do not show selection
-            component.setEditable(false); // hide the caret
+            // NOTE: We can't use "setEditable" b/c then global shortcuts would not be deactivated
+            component.setCaretColor(new Color(0, 0, 0, 0)); // hide the caret
+            component.setCursor(Cursor.getDefaultCursor()); // just show the ordinary mouse cursor
             component.setBackground(VitcoSettings.EDIT_BG_COLOR); // bg color when edit
             component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
             return component;
