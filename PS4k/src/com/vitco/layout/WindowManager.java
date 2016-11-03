@@ -564,6 +564,14 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             overlay.setActive(true);
         }
 
+        // focus main frame, ensures that frame specific shortcuts work initially
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                getDockingManager().getFrame("mainView").requestFocus();
+            }
+        });
+
         actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
