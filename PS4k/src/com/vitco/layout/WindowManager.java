@@ -473,7 +473,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         );
 
         try {
-            DockingManager dockingManager = getDockingManager();
+            final DockingManager dockingManager = getDockingManager();
             DockableBarManager dockableBarManager = getDockableBarManager();
             LayoutPersistence layoutPersistence = getLayoutPersistence();
 
@@ -537,6 +537,14 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
 
             // set the draggable size between frames
             setDividerSizeDeep(dockingManager.getDockedFrameContainer(), 2);
+
+            // focus main frame, ensures that frame specific shortcuts work initially
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    dockingManager.getFrame("mainView").requestFocus();
+                }
+            });
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
         } catch (SAXException e) {
