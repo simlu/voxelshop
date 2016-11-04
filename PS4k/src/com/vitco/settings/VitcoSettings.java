@@ -207,6 +207,6 @@ public final class VitcoSettings {
     public static final Color HELP_OVERLAY_HIGHLIGHT_COLOR = new Color(184, 31, 0);
 
     // splash screen colors
-    public static final Color SPLASH_SCREEN_OVERLAY_TEXT_COLOR = new Color(127, 157, 184);
+    public static final Color SPLASH_SCREEN_OVERLAY_TEXT_COLOR = new Color(255, 103, 0);
 
 }
