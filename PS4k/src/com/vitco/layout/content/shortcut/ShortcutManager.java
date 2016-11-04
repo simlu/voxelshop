@@ -777,13 +777,13 @@ public class ShortcutManager implements ShortcutManagerInterface {
         }
     }
 
-    // activate global shortcuts
+    // activate shortcuts
     @Override
     public void activateShortcuts() {
         enableAllActivatableActions = true;
     }
 
-    // deactivate global shortcuts
+    // deactivate shortcuts
     @Override
     public void deactivateShortcuts() {
         enableAllActivatableActions = false;
