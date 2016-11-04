@@ -177,6 +177,9 @@ public class FrameHelpOverlay extends JComponent {
     // enable/disable this glasspane
     private boolean active = false;
     public final void setActive(boolean active) {
+        if (this.active == active) {
+            return;
+        }
         this.active = active;
         frame.setGlassPane(this);
         this.setVisible(active); // this will trigger updating
