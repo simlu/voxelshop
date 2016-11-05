@@ -1,12 +1,16 @@
 package com.vitco.layout.frames;
 
 import com.vitco.layout.content.mainview.MainViewInterface;
+import com.vitco.layout.content.menu.MainMenuLogic;
 import com.vitco.layout.frames.custom.CDockableFrame;
 import com.vitco.manager.action.types.StateActionPrototype;
 import com.vitco.util.misc.SaveResourceLoader;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * construct the main view
@@ -19,6 +23,13 @@ public class MainViewLinkage extends FrameLinkagePrototype {
         this.mainView = mainView;
     }
 
+    // var & setter
+    protected MainMenuLogic menuLogic;
+    @Autowired
+    public final void setMenuLogic(MainMenuLogic menuLogic) {
+        this.menuLogic = menuLogic;
+    }
+
     @Override
     public CDockableFrame buildFrame(String key, Frame mainFrame) {
         // construct frame
@@ -26,7 +37,20 @@ public class MainViewLinkage extends FrameLinkagePrototype {
                 new SaveResourceLoader("resource/img/icons/frames/mainview.png").asIconImage(),
                 langSelector
         );
-        updateTitle(); // update the title
+
+        // ensure the title is updated correctly
+        menuLogic.addSaveLocationListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String fileName = e.getActionCommand();
+                setTitle(fileName == null ? "NEW MODEL" : fileName);
+            }
+        });
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                menuLogic.setSaveLocation(null);
+            }
+        });
 
         frame.add(mainView.build());
 

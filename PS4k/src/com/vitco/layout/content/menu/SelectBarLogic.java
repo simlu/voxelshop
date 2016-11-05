@@ -4,7 +4,6 @@ package com.vitco.layout.content.menu;
  * Handles the select bar logic.
  */
 
-import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.data.notification.DataChangeAdapter;
 import com.vitco.manager.action.types.StateActionPrototype;
@@ -176,10 +175,9 @@ public class SelectBarLogic extends MenuLogicPrototype implements MenuLogicInter
 
             @Override
             public void action(ActionEvent actionEvent) {
-
+                // todo make this an intent (select layer) -> to prevent two history entries
                 // deselect voxels (this is necessary if there are voxel selected that are not in the current layer)
                 Integer[] selected = Voxel.convertVoxelsToIdArray(data.getSelectedVoxels());
-
                 Integer[] toSelect = getVoxelsToSelect();
 
                 if (selected.length > 0) {

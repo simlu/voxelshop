@@ -68,19 +68,26 @@ public abstract class FrameLinkagePrototype {
         return frame.getDockingManager() != null && frame.getDockingManager().getFrame(frame.getName()).isVisible();
     }
 
-    // updates the title when the frame is ready
-    protected void updateTitle() {
+    protected void setTitle(final String append) {
         // invoke when ready
         // "This method should be used when an application thread needs to update the GUI"
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 String title = langSelector.getString(frame.getName() + "_caption");
+                if (append != null) {
+                    title += " - " + append;
+                }
                 frame.setTitle(title);
                 frame.setTabTitle(title);
                 frame.setSideTitle(title);
             }
         });
+    }
+
+    // updates the title when the frame is ready
+    protected void updateTitle() {
+        setTitle(null);
     }
 
     // holds the reference of the actual frame container
