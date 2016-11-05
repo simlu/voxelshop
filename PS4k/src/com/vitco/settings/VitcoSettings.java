@@ -79,6 +79,7 @@ public final class VitcoSettings {
 
     // e.g. for shortcut manager
     public static final Color EDIT_BG_COLOR = new Color(250, 250, 250); // new Color(187, 209, 255);
+    public static final Color EDIT_BG_COLOR_HIGHLIGHT = new Color(250, 223, 78);
     public static final Color EDIT_TEXT_COLOR = new Color(30, 30, 30); // new Color(0, 0, 0);
     public static final Color EDIT_ERROR_BG_COLOR = new Color(255, 171, 161); // new Color(255,200,200);
     public static final Color DEFAULT_TEXT_COLOR = new Color(233,233,233);
