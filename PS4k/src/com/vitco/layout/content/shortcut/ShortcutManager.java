@@ -1,6 +1,10 @@
 package com.vitco.layout.content.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
+import com.jidesoft.docking.DockableFrame;
+import com.jidesoft.docking.DockingManager;
+import com.jidesoft.docking.event.DockableFrameAdapter;
+import com.jidesoft.docking.event.DockableFrameEvent;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.types.KeyActionEvent;
 import com.vitco.manager.action.types.KeyActionPrototype;
@@ -104,8 +108,11 @@ public class ShortcutManager implements ShortcutManagerInterface {
         }
     }
 
+    // hold the currently active frame
+    private DockableFrame activeFrame = null;
+
     // holds the mapping: frame -> (KeyStroke, actionName)
-    private final Map<String, ArrayList<ShortcutObject>> map = new HashMap<String, ArrayList<ShortcutObject>>();
+    private final HashMap<String, ArrayList<ShortcutObject>> map = new HashMap<String, ArrayList<ShortcutObject>>();
 
     // holds the global shortcuts (KeyStroke, actionName)
     private final ArrayList<ShortcutObject> global = new ArrayList<ShortcutObject>();
@@ -122,6 +129,22 @@ public class ShortcutManager implements ShortcutManagerInterface {
             final int eventId = e.getID();
             final int keyCode = e.getKeyCode();
             final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+
+            // ensure the release is triggered if this is a release event
+            if (eventId == KeyEvent.KEY_RELEASED) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        KeyActionPrototype.release(keyCode);
+                    }
+                });
+            }
+
+            // do not process if there is an active frame shortcut that will match
+            if (activeFrame.getActionForKeyStroke(keyStroke) != null) {
+                return keyCode == 18;
+            }
+
             if (globalByKeyStroke.containsKey(keyStroke)
                     // only fire if all actions are activated
                     && enableAllActivatableActions) {
@@ -137,15 +160,6 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
             }
-            // ensure the release is triggered if this is a release event
-            if (eventId == KeyEvent.KEY_RELEASED) {
-                asyncActionManager.addAsyncAction(new AsyncAction() {
-                    @Override
-                    public void performAction() {
-                        KeyActionPrototype.release(keyCode);
-                    }
-                });
-            }
             // might need further action (but disable if alt key)
             return keyCode == 18;
         }
@@ -153,9 +167,17 @@ public class ShortcutManager implements ShortcutManagerInterface {
 
     // register global shortcuts and make sure all shortcuts are correctly enabled
     @Override
-    public void registerShortcuts(final Frame frame) {
+    public void registerShortcuts(final Frame frame, final DockingManager dockingManager) {
         // register global actions
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(globalProcessor);
+
+        // listen to frame activation / deactivation
+        dockingManager.addDockableFrameListener(new DockableFrameAdapter() {
+            @Override
+            public void dockableFrameActivated(DockableFrameEvent dockableFrameEvent) {
+                activeFrame = dockableFrameEvent.getDockableFrame();
+            }
+        });
 
         // update activity / inactivity of shortcuts
         FocusManager.getCurrentManager().addPropertyChangeListener(new PropertyChangeListener() {
@@ -383,22 +405,15 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 } else {
                     System.err.println("Error: Can not find frame \"" + frame + "\".");
                 }
-            } else { // check for all frames
-                // check that this shortcut is not already set in any frame
-                for (String key : map.keySet()) {
-                    for (ShortcutObject shortcutObject : map.get(key)) {
-                        if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
-                            result = false;
-                        }
+            } else {
+                // check for global shortcuts
+                for (ShortcutObject shortcutObject : global) {
+                    if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                        result = false;
                     }
                 }
             }
-            // check for global shortcuts
-            for (ShortcutObject shortcutObject : global) {
-                if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
-                    result = false;
-                }
-            }
+
         }
         return result;
     }
@@ -623,14 +638,6 @@ public class ShortcutManager implements ShortcutManagerInterface {
                                 (debug ? so.actionName : langSel.getString(so.caption)) + "\" and \"" +
                                 (debug ? dup.actionName : langSel.getString(dup.caption)) +
                                 "\" for frame \"" + key + "\" have the same shortcut (" + stroke + ").");
-                    }
-                    // check if this clashes with a global shortcut
-                    if (globalShortcuts.containsKey(stroke)) {
-                        ShortcutObject dup = globalShortcuts.get(stroke);
-                        System.err.println("Warning: The two actions \"" +
-                                (debug ? dup.actionName : langSel.getString(dup.caption)) + "\" (global) and \"" +
-                                (debug ? so.actionName : langSel.getString(so.caption)) +
-                                "\" (frame \"" + key + "\") have the same shortcut (" + stroke + ").");
                     }
                     shortcuts.put(stroke, so);
                 }

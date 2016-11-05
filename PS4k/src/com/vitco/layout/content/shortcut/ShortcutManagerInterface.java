@@ -1,5 +1,6 @@
 package com.vitco.layout.content.shortcut;
 
+import com.jidesoft.docking.DockingManager;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.lang.LangSelectorInterface;
@@ -40,5 +41,5 @@ public interface ShortcutManagerInterface {
     void registerGlobalShortcutActions();
 
     // register global shortcuts and make sure all shortcuts are correctly enabled
-    void registerShortcuts(Frame frame);
+    void registerShortcuts(Frame frame, final DockingManager dockingManager);
 }
