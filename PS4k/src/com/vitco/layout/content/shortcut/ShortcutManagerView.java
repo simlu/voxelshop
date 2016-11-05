@@ -94,9 +94,13 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                     asyncActionManager.addAsyncAction(new AsyncAction() {
                         @Override
                         public void performAction() {
-                            KeyStroke keyStroke = e.getKeyCode() == 27
-                                    ? null // escape
-                                    : KeyStroke.getKeyStrokeForEvent(e); // else
+                            int keyCode = e.getKeyCode();
+                            if (keyCode == 27) { // escape
+                                stopCellEditing();
+                                return;
+                            }
+                            KeyStroke keyStroke = keyCode == 127 // delete
+                                    ? null : KeyStroke.getKeyStrokeForEvent(e);
                             if (shortcutManager.isValidShortcut(keyStroke)) {
                                 if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
                                     // update the shortcut
@@ -107,7 +111,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                                         // note: workaround for resize bug
                                         table.setValueAt(shortcutText, rowIndex, vColIndex);
                                     }
-                                    component.setBackground(VitcoSettings.EDIT_BG_COLOR);
+                                    component.setBackground(shortcutManager.getEditBgColor(frame, rowIndex));
                                 } else { // this shortcut is already used (!)
                                     // show error color for one second
                                     component.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
@@ -121,7 +125,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                                                 // no need to track this
                                                 // e1.printStackTrace();
                                             }
-                                            component.setBackground(VitcoSettings.EDIT_BG_COLOR);
+                                            component.setBackground(shortcutManager.getEditBgColor(frame, rowIndex));
                                         }
                                     }.start();
                                 }
@@ -141,7 +145,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             // NOTE: We can't use "setEditable" b/c then global shortcuts would not be deactivated
             component.setCaretColor(new Color(0, 0, 0, 0)); // hide the caret
             component.setCursor(Cursor.getDefaultCursor()); // just show the ordinary mouse cursor
-            component.setBackground(VitcoSettings.EDIT_BG_COLOR); // bg color when edit
+            component.setBackground(shortcutManager.getEditBgColor(frame, rowIndex)); // bg color when edit
             component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
             return component;
         }

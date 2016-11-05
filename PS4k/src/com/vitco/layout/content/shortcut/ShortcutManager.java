@@ -14,6 +14,7 @@ import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.help.FrameHelpOverlay;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
+import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.SaveResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -328,6 +329,39 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 };
             }
             return result;
+        }
+    }
+
+    /* Check if keyStroke is local and collides with global or the other way around */
+    private boolean hasSoftCollision(String frame, KeyStroke keyStroke) {
+        if (frame == null) {
+            // check frame shortcuts for collision
+            for (Collection<ShortcutObject> shortcutObjects : map.values()) {
+                for (ShortcutObject shortcutObject : shortcutObjects) {
+                    if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            // check global shortcuts for collision
+            for (ShortcutObject shortcutObject : global) {
+                if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /* Obtain BG color for a shortcut field that is being edited */
+    @Override
+    public final Color getEditBgColor(String frame, int id) {
+        KeyStroke keyStroke = frame == null ? global.get(id).keyStroke : map.get(frame).get(id).keyStroke;
+        if (hasSoftCollision(frame, keyStroke)) {
+            return VitcoSettings.EDIT_BG_COLOR_HIGHLIGHT;
+        } else {
+            return VitcoSettings.EDIT_BG_COLOR;
         }
     }
 

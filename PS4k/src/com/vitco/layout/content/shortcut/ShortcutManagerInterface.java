@@ -23,6 +23,7 @@ public interface ShortcutManagerInterface {
     boolean isValidShortcut(KeyStroke keyStroke);
     boolean updateShortcutObject(KeyStroke keyStroke, String frame, int id);
     boolean isFreeShortcut(String frame, KeyStroke keyStroke);
+    Color getEditBgColor(String frame, int id);
     // convert KeyStroke to string representation
     String asString(KeyStroke keyStroke);
     void setErrorHandler(ErrorHandlerInterface errorHandler);
