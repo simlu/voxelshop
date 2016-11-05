@@ -1,0 +1,67 @@
+entries:
+- title: sidebar
+  product: VoxelShop
+  version: 1.8.0
+  folders:
+
+  - title:
+    output: pdf
+    type: frontmatter
+    folderitems:
+    - title:
+      url: /titlepage
+      output: pdf
+      type: frontmatter
+    - title:
+      url: /tocpage
+      output: pdf
+      type: frontmatter
+
+  - title: Documentation
+    output: web, pdf
+    folderitems:
+
+    - title: Get started
+      url: /index.html
+      output: web, pdf
+      type: homepage
+    
+    - title: Tools
+      url: /voxelshop_tools.html
+      output: web, pdf
+    
+    - title: Frames
+      url: /voxelshop_frames.html
+      output: web, pdf
+
+    - title: Colors
+      url: /voxelshop_colors.html
+      output: web, pdf
+    
+    - title: Animation
+      url: /voxelshop_animation.html
+      output: web, pdf
+  
+    - title: Import
+      url: /voxelshop_import.html
+      output: web, pdf
+  
+    - title: Export
+      url: /voxelshop_export.html
+      output: web, pdf
+  
+    - title: Shortcuts
+      url: /voxelshop_shortcuts.html
+      output: web, pdf
+  
+    - title: Tutorials
+      url: /voxelshop_tutorials.html
+      output: web, pdf
+
+  - title: Release Notes
+    output: web, pdf
+    folderitems:
+
+      - title: 1.8.0 Release notes
+        url: /voxelshop_release_notes_1_8_0.html
+        output: web, pdf
