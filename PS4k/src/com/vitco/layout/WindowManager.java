@@ -447,6 +447,18 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         }
     }
 
+    /* Focus on MainView unless the FrameHelpOverlay is shown */
+    private static void tryFocusOnMainView(final DockingManager dockingManager) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof FrameHelpOverlay)) {
+                    dockingManager.getFrame("mainView").requestFocus();
+                }
+            }
+        });
+    }
+
     @PostConstruct
     @Override
     public final void init() {
@@ -539,12 +551,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             setDividerSizeDeep(dockingManager.getDockedFrameContainer(), 2);
 
             // focus main frame, ensures that frame specific shortcuts work initially
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    dockingManager.getFrame("mainView").requestFocus();
-                }
-            });
+            tryFocusOnMainView(dockingManager);
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
         } catch (SAXException e) {
@@ -556,6 +563,13 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         // register help overlay for entire window
         JRootPane rootPane = thisFrame.getRootPane();
         final FrameHelpOverlay overlay = new FrameHelpOverlay(rootPane, actionManager, complexActionManager, langSelector);
+        overlay.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                // focus on main view again when the focus is lost, ensures that frame specific shortcuts work initially
+                tryFocusOnMainView(getDockingManager());
+            }
+        });
         actionManager.registerAction("show_help_overlay", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
