@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <head xmlns="http://www.unfine.de/schema/shortcuts">
     <global>
-        <!--History-->
+        <!--History : fixed-->
         <shortcut ctrl="yes" alt="no" shift="no" key="Z" action="global_action_undo" caption="global_undo_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="Z" action="global_action_redo" caption="global_redo_caption" />
+
+        <!--File : fixed -->
+        <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="I" action="import_file_action" caption="import_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="E" action="export_file_action" caption="export_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
+
+        <!--Tools-->
+        <shortcut ctrl="no" alt="no" shift="no" key="1" action="voxel_mode_select_type_view" caption="voxel_mode_select_type_view_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="2" action="voxel_mode_select_type_draw" caption="voxel_mode_select_type_draw_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="5" action="voxel_mode_select_type_floodfill_tool" caption="voxel_mode_select_type_floodfill_tool_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="6" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="7" action="voxel_mode_select_type_select_tool" caption="voxel_mode_select_type_select_tool_caption" />
+        <shortcut action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
+
         <!--Windows-->
         <shortcut ctrl="yes" alt="no" shift="no" key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
         <shortcut ctrl="yes" alt="no" shift="no" key="1" action="console_state-action_show" caption="console_caption" />
@@ -17,23 +36,8 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="9" action="colorpicker_state-action_show" caption="colorpicker_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="0" action="mainview_state-action_show" caption="mainView_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="-" action="colorPalette_state-action_show" caption="colorPalette_caption" />
-        <!--File-->
-        <shortcut ctrl="yes" alt="no" shift="no" key="N" action="new_file_action" caption="new_file_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="O" action="load_file_action" caption="load_file_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="I" action="import_file_action" caption="import_file_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="E" action="export_file_action" caption="export_file_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="S" action="quick_save_file_action" caption="quick_save_file_caption" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="save_file_action" caption="save_file_caption" />
-        <!--Tools-->
-        <shortcut ctrl="no" alt="no" shift="no" key="1" action="voxel_mode_select_type_view" caption="voxel_mode_select_type_view_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="2" action="voxel_mode_select_type_draw" caption="voxel_mode_select_type_draw_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="3" action="voxel_mode_select_type_erase" caption="voxel_mode_select_type_erase_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="4" action="voxel_mode_select_type_picker" caption="voxel_mode_select_type_picker_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="5" action="voxel_mode_select_type_floodfill_tool" caption="voxel_mode_select_type_floodfill_tool_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="6" action="voxel_mode_select_type_color_changer" caption="voxel_mode_select_type_color_changer_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="7" action="voxel_mode_select_type_select_tool" caption="voxel_mode_select_type_select_tool_caption" />
-        <shortcut action="toggle_voxel_snap" caption="toggle_voxel_snap_caption" />
-        <!--Selection Interaction-->
+
+        <!--Selection Interaction : fixed-->
         <shortcut ctrl="yes" alt="no" shift="no" key="X" action="selection_tool_cut" caption="selection_tool_cut_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="C" action="selection_tool_copy" caption="selection_tool_copy_caption" />
         <shortcut ctrl="yes" alt="no" shift="no" key="V" action="selection_tool_paste" caption="selection_tool_paste_caption" />
@@ -41,6 +45,7 @@
         <shortcut ctrl="no" alt="no" shift="no" key="ESC" action="selection_tool_deselect" caption="selection_tool_deselect_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="DEL" action="selection_tool_delete" caption="selection_tool_delete_caption" />
 
+        <!--Selection Interaction-->
         <shortcut ctrl="yes" alt="no" shift="no" key="A" action="selection_tool_select_all" caption="selection_tool_select_all_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="A" action="selection_tool_select_all_layers_all" caption="selection_tool_select_all_layers_all_caption" />
         <shortcut ctrl="yes" alt="no" shift="yes" key="W" action="selection_tool_expand_selection" caption="selection_tool_expand_selection_caption" />
@@ -52,22 +57,10 @@
         <shortcut ctrl="yes" alt="no" shift="no" key="ENTER" action="selection_tool_finalize_shifting_as_copy" caption="selection_tool_finalize_shifting_as_copy_caption" />
 
         <!--Color Palette-->
-        <shortcut ctrl="no" alt="no" shift="yes" key="LEFT" action="color-palette_color_left" caption="color-palette_color_left_caption" />
-        <shortcut ctrl="no" alt="no" shift="yes" key="RIGHT" action="color-palette_color_right" caption="color-palette_color_right_caption" />
-        <shortcut ctrl="no" alt="no" shift="yes" key="UP" action="color-palette_color_up" caption="color-palette_color_up_caption" />
-        <shortcut ctrl="no" alt="no" shift="yes" key="DOWN" action="color-palette_color_down" caption="color-palette_color_down_caption" />
-
-        <!--Camera-->
-        <shortcut ctrl="no" alt="no" shift="no" key="W" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="S" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="A" action="mainview_rotate_left" caption="main-view_rotate_left_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="D" action="mainview_rotate_right" caption="main-view_rotate_right_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="E" action="mainview_rotate_up" caption="main-view_rotate_up_caption" />
-        <shortcut ctrl="no" alt="no" shift="no" key="Q" action="mainview_rotate_down" caption="main-view_rotate_down_caption" />
-        <shortcut ctrl="no" alt="no" shift="yes" key="W" action="mainview_move_up" caption="main-view_move_up_caption" />
-        <shortcut ctrl="no" alt="no" shift="yes" key="S" action="mainview_move_down" caption="main-view_move_down_caption" />
-        <shortcut ctrl="no" alt="no" shift="yes" key="A" action="mainview_move_left" caption="main-view_move_left_caption" />
-        <shortcut ctrl="no" alt="no" shift="yes" key="D" action="mainview_move_right" caption="main-view_move_right_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="A" action="color-palette_color_left" caption="color-palette_color_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="D" action="color-palette_color_right" caption="color-palette_color_right_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="W" action="color-palette_color_up" caption="color-palette_color_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="yes" key="S" action="color-palette_color_down" caption="color-palette_color_down_caption" />
 
         <!--Custom-->
         <shortcut action="swap_mainView_with_xyView" caption="swap_mainView_with_xyView_caption" />
@@ -75,51 +68,89 @@
         <shortcut action="swap_mainView_with_yzView" caption="swap_mainView_with_yzView_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="P" action="pick_color_under_mouse_as_current_color" caption="pick_color_under_mouse_as_current_color_caption" />
 
-        <!--Move Selection-->
+    </global>
+
+    <frame name="mainView">
+        <!--Camera : fixed-->
+        <shortcut ctrl="no" alt="no" shift="no" key="W" action="mainview_zoom_in" caption="main-view_zoom_in_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="S" action="mainview_zoom_out" caption="main-view_zoom_out_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="A" action="mainview_rotate_left" caption="main-view_rotate_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="D" action="mainview_rotate_right" caption="main-view_rotate_right_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="E" action="mainview_rotate_up" caption="main-view_rotate_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="Q" action="mainview_rotate_down" caption="main-view_rotate_down_caption" />
+
+        <!--Camera-->
+        <shortcut ctrl="yes" alt="no" shift="yes" key="W" action="mainview_move_up" caption="main-view_move_up_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="S" action="mainview_move_down" caption="main-view_move_down_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="A" action="mainview_move_left" caption="main-view_move_left_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="D" action="mainview_move_right" caption="main-view_move_right_caption" />
+
+        <shortcut ctrl="no" alt="no" shift="no" key="SPACE" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
+
+        <!--Move Selection : fixed-->
         <shortcut ctrl="no" alt="no" shift="no" key="UP" action="shift_selected_voxels_up" caption="shift_selected_voxels_up_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="DOWN" action="shift_selected_voxels_down" caption="shift_selected_voxels_down_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="LEFT" action="shift_selected_voxels_left" caption="shift_selected_voxels_left_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="RIGHT" action="shift_selected_voxels_right" caption="shift_selected_voxels_right_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="PAGE_DOWN" action="shift_selected_voxels_in" caption="shift_selected_voxels_in_caption" />
         <shortcut ctrl="no" alt="no" shift="no" key="PAGE_UP" action="shift_selected_voxels_out" caption="shift_selected_voxels_out_caption" />
-
-    </global>
-
-    <frame name="mainView">
-        <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="reset_main_view_camera" caption="reset_camera_main-view_caption" />
     </frame>
 
     <frame name="xyView">
-        <shortcut action="sideview_set_plane_to_zero1" caption="sideview_set_plane_to_zero_caption" />
+        <!--Camera-->
         <shortcut ctrl="yes" key="UP" action="sideview_move_plane_in1" caption="sideview_move_plane_in_caption" />
         <shortcut ctrl="yes" key="DOWN" action="sideview_move_plane_out1" caption="sideview_move_plane_out_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="sideview_reset_view1" caption="sideview_reset_view_tooltip" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb1" caption="sideview_zoom_out" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb1" caption="sideview_zoom_in" />
+        <shortcut action="sideview_set_plane_to_zero1" caption="sideview_set_plane_to_zero_caption" />
+
+        <shortcut ctrl="no" alt="no" shift="no" key="W" action="sideview_zoom_in_tb1" caption="sideview_zoom_out" />
+        <shortcut ctrl="no" alt="no" shift="no" key="S" action="sideview_zoom_out_tb1" caption="sideview_zoom_in" />
+        <shortcut ctrl="no" alt="no" shift="no" key="SPACE" action="sideview_reset_view1" caption="sideview_reset_view_tooltip" />
+
+        <!--Move Selection : fixed-->
+        <shortcut ctrl="no" alt="no" shift="no" key="UP" action="shift_selected_voxels_up" caption="shift_selected_voxels_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="DOWN" action="shift_selected_voxels_down" caption="shift_selected_voxels_down_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="LEFT" action="shift_selected_voxels_out" caption="shift_selected_voxels_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="RIGHT" action="shift_selected_voxels_in" caption="shift_selected_voxels_right_caption" />
     </frame>
 
     <frame name="xzView">
-        <shortcut action="sideview_set_plane_to_zero2" caption="sideview_set_plane_to_zero_caption" />
+        <!--Camera-->
         <shortcut ctrl="yes" key="UP" action="sideview_move_plane_in2" caption="sideview_move_plane_in_caption" />
         <shortcut ctrl="yes" key="DOWN" action="sideview_move_plane_out2" caption="sideview_move_plane_out_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="sideview_reset_view2" caption="sideview_reset_view_tooltip" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb2" caption="sideview_zoom_out" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb2" caption="sideview_zoom_in" />
+        <shortcut action="sideview_set_plane_to_zero2" caption="sideview_set_plane_to_zero_caption" />
+
+        <shortcut ctrl="no" alt="no" shift="no" key="W" action="sideview_zoom_in_tb2" caption="sideview_zoom_out" />
+        <shortcut ctrl="no" alt="no" shift="no" key="S" action="sideview_zoom_out_tb2" caption="sideview_zoom_in" />
+        <shortcut ctrl="no" alt="no" shift="no" key="SPACE" action="sideview_reset_view2" caption="sideview_reset_view_tooltip" />
+
+        <!--Move Selection : fixed-->
+        <shortcut ctrl="no" alt="no" shift="no" key="UP" action="shift_selected_voxels_left" caption="shift_selected_voxels_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="DOWN" action="shift_selected_voxels_right" caption="shift_selected_voxels_down_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="LEFT" action="shift_selected_voxels_out" caption="shift_selected_voxels_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="RIGHT" action="shift_selected_voxels_in" caption="shift_selected_voxels_right_caption" />
     </frame>
 
     <frame name="yzView">
-        <shortcut action="sideview_set_plane_to_zero3" caption="sideview_set_plane_to_zero_caption" />
+        <!--Camera-->
         <shortcut ctrl="yes" key="UP" action="sideview_move_plane_in3" caption="sideview_move_plane_in_caption" />
         <shortcut ctrl="yes" key="DOWN" action="sideview_move_plane_out3" caption="sideview_move_plane_out_caption" />
-        <shortcut ctrl="yes" alt="no" shift="no" key="SPACE" action="sideview_reset_view3" caption="sideview_reset_view_tooltip" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="I" action="sideview_zoom_in_tb3" caption="sideview_zoom_out" />
-        <shortcut ctrl="yes" alt="no" shift="yes" key="O" action="sideview_zoom_out_tb3" caption="sideview_zoom_in" />
+        <shortcut action="sideview_set_plane_to_zero3" caption="sideview_set_plane_to_zero_caption" />
+
+        <shortcut ctrl="no" alt="no" shift="no" key="W" action="sideview_zoom_in_tb3" caption="sideview_zoom_out" />
+        <shortcut ctrl="no" alt="no" shift="no" key="S" action="sideview_zoom_out_tb3" caption="sideview_zoom_in" />
+        <shortcut ctrl="no" alt="no" shift="no" key="SPACE" action="sideview_reset_view3" caption="sideview_reset_view_tooltip" />
+
+        <!--Move Selection : fixed-->
+        <shortcut ctrl="no" alt="no" shift="no" key="UP" action="shift_selected_voxels_up" caption="shift_selected_voxels_up_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="DOWN" action="shift_selected_voxels_down" caption="shift_selected_voxels_down_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="LEFT" action="shift_selected_voxels_left" caption="shift_selected_voxels_left_caption" />
+        <shortcut ctrl="no" alt="no" shift="no" key="RIGHT" action="shift_selected_voxels_right" caption="shift_selected_voxels_right_caption" />
     </frame>
 
     <frame name="console">
-        <shortcut ctrl="no" alt="yes" shift="yes" key="A" action="console_toggle_auto_show" caption="console_auto-show_caption" />
-        <shortcut ctrl="no" alt="yes" shift="yes" key="S" action="console_toggle_auto_scroll" caption="console_auto-scroll_caption" />
-        <shortcut ctrl="no" alt="yes" shift="yes" key="C" action="console_action_clear" caption="console_clear_caption" />
+        <shortcut action="console_toggle_auto_show" caption="console_auto-show_caption" />
+        <shortcut action="console_toggle_auto_scroll" caption="console_auto-scroll_caption" />
+        <shortcut action="console_action_clear" caption="console_clear_caption" />
     </frame>
 
     <frame name="snapshot">
@@ -132,10 +163,11 @@
     </frame>
 
     <frame name="layer">
-        <shortcut ctrl="yes" alt="no" shift="no" key="DEL" action="layer-frame_remove-layer" caption="layer-frame_remove-layer_caption" />
-        <shortcut ctrl="yes" alt="yes" shift="no" key="N" action="layer-frame_add-layer" caption="layer-frame_add-layer_caption" />
-        <shortcut ctrl="yes" alt="yes" shift="no" key="U" action="layer-frame_move-layer-up" caption="layer-frame_move-layer-up_caption" />
-        <shortcut ctrl="yes" alt="yes" shift="no" key="D" action="layer-frame_move-layer-down" caption="layer-frame_move-layer-down_caption" />
+        <!--Basic Layer Interactions-->
+        <shortcut ctrl="no" alt="no" shift="no" key="DEL" action="layer-frame_remove-layer" caption="layer-frame_remove-layer_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="N" action="layer-frame_add-layer" caption="layer-frame_add-layer_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="]" action="layer-frame_move-layer-up" caption="layer-frame_move-layer-up_caption" />
+        <shortcut ctrl="yes" alt="no" shift="no" key="[" action="layer-frame_move-layer-down" caption="layer-frame_move-layer-down_caption" />
     </frame>
 
     <frame name="colorpicker">
@@ -145,10 +177,10 @@
     </frame>
 
     <frame name="textureManager">
-        <shortcut ctrl="yes" alt="yes" shift="no" key="A" action="texturemg_action_add" caption="texturemg_add_caption" />
-        <shortcut ctrl="yes" alt="yes" shift="no" key="D" action="texturemg_action_remove" caption="texturemg_remove_caption" />
-        <shortcut ctrl="yes" alt="yes" shift="no" key="R" action="texturemg_action_replace" caption="texturemg_replace_caption" />
-        <shortcut ctrl="yes" alt="yes" shift="no" key="E" action="texturemg_action_export" caption="texturemg_export_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="A" action="texturemg_action_add" caption="texturemg_add_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="D" action="texturemg_action_remove" caption="texturemg_remove_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="R" action="texturemg_action_replace" caption="texturemg_replace_caption" />
+        <shortcut ctrl="yes" alt="no" shift="yes" key="E" action="texturemg_action_export" caption="texturemg_export_caption" />
     </frame>
 
     <frame name="hexPicker">
