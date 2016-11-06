@@ -109,8 +109,8 @@
         <!--Move Selection : fixed-->
         <shortcut key="UP" action="shift_selected_voxels_up" caption="shift_selected_voxels_up_caption" />
         <shortcut key="DOWN" action="shift_selected_voxels_down" caption="shift_selected_voxels_down_caption" />
-        <shortcut key="LEFT" action="shift_selected_voxels_out" caption="shift_selected_voxels_left_caption" />
-        <shortcut key="RIGHT" action="shift_selected_voxels_in" caption="shift_selected_voxels_right_caption" />
+        <shortcut key="LEFT" action="shift_selected_voxels_out" caption="shift_selected_voxels_out_caption" />
+        <shortcut key="RIGHT" action="shift_selected_voxels_in" caption="shift_selected_voxels_in_caption" />
     </frame>
 
     <frame name="xzView">
@@ -124,10 +124,10 @@
         <shortcut key="SPACE" action="sideview_reset_view2" caption="sideview_reset_view_tooltip" />
 
         <!--Move Selection : fixed-->
-        <shortcut key="UP" action="shift_selected_voxels_left" caption="shift_selected_voxels_up_caption" />
-        <shortcut key="DOWN" action="shift_selected_voxels_right" caption="shift_selected_voxels_down_caption" />
-        <shortcut key="LEFT" action="shift_selected_voxels_out" caption="shift_selected_voxels_left_caption" />
-        <shortcut key="RIGHT" action="shift_selected_voxels_in" caption="shift_selected_voxels_right_caption" />
+        <shortcut key="UP" action="shift_selected_voxels_left" caption="shift_selected_voxels_left_caption" />
+        <shortcut key="DOWN" action="shift_selected_voxels_right" caption="shift_selected_voxels_right_caption" />
+        <shortcut key="LEFT" action="shift_selected_voxels_out" caption="shift_selected_voxels_out_caption" />
+        <shortcut key="RIGHT" action="shift_selected_voxels_in" caption="shift_selected_voxels_in_caption" />
     </frame>
 
     <frame name="yzView">
