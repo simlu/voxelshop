@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-PLEASE CONSIDER REFERENCES:
-- Photoshop: https://www.sitepoint.com/speed-up-your-photoshop-work-with-layer-shortcuts/
-- Photoshop: https://www.nobledesktop.com/shortcuts/photoshopcs6/mac
-- JetBrains: https://www.jetbrains.com/help/idea/2016.2/keyboard-shortcuts-you-cannot-miss.html
-- Blender: https://wiki.blender.org/index.php/Doc:2.4/Reference/Hotkeys/All
--->
 <head xmlns="http://www.unfine.de/schema/shortcuts">
+    <!--
+    PLEASE CONSIDER REFERENCES:
+    - Photoshop: https://www.sitepoint.com/speed-up-your-photoshop-work-with-layer-shortcuts/
+    - Photoshop: https://www.nobledesktop.com/shortcuts/photoshopcs6/mac
+    - JetBrains: https://www.jetbrains.com/help/idea/2016.2/keyboard-shortcuts-you-cannot-miss.html
+    - Blender: https://wiki.blender.org/index.php/Doc:2.4/Reference/Hotkeys/All
+    -->
     <global>
         <!--History : fixed-->
         <shortcut ctrl="yes" key="Z" action="global_action_undo" caption="global_undo_caption" />
