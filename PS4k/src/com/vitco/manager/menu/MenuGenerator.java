@@ -203,7 +203,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
     }
 
     /* Update Tooltip for a Button and action */
-    private void updateTooltip(String action, JComponent button, String baseToolTop) {
+    private void updateButtonToolTip(String action, JComponent button, String baseToolTop) {
         // check frame shortcut
         String frame = getFrameForComponent(button);
         if (frame != null) {
@@ -229,7 +229,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
         // listen to button ancestor changes
         button.addAncestorListener(new AncestorListener() {
             private void refresh() {
-                updateTooltip(e.getAttribute("action"), button, baseTooltip);
+                updateButtonToolTip(e.getAttribute("action"), button, baseTooltip);
             }
             @Override
             public void ancestorAdded(AncestorEvent event) {
@@ -249,7 +249,7 @@ public class MenuGenerator implements MenuGeneratorInterface {
         shortcutManager.addShortcutChangeListener(new ShortcutChangeListener() {
             @Override
             public void onChange() {
-                updateTooltip(e.getAttribute("action"), button, baseTooltip);
+                updateButtonToolTip(e.getAttribute("action"), button, baseTooltip);
             }
         });
     }
