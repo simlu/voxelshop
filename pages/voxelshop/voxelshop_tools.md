@@ -113,7 +113,8 @@ Recolor all voxels that have the same color as the selected one using the curren
 > **Note**: In side view this works layerwise
 
 ### ![Color Change](https://github.com/simlu/voxelshop/blob/master/PS4k/resource/img/bars/tool_bar/color_changer.png?raw=true) Color Changer Tool
- Change the color of the clicked voxel into the currently selected color.
+
+Change the color of the clicked voxel into the currently selected color.
 
 |Key|Description|
 |:--:|---|

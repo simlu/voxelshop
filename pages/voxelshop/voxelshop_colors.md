@@ -11,16 +11,16 @@ folder: voxelshop
 VoxelShop provides color modification for the scene's background and model.
 
 ## Background Color
-IMG Allows to select the background color for the viewing ports, i.e. side views and 3D View. This is helpful to get better contrast between the voxels and the background.
+![Side View](./images/Screenshots/bgcolor-screenshot.png)
+
+Allows to select the background color for the viewing ports, i.e. side views and 3D View. This is helpful to get better contrast between the voxels and the background.
 
 ## Model Color - Frames
 The color model can be defined with multiple tools.
 
-### Quick Color Chooser
-IMG Allows to select the color in a predefined set. The chosen color becomes the current one used to add voxels in the scene.
-
 ### Color Palette
-IMG
+![Color Palette](./images/Screenshots/color-palette-screenshot.png)
+
 This window allows you to manage your own color palette. This is very useful if you want to keep a consistent style and makes reusing colors very easy.
 
 You can replace colors by first unlocking the palette and then using
@@ -29,37 +29,50 @@ You can replace colors by first unlocking the palette and then using
 If you want to select a color from the palette simply use LEFT CLICK or use WASD (default shortcuts) to move between selected colors.
 
 ### Color Picker
-IMG
+![](./images/Screenshots/color-picker-screenshot.png)
+
 This window allows you to quickly select a color. You can select the hue on the right. The selected color is outlined with a circle.
 
 ### Color Slider
-IMG
+
 This window allows you to select your current color by using different color models and sliders. The three color models that can be used are CMYK, HSB and RGB.
 
 #### RGB Tab
-IMG
+![RGB Tab](./images/Screenshots/color-slider-rgb-screenshot.png)
+
 This tab contains the three sliders Red, Green and Blue which form the RGB color model.
 
 #### CMYK Tab
-IMG
+![CMYK Tab](./images/Screenshots/color-slider-cmyk-screenshot.png)
+
 This tab contains the four sliders Cyan, Magenta, Yellow and Key (Black) which form the CMYK color model.
 
 #### HSB Tab
-IMG
+![HSB Tab](./images/Screenshots/color-slider-hsb-screenshot.png)
+
 This tab contains the three sliders Hue, Saturation and Brightness which form the HSB color model.
 
 ### Hex Picker Window
-IMG
+![](./images/Screenshots/hex-picker-screenshot.png)
+
 This windows allows you to enter a color as a hex value. You can even enter shortened hex values, e.g. AA or FFF.
 
 ### Color Adjuster Window
-IMG
+![](./images/Screenshots/color-adjuster-screenshot.png)
+
 This windows allows you to adjust the colors of all selected Voxel.
+
+### Quick Color Chooser
+![Quick Color chooser](./images/Screenshots/quick-color-chooser-screenshot.png)
+
+Allows to select the color in a predefined set. The chosen color becomes the current one used to add voxels in the scene.
 
 ## Model Color - Tools
 
-### Color Picker Tool
-IMG This tool allows you to select a color from existing voxels.
+### ![Color Picker](https://github.com/simlu/voxelshop/blob/master/PS4k/resource/img/bars/tool_bar/color_picker.png?raw=true) Color Picker
+  Color Picker Tool
+
+This tool allows you to select a color from existing voxels.
 
 |Key|Description|
 |:--:|---|
@@ -68,8 +81,9 @@ IMG This tool allows you to select a color from existing voxels.
 |**SHIFT + LMC**| Draw out an area to select the (weighted) average color of all voxels inside.|
 |**SHIFT + RMC**| Like LMC, but each unique color is only used once.|
 
-### Flood Fill Tool
-IMG Recolor all voxels that have the same color as the selected one using the currently selected color.
+### ![Flood Fill](https://github.com/simlu/voxelshop/blob/master/PS4k/resource/img/bars/tool_bar/floodfill.png?raw=true) Flood Fill
+
+Recolor all voxels that have the same color as the selected one using the currently selected color.
 
 |Key|Description|
 |:--:|---|
@@ -80,8 +94,9 @@ IMG Recolor all voxels that have the same color as the selected one using the cu
 
 > Note: In side view this works layerwise
 
-### Color Changer Tool
-IMG Change the color of the clicked voxel into the currently selected color.
+### ![Color Change](https://github.com/simlu/voxelshop/blob/master/PS4k/resource/img/bars/tool_bar/color_changer.png?raw=true) Color Changer Tool
+
+Change the color of the clicked voxel into the currently selected color.
 
 |Key|Description|
 |:--:|---|
