@@ -31,12 +31,11 @@ public interface ShortcutManagerInterface {
     void activateShortcuts();
     void deactivateShortcuts();
 
-    // get global KeyStroke by action
-    KeyStroke getGlobalShortcutByAction(String actionName);
+    // get KeyStroke by action
+    KeyStroke getShortcutByAction(String frame, String actionName);
 
-    void addGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
-
-    void removeGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
+    void addShortcutChangeListener(ShortcutChangeListener shortcutChangeListener);
+    void removeShortcutChangeListener(ShortcutChangeListener shortcutChangeListener);
 
     // register all actions of global shortcuts, to perform validity check
     void registerGlobalShortcutActions();

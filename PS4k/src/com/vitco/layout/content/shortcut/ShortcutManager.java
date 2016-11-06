@@ -120,9 +120,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // updated when global changes
     private final Map<KeyStroke, ShortcutObject> globalByKeyStroke = new HashMap<KeyStroke, ShortcutObject>();
     private final Map<String, ShortcutObject> globalByAction = new HashMap<String, ShortcutObject>();
-    // notified when global changes
-    private final ArrayList<GlobalShortcutChangeListener> globalShortcutChangeListeners =
-            new ArrayList<GlobalShortcutChangeListener>();
+    // notified when shortcut change
+    private final ArrayList<ShortcutChangeListener> shortcutChangeListeners = new ArrayList<ShortcutChangeListener>();
     // hook that catches KeyStroke if this is registered as global
     private final KeyEventDispatcher globalProcessor = new KeyEventDispatcher() {
         @Override
@@ -221,19 +220,19 @@ public class ShortcutManager implements ShortcutManagerInterface {
             globalByAction.put(shortcutObject.actionName, shortcutObject);
         }
         // notify all listeners
-        for (GlobalShortcutChangeListener gscl : globalShortcutChangeListeners) {
-            gscl.onChange();
+        for (ShortcutChangeListener shortcutChangeListener : shortcutChangeListeners) {
+            shortcutChangeListener.onChange();
         }
     }
 
     @Override
-    public void addGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener) {
-        globalShortcutChangeListeners.add(globalShortcutChangeListener);
+    public void addShortcutChangeListener(ShortcutChangeListener shortcutChangeListener) {
+        shortcutChangeListeners.add(shortcutChangeListener);
     }
 
     @Override
-    public void removeGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener) {
-        globalShortcutChangeListeners.remove(globalShortcutChangeListener);
+    public void removeShortcutChangeListener(ShortcutChangeListener shortcutChangeListener) {
+        shortcutChangeListeners.remove(shortcutChangeListener);
     }
 
     // var & setter
@@ -289,16 +288,21 @@ public class ShortcutManager implements ShortcutManagerInterface {
         return result;
     }
 
-
-    // get global KeyStroke by action
-    // returns null if not registered
     @Override
-    public final KeyStroke getGlobalShortcutByAction(String actionName) {
-       if (globalByAction.containsKey(actionName)) {
-           return globalByAction.get(actionName).keyStroke;
-       } else {
-           return null;
-       }
+    public final KeyStroke getShortcutByAction(String frame, String actionName) {
+        if (frame == null) { // check global shortcuts
+            if (globalByAction.containsKey(actionName)) {
+                return globalByAction.get(actionName).keyStroke;
+            }
+        } else { // check frame shortcuts
+            ArrayList<ShortcutObject> frameAction = map.get(frame);
+            for (ShortcutObject shortcutObject : frameAction) {
+                if (shortcutObject.actionName.equals(actionName)) {
+                    return shortcutObject.keyStroke;
+                }
+            }
+        }
+        return null;
     }
 
     // get shortcuts as string array (localized caption, str representation)
@@ -386,6 +390,9 @@ public class ShortcutManager implements ShortcutManagerInterface {
                         actionManager.performWhenActionIsReady(actionName, new Runnable() {
                             @Override
                             public void run() {
+                                for (ShortcutChangeListener shortcutChangeListener : shortcutChangeListeners) {
+                                    shortcutChangeListener.onChange();
+                                }
                                 shortcutObject.linkedFrame.registerKeyboardAction(
                                         new ActivatableKeyStrokeAction(shortcutObject.keyStroke, actionManager.getAction(actionName)),
                                         shortcutObject.keyStroke,
@@ -843,6 +850,9 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     actionManager.performWhenActionIsReady(entry.actionName, new Runnable() {
                         @Override
                         public void run() {
+                            for (ShortcutChangeListener shortcutChangeListener : shortcutChangeListeners) {
+                                shortcutChangeListener.onChange();
+                            }
                             frame.registerKeyboardAction(
                                     new ActivatableKeyStrokeAction(entry.keyStroke, actionManager.getAction(entry.actionName)),
                                     entry.keyStroke,
