@@ -9,11 +9,5 @@ topnav:
       external_url: https://blackflux.com/forums/index.php
     - title: Github Repo
       external_url: https://github.com/simlu/voxelshop
-#Topnav dropdowns
-#topnav_dropdowns:
-#- title: Topnav dropdowns
-#  folders:
-#    - title: VoxelShop Resources
-#      folderitems:
         
         
