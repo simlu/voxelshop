@@ -164,7 +164,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
             }
 
             // do not process if there is an active frame shortcut that will match
-            if (activeFrame.getActionForKeyStroke(keyStroke) != null) {
+            if (activeFrame != null && activeFrame.getActionForKeyStroke(keyStroke) != null) {
                 return keyCode == 18;
             }
 
