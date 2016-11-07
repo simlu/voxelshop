@@ -9,8 +9,8 @@ import com.vitco.core.CameraChangeListener;
 import com.vitco.core.EngineInteractionPrototype;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.core.world.WorldManager;
-import com.vitco.manager.action.types.KeyActionPrototype;
 import com.vitco.manager.action.types.StateActionPrototype;
+import com.vitco.manager.action.types.SwitchActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.pref.PrefChangeListener;
 import com.vitco.manager.thread.LifeTimeThread;
@@ -385,12 +385,12 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
         container.addMouseMotionListener(mouseAdapter);
         container.addMouseListener(mouseAdapter);
 
-        abstract class CameraAction extends KeyActionPrototype {
+        abstract class CameraAction extends SwitchActionPrototype {
             protected abstract void step();
             private LifeTimeThread thread = null;
 
             @Override
-            public void onKeyDown() {
+            public void switchOn() {
                 if (thread == null) {
                     thread = new LifeTimeThread() {
                         @Override
@@ -413,7 +413,7 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
             }
 
             @Override
-            public void onKeyUp() {
+            public void switchOff() {
                 if (thread != null) {
                     threadManager.remove(thread);
                     thread = null;

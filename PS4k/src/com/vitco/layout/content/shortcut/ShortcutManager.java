@@ -6,8 +6,7 @@ import com.jidesoft.docking.DockingManager;
 import com.jidesoft.docking.event.DockableFrameAdapter;
 import com.jidesoft.docking.event.DockableFrameEvent;
 import com.vitco.manager.action.ActionManager;
-import com.vitco.manager.action.types.KeyActionEvent;
-import com.vitco.manager.action.types.KeyActionPrototype;
+import com.vitco.manager.action.types.SwitchActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
@@ -17,6 +16,7 @@ import com.vitco.manager.pref.PreferencesInterface;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.SaveResourceLoader;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -91,6 +91,26 @@ public class ShortcutManager implements ShortcutManagerInterface {
     // global setting for all activatable actions
     private boolean enableAllActivatableActions = true;
 
+    // actions currently active b/c a key is pressed
+    private static final TIntObjectHashMap<AbstractAction> activeKeyActions = new TIntObjectHashMap<AbstractAction>();
+
+    // handle release key event and switch off registered actions
+    private void releaseKey(int keyCode) {
+        synchronized (activeKeyActions) {
+            AbstractAction action = activeKeyActions.remove(keyCode);
+            if (action instanceof SwitchActionPrototype) {
+                ((SwitchActionPrototype) action).switchOff();
+            }
+        }
+    }
+
+    public void rememberPressedKey(int keyCode, AbstractAction action) {
+        if (activeKeyActions.containsKey(keyCode)) {
+            releaseKey(keyCode);
+        }
+        activeKeyActions.put(keyCode, action);
+    }
+
     // prototype of an action that can be disabled
     private final class ActivatableKeyStrokeAction extends AbstractAction {
         private final AbstractAction action;
@@ -104,7 +124,10 @@ public class ShortcutManager implements ShortcutManagerInterface {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (enableAllActivatableActions) {
-                action.actionPerformed(new KeyActionEvent(keyCode, e.getSource(), e.getID(), e.paramString(), e.getWhen(), e.getModifiers()));
+                synchronized (activeKeyActions) {
+                    rememberPressedKey(keyCode, action);
+                    action.actionPerformed(e);
+                }
             }
         }
     }
@@ -135,7 +158,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        KeyActionPrototype.release(keyCode);
+                        releaseKey(keyCode);
                     }
                 });
             }
@@ -153,7 +176,7 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     public void performAction() {
                         // fire new action
                         new ActivatableKeyStrokeAction(keyStroke, actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName)).actionPerformed(
-                                new KeyActionEvent(keyCode, e.getSource(), eventId, e.paramString(), e.getWhen(), e.getModifiers()) {}
+                                new ActionEvent(e.getSource(), eventId, e.paramString(), e.getWhen(), e.getModifiers())
                         );
                     }
                 });

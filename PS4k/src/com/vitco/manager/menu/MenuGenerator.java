@@ -13,6 +13,7 @@ import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ChangeListener;
 import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.action.types.StateActionPrototype;
+import com.vitco.manager.action.types.SwitchActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
@@ -27,8 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
+import javax.swing.event.ChangeEvent;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -227,21 +227,10 @@ public class MenuGenerator implements MenuGeneratorInterface {
         final String baseTooltip = langSel.getString(e.getAttribute("tool-tip"));
 
         // listen to button ancestor changes
-        button.addAncestorListener(new AncestorListener() {
-            private void refresh() {
+        button.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
                 updateButtonToolTip(e.getAttribute("action"), button, baseTooltip);
-            }
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                refresh();
-            }
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-                refresh();
-            }
-            @Override
-            public void ancestorMoved(AncestorEvent event) {
-                refresh();
             }
         });
 
@@ -372,7 +361,21 @@ public class MenuGenerator implements MenuGeneratorInterface {
         actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
             public void run() {
-                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
+                final AbstractAction action = actionManager.getAction(e.getAttribute("action"));
+                if (action instanceof SwitchActionPrototype) {
+                    jideButton.getModel().addChangeListener(new javax.swing.event.ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            if (jideButton.getModel().isPressed()) {
+                                ((SwitchActionPrototype) action).switchOn();
+                            } else {
+                                ((SwitchActionPrototype) action).switchOff();
+                            }
+                        }
+                    });
+                } else {
+                    jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
+                }
             }
         });
 
