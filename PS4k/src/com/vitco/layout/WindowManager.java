@@ -383,8 +383,8 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         });
 
         // open link to wiki
-        actionManager.registerAction("open_wiki", new AbstractAction() {
-            private String wikiUrl = "https://github.com/simlu/voxelshop/wiki";
+        actionManager.registerAction("open_website", new AbstractAction() {
+            private String wikiUrl = "https://simlu.github.io/voxelshop/";
 
             @Override
             public void actionPerformed(ActionEvent e) {
