@@ -21,7 +21,7 @@ Frames are related to:
 
 ## Axis Views
 
-![Side View](./images/Screenshots/side-view-screenshot.png)
+![Side View](./images/screenshots/side-view-screenshot.png)
 
 VoxelShop provides 3 views for the main 3D axis:
 -  Front - XY View
@@ -46,7 +46,7 @@ During manipulation, the 3D cursor location is displayed in the right up corner 
 
 ## 3D View
 
-![3D View](./images/Screenshots/mainview-screenshot.png)
+![3D View](./images/screenshots/mainview-screenshot.png)
 
 This sub-window shows your creation as a whole and can be used to intuitively change voxels. The coordinate axis in the top left corner shows the current orientation of the voxel object.
 
@@ -83,7 +83,7 @@ Zoom In / Zoom Out can be done also with ![Plus](https://github.com/simlu/voxels
 Multiple frames are related to color definition and management. You can find details [here](voxelshop-colors.html).
 
 ## Layers
-![Layers View](./images/Screenshots/layer-screenshot.png)
+![Layers View](./images/screenshots/layer-screenshot.png)
 
 3D model creation is made usually with multiple parts and the process is easier with this separation feature. In VoxelShop, this is called **Layer**.
 
@@ -104,7 +104,7 @@ Layers can be renamed by double clicking them and their visibility can be change
 ![Add](https://github.com/simlu/voxelshop/blob/master/PS4k/resource/img/framebars/layer/add.png?raw=true) Add a new layer. You can rename layers by double clicking their name.
 
 ## Shortcut Manager
-![Shortcuts View](./images/Screenshots/shortcut-manager-screenshot.png)
+![Shortcuts View](./images/screenshots/shortcut-manager-screenshot.png)
 
 This sub-window allows you to freely bind all your shortcuts. It is organized by sub-window. Shortcuts that always work are listed in the "Global" tab. Shortcuts that only work when the corresponding sub-window is active are listed in their separate tabs.
 
