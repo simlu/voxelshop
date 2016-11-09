@@ -33,23 +33,23 @@
         <shortcut key="F2" action="toggle_animation_mode" caption="toggle_animation_mode" />
 
         <!--Windows-->
-        <shortcut key="1" action="mainview_state-action_show" caption="mainView_caption" />
+        <shortcut ctrl="yes" key="1" action="mainview_state-action_show" caption="mainView_caption" />
 
-        <shortcut key="2" action="side-view_state-action_show1" caption="xyView_caption" />
-        <shortcut key="3" action="side-view_state-action_show2" caption="xzView_caption" />
-        <shortcut key="4" action="side-view_state-action_show3" caption="yzView_caption" />
+        <shortcut ctrl="yes" key="2" action="side-view_state-action_show1" caption="xyView_caption" />
+        <shortcut ctrl="yes" key="3" action="side-view_state-action_show2" caption="xzView_caption" />
+        <shortcut ctrl="yes" key="4" action="side-view_state-action_show3" caption="yzView_caption" />
 
-        <shortcut key="5" action="layer_state-action_show" caption="layer_caption" />
+        <shortcut ctrl="yes" key="5" action="layer_state-action_show" caption="layer_caption" />
 
-        <shortcut key="6" action="colorpicker_state-action_show" caption="colorpicker_caption" />
-        <shortcut key="7" action="colorPalette_state-action_show" caption="colorPalette_caption" />
-        <shortcut key="8" action="colorslider_state-action_show" caption="colorslider_caption" />
-        <shortcut key="9" action="hexPicker_state-action_show" caption="hexPicker_caption" />
-        <shortcut key="0" action="colorAdjuster_state-action_show" caption="colorAdjuster_caption" />
+        <shortcut ctrl="yes" key="6" action="colorpicker_state-action_show" caption="colorpicker_caption" />
+        <shortcut ctrl="yes" key="7" action="colorPalette_state-action_show" caption="colorPalette_caption" />
+        <shortcut ctrl="yes" key="8" action="colorslider_state-action_show" caption="colorslider_caption" />
+        <shortcut ctrl="yes" key="9" action="hexPicker_state-action_show" caption="hexPicker_caption" />
+        <shortcut ctrl="yes" key="0" action="colorAdjuster_state-action_show" caption="colorAdjuster_caption" />
 
-        <shortcut key="-" action="textureManager_state-action_show" caption="textureManager_caption" />
+        <shortcut ctrl="yes" key="-" action="textureManager_state-action_show" caption="textureManager_caption" />
 
-        <shortcut key="=" action="console_state-action_show" caption="console_caption" />
+        <shortcut ctrl="yes" key="=" action="console_state-action_show" caption="console_caption" />
         <shortcut action="shortcut-mg_state-action_show" caption="shortcutManager_caption" />
         <shortcut action="snapshot_state-action_show" caption="snapshot_caption" />
         <shortcut action="personal_state-action_show" caption="personal_caption" />
