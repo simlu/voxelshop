@@ -40,7 +40,7 @@
     </menu>
 
     <menu caption="help_btn">
-        <item caption="open_wiki_caption" action="open_wiki"/>
+        <item caption="open_website_caption" action="open_website"/>
         <item caption="show_help_overlay_caption" action="show_help_overlay"/>
     </menu>
 </head>
