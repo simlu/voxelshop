@@ -2,16 +2,18 @@ package com.vitco.manager.menu;
 
 import com.jidesoft.action.CommandBarSeparator;
 import com.jidesoft.action.CommandMenuBar;
+import com.jidesoft.docking.DockableFrame;
 import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideMenu;
 import com.jidesoft.swing.JideSplitButton;
 import com.jidesoft.swing.JideToggleButton;
-import com.vitco.layout.content.shortcut.GlobalShortcutChangeListener;
+import com.vitco.layout.content.shortcut.ShortcutChangeListener;
 import com.vitco.layout.content.shortcut.ShortcutManagerInterface;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.action.ChangeListener;
 import com.vitco.manager.action.ComplexActionManager;
 import com.vitco.manager.action.types.StateActionPrototype;
+import com.vitco.manager.action.types.SwitchActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
@@ -26,6 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -174,45 +177,68 @@ public class MenuGenerator implements MenuGeneratorInterface {
 
     private void handleMenuShortcut(final JMenuItem item, final Element e) {
         // shortcut change events
-        KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
+        KeyStroke accelerator = shortcutManager.getShortcutByAction(null, e.getAttribute("action"));
         if (accelerator != null) {
             item.setAccelerator(accelerator);
         }
-        shortcutManager.addGlobalShortcutChangeListener(new GlobalShortcutChangeListener() {
+        shortcutManager.addShortcutChangeListener(new ShortcutChangeListener() {
             @Override
             public void onChange() {
-                KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
+                KeyStroke accelerator = shortcutManager.getShortcutByAction(null, e.getAttribute("action"));
                 item.setAccelerator(accelerator);
             }
         });
     }
 
-    private void handleButtonShortcutAndTooltip(final JComponent button, final Element e) {
-        // shortcut change events
-        KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
-        if (accelerator != null) {
-            button.setToolTipText(
-                    langSel.getString(e.getAttribute("tool-tip"))
-                            + " (" + shortcutManager.asString(accelerator) + ")"
-            );
-        } else {
-            // might still have a frame shortcut, we don't know
-            button.setToolTipText(
-                    langSel.getString(e.getAttribute("tool-tip"))
-            );
+    /* Obtain the Dockable frame for a component or null if not available */
+    private String getFrameForComponent(Container component) {
+        while (component != null && !(component instanceof DockableFrame)) {
+            component = component.getParent();
         }
-        shortcutManager.addGlobalShortcutChangeListener(new GlobalShortcutChangeListener() {
+        if (component != null) {
+            return component.getName();
+        } else {
+            return null;
+        }
+    }
+
+    /* Update Tooltip for a Button and action */
+    private void updateButtonToolTip(String action, JComponent button, String baseToolTop) {
+        // check frame shortcut
+        String frame = getFrameForComponent(button);
+        if (frame != null) {
+            KeyStroke keyStroke = shortcutManager.getShortcutByAction(frame, action);
+            if (keyStroke != null) {
+                button.setToolTipText(baseToolTop + " [" + shortcutManager.asString(keyStroke) + "]");
+                return;
+            }
+        }
+        // check global shortcut
+        KeyStroke keyStroke = shortcutManager.getShortcutByAction(null, action);
+        if (keyStroke != null) {
+            button.setToolTipText(baseToolTop + " (" + shortcutManager.asString(keyStroke) + ")");
+            return;
+        }
+        // no shortcut
+        button.setToolTipText(baseToolTop);
+    }
+
+    private void handleButtonShortcutAndTooltip(final JComponent button, final Element e) {
+        final String baseTooltip = langSel.getString(e.getAttribute("tool-tip"));
+
+        // listen to button ancestor changes
+        button.addPropertyChangeListener("ancestor",new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                updateButtonToolTip(e.getAttribute("action"), button, baseTooltip);
+            }
+        });
+
+        // listen to shortcut changes
+        shortcutManager.addShortcutChangeListener(new ShortcutChangeListener() {
             @Override
             public void onChange() {
-                KeyStroke accelerator = shortcutManager.getGlobalShortcutByAction(e.getAttribute("action"));
-                if (accelerator != null) {
-                    button.setToolTipText(
-                            langSel.getString(e.getAttribute("tool-tip"))
-                                    + " (" + shortcutManager.asString(accelerator) + ")"
-                    );
-                } else {
-                    button.setToolTipText(langSel.getString(e.getAttribute("tool-tip")));
-                }
+                updateButtonToolTip(e.getAttribute("action"), button, baseTooltip);
             }
         });
     }
@@ -335,7 +361,21 @@ public class MenuGenerator implements MenuGeneratorInterface {
         actionManager.performWhenActionIsReady(e.getAttribute("action"), new Runnable() {
             @Override
             public void run() {
-                jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
+                final AbstractAction action = actionManager.getAction(e.getAttribute("action"));
+                if (action instanceof SwitchActionPrototype) {
+                    jideButton.getModel().addChangeListener(new javax.swing.event.ChangeListener() {
+                        @Override
+                        public void stateChanged(ChangeEvent e) {
+                            if (jideButton.getModel().isPressed()) {
+                                ((SwitchActionPrototype) action).switchOn();
+                            } else {
+                                ((SwitchActionPrototype) action).switchOff();
+                            }
+                        }
+                    });
+                } else {
+                    jideButton.addActionListener(actionManager.getAction(e.getAttribute("action")));
+                }
             }
         });
 
