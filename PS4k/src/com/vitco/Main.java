@@ -35,11 +35,15 @@ public class Main {
             if (g != null) {
                 g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-                Font font = new Font("Verdana", Font.BOLD, 7);
+                Font font = Font.createFont(
+                        Font.TRUETYPE_FONT,
+                        new SaveResourceLoader("resource/font/arcade.ttf").asInputStream()
+                ).deriveFont(Font.PLAIN, 42f);
                 g.setFont(font);
                 //g.setFont(g.getFont().deriveFont(9f));
                 g.setColor(VitcoSettings.SPLASH_SCREEN_OVERLAY_TEXT_COLOR);
-                g.drawString("V" + VitcoSettings.VERSION_ID, 10, 15);
+                int width = g.getFontMetrics().stringWidth(VitcoSettings.VERSION_ID);
+                g.drawString(VitcoSettings.VERSION_ID, 400 - 20 - width, 110);
                 splash.update();
                 g.dispose();
             }

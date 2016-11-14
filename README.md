@@ -3,7 +3,9 @@
 This README would normally document whatever steps are necessary to get your application up and running.
 
 ### What is this repository for?
-This is the GIT repository for [VoxelShop](https://blackflux.com/node/11). If you have questions about the program itself, please do not create an issue, but ask on the [forums](https://blackflux.com/forums/).
+This is the GIT repository for [VoxelShop](https://blackflux.com/node/11).
+
+Documentation on how to use the program can be found [here](https://simlu.github.io/voxelshop).
 
 ## Setup, Run Locally and Distributable
 
@@ -18,6 +20,20 @@ Fork the git repository, open a terminal, go to the desired project location and
 > git pull origin master
 ~~~~
 then enter your password and wait until command completes
+
+### How to Contribute
+
+Create a new feature branch using `develop` as a base for each change set you are planning to do.
+
+    git checkout develop
+    git checkout -b feature-branch-name
+
+Commit and push as you work on your feature branch.
+
+Once you are happy create a pull request from your feature branch against
+the main repo `develop` branch, *referencing the associated issue(s)*.
+
+Make sure you use a different branch for each change set.
 
 ### IntelliJ
 - Click Open and select PS4k Folder (within the folder you selected as root)
@@ -35,7 +51,7 @@ then enter your password and wait until command completes
 Java UI component provider and Window Manager
 http://www.jidesoft.com/
 
-## How to Contribute
+## Doing Things
 
 ### Adding a new JIDE Frame
 #### Adding the Frame to the layout

@@ -1,16 +1,22 @@
 package com.vitco.layout.content.shortcut;
 
 import com.jidesoft.docking.DialogFloatingContainer;
+import com.jidesoft.docking.DockableFrame;
+import com.jidesoft.docking.DockingManager;
+import com.jidesoft.docking.event.DockableFrameAdapter;
+import com.jidesoft.docking.event.DockableFrameEvent;
 import com.vitco.manager.action.ActionManager;
-import com.vitco.manager.action.types.KeyActionPrototype;
+import com.vitco.manager.action.types.SwitchActionPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.help.FrameHelpOverlay;
 import com.vitco.manager.lang.LangSelectorInterface;
 import com.vitco.manager.pref.PreferencesInterface;
+import com.vitco.settings.VitcoSettings;
 import com.vitco.util.file.FileTools;
 import com.vitco.util.misc.SaveResourceLoader;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -61,8 +67,8 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     // up, down, left, right, pgup, pgdown
                     KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
                     KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP,
-                    // minus
-                    45
+                    // minus, [, ], =
+                    45, KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_CLOSE_BRACKET, KeyEvent.VK_EQUALS
             }));
     private final ArrayList<Integer> VALID_KEYS_WITHOUT_MODIFIER =
             new ArrayList<Integer>(Arrays.asList(new Integer[]{
@@ -78,84 +84,123 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     // up, down, left, right, pgup, pgdown
                     KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
                     KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_PAGE_UP,
-                    // minus
-                    45
+                    // minus, [, ], =
+                    45, KeyEvent.VK_OPEN_BRACKET, KeyEvent.VK_CLOSE_BRACKET, KeyEvent.VK_EQUALS
             }));
 
     // global setting for all activatable actions
     private boolean enableAllActivatableActions = true;
 
+    // actions currently active b/c a key is pressed
+    private static final TIntObjectHashMap<AbstractAction> activeKeyActions = new TIntObjectHashMap<AbstractAction>();
+
+    // handle release key event and switch off registered actions
+    private void releaseKey(int keyCode) {
+        synchronized (activeKeyActions) {
+            AbstractAction action = activeKeyActions.remove(keyCode);
+            if (action instanceof SwitchActionPrototype) {
+                ((SwitchActionPrototype) action).switchOff();
+            }
+        }
+    }
+
+    public void rememberPressedKey(int keyCode, AbstractAction action) {
+        if (activeKeyActions.containsKey(keyCode)) {
+            releaseKey(keyCode);
+        }
+        activeKeyActions.put(keyCode, action);
+    }
+
     // prototype of an action that can be disabled
-    private final class ActivatableAction extends AbstractAction {
+    private final class ActivatableKeyStrokeAction extends AbstractAction {
         private final AbstractAction action;
-        private ActivatableAction(AbstractAction action) {
+        public final int keyCode;
+
+        private ActivatableKeyStrokeAction(KeyStroke keyStroke, AbstractAction action) {
+            this.keyCode = keyStroke.getKeyCode();
             this.action = action;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (enableAllActivatableActions) {
-                action.actionPerformed(e);
+                synchronized (activeKeyActions) {
+                    rememberPressedKey(keyCode, action);
+                    action.actionPerformed(e);
+                }
             }
         }
     }
 
+    // hold the currently active frame
+    private DockableFrame activeFrame = null;
+
     // holds the mapping: frame -> (KeyStroke, actionName)
-    private final Map<String, ArrayList<ShortcutObject>> map = new HashMap<String, ArrayList<ShortcutObject>>();
+    private final HashMap<String, ArrayList<ShortcutObject>> map = new HashMap<String, ArrayList<ShortcutObject>>();
 
     // holds the global shortcuts (KeyStroke, actionName)
     private final ArrayList<ShortcutObject> global = new ArrayList<ShortcutObject>();
     // updated when global changes
     private final Map<KeyStroke, ShortcutObject> globalByKeyStroke = new HashMap<KeyStroke, ShortcutObject>();
     private final Map<String, ShortcutObject> globalByAction = new HashMap<String, ShortcutObject>();
-    // notified when global changes
-    private final ArrayList<GlobalShortcutChangeListener> globalShortcutChangeListeners =
-            new ArrayList<GlobalShortcutChangeListener>();
+    // notified when shortcut change
+    private final ArrayList<ShortcutChangeListener> shortcutChangeListeners = new ArrayList<ShortcutChangeListener>();
     // hook that catches KeyStroke if this is registered as global
     private final KeyEventDispatcher globalProcessor = new KeyEventDispatcher() {
         @Override
         public boolean dispatchKeyEvent(final KeyEvent e) {
             final int eventId = e.getID();
-            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(
-                    // always convert into key pressed event so it can be matched
-                    new KeyEvent(e.getComponent(), KeyEvent.KEY_PRESSED, e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation())
-            );
+            final int keyCode = e.getKeyCode();
+            final KeyStroke keyStroke = KeyStroke.getKeyStrokeForEvent(e);
+
+            // ensure the release is triggered if this is a release event
+            if (eventId == KeyEvent.KEY_RELEASED) {
+                asyncActionManager.addAsyncAction(new AsyncAction() {
+                    @Override
+                    public void performAction() {
+                        releaseKey(keyCode);
+                    }
+                });
+            }
+
+            // do not process if there is an active frame shortcut that will match
+            if (activeFrame != null && activeFrame.getActionForKeyStroke(keyStroke) != null) {
+                return keyCode == 18;
+            }
+
             if (globalByKeyStroke.containsKey(keyStroke)
                     // only fire if all actions are activated
-                    && enableAllActivatableActions
-                    // ensure we only consider pressed and released events
-                    && (eventId == KeyEvent.KEY_PRESSED || eventId == KeyEvent.KEY_RELEASED)) {
+                    && enableAllActivatableActions) {
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
                         // fire new action
-                        AbstractAction action = actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName);
-                        if (action instanceof KeyActionPrototype) {
-                            if (eventId == KeyEvent.KEY_PRESSED) {
-                                ((KeyActionPrototype) action).onKeyDown();
-                            } else {
-                                ((KeyActionPrototype) action).onKeyUp();
-                            }
-                        } else {
-                            if (eventId == KeyEvent.KEY_PRESSED) {
-                                action.actionPerformed(new ActionEvent(e.getSource(), eventId, e.toString(), e.getWhen(), e.getModifiers()) {});
-                            }
-                        }
+                        new ActivatableKeyStrokeAction(keyStroke, actionManager.getAction(globalByKeyStroke.get(keyStroke).actionName)).actionPerformed(
+                                new ActionEvent(e.getSource(), eventId, e.paramString(), e.getWhen(), e.getModifiers())
+                        );
                     }
                 });
                 e.consume(); // no-one else needs to handle this now
                 return true; // no further action
             }
             // might need further action (but disable if alt key)
-            return e.getKeyCode() == 18;
+            return keyCode == 18;
         }
     };
 
     // register global shortcuts and make sure all shortcuts are correctly enabled
     @Override
-    public void registerShortcuts(final Frame frame) {
+    public void registerShortcuts(final Frame frame, final DockingManager dockingManager) {
         // register global actions
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(globalProcessor);
+
+        // listen to frame activation / deactivation
+        dockingManager.addDockableFrameListener(new DockableFrameAdapter() {
+            @Override
+            public void dockableFrameActivated(DockableFrameEvent dockableFrameEvent) {
+                activeFrame = dockableFrameEvent.getDockableFrame();
+            }
+        });
 
         // update activity / inactivity of shortcuts
         FocusManager.getCurrentManager().addPropertyChangeListener(new PropertyChangeListener() {
@@ -198,19 +243,19 @@ public class ShortcutManager implements ShortcutManagerInterface {
             globalByAction.put(shortcutObject.actionName, shortcutObject);
         }
         // notify all listeners
-        for (GlobalShortcutChangeListener gscl : globalShortcutChangeListeners) {
-            gscl.onChange();
+        for (ShortcutChangeListener shortcutChangeListener : shortcutChangeListeners) {
+            shortcutChangeListener.onChange();
         }
     }
 
     @Override
-    public void addGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener) {
-        globalShortcutChangeListeners.add(globalShortcutChangeListener);
+    public void addShortcutChangeListener(ShortcutChangeListener shortcutChangeListener) {
+        shortcutChangeListeners.add(shortcutChangeListener);
     }
 
     @Override
-    public void removeGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener) {
-        globalShortcutChangeListeners.remove(globalShortcutChangeListener);
+    public void removeShortcutChangeListener(ShortcutChangeListener shortcutChangeListener) {
+        shortcutChangeListeners.remove(shortcutChangeListener);
     }
 
     // var & setter
@@ -266,16 +311,21 @@ public class ShortcutManager implements ShortcutManagerInterface {
         return result;
     }
 
-
-    // get global KeyStroke by action
-    // returns null if not registered
     @Override
-    public final KeyStroke getGlobalShortcutByAction(String actionName) {
-       if (globalByAction.containsKey(actionName)) {
-           return globalByAction.get(actionName).keyStroke;
-       } else {
-           return null;
-       }
+    public final KeyStroke getShortcutByAction(String frame, String actionName) {
+        if (frame == null) { // check global shortcuts
+            if (globalByAction.containsKey(actionName)) {
+                return globalByAction.get(actionName).keyStroke;
+            }
+        } else { // check frame shortcuts
+            ArrayList<ShortcutObject> frameAction = map.get(frame);
+            for (ShortcutObject shortcutObject : frameAction) {
+                if (shortcutObject.actionName.equals(actionName)) {
+                    return shortcutObject.keyStroke;
+                }
+            }
+        }
+        return null;
     }
 
     // get shortcuts as string array (localized caption, str representation)
@@ -309,6 +359,39 @@ public class ShortcutManager implements ShortcutManagerInterface {
         }
     }
 
+    /* Check if keyStroke is local and collides with global or the other way around */
+    private boolean hasSoftCollision(String frame, KeyStroke keyStroke) {
+        if (frame == null) {
+            // check frame shortcuts for collision
+            for (Collection<ShortcutObject> shortcutObjects : map.values()) {
+                for (ShortcutObject shortcutObject : shortcutObjects) {
+                    if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            // check global shortcuts for collision
+            for (ShortcutObject shortcutObject : global) {
+                if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /* Obtain BG color for a shortcut field that is being edited */
+    @Override
+    public final Color getEditBgColor(String frame, int id) {
+        KeyStroke keyStroke = frame == null ? global.get(id).keyStroke : map.get(frame).get(id).keyStroke;
+        if (hasSoftCollision(frame, keyStroke)) {
+            return VitcoSettings.EDIT_BG_COLOR_HIGHLIGHT;
+        } else {
+            return VitcoSettings.EDIT_BG_COLOR;
+        }
+    }
+
     // update (keystroke,action) registration for a frame and shortcut id
     // if frame == null this will update a global shortcut
     @Override
@@ -330,8 +413,11 @@ public class ShortcutManager implements ShortcutManagerInterface {
                         actionManager.performWhenActionIsReady(actionName, new Runnable() {
                             @Override
                             public void run() {
+                                for (ShortcutChangeListener shortcutChangeListener : shortcutChangeListeners) {
+                                    shortcutChangeListener.onChange();
+                                }
                                 shortcutObject.linkedFrame.registerKeyboardAction(
-                                        new ActivatableAction(actionManager.getAction(actionName)),
+                                        new ActivatableKeyStrokeAction(shortcutObject.keyStroke, actionManager.getAction(actionName)),
                                         shortcutObject.keyStroke,
                                         JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                                 );
@@ -383,22 +469,15 @@ public class ShortcutManager implements ShortcutManagerInterface {
                 } else {
                     System.err.println("Error: Can not find frame \"" + frame + "\".");
                 }
-            } else { // check for all frames
-                // check that this shortcut is not already set in any frame
-                for (String key : map.keySet()) {
-                    for (ShortcutObject shortcutObject : map.get(key)) {
-                        if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
-                            result = false;
-                        }
+            } else {
+                // check for global shortcuts
+                for (ShortcutObject shortcutObject : global) {
+                    if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
+                        result = false;
                     }
                 }
             }
-            // check for global shortcuts
-            for (ShortcutObject shortcutObject : global) {
-                if (shortcutObject.keyStroke != null && shortcutObject.keyStroke.equals(keyStroke)) {
-                    result = false;
-                }
-            }
+
         }
         return result;
     }
@@ -624,14 +703,6 @@ public class ShortcutManager implements ShortcutManagerInterface {
                                 (debug ? dup.actionName : langSel.getString(dup.caption)) +
                                 "\" for frame \"" + key + "\" have the same shortcut (" + stroke + ").");
                     }
-                    // check if this clashes with a global shortcut
-                    if (globalShortcuts.containsKey(stroke)) {
-                        ShortcutObject dup = globalShortcuts.get(stroke);
-                        System.err.println("Warning: The two actions \"" +
-                                (debug ? dup.actionName : langSel.getString(dup.caption)) + "\" (global) and \"" +
-                                (debug ? so.actionName : langSel.getString(so.caption)) +
-                                "\" (frame \"" + key + "\") have the same shortcut (" + stroke + ").");
-                    }
                     shortcuts.put(stroke, so);
                 }
             }
@@ -777,13 +848,13 @@ public class ShortcutManager implements ShortcutManagerInterface {
         }
     }
 
-    // activate global shortcuts
+    // activate shortcuts
     @Override
     public void activateShortcuts() {
         enableAllActivatableActions = true;
     }
 
-    // deactivate global shortcuts
+    // deactivate shortcuts
     @Override
     public void deactivateShortcuts() {
         enableAllActivatableActions = false;
@@ -802,8 +873,11 @@ public class ShortcutManager implements ShortcutManagerInterface {
                     actionManager.performWhenActionIsReady(entry.actionName, new Runnable() {
                         @Override
                         public void run() {
+                            for (ShortcutChangeListener shortcutChangeListener : shortcutChangeListeners) {
+                                shortcutChangeListener.onChange();
+                            }
                             frame.registerKeyboardAction(
-                                    new ActivatableAction(actionManager.getAction(entry.actionName)),
+                                    new ActivatableKeyStrokeAction(entry.keyStroke, actionManager.getAction(entry.actionName)),
                                     entry.keyStroke,
                                     JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
                             );

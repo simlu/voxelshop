@@ -22,25 +22,27 @@
         <item caption="toggle_active_frame_highlighted_caption" action="toggle_active_frame_highlighted" checkable="true"/>
         <item caption="toggle_floatable_frames_caption" action="toggle_floatable_frames" checkable="true"/>
         <separator/>
-        <item caption="console_caption" action="console_state-action_show" checkable="true"/>
-        <item caption="shortcutManager_caption" action="shortcut-mg_state-action_show" checkable="true"/>
-        <item caption="textureManager_caption" action="textureManager_state-action_show" checkable="true"/>
+        <item caption="mainView_caption" action="mainview_state-action_show" checkable="true"/>
         <item caption="xyView_caption" action="side-view_state-action_show1" checkable="true"/>
         <item caption="xzView_caption" action="side-view_state-action_show2" checkable="true"/>
         <item caption="yzView_caption" action="side-view_state-action_show3" checkable="true"/>
-        <item caption="mainView_caption" action="mainview_state-action_show" checkable="true"/>
-        <item caption="snapshot_caption" action="snapshot_state-action_show" checkable="true"/>
-        <item caption="personal_caption" action="personal_state-action_show" checkable="true"/>
+        <separator/>
+        <item caption="layer_caption" action="layer_state-action_show" checkable="true"/>
         <item caption="colorpicker_caption" action="colorpicker_state-action_show" checkable="true"/>
+        <item caption="colorPalette_caption" action="colorPalette_state-action_show" checkable="true"/>
         <item caption="colorslider_caption" action="colorslider_state-action_show" checkable="true"/>
         <item caption="hexPicker_caption" action="hexPicker_state-action_show" checkable="true"/>
-        <item caption="layer_caption" action="layer_state-action_show" checkable="true"/>
-        <item caption="colorPalette_caption" action="colorPalette_state-action_show" checkable="true"/>
         <item caption="colorAdjuster_caption" action="colorAdjuster_state-action_show" checkable="true"/>
+        <item caption="textureManager_caption" action="textureManager_state-action_show" checkable="true"/>
+        <separator/>
+        <item caption="console_caption" action="console_state-action_show" checkable="true"/>
+        <item caption="shortcutManager_caption" action="shortcut-mg_state-action_show" checkable="true"/>
+        <item caption="snapshot_caption" action="snapshot_state-action_show" checkable="true"/>
+        <item caption="personal_caption" action="personal_state-action_show" checkable="true"/>
     </menu>
 
     <menu caption="help_btn">
-        <item caption="open_wiki_caption" action="open_wiki"/>
+        <item caption="open_website_caption" action="open_website"/>
         <item caption="show_help_overlay_caption" action="show_help_overlay"/>
     </menu>
 </head>

@@ -1,5 +1,6 @@
 package com.vitco.layout.content.shortcut;
 
+import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideTabbedPane;
 import com.vitco.layout.content.JCustomScrollPane;
 import com.vitco.layout.content.JCustomTable;
@@ -7,6 +8,7 @@ import com.vitco.layout.content.ViewPrototype;
 import com.vitco.manager.async.AsyncAction;
 import com.vitco.manager.async.AsyncActionManager;
 import com.vitco.settings.VitcoSettings;
+import com.vitco.util.misc.SaveResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
@@ -59,6 +61,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
     private class CellEditor extends AbstractCellEditor implements TableCellEditor {
 
         // handles the editing of the cell value
+        JPanel wrapper;
         JTextArea component;
         // var & setter (constructor)
         // so we have a reference to the current frame
@@ -73,6 +76,39 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         public boolean isCellEditable( EventObject e ) {
             // only edit with double-click
             return !(e instanceof MouseEvent) || ((MouseEvent) e).getClickCount() >= 2;
+        }
+
+        private void handleKeyStroke(final KeyStroke keyStroke, JTable table, final int rowIndex, int vColIndex) {
+            if (shortcutManager.isValidShortcut(keyStroke)) {
+                if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
+                    // update the shortcut
+                    if (shortcutManager.updateShortcutObject(keyStroke, frame, rowIndex)) {
+                        String shortcutText = shortcutManager.asString(keyStroke);
+                        component.setText(shortcutText);
+                        // make sure the table is up to date
+                        // note: workaround for resize bug
+                        table.setValueAt(shortcutText, rowIndex, vColIndex);
+                    }
+                    wrapper.setBackground(shortcutManager.getEditBgColor(frame, rowIndex));
+                    stopCellEditing(); // immediately stop editing
+                } else { // this shortcut is already used (!)
+                    // show error color for one second
+                    wrapper.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
+                    Toolkit.getDefaultToolkit().beep(); // play beep
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e1) {
+                                // no need to track this
+                                // e1.printStackTrace();
+                            }
+                            wrapper.setBackground(shortcutManager.getEditBgColor(frame, rowIndex));
+                        }
+                    }.start();
+                }
+            }
         }
 
         // start editing
@@ -94,38 +130,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                     asyncActionManager.addAsyncAction(new AsyncAction() {
                         @Override
                         public void performAction() {
-                            KeyStroke keyStroke = e.getKeyCode() == 27
-                                    ? null // escape
-                                    : KeyStroke.getKeyStrokeForEvent(e); // else
-                            if (shortcutManager.isValidShortcut(keyStroke)) {
-                                if (shortcutManager.isFreeShortcut(frame, keyStroke)) {
-                                    // update the shortcut
-                                    if (shortcutManager.updateShortcutObject(keyStroke, frame, rowIndex)) {
-                                        String shortcutText = shortcutManager.asString(keyStroke);
-                                        component.setText(shortcutText);
-                                        // make sure the table is up to date
-                                        // note: workaround for resize bug
-                                        table.setValueAt(shortcutText, rowIndex, vColIndex);
-                                    }
-                                    component.setBackground(VitcoSettings.EDIT_BG_COLOR);
-                                } else { // this shortcut is already used (!)
-                                    // show error color for one second
-                                    component.setBackground(VitcoSettings.EDIT_ERROR_BG_COLOR);
-                                    Toolkit.getDefaultToolkit().beep(); // play beep
-                                    new Thread() {
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                Thread.sleep(1000);
-                                            } catch (InterruptedException e1) {
-                                                // no need to track this
-                                                // e1.printStackTrace();
-                                            }
-                                            component.setBackground(VitcoSettings.EDIT_BG_COLOR);
-                                        }
-                                    }.start();
-                                }
-                            }
+                            handleKeyStroke(KeyStroke.getKeyStrokeForEvent(e), table, rowIndex, vColIndex);
                         }
                     });
                     // prevent further use of this keystroke (this mustn't be done async)
@@ -138,10 +143,31 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                 }
             });
             component.setHighlighter(null); // do not show selection
-            component.setEditable(false); // hide the caret
-            component.setBackground(VitcoSettings.EDIT_BG_COLOR); // bg color when edit
+            // NOTE: We can't use "setEditable" b/c then global shortcuts would not be deactivated
+            component.setCaretColor(new Color(0, 0, 0, 0)); // hide the caret
+            component.setCursor(Cursor.getDefaultCursor()); // just show the ordinary mouse cursor
+            component.setOpaque(false);
             component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
-            return component;
+
+            // Allow for clearing the shortcut
+            JideButton clearButton = new JideButton();
+            clearButton.setIcon(new SaveResourceLoader("resource/img/icons/clear.png").asIconImage());
+            clearButton.setButtonStyle(JideButton.FLAT_STYLE);
+            clearButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    handleKeyStroke(null, table, rowIndex, vColIndex);
+                }
+            });
+
+            // holds edit field and clear button
+            wrapper = new JPanel();
+            wrapper.setLayout(new BorderLayout());
+            wrapper.add(component, BorderLayout.CENTER);
+            wrapper.add(clearButton, BorderLayout.EAST);
+            wrapper.setBackground(shortcutManager.getEditBgColor(frame, rowIndex)); // bg color when edit
+
+            return wrapper;
         }
 
         // edit complete

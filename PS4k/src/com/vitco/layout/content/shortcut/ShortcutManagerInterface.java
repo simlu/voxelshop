@@ -1,5 +1,6 @@
 package com.vitco.layout.content.shortcut;
 
+import com.jidesoft.docking.DockingManager;
 import com.vitco.manager.action.ActionManager;
 import com.vitco.manager.error.ErrorHandlerInterface;
 import com.vitco.manager.lang.LangSelectorInterface;
@@ -22,6 +23,7 @@ public interface ShortcutManagerInterface {
     boolean isValidShortcut(KeyStroke keyStroke);
     boolean updateShortcutObject(KeyStroke keyStroke, String frame, int id);
     boolean isFreeShortcut(String frame, KeyStroke keyStroke);
+    Color getEditBgColor(String frame, int id);
     // convert KeyStroke to string representation
     String asString(KeyStroke keyStroke);
     void setErrorHandler(ErrorHandlerInterface errorHandler);
@@ -29,16 +31,15 @@ public interface ShortcutManagerInterface {
     void activateShortcuts();
     void deactivateShortcuts();
 
-    // get global KeyStroke by action
-    KeyStroke getGlobalShortcutByAction(String actionName);
+    // get KeyStroke by action
+    KeyStroke getShortcutByAction(String frame, String actionName);
 
-    void addGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
-
-    void removeGlobalShortcutChangeListener(GlobalShortcutChangeListener globalShortcutChangeListener);
+    void addShortcutChangeListener(ShortcutChangeListener shortcutChangeListener);
+    void removeShortcutChangeListener(ShortcutChangeListener shortcutChangeListener);
 
     // register all actions of global shortcuts, to perform validity check
     void registerGlobalShortcutActions();
 
     // register global shortcuts and make sure all shortcuts are correctly enabled
-    void registerShortcuts(Frame frame);
+    void registerShortcuts(Frame frame, final DockingManager dockingManager);
 }

@@ -383,8 +383,8 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         });
 
         // open link to wiki
-        actionManager.registerAction("open_wiki", new AbstractAction() {
-            private String wikiUrl = "https://github.com/simlu/voxelshop/wiki";
+        actionManager.registerAction("open_website", new AbstractAction() {
+            private String wikiUrl = "https://simlu.github.io/voxelshop/";
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -447,6 +447,18 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         }
     }
 
+    /* Focus on MainView unless the FrameHelpOverlay is shown */
+    private static void tryFocusOnMainView(final DockingManager dockingManager) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof FrameHelpOverlay)) {
+                    dockingManager.getFrame("mainView").requestFocus();
+                }
+            }
+        });
+    }
+
     @PostConstruct
     @Override
     public final void init() {
@@ -473,7 +485,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         );
 
         try {
-            DockingManager dockingManager = getDockingManager();
+            final DockingManager dockingManager = getDockingManager();
             DockableBarManager dockableBarManager = getDockableBarManager();
             LayoutPersistence layoutPersistence = getLayoutPersistence();
 
@@ -515,7 +527,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             shortcutManager.registerGlobalShortcutActions();
 
             // load the global hotkeys
-            shortcutManager.registerShortcuts(thisFrame);
+            shortcutManager.registerShortcuts(thisFrame, dockingManager);
 
             // try to load the saved layout
             layoutPersistence.beginLoadLayoutData();
@@ -537,6 +549,9 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
 
             // set the draggable size between frames
             setDividerSizeDeep(dockingManager.getDockedFrameContainer(), 2);
+
+            // focus main frame, ensures that frame specific shortcuts work initially
+            tryFocusOnMainView(dockingManager);
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
         } catch (SAXException e) {
@@ -548,6 +563,13 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         // register help overlay for entire window
         JRootPane rootPane = thisFrame.getRootPane();
         final FrameHelpOverlay overlay = new FrameHelpOverlay(rootPane, actionManager, complexActionManager, langSelector);
+        overlay.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                // focus on main view again when the focus is lost, ensures that frame specific shortcuts work initially
+                tryFocusOnMainView(getDockingManager());
+            }
+        });
         actionManager.registerAction("show_help_overlay", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
