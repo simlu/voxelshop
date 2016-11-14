@@ -3,7 +3,9 @@
 This README would normally document whatever steps are necessary to get your application up and running.
 
 ### What is this repository for?
-This is the GIT repository for [VoxelShop](https://blackflux.com/node/11). If you have questions about the program itself, please do not create an issue, but ask on the [forums](https://blackflux.com/forums/).
+This is the GIT repository for [VoxelShop](https://blackflux.com/node/11).
+
+Documentation on how to use the program can be found [here](https://simlu.github.io/voxelshop).
 
 ## Setup, Run Locally and Distributable
 
