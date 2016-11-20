@@ -14,6 +14,7 @@ public class MagicaVoxelExporter extends AbstractExporter {
 
     private final static int PALETTE_SIZE = 256;
     private final static int MV_VERSION = 150;
+    private final BiMap<Integer, Color> palette  = new BiMap<>();
 
     public MagicaVoxelExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
         super(exportTo, data, dialog, console);
@@ -22,12 +23,12 @@ public class MagicaVoxelExporter extends AbstractExporter {
     // Write File
     @Override
     protected boolean writeFile() throws IOException {
-        final int voxelsCount = data.getVisibleLayerVoxel().length;
-        final int[][] sizeMeta = this.getSizeMeta();
 
-        final BiMap<Integer, Color> palette = new BiMap<>();
+        final int[] min = getMin();
+        final int[] max = getMax();
+
+        this.setColorDefault();
         int currentPaletteIndex = PALETTE_SIZE - 2;
-        this.setColorDefault(palette);
 
         // Magic number
         fileOut.writeASCIIString("VOX ");
@@ -37,22 +38,22 @@ public class MagicaVoxelExporter extends AbstractExporter {
         //MAIN Chunk
         fileOut.writeASCIIString("MAIN");
         fileOut.writeIntRev(0); // Content Size
-        fileOut.writeIntRev((12 + 4 * 3) + (12 + 4 + 4 * voxelsCount) + (12 + 4 * PALETTE_SIZE));
+        fileOut.writeIntRev((12 + 4 * 3) + (12 + 4 + 4 * getCount()) + (12 + 4 * PALETTE_SIZE));
 
         // Size Chunk
         fileOut.writeASCIIString("SIZE");
         fileOut.writeIntRev(4 * 3);
         fileOut.writeIntRev(0);
-        fileOut.writeIntRev(sizeMeta[1][0] + sizeMeta[0][0]);
-        fileOut.writeIntRev(sizeMeta[1][2] + sizeMeta[0][2]); // Maybe MV is Z-UP, Not sure but this just works
-        fileOut.writeIntRev(sizeMeta[1][1] + sizeMeta[0][1]);
+        fileOut.writeIntRev(max[0] + min[0]);
+        fileOut.writeIntRev(max[2] + min[2]); // Maybe MV is Z-UP, Not sure but this just works
+        fileOut.writeIntRev(max[1] + min[1]);
 
 
         //XYZI Chunk
         fileOut.writeASCIIString("XYZI");
-        fileOut.writeIntRev(4 + 4 * voxelsCount);
+        fileOut.writeIntRev(4 + 4 * getCount());
         fileOut.writeIntRev(0);
-        fileOut.writeIntRev(voxelsCount);
+        fileOut.writeIntRev(getCount());
 
         for (Voxel voxel : data.getVisibleLayerVoxel()) {
 
@@ -70,9 +71,9 @@ public class MagicaVoxelExporter extends AbstractExporter {
             }
 
 
-            final int vx = sizeMeta[1][0] - voxel.x;
-            final int vy = sizeMeta[1][1] - voxel.y;
-            final int vz = sizeMeta[1][2] - voxel.z;
+            final int vx = max[0] - voxel.x;
+            final int vy = max[1] - voxel.y;
+            final int vz = max[2] - voxel.z;
 
             fileOut.writeByte((byte)vx);
             fileOut.writeByte((byte)vz); // Maybe MV is Z-UP, Not sure but this just works
@@ -96,28 +97,10 @@ public class MagicaVoxelExporter extends AbstractExporter {
     }
 
     // Just want to match MV default palette "look"
-    private void setColorDefault(final BiMap<Integer, Color> palette) {
+    private void setColorDefault() {
+        this.palette.clear();
         for (int i = 0; i < PALETTE_SIZE; i++) {
-            palette.put(i, new Color(75, 75, 75));
+            this.palette.put(i, new Color(75, 75, 75));
         }
-    }
-
-    private int[][] getSizeMeta() {
-        int[] max = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
-        int[] min = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
-
-        for (Voxel voxel : data.getVisibleLayerVoxel()) {
-            max[0] = Math.max(voxel.x, max[0]);
-            max[1] = Math.max(voxel.y, max[1]);
-            max[2] = Math.max(voxel.z, max[2]);
-
-            min[0] = Math.min(voxel.x, min[0]);
-            min[1] = Math.min(voxel.y, min[1]);
-            min[2] = Math.min(voxel.z, min[2]);
-        }
-
-        return new int[][] {
-                min, max
-        };
     }
 }
