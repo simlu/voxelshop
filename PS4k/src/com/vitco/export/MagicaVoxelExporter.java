@@ -4,17 +4,17 @@ import com.vitco.core.data.Data;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.layout.content.console.ConsoleInterface;
 import com.vitco.util.components.progressbar.ProgressDialog;
+import com.vitco.util.misc.BiMap;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.awt.Color;
-import com.vitco.util.misc.BiMap;
 
 public class MagicaVoxelExporter extends AbstractExporter {
 
     private final static int PALETTE_SIZE = 256;
     private final static int MV_VERSION = 150;
-    private final BiMap<Integer, Color> palette  = new BiMap<>();
+    private final BiMap<Integer, Color> palette  = new BiMap<Integer, Color>();
 
     public MagicaVoxelExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
         super(exportTo, data, dialog, console);
