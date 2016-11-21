@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class MagicaVoxelExporter extends AbstractExporter {
+    // Reference: https://github.com/ephtracy/voxel-model/blob/master/MagicaVoxel-file-format-vox.txt
 
     private final static int PALETTE_SIZE = 255;
     private final static int MV_VERSION = 150;
