@@ -448,11 +448,11 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
     }
 
     /* Focus on MainView unless the FrameHelpOverlay is shown */
-    private static void tryFocusOnMainView(final DockingManager dockingManager) {
+    private static void tryFocusOnMainView(final FrameHelpOverlay overlay, final DockingManager dockingManager) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof FrameHelpOverlay)) {
+                if (!overlay.isActive()) {
                     dockingManager.getFrame("mainView").requestFocus();
                 }
             }
@@ -484,8 +484,9 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
                 new SaveResourceLoader("resource/img/icons/application/paintbucket.png").asImage()
         );
 
+        final DockingManager dockingManager = getDockingManager();
+
         try {
-            final DockingManager dockingManager = getDockingManager();
             DockableBarManager dockableBarManager = getDockableBarManager();
             LayoutPersistence layoutPersistence = getLayoutPersistence();
 
@@ -549,9 +550,6 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
 
             // set the draggable size between frames
             setDividerSizeDeep(dockingManager.getDockedFrameContainer(), 2);
-
-            // focus main frame, ensures that frame specific shortcuts work initially
-            tryFocusOnMainView(dockingManager);
         } catch (ParserConfigurationException e) {
             errorHandler.handle(e); // should not happen
         } catch (SAXException e) {
@@ -567,7 +565,7 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
             @Override
             public void focusLost(FocusEvent e) {
                 // focus on main view again when the focus is lost, ensures that frame specific shortcuts work initially
-                tryFocusOnMainView(getDockingManager());
+                tryFocusOnMainView(overlay, getDockingManager());
             }
         });
         actionManager.registerAction("show_help_overlay", new AbstractAction() {
@@ -585,6 +583,9 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         if (start_count < 3) {
             overlay.setActive(true);
         }
+
+        // focus main frame, ensures that frame specific shortcuts work initially
+        tryFocusOnMainView(overlay, dockingManager);
 
         actionManager.registerAction("swap_mainView_with_xyView", new AbstractAction() {
             @Override
