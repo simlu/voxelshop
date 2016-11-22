@@ -542,6 +542,16 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // ---------------
 
+        // add "MagicaVoxel" exporter
+        FieldSet magicaVoxelExporter = new FieldSet("magicavoxel_format", "MagicaVoxel Format (*.vox)");
+
+        // add information for voxel format
+        LabelModule labelMagicaVoxel = new LabelModule("MagicaVoxel Format (150)\nhttps://github.com/ephtracy/voxel-model/");
+        labelMagicaVoxel.setVisibleLookup("export_type=magicavoxel_format");
+        magicaVoxelExporter.addComponent(labelMagicaVoxel);
+
+        // ---------------
+
         // add "kv6" exporter
         FieldSet kv6Exporter = new FieldSet("kv6_format", "Kv6 Format (*.kv6)");
 
@@ -626,7 +636,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // add all formats
         dialog.addComboBox("export_type", new FieldSet[] {
-                collada, voxExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
+                collada, voxExporter, magicaVoxelExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
         }, 0);
 
         // ---------------
@@ -862,6 +872,54 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 long time = System.currentTimeMillis();
                                 try {
                                     VoxGameExporter exporter = new VoxGameExporter(exportTo, data, progressDialog, console);
+                                    success = exporter.writeData();
+                                } catch (IOException ignored) {
+                                    success = false;
+                                }
+                                if (success) {
+                                    console.addLine(
+                                            String.format(langSelector.getString("export_file_successful"),
+                                                    System.currentTimeMillis() - time)
+                                    );
+                                } else {
+                                    console.addLine(langSelector.getString("export_file_error"));
+                                }
+
+                                return null;
+                            }
+                        });
+
+                        // ===========
+                    } else if (dialog.is("export_type=magicavoxel_format")) {
+
+                        // ===========
+                        // -- handle magicavoxel vox file format
+
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+
+                        // do the exporting
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // extract file name
+                                final File exportTo = new File(baseName + (baseName.endsWith(".vox") ? "" : ".vox"));
+                                // check if file exists
+                                if (exportTo.exists()) {
+                                    if (JOptionPane.showConfirmDialog(frame,
+                                            exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                            langSelector.getString("replace_file_query_title"),
+                                            JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                        return false;
+                                    }
+                                }
+
+                                // export magicavoxel format
+                                boolean success;
+                                long time = System.currentTimeMillis();
+                                try {
+                                    MagicaVoxelExporter exporter = new MagicaVoxelExporter(exportTo, data, progressDialog, console);
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
