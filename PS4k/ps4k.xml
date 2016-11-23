@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ps4k" default="all">
+  
+  
+  <property file="ps4k.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.ane"/>
+    <include name="*.zip"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <include name="**/?*.properties"/>
+    <include name="**/?*.xml"/>
+    <include name="**/?*.gif"/>
+    <include name="**/?*.png"/>
+    <include name="**/?*.jpeg"/>
+    <include name="**/?*.jpg"/>
+    <include name="**/?*.html"/>
+    <include name="**/?*.dtd"/>
+    <include name="**/?*.tld"/>
+    <include name="**/?*.ftl"/>
+    <include name="**/?*.handlers"/>
+    <include name="**/?*.schemas"/>
+    <include name="**/?*.xsd"/>
+  </patternset>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.apachehttp.classpath">
+    <fileset dir="${basedir}/lib/apachehttp">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.converter.classpath">
+    <fileset dir="${basedir}/lib/converter">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.jide.classpath">
+    <fileset dir="${basedir}/lib/jide">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.misc.classpath">
+    <fileset dir="${basedir}/lib/misc">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.render.classpath">
+    <fileset dir="${basedir}/lib/render">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.spring.classpath">
+    <fileset dir="${basedir}/lib/spring">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module PS4k -->
+  
+  <dirname property="module.ps4k.basedir" file="${ant.file}"/>
+  
+  
+  
+  <property name="compiler.args.ps4k" value="-encoding UTF-8 -source 1.7 -target 1.7 ${compiler.args}"/>
+  
+  <property name="ps4k.output.dir" value="${module.ps4k.basedir}/out/production/PS4k"/>
+  <property name="ps4k.testoutput.dir" value="${module.ps4k.basedir}/out/test/PS4k"/>
+  
+  <path id="ps4k.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ps4k.module.production.classpath">
+    <path refid="library.spring.classpath"/>
+    <path refid="library.apachehttp.classpath"/>
+    <path refid="library.render.classpath"/>
+    <path refid="library.jide.classpath"/>
+    <path refid="library.converter.classpath"/>
+    <pathelement location="${basedir}"/>
+    <path refid="library.misc.classpath"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+  </path>
+  
+  <path id="ps4k.runtime.production.module.classpath">
+    <pathelement location="${ps4k.output.dir}"/>
+    <path refid="library.spring.classpath"/>
+    <path refid="library.apachehttp.classpath"/>
+    <path refid="library.render.classpath"/>
+    <path refid="library.jide.classpath"/>
+    <path refid="library.converter.classpath"/>
+    <pathelement location="${basedir}"/>
+    <path refid="library.misc.classpath"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+  </path>
+  
+  <path id="ps4k.module.classpath">
+    <pathelement location="${ps4k.output.dir}"/>
+    <path refid="library.spring.classpath"/>
+    <path refid="library.apachehttp.classpath"/>
+    <path refid="library.render.classpath"/>
+    <path refid="library.jide.classpath"/>
+    <path refid="library.converter.classpath"/>
+    <pathelement location="${basedir}"/>
+    <path refid="library.misc.classpath"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+  </path>
+  
+  <path id="ps4k.runtime.module.classpath">
+    <pathelement location="${ps4k.testoutput.dir}"/>
+    <pathelement location="${ps4k.output.dir}"/>
+    <path refid="library.spring.classpath"/>
+    <path refid="library.apachehttp.classpath"/>
+    <path refid="library.render.classpath"/>
+    <path refid="library.jide.classpath"/>
+    <path refid="library.converter.classpath"/>
+    <pathelement location="${basedir}"/>
+    <path refid="library.misc.classpath"/>
+    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+    <pathelement location="${idea.home}/lib/junit-4.12.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ps4k">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ps4k">
+    <patternset refid="excluded.from.module.ps4k"/>
+  </patternset>
+  
+  <path id="ps4k.module.sourcepath">
+    <dirset dir="${module.ps4k.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.ps4k" depends="compile.module.ps4k.production,compile.module.ps4k.tests" description="Compile module PS4k"/>
+  
+  <target name="compile.module.ps4k.production" description="Compile module PS4k; production classes">
+    <mkdir dir="${ps4k.output.dir}"/>
+    <javac destdir="${ps4k.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.ps4k}"/>
+      <bootclasspath refid="ps4k.module.bootclasspath"/>
+      <classpath refid="ps4k.module.production.classpath"/>
+      <src refid="ps4k.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ps4k"/>
+    </javac>
+    
+    <copy todir="${ps4k.output.dir}">
+      <fileset dir="${module.ps4k.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.ps4k.tests" depends="compile.module.ps4k.production" description="compile module PS4k; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.ps4k" description="cleanup module">
+    <delete dir="${ps4k.output.dir}"/>
+    <delete dir="${ps4k.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.ps4k, clean.artifact.lib" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.ps4k" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.images" value="${basedir}/out/artifacts/PS4k_jar"/>
+    <property name="artifact.output.lib" value="${basedir}/out/artifacts/PS4k_jar/lib"/>
+    <property name="artifact.output.ps4k:jar" value="${basedir}/out/artifacts/PS4k_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.images.jar" value="${artifacts.temp.dir}/images.jar"/>
+    <property name="temp.jar.path.main.jar" value="${artifacts.temp.dir}/main.jar"/>
+  </target>
+  
+  <target name="clean.artifact.lib" description="clean lib artifact output">
+    <delete dir="${artifact.output.lib}"/>
+  </target>
+  
+  <target name="artifact.images" depends="init.artifacts" description="Build &#39;images&#39; artifact">
+    <property name="artifact.temp.output.images" value="${artifacts.temp.dir}/images"/>
+    <mkdir dir="${artifact.temp.output.images}"/>
+    <jar destfile="${temp.jar.path.images.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${basedir}/images" prefix="images"/>
+    </jar>
+    <copy file="${temp.jar.path.images.jar}" tofile="${artifact.temp.output.images}/images.jar"/>
+  </target>
+  
+  <target name="artifact.lib" depends="init.artifacts" description="Build &#39;lib&#39; artifact">
+    <mkdir dir="${artifact.output.lib}"/>
+    <copy file="${basedir}/lib/spring/log4j-1.2.17.jar" tofile="${artifact.output.lib}/log4j-1.2.17.jar"/>
+    <copy file="${basedir}/lib/spring/commons-logging-1.1.1.jar" tofile="${artifact.output.lib}/commons-logging-1.1.1.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.asm-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.asm-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.orm-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.orm-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.core-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.core-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.beans-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.beans-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.aspects-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.aspects-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.context-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.context-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.expression-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.expression-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/log4j-1.2.17.jar" tofile="${artifact.output.lib}/log4j-1.2.17.jar"/>
+    <copy file="${basedir}/lib/spring/commons-logging-1.1.1.jar" tofile="${artifact.output.lib}/commons-logging-1.1.1.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.asm-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.asm-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.orm-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.orm-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.core-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.core-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.beans-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.beans-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.aspects-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.aspects-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.context-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.context-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/spring/org.springframework.expression-3.1.2.RELEASE.jar" tofile="${artifact.output.lib}/org.springframework.expression-3.1.2.RELEASE.jar"/>
+    <copy file="${basedir}/lib/apachehttp/httpcore-4.2.1.jar" tofile="${artifact.output.lib}/httpcore-4.2.1.jar"/>
+    <copy file="${basedir}/lib/apachehttp/httpmime-4.2.1.jar" tofile="${artifact.output.lib}/httpmime-4.2.1.jar"/>
+    <copy file="${basedir}/lib/apachehttp/httpclient-4.2.1.jar" tofile="${artifact.output.lib}/httpclient-4.2.1.jar"/>
+    <copy file="${basedir}/lib/apachehttp/commons-codec-1.6.jar" tofile="${artifact.output.lib}/commons-codec-1.6.jar"/>
+    <copy file="${basedir}/lib/apachehttp/httpcore-4.2.1.jar" tofile="${artifact.output.lib}/httpcore-4.2.1.jar"/>
+    <copy file="${basedir}/lib/apachehttp/httpmime-4.2.1.jar" tofile="${artifact.output.lib}/httpmime-4.2.1.jar"/>
+    <copy file="${basedir}/lib/apachehttp/httpclient-4.2.1.jar" tofile="${artifact.output.lib}/httpclient-4.2.1.jar"/>
+    <copy file="${basedir}/lib/apachehttp/commons-codec-1.6.jar" tofile="${artifact.output.lib}/commons-codec-1.6.jar"/>
+    <copy file="${basedir}/lib/render/jpct.jar" tofile="${artifact.output.lib}/jpct.jar"/>
+    <copy file="${basedir}/lib/render/jpct.jar" tofile="${artifact.output.lib}/jpct.jar"/>
+    <copy file="${basedir}/lib/jide/jide-dock.jar" tofile="${artifact.output.lib}/jide-dock.jar"/>
+    <copy file="${basedir}/lib/jide/jide-action.jar" tofile="${artifact.output.lib}/jide-action.jar"/>
+    <copy file="${basedir}/lib/jide/jide-common.jar" tofile="${artifact.output.lib}/jide-common.jar"/>
+    <copy file="${basedir}/lib/converter/jts-1.8.jar" tofile="${artifact.output.lib}/jts-1.8.jar"/>
+    <copy file="${basedir}/lib/converter/jai_core.jar" tofile="${artifact.output.lib}/jai_core.jar"/>
+    <copy file="${basedir}/lib/converter/jai_codec.jar" tofile="${artifact.output.lib}/jai_codec.jar"/>
+    <copy file="${basedir}/lib/converter/jt-all-1.3.1.jar" tofile="${artifact.output.lib}/jt-all-1.3.1.jar"/>
+    <copy file="${basedir}/lib/converter/slf4j-api-1.6.5.jar" tofile="${artifact.output.lib}/slf4j-api-1.6.5.jar"/>
+    <copy file="${basedir}/lib/converter/slf4j-log4j12-1.6.5.jar" tofile="${artifact.output.lib}/slf4j-log4j12-1.6.5.jar"/>
+    <copy file="${basedir}/lib/converter/poly2tri-core-0.1.1-SNAPSHOT.jar" tofile="${artifact.output.lib}/poly2tri-core-0.1.1-SNAPSHOT.jar"/>
+    <copy file="${basedir}/lib/converter/poly2tri-ardor3d-0.1.1-SNAPSHOT.jar" tofile="${artifact.output.lib}/poly2tri-ardor3d-0.1.1-SNAPSHOT.jar"/>
+    <copy file="${basedir}/lib/misc/trove-3.0.3.jar" tofile="${artifact.output.lib}/trove-3.0.3.jar"/>
+    <copy file="${basedir}/lib/misc/algs4-package.jar" tofile="${artifact.output.lib}/algs4-package.jar"/>
+    <copy file="${basedir}/lib/misc/stdlib-package.jar" tofile="${artifact.output.lib}/stdlib-package.jar"/>
+    <copy file="${basedir}/lib/misc/pngtastic-0.4.0.jar" tofile="${artifact.output.lib}/pngtastic-0.4.0.jar"/>
+  </target>
+  
+  <target name="artifact.ps4k:jar" depends="init.artifacts, compile.module.ps4k" description="Build &#39;PS4k:jar&#39; artifact">
+    <property name="artifact.temp.output.ps4k:jar" value="${artifacts.temp.dir}/PS4k_jar"/>
+    <mkdir dir="${artifact.temp.output.ps4k:jar}"/>
+    <ant antfile="" target="null" dir="">
+      <property name="artifact.output.path" value="${artifact.temp.output.ps4k:jar}"/>
+    </ant>
+    <jar destfile="${temp.jar.path.main.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
+      <zipfileset dir="${ps4k.output.dir}"/>
+      <zipfileset dir="${basedir}/resource" prefix="resource"/>
+    </jar>
+    <copy file="${temp.jar.path.main.jar}" tofile="${artifact.temp.output.ps4k:jar}/main.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.images, artifact.lib, artifact.ps4k:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.images}"/>
+    <copy todir="${artifact.output.images}">
+      <fileset dir="${artifact.temp.output.images}"/>
+    </copy>
+    <mkdir dir="${artifact.output.ps4k:jar}"/>
+    <copy todir="${artifact.output.ps4k:jar}">
+      <fileset dir="${artifact.temp.output.ps4k:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
