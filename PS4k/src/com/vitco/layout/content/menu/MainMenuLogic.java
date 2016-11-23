@@ -550,7 +550,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         labelMagicaVoxel.setVisibleLookup("export_type=magicavoxel_format");
         magicaVoxelExporter.addComponent(labelMagicaVoxel);
 
-        final CheckBoxModule fit_to_size = new CheckBoxModule("fit_to_size", "Use bounding box as chunk", false);
+        final CheckBoxModule fit_to_size = new CheckBoxModule("fit_to_size", "Fit to Size", false);
         magicaVoxelExporter.addComponent(fit_to_size);
 
         // ---------------
