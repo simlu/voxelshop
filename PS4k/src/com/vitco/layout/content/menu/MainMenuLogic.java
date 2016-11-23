@@ -546,9 +546,12 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         FieldSet magicaVoxelExporter = new FieldSet("magicavoxel_format", "MagicaVoxel Format (*.vox)");
 
         // add information for voxel format
-        LabelModule labelMagicaVoxel = new LabelModule("MagicaVoxel Format (150)\nhttps://github.com/ephtracy/voxel-model/");
+        LabelModule labelMagicaVoxel = new LabelModule("Export as MagicaVoxel Format Version 150.");
         labelMagicaVoxel.setVisibleLookup("export_type=magicavoxel_format");
         magicaVoxelExporter.addComponent(labelMagicaVoxel);
+
+        final CheckBoxModule fit_to_size = new CheckBoxModule("fit_to_size", "Fit to Size", true);
+        magicaVoxelExporter.addComponent(fit_to_size);
 
         // ---------------
 
@@ -919,7 +922,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                    MagicaVoxelExporter exporter = new MagicaVoxelExporter(exportTo, data, progressDialog, console);
+                                    MagicaVoxelExporter exporter = new MagicaVoxelExporter(
+                                            exportTo, data, progressDialog, console, dialog.is("magicavoxel_format.fit_to_size=true"));
                                     success = exporter.writeData();
                                 } catch (IOException ignored) {
                                     success = false;
