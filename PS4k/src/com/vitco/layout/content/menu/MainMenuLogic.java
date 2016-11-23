@@ -3,6 +3,7 @@ package com.vitco.layout.content.menu;
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
+import com.threed.jpct.SimpleVector;
 import com.vitco.core.data.container.Voxel;
 import com.vitco.export.*;
 import com.vitco.export.collada.ColladaExportWrapper;
@@ -19,6 +20,7 @@ import com.vitco.util.components.dialog.components.*;
 import com.vitco.util.components.progressbar.ProgressDialog;
 import com.vitco.util.components.progressbar.ProgressWorker;
 import com.vitco.util.file.FileTools;
+import com.vitco.util.misc.AnimatedGifEncoder;
 import com.vitco.util.misc.CFileDialog;
 import com.vitco.util.misc.ColorTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -532,6 +534,59 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // ---------------
 
+        // add "turntable image sequence" export
+        FieldSet turnTableImageSeq = new FieldSet("turntable_image_sequence", "Turntable Render (*.png)");
+        turnTableImageSeq.addComponent(new LabelModule("Render as multiple image sequence"));
+        final TextInputModule frameCount = new TextInputModule("frames_count", "Number of frames", "60", true);
+        frameCount.setVisibleLookup("export_type=turntable_image_sequence");
+
+        turnTableImageSeq.addComponent(frameCount);
+        turnTableImageSeq.addComponent(new CheckBoxModule("watermark", "Add watermark: Show VoxelShop some love", true));
+        turnTableImageSeq.addComponent(new SeparatorModule("Animation orbit:"));
+        turnTableImageSeq.addComponent(new ComboBoxModule("animation_orbit", new String[][]{
+                new String[]{"clockwise", "ClockWise"},
+                new String[]{"anti-clockwise", "Anti-Colockwise"},
+        }, 0));
+        turnTableImageSeq.addComponent(new SeparatorModule(""));
+        turnTableImageSeq.addComponent(new CheckBoxModule("add_background_color", "Add Image background color", false));
+        TextInputModule TISBackgroundColor = new TextInputModule("background_color", "Image Background Color: e.g #ffffff", "#000000", true);
+        TISBackgroundColor.setVisibleLookup("export_type=turntable_image_sequence&turntable_image_sequence.add_background_color=true");
+        TISBackgroundColor.setEnabledLookup("export_type=turntable_image_sequence&turntable_image_sequence.add_background_color=true");
+        turnTableImageSeq.addComponent(TISBackgroundColor);
+
+        // ---------------
+
+        // add "turntable animation" export
+        FieldSet turntableAnim = new FieldSet("turntable_animation", "Turntable Render (*.gif)");
+        turntableAnim.addComponent(new LabelModule("Render as Turntable animation"));
+        turntableAnim.addComponent(new CheckBoxModule("watermark", "Add watermark: Show VoxelShop some love", true));
+        turntableAnim.addComponent(new SeparatorModule("Animation quality: 1-10"));
+        turntableAnim.addComponent(new LabelModule("1 = Lowest quality"));
+        turntableAnim.addComponent(new LabelModule("10 = Highest quality"));
+        TextInputModule TIAnimQuality = new TextInputModule("animation_quality", "", "5", true);
+        TIAnimQuality.setVisibleLookup("export_type=turntable_animation");
+        turntableAnim.addComponent(TIAnimQuality);
+        turntableAnim.addComponent(new SeparatorModule("Animation speed:"));
+        turntableAnim.addComponent(new ComboBoxModule("animation_speed", new String[][]{
+                new String[]{"fast", "Fast"},
+                new String[]{"normal", "Normal"},
+                new String[]{"slow", "Slow"},
+        }, 1));
+
+        turntableAnim.addComponent(new SeparatorModule("Animation orbit:"));
+        turntableAnim.addComponent(new ComboBoxModule("animation_orbit", new String[][]{
+                new String[]{"clockwise", "ClockWise"},
+                new String[]{"anti-clockwise", "Anti-Colockwise"},
+        }, 0));
+        turntableAnim.addComponent(new SeparatorModule(""));
+        turntableAnim.addComponent(new CheckBoxModule("add_background_color", "Add Animation background color", false));
+        TextInputModule TIBackgroundColor = new TextInputModule("background_color", "Animation Background Color: e.g #ffffff", "#000000", true);
+        TIBackgroundColor.setVisibleLookup("export_type=turntable_animation&turntable_animation.add_background_color=true");
+        TIBackgroundColor.setEnabledLookup("export_type=turntable_animation&turntable_animation.add_background_color=true");
+        turntableAnim.addComponent(TIBackgroundColor);
+
+        // ---------------
+
         // add "vox (the game)" exporter
         FieldSet voxExporter = new FieldSet("vox_game_format", "Vox Game Format (*.vox)");
 
@@ -626,7 +681,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // add all formats
         dialog.addComboBox("export_type", new FieldSet[] {
-                collada, voxExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
+                collada, voxExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer, turnTableImageSeq, turntableAnim
         }, 0);
 
         // ---------------
@@ -710,7 +765,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 progressDialog.setActivity("Writing Render...", true);
                                 BufferedImage image = mainView.getImage();
                                 try {
-                                    ImageIO.write(image,"png", exportRenderTo);
+                                    ImageIO.write(image, "png", exportRenderTo);
                                 } catch (IOException e) {
                                     errorHandler.handle(e);
                                 }
@@ -719,7 +774,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     progressDialog.setActivity("Writing Depth Render...", true);
                                     BufferedImage depth = mainView.getDepthImage();
                                     try {
-                                        ImageIO.write(depth,"png", finalExportDepthMapTo);
+                                        ImageIO.write(depth, "png", finalExportDepthMapTo);
                                     } catch (IOException e) {
                                         errorHandler.handle(e);
                                     }
@@ -729,6 +784,206 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         });
 
                         // ===========
+
+                    } else if (dialog.is("export_type=turntable_image_sequence")) {
+
+                        // ===========
+
+                        // -- export turntable image sequence
+                        // check if folder is empty
+                        // went with this approach cause it's "cheaper"
+                        try {
+                            final File[] fileList = toValidateFolder.getParentFile().listFiles();
+                            if (fileList != null && fileList.length > 0) {
+                                if (JOptionPane.showConfirmDialog(frame,
+                                        langSelector.getString("folder_not_empty_query"),
+                                        langSelector.getString("folder_not_empty_query_title"),
+                                        JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                    return false;
+                                }
+                            }
+                        } catch (Exception e) {
+                            errorHandler.handle(e);
+                        }
+
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // export color render (image)
+                                progressDialog.setActivity("Processing turntable image sequence", true);
+                                // get camera initial position for rotation calculation
+                                float[] initCamPos = mainView.getCamPosition();
+                                // get number of frames
+                                float animFramesCount = 360f / Integer.parseInt(dialog.getValue("turntable_image_sequence.frames_count"));
+                                if (animFramesCount == Float.NaN) {
+                                    // sanity check
+                                    console.addLine("Error: Invalid frames count");
+                                    return false;
+                                }
+
+                                final boolean addWatermark = dialog.is("turntable_image_sequence.watermark=true");
+                                final boolean animClockwise = dialog.is("turntable_image_sequence.animation_orbit=clockwise");
+
+                                Color bgColor = null;
+                                try {
+                                    final String colorHex = dialog.getValue("turntable_image_sequence.background_color");
+                                    if (dialog.is("turntable_image_sequence.add_background_color=true")) {
+                                        // validation check
+                                        if (!colorHex.isEmpty() && colorHex.length() == (colorHex.startsWith("#") ? 7 : 6))
+                                            bgColor = Color.decode(colorHex.startsWith("#") ? colorHex : "#" + colorHex);
+                                        else throw new NumberFormatException();
+                                    }
+                                } catch (NumberFormatException e) {
+                                    console.addLine("Error: Invalid image background color");
+                                    errorHandler.handle(e);
+                                    return false;
+                                }
+
+                                final long time = System.currentTimeMillis();
+
+                                // exported files count
+                                int count = 0;
+                                for (float i = 0f; i < 360f; i += animFramesCount) {
+                                    // get current rotation angle in radians (clockwise or anti-clockwise)
+                                    final float rotAngleDeg = (float) Math.toRadians((animClockwise ? i : 360f - i));
+                                    // current export file name
+                                    final String renderName = baseName + "_" + (count + 1) + ".png";
+                                    progressDialog.setActivity("Exporting " + renderName, true);
+
+                                    // camera's rotation calculation
+                                    SimpleVector camPos = new SimpleVector(initCamPos);
+                                    camPos.x += (float) Math.sin(rotAngleDeg);
+                                    camPos.z += (float) Math.cos(rotAngleDeg);
+
+                                    try {
+                                        BufferedImage image = mainView.getImage(camPos.rotate(new SimpleVector(0f,
+                                                rotAngleDeg, 0f)), bgColor, addWatermark, true);
+                                        ImageIO.write(image, "png", new File(renderName));
+                                        count++;
+                                    } catch (Exception e) {
+                                        errorHandler.handle(e);
+                                        console.addLine(String.format(langSelector.getString("export_files_error"), count));
+                                        return false;
+                                    }
+                                }
+                                console.addLine(String.format(langSelector.getString("export_files_successful"), System.currentTimeMillis() - time, count));
+                                return null;
+                            }
+                        });
+
+                        // ===========
+
+                    } else if (dialog.is("export_type=turntable_animation")) {
+
+                        // ===========
+
+                        // -- export turntable animation
+                        // extract file name
+                        final File exportRenderTo = new File(baseName + (baseName.endsWith(".gif") ? "" : ".gif"));
+                        // check if file exists
+                        if (exportRenderTo.exists()) {
+                            if (JOptionPane.showConfirmDialog(frame,
+                                    exportRenderTo.getPath() + " " + langSelector.getString("replace_file_query"),
+                                    langSelector.getString("replace_file_query_title"),
+                                    JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
+                                return false;
+                            }
+                        }
+
+                        // create progress dialog
+                        final ProgressDialog progressDialog = new ProgressDialog(frame);
+                        progressDialog.start(new ProgressWorker() {
+                            @Override
+                            protected Object doInBackground() throws Exception {
+
+                                // export color render (image)
+                                progressDialog.setActivity("Exporting turntable animation", true);
+                                float[] initialCamPosition = mainView.getCamPosition();
+
+                                // animation speed
+                                float animSpeed = 0;
+                                // get animation speed user input
+                                final String speed = dialog.getValue("turntable_animation.animation_speed");
+                                if (speed.equals("fast"))
+                                    animSpeed = 12f;
+                                else if (speed.equals("normal"))
+                                    animSpeed = 6f;
+                                else if (speed.equals("slow"))
+                                    animSpeed = 3f;
+                                else {
+                                    // this "normally" should never run
+                                    console.addLine("Error: Invalid animation speed");
+                                    return false;
+                                }
+
+                                // animation quality
+                                int animQuality = Integer.parseInt(dialog.getValue("turntable_animation.animation_quality"));
+                                if (animQuality < 1 || animQuality > 10) {
+                                    console.addLine("Error: Invalid animation quality");
+                                    return false;
+                                } else {
+                                    animQuality = 20 / (animQuality * 2);
+                                }
+
+                                final boolean addWatermark = dialog.is("turntable_animation.watermark=true");
+                                final boolean animClockwise = dialog.is("turntable_animation.animation_orbit=clockwise");
+
+                                Color bgColor = null;
+                                try {
+                                    final String colorHex = dialog.getValue("turntable_animation.background_color");
+                                    if (dialog.is("turntable_animation.add_background_color=true")) {
+                                        // validation check
+                                        if (!colorHex.isEmpty() && colorHex.length() == (colorHex.startsWith("#") ? 7 : 6))
+                                            bgColor = Color.decode(colorHex.startsWith("#") ? colorHex : "#" + colorHex);
+                                        else throw new NumberFormatException();
+                                    }
+                                } catch (NumberFormatException e) {
+                                    console.addLine("Error: Invalid animation background color");
+                                    errorHandler.handle(e);
+                                    return false;
+                                }
+
+                                final long time = System.currentTimeMillis();
+
+                                // Setup gif encoder
+                                AnimatedGifEncoder gifEncoder = new AnimatedGifEncoder();
+                                gifEncoder.setRepeat(0);
+                                gifEncoder.setQuality(animQuality);
+                                gifEncoder.setTransparent(bgColor == null ? Color.BLACK : null);
+                                gifEncoder.start(new FileOutputStream(exportRenderTo));
+
+                                for (float i = 0f; i < 360f; i += animSpeed) {
+                                    // get current rotation angle in radians (clockwise or anti-clockwise)
+                                    final float rotAngleDeg = (float) Math.toRadians((animClockwise ? i : 360f - i));
+
+                                    // camera's rotation calculation
+                                    SimpleVector camPos = new SimpleVector(initialCamPosition);
+                                    camPos.x += (float) Math.sin(rotAngleDeg);
+                                    camPos.z += (float) Math.cos(rotAngleDeg);
+
+                                    try {
+                                        if (!gifEncoder.addFrame(mainView.getImage(camPos.rotate(new SimpleVector(0f,
+                                                rotAngleDeg, 0f)), (bgColor == null ? Color.BLACK : bgColor), addWatermark, true))) {
+                                            console.addLine("Error: An error occurred while exporting animation");
+                                            gifEncoder.finish();
+                                            return false;
+                                        }
+                                        gifEncoder.setDispose(bgColor == null ? 2 : 0);
+                                    } catch (Exception e) {
+                                        gifEncoder.finish();
+                                        errorHandler.handle(e);
+                                        console.addLine(langSelector.getString("export_file_error"));
+                                        return false;
+                                    }
+                                }
+                                gifEncoder.finish();
+                                console.addLine(String.format(langSelector.getString("export_file_successful"), System.currentTimeMillis() - time));
+                                return null;
+                            }
+                        });
 
                     } else if (dialog.is("export_type=collada")) {
 

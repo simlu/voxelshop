@@ -86,8 +86,27 @@ public abstract class EngineViewPrototype extends ViewPrototype {
         return container.getWidth();
     }
     // get the image rendered in container in high quality
-    public BufferedImage getImage() {
+    public BufferedImage getImage() throws Exception {
         return container.getImage();
+    }
+
+    // get camera position
+    public final float[] getCamPosition() { return this.camera.getCamPosition(); }
+
+    public BufferedImage getImage(final Color bgColor, final boolean addWatermark) throws Exception { return container.getImage(bgColor, addWatermark); }
+    public BufferedImage getImage(SimpleVector camPos, final Color bgColor, final boolean addWatermark) throws Exception { return this.getImage(camPos, bgColor, addWatermark, false); }
+    public BufferedImage getImage(SimpleVector camPos, final Color bgColor, final boolean addWatermark, final boolean camLookAtOrigin) throws Exception {
+        // get camera's initial position
+        float[] initialCamPos = this.getCamPosition();
+        // set camera position for the "shot"
+        this.camera.setPosition(camPos.x, camPos.y, camPos.z);
+        // camera look at origin
+        if (camLookAtOrigin) this.camera.lookAt(new SimpleVector());
+
+        BufferedImage image = getImage(bgColor, addWatermark);
+        // reset camera to it initial position
+        this.camera.setView(new SimpleVector(initialCamPos));
+        return image;
     }
     // get the depth image
     public BufferedImage getDepthImage() {

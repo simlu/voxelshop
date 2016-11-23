@@ -71,6 +71,11 @@ public class CCamera extends Camera {
         return new SimpleVector(-centerShift.x, -centerShift.y-amountShifted[1], -centerShift.z);
     }
 
+    // getting the camera's position
+    public final float[] getCamPosition() {
+        return this.getPosition().toArray();
+    }
+
     public void zoomIn(float speed) {
         if (enableCamera && speed != 0) {
             speed = Math.abs(speed);

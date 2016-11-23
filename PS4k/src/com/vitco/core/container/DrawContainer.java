@@ -6,6 +6,7 @@ import com.vitco.manager.async.AsyncAction;
 import com.vitco.settings.DynamicSettings;
 import com.vitco.settings.VitcoSettings;
 import com.vitco.util.graphic.G2DUtil;
+import com.vitco.util.misc.SaveResourceLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -807,7 +808,8 @@ public abstract class DrawContainer extends AbstractDrawContainer {
     }
 
     // get the image currently rendered in high quality
-    public final BufferedImage getImage() {
+    public final BufferedImage getImage() throws Exception { return this.getImage(null, false); }
+    public final BufferedImage getImage(final Color bgColor, final boolean addWatermark) throws Exception {
         Config.useFramebufferWithAlpha = true;
         HackedFrameBuffer fb = new HackedFrameBuffer(getWidth()*2, getHeight()*2, FrameBuffer.SAMPLINGMODE_NORMAL);
         Config.useFramebufferWithAlpha = false;
@@ -853,6 +855,26 @@ public abstract class DrawContainer extends AbstractDrawContainer {
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // background color
+        // null for transparent
+        if (bgColor != null) {
+            g2d.setPaint(bgColor);
+            g2d.fillRect(0, 0, largeResult.getWidth() / 2, largeResult.getHeight() / 2);
+        }
+
+        // render watermark
+        if (addWatermark) {
+            g2d.setPaint(VitcoSettings.RENDER_WATERMARK_TEXT_COLOR);
+            final Font font = Font.createFont(Font.TRUETYPE_FONT,
+                    new SaveResourceLoader("resource/font/arcade.ttf").asInputStream()).deriveFont(Font.PLAIN,
+                    VitcoSettings.RENDER_WATERMARK_TEXT_SIZE);
+            g2d.setFont(font);
+            final String renderWatermark = "VoxelShop";
+            final int textWidth = g2d.getFontMetrics().stringWidth(renderWatermark);
+            g2d.drawString(renderWatermark, (largeResult.getWidth() / 2) - textWidth - 20,
+                    (largeResult.getHeight() / 2) - VitcoSettings.RENDER_WATERMARK_TEXT_SIZE);
+        }
         g2d.drawImage(largeResult, 0, 0, largeResult.getWidth()/2, largeResult.getHeight()/2, null);
         g2d.dispose();
 

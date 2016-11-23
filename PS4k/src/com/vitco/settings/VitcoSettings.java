@@ -209,5 +209,8 @@ public final class VitcoSettings {
 
     // splash screen colors
     public static final Color SPLASH_SCREEN_OVERLAY_TEXT_COLOR = new Color(255, 103, 0);
+    // render watermark text
+    public static final Color RENDER_WATERMARK_TEXT_COLOR = new Color(130, 130, 130, 140);
+    public static final float RENDER_WATERMARK_TEXT_SIZE = 24f;
 
 }
