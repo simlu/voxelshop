@@ -17,32 +17,32 @@ public class MagicaVoxelExporter extends AbstractExporter {
     private final static int PALETTE_SIZE = 255;
     private final static int MV_VERSION = 150;
     private final static int MV_DEFAULT_PALETTE_COLOR = new Color(75, 75, 75).getRGB();
-    private final boolean useBoxAsChunk;
+    private final boolean fitToSize;
 
-    public MagicaVoxelExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console, boolean useBoxAsChunk) throws IOException {
+    public MagicaVoxelExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console, boolean fitToSize) throws IOException {
         super(exportTo, data, dialog, console);
-        this.useBoxAsChunk = useBoxAsChunk;
+        this.fitToSize = fitToSize;
     }
 
     // Write File
     @Override
     protected boolean writeFile() throws IOException {
 
-        final int[] min = useBoxAsChunk ? new int[] {
+        final int[] min = fitToSize ? getMin() : new int[]{
                 DynamicSettings.VOXEL_PLANE_RANGE_X_NEG + 1,
                 -DynamicSettings.VOXEL_PLANE_SIZE_Y + 1,
                 DynamicSettings.VOXEL_PLANE_RANGE_Z_NEG + 1
-        } : getMin();
-        final int[] max = useBoxAsChunk ? new int[] {
+        };
+        final int[] max = fitToSize ? getMax() : new int[]{
                 DynamicSettings.VOXEL_PLANE_RANGE_X_POS - 1,
                 0,
                 DynamicSettings.VOXEL_PLANE_RANGE_Z_POS - 1
-        } : getMax();
-        final int[] size = useBoxAsChunk ? new int[]{
+        };
+        final int[] size = fitToSize ? getSize() : new int[]{
                 max[0] - min[0] + 1,
                 max[1] - min[1] + 1,
                 max[2] - min[2] + 1
-        } : getSize();
+        };
 
         final int[] colors = getColors();
         if (colors.length > PALETTE_SIZE) {
