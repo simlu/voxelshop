@@ -37,6 +37,7 @@
         </resources>
 
         <plugins>
+            <!-- Make git information available -->
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
@@ -62,6 +63,7 @@
                 <version>2.5.3</version>
                 <configuration>
                     <descriptor>pack.xml</descriptor>
+                    <finalName>build/ps4k-${git.branch}-${git.commit.id.describe-short}</finalName>
                 </configuration>
                 <executions>
                     <execution>
