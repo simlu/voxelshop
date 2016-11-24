@@ -15,3 +15,4 @@ deploy:
   acl: public_read
   on:
       all_branches: true
+      jdk: oraclejdk7
