@@ -20,12 +20,14 @@
 
     <build>
         <resources>
+            <!-- Ensure that xml files are included -->
             <resource>
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**/*.xml</include>
                 </includes>
             </resource>
+            <!-- Ensure that the log4j configuration is included -->
             <resource>
                 <directory>src/main/java</directory>
                 <includes>
@@ -48,11 +50,11 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <!-- here the phase you need -->
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
+                        <!-- Copy the resources folder -->
                         <configuration>
                             <outputDirectory>${project.build.directory}/classes/resource</outputDirectory>
                             <resources>
@@ -76,6 +78,7 @@
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
+                        <!-- Generate the lib/*.jar files according to definition below -->
                         <configuration>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
@@ -96,6 +99,7 @@
                             <addClasspath>true</addClasspath>
                             <mainClass>com.vitco.app.App</mainClass>
                         </manifest>
+                        <!-- Define the generated lib/*.jar dependencies -->
                         <manifestEntries>
                             <Class-Path>
                                 ./lib/commons-codec-1.6.jar
@@ -141,6 +145,7 @@
         </plugins>
     </build>
 
+    <!-- Make the local jar dependencies accessible -->
     <dependencies>
         <dependency>
             <artifactId>commons-codec</artifactId>
