@@ -65,6 +65,23 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-images</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <!-- Copy the images folder -->
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/images</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${pom.basedir}/images</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -101,6 +118,7 @@
                         </manifest>
                         <!-- Define the generated lib/*.jar dependencies -->
                         <manifestEntries>
+                            <SplashScreen-Image>images/splash.png</SplashScreen-Image>
                             <Class-Path>
                                 ./lib/commons-codec-1.6.jar
                                 ./lib/httpclient-4.2.1.jar
