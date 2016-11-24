@@ -10,7 +10,7 @@ deploy:
   bucket: $S3_BUCKET
   region: $S3_REGION
   upload-dir: build
-  local-dir: build
+  local-dir: $TRAVIS_BUILD_DIR/build
   skip_cleanup: true
   acl: public_read
   on:
