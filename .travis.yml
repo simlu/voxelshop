@@ -9,8 +9,6 @@ deploy:
   secret_access_key: $S3_SECRET_ACCESS_KEY
   bucket: $S3_BUCKET
   region: $S3_REGION
-  upload-dir: build
-  local-dir: build
   skip_cleanup: true
   acl: public_read
   on:
