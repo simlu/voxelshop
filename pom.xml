@@ -18,13 +18,6 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
-    <scm>
-        <connection>scm:git:https://github.com/simlu/voxelshop</connection>
-        <developerConnection>scm:git:https://github.com/simlu/voxelshop</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/simlu/voxelshop</url>
-    </scm>
-
     <build>
         <resources>
             <!-- Ensure that xml files are included -->
@@ -44,23 +37,6 @@
         </resources>
 
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <doCheck>true</doCheck>
-                    <doUpdate>true</doUpdate>
-                </configuration>
-            </plugin>
 
             <!-- Create *.zip archive with required files -->
             <plugin>
