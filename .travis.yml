@@ -2,3 +2,11 @@ language: java
 jdk:
   - oraclejdk8
   - oraclejdk7
+
+deploy:
+  provider: s3
+  access_key_id: $S3_ACCESS_KEY_ID
+  secret_access_key: $S3_SECRET_ACCESS_KEY
+  bucket: $S3_BUCKET
+  skip_cleanup: true
+  acl: public_read
