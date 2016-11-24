@@ -13,3 +13,5 @@ deploy:
   local-dir: build
   skip_cleanup: true
   acl: public_read
+  on:
+      branch: release
