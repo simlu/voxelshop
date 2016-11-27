@@ -3,6 +3,9 @@ jdk:
   - oraclejdk8
   - oraclejdk7
 
+after_script:
+  echo "Some text here." > $TRAVIS_BUILD_DIR/resource/jidelicense.txt
+
 deploy:
   provider: s3
   access_key_id: $S3_ACCESS_KEY_ID
