@@ -7,7 +7,7 @@
     <groupId>com.blackflux.ps4k</groupId>
     <artifactId>ps4k</artifactId>
     <packaging>jar</packaging>
-    <version>${git.branch}-${git.commit.id.describe-short}</version>
+    <version>start</version>
 
     <name>VoxelShop</name>
     <url>https://github.com/simlu/voxelshop</url>
@@ -37,25 +37,6 @@
         </resources>
 
         <plugins>
-            <!-- Make git information available -->
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <prefix>git</prefix>
-                    <dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
-                    <verbose>true</verbose>
-                    <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
-                </configuration>
-            </plugin>
 
             <!-- Create *.zip archive with required files -->
             <plugin>
@@ -63,7 +44,7 @@
                 <version>2.5.3</version>
                 <configuration>
                     <descriptor>pack.xml</descriptor>
-                    <finalName>build/ps4k-${git.branch}-${git.commit.id.describe-short}</finalName>
+                    <finalName>build/ps4k-java</finalName>
                 </configuration>
                 <executions>
                     <execution>
