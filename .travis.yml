@@ -8,7 +8,7 @@ before_install:
   - echo "$JIDE_COMPANY_NAME" > $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
   - echo "$JIDE_PROJECT_NAME" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
   - echo "$JIDE_LICENSE_KEY" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
-  - if [ -n "$TRAVIS_TAG" ]; echo "$TRAVIS_TAG" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt
+  - if [ -n "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt; fi
 
 deploy:
   provider: s3
