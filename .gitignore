@@ -10,3 +10,6 @@
 /resource/jidelicense.txt
 /target/
 /resource/version.txt
+/resource/date.txt
+/resource/build.txt
+/resource/branch.txt

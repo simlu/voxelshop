@@ -11,7 +11,7 @@ before_install:
   - echo "$JIDE_LICENSE_KEY" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
   - touch $TRAVIS_BUILD_DIR/target/classes/resource/version.txt
   - if [ -n "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt; fi
-  - if [ "$TRAVIS_BRANCH" -ne "master" ]; then echo "$TRAVIS_BRANCH" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt; fi
+  - echo "$TRAVIS_BRANCH" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt
 
 deploy:
   provider: s3
