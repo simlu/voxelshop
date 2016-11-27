@@ -35,15 +35,36 @@ public class App {
             if (g != null) {
                 g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-                Font font = Font.createFont(
-                        Font.TRUETYPE_FONT,
-                        new SaveResourceLoader("resource/font/arcade.ttf").asInputStream()
-                ).deriveFont(Font.PLAIN, 42f);
-                g.setFont(font);
                 //g.setFont(g.getFont().deriveFont(9f));
                 g.setColor(VitcoSettings.SPLASH_SCREEN_OVERLAY_TEXT_COLOR);
-                int width = g.getFontMetrics().stringWidth(VitcoSettings.VERSION_ID);
-                g.drawString(VitcoSettings.VERSION_ID, 400 - 20 - width, 110);
+                if (VitcoSettings.VERSION_ID != null) {
+                    Font font = Font.createFont(
+                            Font.TRUETYPE_FONT,
+                            new SaveResourceLoader("resource/font/arcade.ttf").asInputStream()
+                    ).deriveFont(Font.PLAIN, 42f);
+                    g.setFont(font);
+                    int width = g.getFontMetrics().stringWidth(VitcoSettings.VERSION_ID);
+                    g.drawString(VitcoSettings.VERSION_ID, 400 - 20 - width, 110);
+
+                }
+                if (VitcoSettings.TRAVIS_BRANCH != null) {
+                    String text = "Branch: " + VitcoSettings.TRAVIS_BRANCH;
+                    g.setFont(VitcoSettings.SPLASH_SCREEN_SMALL_FONT);
+                    int width = g.getFontMetrics().stringWidth(text);
+                    g.drawString(text, 400 - 20 - width, 120);
+                }
+                if (VitcoSettings.TRAVIS_BUILD_NUMBER != null) {
+                    String text = "Build: " + VitcoSettings.TRAVIS_BUILD_NUMBER;
+                    g.setFont(VitcoSettings.SPLASH_SCREEN_SMALL_FONT);
+                    int width = g.getFontMetrics().stringWidth(text);
+                    g.drawString(text, 400 - 20 - width, 135);
+                }
+                if (VitcoSettings.TRAVIS_DATE != null) {
+                    String text = "Date: " + VitcoSettings.TRAVIS_DATE;
+                    g.setFont(VitcoSettings.SPLASH_SCREEN_SMALL_FONT);
+                    int width = g.getFontMetrics().stringWidth(text);
+                    g.drawString(text, 400 - 20 - width, 150);
+                }
                 splash.update();
                 g.dispose();
             }

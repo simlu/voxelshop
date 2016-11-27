@@ -55,10 +55,21 @@ public final class VitcoSettings {
     static {
         SaveResourceLoader saveResourceLoader = new SaveResourceLoader("resource/version.txt");
         VERSION_ID = !saveResourceLoader.error ? saveResourceLoader.asString() : "DEBUG";
+        saveResourceLoader = new SaveResourceLoader("resource/branch.txt");
+        TRAVIS_BRANCH = !saveResourceLoader.error ? saveResourceLoader.asString() : null;
+        saveResourceLoader = new SaveResourceLoader("resource/build.txt");
+        TRAVIS_BUILD_NUMBER = !saveResourceLoader.error ? saveResourceLoader.asString() : null;
+        saveResourceLoader = new SaveResourceLoader("resource/date.txt");
+        TRAVIS_DATE = !saveResourceLoader.error ? saveResourceLoader.asString() : null;
     }
 
-    public static final String VERSION_ID;
     // version id
+    public static final String VERSION_ID;
+    public static final String TRAVIS_BRANCH;
+    public static final String TRAVIS_BUILD_NUMBER;
+    public static final String TRAVIS_DATE;
+    public static final Font SPLASH_SCREEN_SMALL_FONT = new Font("Tohama", Font.PLAIN, 12);
+
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (" + VERSION_ID + ")";
     public static final Font TITLE_FONT = new Font("Tohama", Font.PLAIN, 14);
     public static final Color TITLE_COLOR = new Color(200, 200, 200);
