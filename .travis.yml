@@ -3,7 +3,7 @@ jdk:
   - oraclejdk8
   - oraclejdk7
 
-after_script:
+before_script:
   echo "Some text here." > $TRAVIS_BUILD_DIR/resource/jidelicense.txt
 
 deploy:
