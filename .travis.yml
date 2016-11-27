@@ -4,8 +4,7 @@ jdk:
   - oraclejdk7
 
 before_script:
-  mkdir -p $TRAVIS_BUILD_DIR/target/resource/
-  echo "Some text here." > $TRAVIS_BUILD_DIR/target/resource/jidelicense.txt
+  mkdir -p $TRAVIS_BUILD_DIR/target/resource/ && echo "Some text here." > $TRAVIS_BUILD_DIR/target/resource/jidelicense.txt
 
 deploy:
   provider: s3
