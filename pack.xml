@@ -5,9 +5,11 @@
     <formats>
         <format>zip</format>
     </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
             <directory>${project.basedir}</directory>
+            <outputDirectory>voxelshop/</outputDirectory>
             <includes>
                 <include>README.md</include>
                 <include>LICENSE.txt</include>
@@ -15,14 +17,14 @@
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory> </outputDirectory>
+            <outputDirectory>voxelshop/</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/lib</directory>
-            <outputDirectory>lib/</outputDirectory>
+            <outputDirectory>voxelshop/lib/</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>

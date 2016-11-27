@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.blackflux.ps4k</groupId>
-    <artifactId>ps4k</artifactId>
+    <artifactId>voxelshop</artifactId>
     <packaging>jar</packaging>
     <version>start</version>
 
@@ -44,7 +44,7 @@
                 <version>2.5.3</version>
                 <configuration>
                     <descriptor>pack.xml</descriptor>
-                    <finalName>build/ps4k-java</finalName>
+                    <finalName>build/voxelshop</finalName>
                 </configuration>
                 <executions>
                     <execution>
