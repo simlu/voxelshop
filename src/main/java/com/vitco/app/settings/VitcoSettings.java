@@ -54,6 +54,8 @@ public final class VitcoSettings {
     public static final String VERSION_ID = "1.8.02";
     // version id
     public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
+    public static final Font TITLE_FONT = new Font("Tohama", Font.PLAIN, 14);
+    public static final Color TITLE_COLOR = new Color(200, 200, 200);
 
     // wire-frame / select
     public static final Color WIREFRAME_COLOR = new Color(255, 255, 255);

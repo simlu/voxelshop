@@ -1,9 +1,11 @@
 package com.vitco.app.layout.bars;
 
+import com.jidesoft.action.CommandBar;
 import com.jidesoft.action.CommandMenuBar;
 import com.jidesoft.swing.JideButton;
 import com.vitco.app.manager.action.ActionManager;
 import com.vitco.app.settings.VitcoSettings;
+import com.vitco.app.util.misc.FontUtil;
 import com.vitco.app.util.misc.SaveResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -79,11 +81,27 @@ public class MainMenuLinkage extends BarLinkagePrototype {
     public CommandMenuBar buildBar(String key, final Frame frame) {
         final CommandMenuBar bar = new CommandMenuBar(key);
 
+        // display logo to the left
+        ImageIcon logo = new SaveResourceLoader("resource/img/icons/application/logo.png").asIconImage();
+        JLabel logoLabel = new JLabel(logo);
+        logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 7, 0, 12));
+        bar.add(logoLabel);
+
         // build the menu
         menuGenerator.buildMenuFromXML(bar, "com/vitco/app/layout/bars/main_menu.xml");
 
-        // add buttons to the titlebar
-        bar.addExpansion();
+        // display title string
+        CommandBar.Expansion expansion = new CommandBar.Expansion() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(VitcoSettings.TITLE_COLOR);
+                FontUtil.centerString(g, getVisibleRect(), VitcoSettings.TITLE_STRING, (Font) UIManager.get("CommandBar.font"));
+            }
+        };
+        bar.add(expansion);
+
+        // display window action buttons
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setOpaque(false);
