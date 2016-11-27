@@ -5,10 +5,13 @@ jdk:
 
 before_install:
   - mkdir -p $TRAVIS_BUILD_DIR/target/classes/resource/
-  - echo "$JIDE_COMPANY_NAME" > $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
+  - touch $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
+  - echo "$JIDE_COMPANY_NAME" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
   - echo "$JIDE_PROJECT_NAME" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
   - echo "$JIDE_LICENSE_KEY" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
+  - touch $TRAVIS_BUILD_DIR/target/classes/resource/version.txt
   - if [ -n "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt; fi
+  - if [ "$TRAVIS_BRANCH" -ne "master" ]; then echo "@$TRAVIS_BRANCH-$TRAVIS_COMMIT-$TRAVIS_BUILD_NUMBER" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt; fi
 
 deploy:
   provider: s3
