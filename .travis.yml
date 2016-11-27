@@ -3,7 +3,7 @@ jdk:
   - oraclejdk8
   - oraclejdk7
 
-before_script:
+before_install:
   - mkdir -p $TRAVIS_BUILD_DIR/target/resource/
   - echo "Some text here." > $TRAVIS_BUILD_DIR/target/resource/jidelicense.txt
 
