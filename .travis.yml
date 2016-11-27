@@ -5,9 +5,9 @@ jdk:
 
 before_install:
   - mkdir -p $TRAVIS_BUILD_DIR/target/classes/resource/
-  - echo "$JIDE_COMPANY_NAME" > $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
-  - echo "$JIDE_PROJECT_NAME" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
-  - echo "$JIDE_LICENSE_KEY" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
+  - echo "$(JIDE_COMPANY_NAME)" > $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
+  - echo "$(JIDE_PROJECT_NAME)" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
+  - echo "$(JIDE_LICENSE_KEY)" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
 
 deploy:
   provider: s3
