@@ -2,6 +2,7 @@ package com.vitco.app.settings;
 
 import com.threed.jpct.SimpleVector;
 import com.vitco.app.core.data.container.VOXELMODE;
+import com.vitco.app.util.misc.SaveResourceLoader;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -51,9 +52,14 @@ public final class VitcoSettings {
     public static final Color TEXTURE_BORDER_ACTIVE = Color.ORANGE;
     public static final Color TEXTURE_BORDER_SELECTED = Color.RED;
 
-    public static final String VERSION_ID = "1.8.02";
+    static {
+        SaveResourceLoader saveResourceLoader = new SaveResourceLoader("resource/version.txt");
+        VERSION_ID = !saveResourceLoader.error ? saveResourceLoader.asString() : "DEBUG";
+    }
+
+    public static final String VERSION_ID;
     // version id
-    public static final String TITLE_STRING = "VoxelShop - Alpha Version (V" + VERSION_ID + ")";
+    public static final String TITLE_STRING = "VoxelShop - Alpha Version (" + VERSION_ID + ")";
     public static final Font TITLE_FONT = new Font("Tohama", Font.PLAIN, 14);
     public static final Color TITLE_COLOR = new Color(200, 200, 200);
 
