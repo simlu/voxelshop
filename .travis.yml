@@ -11,7 +11,7 @@ before_install:
   - if [ -n "$TRAVIS_TAG" ]; then echo "$TRAVIS_TAG" >> $TRAVIS_BUILD_DIR/target/classes/resource/version.txt; fi
   - if [ "$TRAVIS_BRANCH" != "master" ]; then echo "$TRAVIS_BRANCH" >> $TRAVIS_BUILD_DIR/target/classes/resource/branch.txt; fi
   - if [ "$TRAVIS_BRANCH" != "master" ]; then echo "$TRAVIS_BUILD_NUMBER" >> $TRAVIS_BUILD_DIR/target/classes/resource/build.txt; fi
-  - echo $(date) >> $TRAVIS_BUILD_DIR/target/classes/resource/date.txt
+  - echo $(date +"%Y-%m-%d") >> $TRAVIS_BUILD_DIR/target/classes/resource/date.txt
 
 deploy:
   provider: s3
