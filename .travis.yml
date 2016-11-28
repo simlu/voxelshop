@@ -24,5 +24,16 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-      all_branches: true
+      branch: develop
       jdk: oraclejdk7
+
+deploy:
+  provider: releases
+  prerelease: true
+  api_key:
+    secure: securekeyhere
+  file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
+  on:
+    repo: simlu/voxelshop
+    branch: ci-prep
+    tags: true
