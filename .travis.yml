@@ -30,8 +30,6 @@ deploy:
 deploy:
   provider: releases
   prerelease: true
-  api_key:
-    secure: securekeyhere
   file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
   on:
     repo: simlu/voxelshop
