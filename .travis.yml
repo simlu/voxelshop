@@ -3,6 +3,12 @@ jdk:
   - oraclejdk8
   - oraclejdk7
 
+# Allow to run tests that depend on UI
+env:
+  - DISPLAY=:99.0
+before_install:
+  - sh -e /etc/init.d/xvfb start
+
 before_install:
   - mkdir -p $TRAVIS_BUILD_DIR/target/classes/resource/
   - echo "$JIDE_COMPANY_NAME" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
