@@ -164,35 +164,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         }
     }
 
-    // import helper for voxel file
-    private void importVoxelData(AbstractImporter importer, boolean shiftToCenter) {
-        if (importer.hasLoaded()) {
-            if (shiftToCenter) {
-                int[] center = importer.getWeightedCenter();
-                int[] highest = importer.getHighest();
-                for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                    int layerId = data.createLayer(layer.name);
-                    data.selectLayer(layerId);
-                    data.setVisible(layerId, layer.isVisible());
-                    for (int[] vox; layer.hasNext();) {
-                        vox = layer.next();
-                        data.addVoxelDirect(new Color(vox[3]),
-                                new int[] {vox[0] - center[0], vox[1] - highest[1], vox[2] - center[2]});
-                    }
-                }
-            } else {
-                for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                    int layerId = data.createLayer(layer.name);
-                    data.selectLayer(layerId);
-                    data.setVisible(layerId, layer.isVisible());
-                    for (int[] vox; layer.hasNext();) {
-                        vox = layer.next();
-                        data.addVoxelDirect(new Color(vox[3]),new int[] {vox[0], vox[1], vox[2]});
-                    }
-                }
-            }
-        }
-    }
     // ======================================
 
     public final void openFile(File file) {
@@ -295,7 +266,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, true);
                                         return null;
                                     }
                                 });
@@ -308,7 +279,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new Kv6Importer(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -320,7 +291,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new PnxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -332,7 +303,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new KvxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -344,7 +315,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new QbImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -356,7 +327,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new VoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -368,7 +339,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new RawVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -380,7 +351,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new CCVxlImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
