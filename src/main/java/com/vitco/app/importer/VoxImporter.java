@@ -211,6 +211,8 @@ public class VoxImporter extends AbstractImporter {
         ArrayList<Integer> voxels = new ArrayList<Integer>();
         int[] palette = voxColors;
 
+        int[] offset = new int[3];
+
         for (int i = 0; i < totalChildrenSize;) {
             // each chunk has an ID, size and child chunks
             String chunkName = fileIn.readASCIIString(4);
@@ -218,33 +220,38 @@ public class VoxImporter extends AbstractImporter {
             int chunkSize = fileIn.readIntRev();
             fileIn.readIntRev();//int childChunks = fileIn.readIntRev();
 
-            if (chunkName.equals("SIZE")) {
-                // read x,y,z
-                fileIn.readIntRev();
-                fileIn.readIntRev();
-                fileIn.readIntRev();
-            } else if (chunkName.equals("XYZI")) {
-                int numVoxels = fileIn.readIntRev();
-                if (numVoxels < 0) { // sanity check
-                    return false;
-                }
-                for (int j = 0; j < numVoxels; j += 1) {
-                    voxels.add(fileIn.readInt());
-                }
+            switch (chunkName) {
+                case "SIZE":
+                    // read x,y,z offsets
+                    offset[0] = (fileIn.readIntRev() - 1) / 2;
+                    offset[1] = fileIn.readIntRev() / 2;
+                    offset[2] = fileIn.readIntRev() / 2;
+                    break;
+                case "XYZI":
+                    int numVoxels = fileIn.readIntRev();
+                    if (numVoxels < 0) { // sanity check
+                        return false;
+                    }
+                    for (int j = 0; j < numVoxels; j += 1) {
+                        voxels.add(fileIn.readInt());
+                    }
 
-            } else if (chunkName.equals("RGBA")) {
-                // use custom color palette
-                palette = new int[256];
-                for (int j = 0; j < 256; j++) {
-                    int r = fileIn.readByteUnsigned();
-                    int g = fileIn.readByteUnsigned();
-                    int b = fileIn.readByteUnsigned();
-                    fileIn.readByteUnsigned();//int a = fileIn.readByteUnsigned();
-                    palette[j] = new Color(r,g,b).getRGB();
-                }
+                    break;
+                case "RGBA":
+                    // use custom color palette
+                    palette = new int[256];
+                    for (int j = 0; j < 256; j++) {
+                        int r = fileIn.readByteUnsigned();
+                        int g = fileIn.readByteUnsigned();
+                        int b = fileIn.readByteUnsigned();
+                        fileIn.readByteUnsigned();//int a = fileIn.readByteUnsigned();
+                        palette[j] = new Color(r, g, b).getRGB();
+                    }
 
-            } else {
-                fileIn.skipBytes(chunkSize);
+                    break;
+                default:
+                    fileIn.skipBytes(chunkSize);
+                    break;
             }
 
             i += 12 + chunkSize;
@@ -254,7 +261,7 @@ public class VoxImporter extends AbstractImporter {
         for (Integer voxel : voxels) {
             buf.position(0);
             buf.putInt(voxel);
-            addVoxel(-(buf.get(0) & 0xFF), -(buf.get(2) & 0xFF), buf.get(1) & 0xFF, palette[(buf.get(3) & 0xFF) - 1]);
+            addVoxel(offset[0] -(buf.get(0) & 0xFF), -(buf.get(2) & 0xFF), -offset[1] + (buf.get(1) & 0xFF), palette[(buf.get(3) & 0xFF) - 1]);
         }
 
         return true;

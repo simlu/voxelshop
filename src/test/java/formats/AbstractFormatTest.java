@@ -35,6 +35,7 @@ public abstract class AbstractFormatTest {
 
     abstract AbstractImporter initImporter(File file) throws IOException;
     abstract AbstractExporter initExporter(File file, Data data) throws IOException;
+    abstract boolean shiftToCenter();
 
     // do the actual test for file
     private void execute(File file) throws IOException {
@@ -42,9 +43,9 @@ public abstract class AbstractFormatTest {
         data.deleteLayer(data.getLayers()[0]);
         AbstractImporter importer = initImporter(file);
 
-        assertTrue(importer.hasLoaded());
+        assertTrue(file.getName(), importer.hasLoaded());
 
-        importer.loadInto(data, false);
+        importer.loadInto(data, shiftToCenter());
 
         File temp = File.createTempFile("temp-file-name", ".tmp");
         AbstractExporter exporter = initExporter(temp, data);
@@ -52,7 +53,7 @@ public abstract class AbstractFormatTest {
 
         byte[] f1 = Files.readAllBytes(file.toPath());
         byte[] f2 = Files.readAllBytes(temp.toPath());
-        assertEquals(f1.length, f2.length);
-        assertTrue(Arrays.equals(f1, f2));
+        assertEquals(file.getName(), f1.length, f2.length);
+        assertTrue(file.getName(), Arrays.equals(f1, f2));
     }
 }
