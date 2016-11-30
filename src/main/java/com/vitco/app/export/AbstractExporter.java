@@ -10,6 +10,7 @@ import gnu.trove.set.hash.TIntHashSet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Abstract class for voxel format exporter.
@@ -81,7 +82,9 @@ public abstract class AbstractExporter extends ProgressReporter {
 
     // helper - get all used colors
     protected final int[] getColors() {
-        return colors.toArray();
+        int[] result = colors.toArray();
+        Arrays.sort(result);  // ensure deterministic
+        return result;
     }
 
     // helper - get size of voxel batch
