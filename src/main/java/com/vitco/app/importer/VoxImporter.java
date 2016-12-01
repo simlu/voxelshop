@@ -1,9 +1,7 @@
 package com.vitco.app.importer;
 
 import com.vitco.app.util.file.FileIn;
-import com.vitco.app.util.file.FileTools;
 import com.vitco.app.util.file.RandomAccessFileIn;
-import com.vitco.app.util.misc.NumberTools;
 
 import java.awt.*;
 import java.io.File;
@@ -53,104 +51,14 @@ public class VoxImporter extends AbstractImporter {
         String checkSum = new String(check, "ASCII");
         if (!checkSum.equals("VOX ")) {
 
-            // this might be the voxel format from the voxlap engine (slab6)
+            // voxlap engine (slab6)
             raf.seek(0);
             int sx = Integer.reverseBytes(raf.readInt());
             int sy = Integer.reverseBytes(raf.readInt());
             int sz = Integer.reverseBytes(raf.readInt());
 
-            if (sx > 512 || sy > 512 || sz > 512 || sx <= 0 || sy <= 0 || sz <= 0) {
-
-                // =====================
-                // vox-game.com format (voxel and config file)
-                // =====================
-
-                String[] line = fileIn.readLine().split(" ");
-                if (line.length == 3) {
-                    sx = NumberTools.parseInt(line[0], 0);
-                    sy = NumberTools.parseInt(line[1], 0);
-                    sz = NumberTools.parseInt(line[2], 0);
-                } else if (line.length == 2) {
-                    // check if this is a config file
-                    if (line[0].equals("skeletonScale:")) {
-                        float scale = NumberTools.parseFloat(line[1], 1);
-                        // sanity check
-                        if (!fileIn.readLine().equals("")) {
-                            return false;
-                        }
-                        // read
-                        String scaleLine;
-                        float offx = 0, offy = 0, offz = 0;
-                        while ((scaleLine = fileIn.readLine()) != null) {
-                            if (scaleLine.length() > 8 && scaleLine.contains("Scale: ")) {
-                                // extract name
-                                String name = scaleLine.substring(0, scaleLine.indexOf(" ") - 6);
-                                // extract offsets
-                                String[] strOffx = fileIn.readLine().split(" ");
-                                if (strOffx.length == 2) {
-                                    offx = NumberTools.parseFloat(strOffx[1], 0)/(10 * scale);
-                                }
-                                String[] strOffy = fileIn.readLine().split(" ");
-                                if (strOffy.length == 2) {
-                                    offy = NumberTools.parseFloat(strOffy[1], 0)/(0.13f * scale);
-                                }
-                                String[] strOffz = fileIn.readLine().split(" ");
-                                if (strOffz.length == 2) {
-                                    offz = NumberTools.parseFloat(strOffz[1], 0)/(0.05f * scale);
-                                }
-                                //System.out.println(offx + " " + offy + " " + offz);
-                                // read the file and import voxel
-                                if (name.equals("feet")) {
-                                    name = "foot";
-                                } else if (name.equals("hands")) {
-                                    name = "hand";
-                                }
-                                File partFile = new File(FileTools.ensureTrailingSeparator(fileIn.getInternalFile().getParent()) + name + ".vox");
-                                if (partFile.exists()) {
-                                    VoxImporter voxImporter = new VoxImporter(partFile, name);
-                                    if (voxImporter.hasLoaded()) {
-                                        for (Layer layer : voxImporter.getVoxel()) {
-                                            addLayer(layer.name);
-                                            for (int[] vox; layer.hasNext();) {
-                                                vox = layer.next();
-                                                // no need to rotate this (already rotated)
-                                                addVoxel(vox[0] - Math.round(offx), vox[1] - Math.round(offy), vox[2] + Math.round(offz), vox[3]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                }
-                // sanity check
-                if (sx > 512 || sy > 512 || sz > 512 || sx <= 0 || sy <= 0 || sz <= 0) {
-                    return false;
-                }
-                // check that this line is empty
-                if (!fileIn.readLine().equals("")) {
-                    return false;
-                }
-                // read to next space
-                for (int y = 0; y < sy; y++) {
-                    for (int x = 0; x < sx; x++) {
-                        for (int z = 0; z < sz; z++) {
-                            int visible = NumberTools.parseInt(fileIn.readSpaceString(), 0);
-                            int r = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
-                            int g = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
-                            int b = Math.round(NumberTools.parseFloat(fileIn.readSpaceString(), 0f) * 255);
-                            if (visible == 1) {
-                                addVoxel(-x,-y,z, new Color(r,g,b).getRGB());
-                            }
-                        }
-                    }
-                }
-                return true;
-            } else {
-                // read over integer values
-                fileIn.skipBytes(12);
-            }
+            // read over integer values
+            fileIn.skipBytes(12);
 
             // =====================
             // VOXLAP ENGINE *.vox FORMAT
