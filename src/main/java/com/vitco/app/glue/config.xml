@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:annotation-config />
+
+    <!-- error handle -->
+    <bean id="ErrorHandler" class="com.vitco.app.manager.error.ErrorHandler">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="debugReportUrl" value="http://www.blackflux.com/software/vs/debug/upload.php"/>
+        <property name="console" ref="Console"/>
+    </bean>
+
+    <!-- set the default error handler -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>java.lang.Thread</value></property>
+        <property name="targetMethod"><value>setDefaultUncaughtExceptionHandler</value></property>
+        <property name="arguments">
+            <list>
+                <ref local="ErrorHandler"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- laod the initial layout -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass"><value>com.vitco.app.layout.LayoutLoader</value></property>
+        <property name="targetMethod"><value>loadLayout</value></property>
+    </bean>
+
+    <!-- manages the console data -->
+    <bean id="Console" class="com.vitco.app.layout.content.console.Console"/>
+    <!-- manages the console data display -->
+    <bean id="ConsoleView" class="com.vitco.app.layout.content.console.ConsoleView">
+        <property name="console" ref="Console"/>
+    </bean>
+
+    <!-- holds general preferenes -->
+    <bean id="Preferences" class="com.vitco.app.manager.pref.Preferences" init-method="load">
+        <property name="storageFile" value="settings/pref-004.ser"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+    </bean>
+
+    <!-- create the language selector (localization) -->
+    <bean id="LangSelector" class="com.vitco.app.manager.lang.LangSelector">
+        <!-- set language bundle -->
+        <property name="languageBundle" value="resource/bundle/LangBundle"/>
+        <!-- select language and country -->
+        <property name="language" value="en"/>
+        <property name="country" value="US"/>
+    </bean>
+
+    <!-- create ActionManager -->
+    <!-- this allows to register and execute action -->
+    <bean id="ActionManager" class="com.vitco.app.manager.action.ActionManager"/>
+    <!-- action group manager -->
+    <bean id="ActionGroupManager" class="com.vitco.app.manager.action.ActionGroupManager"/>
+    <!-- complex action manager -->
+    <bean id="ComplexActionManager" class="com.vitco.app.manager.action.ComplexActionManager"/>
+
+    <!-- manages threads -->
+    <bean id="ThreadManager" class="com.vitco.app.manager.thread.ThreadManager"/>
+
+    <!-- handles texture manager -->
+    <bean id="TextureManager" class="com.vitco.app.layout.content.texture.TextureManager"/>
+
+    <!-- allows color adjusting -->
+    <bean id="ColorAdjuster" class="com.vitco.app.layout.content.coloradjuster.ColorAdjusterView">
+        <property name="langSelector" ref="LangSelector"/>
+    </bean>
+
+    <!-- create ShortcutManager -->
+    <!-- allow registering the windows with the shortcuts -->
+    <bean id="ShortcutManager" class="com.vitco.app.layout.content.shortcut.ShortcutManager">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="configFile" value="com/vitco/app/glue/shortcuts.xml"/>
+        <property name="actionManager" ref="ActionManager"/>
+        <property name="preferences" ref="Preferences"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+    </bean>
+
+    <!--handles displaying of shortcut manager-->
+    <bean id="ShortcutManagerView" class="com.vitco.app.layout.content.shortcut.ShortcutManagerView">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="shortcutManager" ref="ShortcutManager"/>
+        <property name="preferences" ref="Preferences"/>
+    </bean>
+
+    <!-- handles display of layers -->
+    <bean id="LayerView" class="com.vitco.app.layout.content.layer.LayerView"/>
+
+    <!-- create MenuGenerator -->
+    <!-- handles the menu generation (from xml) -->
+    <bean id="MenuGenerator" class="com.vitco.app.manager.menu.MenuGenerator">
+        <property name="shortcutManager" ref="ShortcutManager"/>
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="actionManager" ref="ActionManager"/>
+        <property name="complexActionManager" ref="ComplexActionManager"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+    </bean>
+
+    <!--menu logic-->
+    <bean id="MainMenuLogic" class="com.vitco.app.layout.content.menu.MainMenuLogic"/>
+    <bean id="ToolBarLogic" class="com.vitco.app.layout.content.menu.ToolBarLogic"/>
+    <bean id="SelectBarLogic" class="com.vitco.app.layout.content.menu.SelectBarLogic"/>
+    <bean id="OptionBarLogic" class="com.vitco.app.layout.content.menu.OptionBarLogic"/>
+
+    <!--ENGINE STUFF-->
+    <!-- animation data -->
+    <bean id="Data" class="com.vitco.app.core.data.Data"/>
+
+    <!-- main view -->
+    <bean id="MainView" class="com.vitco.app.layout.content.mainview.MainView"/>
+
+    <!--side views-->
+    <bean id="xyView" class="com.vitco.app.layout.content.sideview.SideView">
+        <constructor-arg value="0"/>  <!--first view-->
+    </bean>
+    <bean id="xzView" class="com.vitco.app.layout.content.sideview.SideView">
+        <constructor-arg value="1"/>  <!--second view-->
+    </bean>
+    <bean id="yzView" class="com.vitco.app.layout.content.sideview.SideView">
+        <constructor-arg value="2"/> <!--third view-->
+    </bean>
+
+    <!-- updater -->
+    <bean id="Updater" class="com.vitco.app.manager.updater.Updater"/>
+
+    <!-- worker thread -->
+    <bean id="AsyncActionManager" class="com.vitco.app.manager.async.AsyncActionManager"/>
+
+    <!-- creates the main window -->
+    <bean id="WindowManager" class="com.vitco.app.layout.WindowManager">
+        <property name="langSelector" ref="LangSelector"/>
+        <property name="actionManager" ref="ActionManager"/>
+        <property name="complexActionManager" ref="ComplexActionManager"/>
+        <property name="preferences" ref="Preferences"/>
+        <property name="errorHandler" ref="ErrorHandler"/>
+        <property name="data" ref="Data"/>
+        <!-- shortcut manager -->
+        <property name="shortcutManager" ref="ShortcutManager"/>
+        <!-- set the linkage map (bars) -->
+        <property name="barLinkageMap">
+            <map>
+                <entry>
+                    <key><value>mainMenu</value></key>
+                    <bean id="MainMenuLinkage" class="com.vitco.app.layout.bars.MainMenuLinkage">
+                        <property name="menuLogic" ref="MainMenuLogic"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>toolBar</value></key>
+                    <bean id="ToolBarLinkage" class="com.vitco.app.layout.bars.ToolBarLinkage">
+                        <property name="menuLogic" ref="ToolBarLogic"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>selectBar</value></key>
+                    <bean id="SelectBarLinkage" class="com.vitco.app.layout.bars.SelectBarLinkage">
+                        <property name="menuLogic" ref="SelectBarLogic"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>optionBar</value></key>
+                    <bean id="OptionBarLinkage" class="com.vitco.app.layout.bars.OptionBarLinkage">
+                        <property name="menuLogic" ref="OptionBarLogic"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+        <!-- set the linkage map (frames) -->
+        <property name="frameLinkageMap">
+            <map>
+                <entry>
+                    <key><value>console</value></key>
+                    <bean id="ConsoleLinkage" class="com.vitco.app.layout.frames.ConsoleLinkage">
+                        <property name="consoleView" ref="ConsoleView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>mainView</value></key>
+                    <bean id="MainViewLinkage" class="com.vitco.app.layout.frames.MainViewLinkage">
+                        <property name="mainView" ref="MainView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>shortcutManager</value></key>
+                    <bean id="ShortcutManagerLinkage" class="com.vitco.app.layout.frames.ShortcutManagerLinkage">
+                        <property name="shortcutManagerView" ref="ShortcutManagerView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>xyView</value></key>
+                    <bean id="SideViewLinkage" class="com.vitco.app.layout.frames.SideViewLinkage">
+                        <property name="sideView" ref="xyView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>xzView</value></key>
+                    <bean id="SideViewLinkage" class="com.vitco.app.layout.frames.SideViewLinkage">
+                        <property name="sideView" ref="xzView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>yzView</value></key>
+                    <bean id="SideViewLinkage" class="com.vitco.app.layout.frames.SideViewLinkage">
+                        <property name="sideView" ref="yzView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>snapshot</value></key>
+                    <bean id="SnapshotLinkage" class="com.vitco.app.layout.frames.SnapshotLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>personal</value></key>
+                    <bean id="PersonalLinkage" class="com.vitco.app.layout.frames.PersonalLinkage"/>
+                </entry>
+                <entry>
+                    <key><value>layer</value></key>
+                    <bean id="LayerLinkage" class="com.vitco.app.layout.frames.LayerLinkage">
+                        <property name="layerView" ref="LayerView"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>colorpicker</value></key>
+                    <bean id="ColorPickerLinkage" class="com.vitco.app.layout.frames.ColorPickerLinkage" />
+                </entry>
+                <entry>
+                    <key><value>colorslider</value></key>
+                    <bean id="ColorSliderLinkage" class="com.vitco.app.layout.frames.ColorSliderLinkage" />
+                </entry>
+                <entry>
+                    <key><value>textureManager</value></key>
+                    <bean id="TextureManagerLinkage" class="com.vitco.app.layout.frames.TextureManagerLinkage">
+                        <property name="textureManager" ref="TextureManager"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key><value>hexPicker</value></key>
+                    <bean id="HexPickerLinkage" class="com.vitco.app.layout.frames.HexPickerLinkage" />
+                </entry>
+                <entry>
+                    <key><value>colorPalette</value></key>
+                    <bean id="ColorPaletteLinkage" class="com.vitco.app.layout.frames.ColorPaletteLinkage" />
+                </entry>
+                <entry>
+                    <key><value>colorAdjuster</value></key>
+                    <bean id="ColorAdjusterLinkage" class="com.vitco.app.layout.frames.ColorAdjusterLinkage">
+                        <property name="colorAdjuster" ref="ColorAdjuster"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>
