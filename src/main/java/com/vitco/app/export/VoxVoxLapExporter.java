@@ -6,7 +6,6 @@ import com.vitco.app.layout.content.console.ConsoleInterface;
 import com.vitco.app.util.components.progressbar.ProgressDialog;
 import com.vitco.app.util.misc.BiMap;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,6 +13,8 @@ import java.io.IOException;
  * Exporter for the *.vox file for the VoxLap engine.
  */
 public class VoxVoxLapExporter extends AbstractExporter {
+
+    private static final int PALETTE_SIZE = 255;
 
     // constructor
     public VoxVoxLapExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
@@ -23,23 +24,26 @@ public class VoxVoxLapExporter extends AbstractExporter {
     // write the file
     @Override
     protected boolean writeFile() throws IOException {
-
-        // write dimension information
+        // write dimension information (x, z, y)
         int[] size = getSize();
-        int sx = size[0];
-        int sy = size[2];
-        int sz = size[1];
-        fileOut.writeIntRev(sx);
-        fileOut.writeIntRev(sy);
-        fileOut.writeIntRev(sz);
+        fileOut.writeIntRev(size[0]);
+        fileOut.writeIntRev(size[2]);
+        fileOut.writeIntRev(size[1]);
 
-        // get and prepare variables
+        // prepare palette
+        int[] colors = getColors();
+        if (colors.length >= PALETTE_SIZE) { // last entry reserved for empty block
+            console.addLine("Error: VoxLap Engine *.vox format only supports " + PALETTE_SIZE + " colors.");
+            return false;
+        }
+        BiMap<Integer, Integer> colorPalette = new BiMap<>();
+        for (int i = 0; i < colors.length; i++) {
+            colorPalette.put(colors[i], i);
+        }
+
+        // fetch min and max so we can loop
         int[] min = getMin();
         int[] max = getMax();
-
-        // current position in palette
-        Byte count = 0;
-        BiMap<Color, Byte> palette = new BiMap<Color, Byte>();
 
         // write the voxel data
         for (int x = min[0]; x <= max[0]; x++) {
@@ -49,34 +53,21 @@ public class VoxVoxLapExporter extends AbstractExporter {
                     if (voxel == null) {
                         fileOut.writeByte((byte)255);
                     } else {
-                        Color color = voxel.getColor();
-                        Byte id = palette.get(color);
-                        if (id == null) {
-                            palette.put(color, count);
-                            id = count;
-                            if (id > 254) { // color 255 is reserved for empty block
-                                console.addLine("Error: More than 254 colors not allowed for selected format.");
-                                return false;
-                            }
-                            count++;
-                        }
-                        fileOut.writeByte(id);
+                        int colorId = colorPalette.get(voxel.getColor().getRGB());
+                        fileOut.writeByte((byte) colorId);
                     }
                 }
             }
         }
 
         // write the palette
-        for (int i = 0; i < 256; i++) {
-            Color col = palette.getKey((byte) i);
-            if (col != null) {
-                byte r = (byte) Math.round((col.getRed() * 63) / 255f);
-                byte g = (byte) Math.round((col.getGreen() * 63) / 255f);
-                byte b = (byte) Math.round((col.getBlue() * 63) / 255f);
-                fileOut.writeBytes(new byte[] {r, g, b});
-            } else {
-                fileOut.writeBytes(new byte[3]);
-            }
+        for (int i = 0; i <= PALETTE_SIZE; i++) {
+            int rgb = colorPalette.containsValue(i) ? colorPalette.getKey(i) : 0;
+            fileOut.writeBytes(new byte[] { // write rgb
+                    (byte) Math.round((((rgb >> 16) & 0xFF) * 63) / 255f),
+                    (byte) Math.round((((rgb >> 8) & 0xFF) * 63) / 255f),
+                    (byte) Math.round(((rgb & 0xFF) * 63) / 255f)
+            });
         }
 
         // success

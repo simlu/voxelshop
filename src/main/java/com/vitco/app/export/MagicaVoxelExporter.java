@@ -3,12 +3,15 @@ package com.vitco.app.export;
 import com.vitco.app.core.data.Data;
 import com.vitco.app.core.data.container.Voxel;
 import com.vitco.app.layout.content.console.ConsoleInterface;
+import com.vitco.app.settings.DynamicSettings;
 import com.vitco.app.util.components.progressbar.ProgressDialog;
 import com.vitco.app.util.misc.BiMap;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class MagicaVoxelExporter extends AbstractExporter {
     // Reference: https://github.com/ephtracy/voxel-model/blob/master/MagicaVoxel-file-format-vox.txt
@@ -16,18 +19,32 @@ public class MagicaVoxelExporter extends AbstractExporter {
     private final static int PALETTE_SIZE = 255;
     private final static int MV_VERSION = 150;
     private final static int MV_DEFAULT_PALETTE_COLOR = new Color(75, 75, 75).getRGB();
+    private final boolean fitToSize;
 
-    public MagicaVoxelExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console) throws IOException {
+    public MagicaVoxelExporter(File exportTo, Data data, ProgressDialog dialog, ConsoleInterface console, boolean fitToSize) throws IOException {
         super(exportTo, data, dialog, console);
+        this.fitToSize = fitToSize;
     }
 
     // Write File
     @Override
     protected boolean writeFile() throws IOException {
 
-        final int[] min = getMin();
-        final int[] max = getMax();
-        final int[] size = getSize();
+        final int[] min = fitToSize ? getMin() : new int[]{
+                DynamicSettings.VOXEL_PLANE_RANGE_X_NEG + 1,
+                -DynamicSettings.VOXEL_PLANE_SIZE_Y + 1,
+                DynamicSettings.VOXEL_PLANE_RANGE_Z_NEG + 1
+        };
+        final int[] max = fitToSize ? getMax() : new int[]{
+                DynamicSettings.VOXEL_PLANE_RANGE_X_POS - 1,
+                0,
+                DynamicSettings.VOXEL_PLANE_RANGE_Z_POS - 1
+        };
+        final int[] size = fitToSize ? getSize() : new int[]{
+                max[0] - min[0] + 1,
+                max[1] - min[1] + 1,
+                max[2] - min[2] + 1
+        };
 
         final int[] colors = getColors();
         if (colors.length > PALETTE_SIZE) {
@@ -35,7 +52,7 @@ public class MagicaVoxelExporter extends AbstractExporter {
             return false;
         }
         // prepare palette
-        BiMap<Integer, Integer> colorPalette = new BiMap<Integer, Integer>();
+        BiMap<Integer, Integer> colorPalette = new BiMap<>();
         for (int i = 0; i < colors.length; i++) {
             colorPalette.put(colors[i], i);
         }
@@ -65,7 +82,17 @@ public class MagicaVoxelExporter extends AbstractExporter {
         fileOut.writeIntRev(0); // no children
         fileOut.writeIntRev(getCount());
 
-        for (Voxel voxel : data.getVisibleLayerVoxel()) {
+        // ensure generated file is deterministic
+        Voxel[] voxels = data.getVisibleLayerVoxel();
+        Arrays.sort(voxels, new Comparator<Voxel>() {
+            @Override
+            public int compare(Voxel o1, Voxel o2) {
+                return o2.posId - o1.posId;
+            }
+        });
+
+        // write voxel data
+        for (Voxel voxel : voxels) {
             final int vx = -(voxel.x - max[0]);
             final int vy = -(voxel.y - max[1]);
             final int vz = voxel.z - min[2];
