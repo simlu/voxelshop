@@ -47,20 +47,20 @@ public class App {
                     g.drawString(VitcoSettings.VERSION_ID, 400 - 20 - width, 110);
 
                 }
-                if (VitcoSettings.TRAVIS_BRANCH != null) {
-                    String text = "Branch: " + VitcoSettings.TRAVIS_BRANCH;
+                if (VitcoSettings.TRAVIS_DATE != null) {
+                    String text = "Date: " + VitcoSettings.TRAVIS_DATE;
                     g.setFont(VitcoSettings.SPLASH_SCREEN_SMALL_FONT);
                     int width = g.getFontMetrics().stringWidth(text);
                     g.drawString(text, 400 - 20 - width, 120);
                 }
-                if (VitcoSettings.TRAVIS_BUILD_NUMBER != null) {
-                    String text = "Build: " + VitcoSettings.TRAVIS_BUILD_NUMBER;
+                if (VitcoSettings.TRAVIS_BRANCH != null) {
+                    String text = "Branch: " + VitcoSettings.TRAVIS_BRANCH;
                     g.setFont(VitcoSettings.SPLASH_SCREEN_SMALL_FONT);
                     int width = g.getFontMetrics().stringWidth(text);
                     g.drawString(text, 400 - 20 - width, 135);
                 }
-                if (VitcoSettings.TRAVIS_DATE != null) {
-                    String text = "Date: " + VitcoSettings.TRAVIS_DATE;
+                if (VitcoSettings.TRAVIS_BUILD_NUMBER != null) {
+                    String text = "Build: " + VitcoSettings.TRAVIS_BUILD_NUMBER;
                     g.setFont(VitcoSettings.SPLASH_SCREEN_SMALL_FONT);
                     int width = g.getFontMetrics().stringWidth(text);
                     g.drawString(text, 400 - 20 - width, 150);

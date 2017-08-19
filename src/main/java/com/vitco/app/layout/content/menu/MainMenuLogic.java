@@ -164,35 +164,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         }
     }
 
-    // import helper for voxel file
-    private void importVoxelData(AbstractImporter importer, boolean shiftToCenter) {
-        if (importer.hasLoaded()) {
-            if (shiftToCenter) {
-                int[] center = importer.getWeightedCenter();
-                int[] highest = importer.getHighest();
-                for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                    int layerId = data.createLayer(layer.name);
-                    data.selectLayer(layerId);
-                    data.setVisible(layerId, layer.isVisible());
-                    for (int[] vox; layer.hasNext();) {
-                        vox = layer.next();
-                        data.addVoxelDirect(new Color(vox[3]),
-                                new int[] {vox[0] - center[0], vox[1] - highest[1], vox[2] - center[2]});
-                    }
-                }
-            } else {
-                for (AbstractImporter.Layer layer : importer.getVoxel()) {
-                    int layerId = data.createLayer(layer.name);
-                    data.selectLayer(layerId);
-                    data.setVisible(layerId, layer.isVisible());
-                    for (int[] vox; layer.hasNext();) {
-                        vox = layer.next();
-                        data.addVoxelDirect(new Color(vox[3]),new int[] {vox[0], vox[1], vox[2]});
-                    }
-                }
-            }
-        }
-    }
     // ======================================
 
     public final void openFile(File file) {
@@ -236,7 +207,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fc_import.addFileType("qb", "Qubicle Binary");
         fc_import.addFileType("vox", "Voxlap Engine File");
         fc_import.addFileType("vox", "MagicaVoxel File");
-        fc_import.addFileType("vox", "Vox Game File");
         fc_import.addFileType("vxl", "C&C File Format");
         fc_import.addFileType("rawvox", "Raw Voxel Format");
 
@@ -295,7 +265,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new BinVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, true);
                                         return null;
                                     }
                                 });
@@ -308,7 +278,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new Kv6Importer(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -320,7 +290,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new PnxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -332,7 +302,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new KvxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -344,7 +314,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new QbImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, false);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -356,7 +326,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new VoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -368,7 +338,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new RawVoxImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -380,7 +350,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                     protected Object doInBackground() throws Exception {
                                         dialog.setActivity("Importing File...", true);
                                         AbstractImporter importer = new CCVxlImporter(toOpen, FileTools.extractNameWithoutExtension(toOpen));
-                                        importVoxelData(importer, true);
+                                        importer.loadInto(data, false);
                                         return null;
                                     }
                                 });
@@ -532,16 +502,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // ---------------
 
-        // add "vox (the game)" exporter
-        FieldSet voxExporter = new FieldSet("vox_game_format", "Vox Game Format (*.vox)");
-
-        // add information for voxel format
-        LabelModule label_vox_game = new LabelModule("Note: Does not support textured voxels. This file format is used by vox-game.com");
-        label_vox_game.setVisibleLookup("export_type=vox_game_format");
-        voxExporter.addComponent(label_vox_game);
-
-        // ---------------
-
         // add "MagicaVoxel" exporter
         FieldSet magicaVoxelExporter = new FieldSet("magicavoxel_format", "MagicaVoxel Format (*.vox)");
 
@@ -639,7 +599,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         // add all formats
         dialog.addComboBox("export_type", new FieldSet[] {
-                collada, voxExporter, magicaVoxelExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
+                collada, magicaVoxelExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, imageRenderer
         }, 0);
 
         // ---------------
@@ -845,54 +805,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
                         // ===========
 
-                    } else if (dialog.is("export_type=vox_game_format")) {
-
-                        // ===========
-                        // -- handle vox file format
-
-                        // create progress dialog
-                        final ProgressDialog progressDialog = new ProgressDialog(frame);
-
-                        // do the exporting
-                        progressDialog.start(new ProgressWorker() {
-                            @Override
-                            protected Object doInBackground() throws Exception {
-
-                                // extract file name
-                                final File exportTo = new File(baseName + (baseName.endsWith(".vox") ? "" : ".vox"));
-                                // check if file exists
-                                if (exportTo.exists()) {
-                                    if (JOptionPane.showConfirmDialog(frame,
-                                            exportTo.getPath() + " " + langSelector.getString("replace_file_query"),
-                                            langSelector.getString("replace_file_query_title"),
-                                            JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
-                                        return false;
-                                    }
-                                }
-
-                                // export vox engine format
-                                boolean success;
-                                long time = System.currentTimeMillis();
-                                try {
-                                    VoxGameExporter exporter = new VoxGameExporter(exportTo, data, progressDialog, console);
-                                    success = exporter.writeData();
-                                } catch (IOException ignored) {
-                                    success = false;
-                                }
-                                if (success) {
-                                    console.addLine(
-                                            String.format(langSelector.getString("export_file_successful"),
-                                                    System.currentTimeMillis() - time)
-                                    );
-                                } else {
-                                    console.addLine(langSelector.getString("export_file_error"));
-                                }
-
-                                return null;
-                            }
-                        });
-
-                        // ===========
                     } else if (dialog.is("export_type=magicavoxel_format")) {
 
                         // ===========

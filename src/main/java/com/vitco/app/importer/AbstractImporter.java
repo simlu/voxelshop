@@ -1,8 +1,10 @@
 package com.vitco.app.importer;
 
+import com.vitco.app.core.data.Data;
 import com.vitco.app.util.file.FileIn;
 import com.vitco.app.util.file.RandomAccessFileIn;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -160,12 +162,40 @@ public abstract class AbstractImporter {
         activeLayer = new Layer(layerName);
         layerList.add(activeLayer);
         FileIn fileIn = new FileIn(file);
-        RandomAccessFileIn raf = new RandomAccessFileIn(file, "r");
-        try {
+        try (RandomAccessFileIn raf = new RandomAccessFileIn(file, "r")) {
             hasLoaded = read(fileIn, raf);
         } finally {
-            raf.close();
             fileIn.finish();
+        }
+    }
+
+    // load the data in this importer into "data"
+    public void loadInto(Data data, boolean shiftToCenter) {
+        if (this.hasLoaded()) {
+            if (shiftToCenter) {
+                int[] center = this.getWeightedCenter();
+                int[] highest = this.getHighest();
+                for (AbstractImporter.Layer layer : this.getVoxel()) {
+                    int layerId = data.createLayer(layer.name);
+                    data.selectLayer(layerId);
+                    data.setVisible(layerId, layer.isVisible());
+                    for (int[] vox; layer.hasNext();) {
+                        vox = layer.next();
+                        data.addVoxelDirect(new Color(vox[3]),
+                                new int[] {vox[0] - center[0], vox[1] - highest[1], vox[2] - center[2]});
+                    }
+                }
+            } else {
+                for (AbstractImporter.Layer layer : this.getVoxel()) {
+                    int layerId = data.createLayer(layer.name);
+                    data.selectLayer(layerId);
+                    data.setVisible(layerId, layer.isVisible());
+                    for (int[] vox; layer.hasNext();) {
+                        vox = layer.next();
+                        data.addVoxelDirect(new Color(vox[3]),new int[] {vox[0], vox[1], vox[2]});
+                    }
+                }
+            }
         }
     }
 

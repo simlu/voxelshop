@@ -10,6 +10,8 @@ import com.vitco.app.util.misc.BiMap;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class MagicaVoxelExporter extends AbstractExporter {
     // Reference: https://github.com/ephtracy/voxel-model/blob/master/MagicaVoxel-file-format-vox.txt
@@ -50,7 +52,7 @@ public class MagicaVoxelExporter extends AbstractExporter {
             return false;
         }
         // prepare palette
-        BiMap<Integer, Integer> colorPalette = new BiMap<Integer, Integer>();
+        BiMap<Integer, Integer> colorPalette = new BiMap<>();
         for (int i = 0; i < colors.length; i++) {
             colorPalette.put(colors[i], i);
         }
@@ -80,7 +82,17 @@ public class MagicaVoxelExporter extends AbstractExporter {
         fileOut.writeIntRev(0); // no children
         fileOut.writeIntRev(getCount());
 
-        for (Voxel voxel : data.getVisibleLayerVoxel()) {
+        // ensure generated file is deterministic
+        Voxel[] voxels = data.getVisibleLayerVoxel();
+        Arrays.sort(voxels, new Comparator<Voxel>() {
+            @Override
+            public int compare(Voxel o1, Voxel o2) {
+                return o2.posId - o1.posId;
+            }
+        });
+
+        // write voxel data
+        for (Voxel voxel : voxels) {
             final int vx = -(voxel.x - max[0]);
             final int vy = -(voxel.y - max[1]);
             final int vz = voxel.z - min[2];

@@ -3,6 +3,14 @@ jdk:
   - oraclejdk8
   - oraclejdk7
 
+# -----------------
+# Reference: https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+# -----------------
+
 before_install:
   - mkdir -p $TRAVIS_BUILD_DIR/target/classes/resource/
   - echo "$JIDE_COMPANY_NAME" >> $TRAVIS_BUILD_DIR/target/classes/resource/jidelicense.txt
