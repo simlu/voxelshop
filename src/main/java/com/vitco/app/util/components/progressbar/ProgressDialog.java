@@ -67,8 +67,8 @@ public class ProgressDialog extends JDialog {
         iconTextWrapper.setLayout(new BorderLayout());
 
         // add loading button
-        Icon icon = new SaveResourceLoader("resource/img/icons/loading.gif").asIconImage();
-        JideLabel label = new JideLabel(icon);
+        SaveResourceLoader saveResourceLoader = new SaveResourceLoader("resource/img/icons/loading.gif");
+        JideLabel label = new JideLabel(saveResourceLoader.error ? null : saveResourceLoader.asIconImage());
         label.setBorder(BorderFactory.createEmptyBorder(0,0,0,6));
         iconTextWrapper.add(label, BorderLayout.WEST);
 
