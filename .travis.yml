@@ -1,7 +1,6 @@
 language: java
 jdk:
   - oraclejdk8
-  - oraclejdk7
 dist: precise
 
 # -----------------
@@ -34,7 +33,7 @@ deploy:
   acl: public_read
   on:
       all_branches: true
-      jdk: oraclejdk7
+      jdk: oraclejdk8
 
 deploy:
   provider: releases
@@ -46,7 +45,7 @@ deploy:
     repo: simlu/voxelshop
     branch: qa
     tags: true
-    jdk: oraclejdk7
+    jdk: oraclejdk8
 
 deploy:
   provider: releases
@@ -57,4 +56,4 @@ deploy:
     repo: simlu/voxelshop
     branch: master
     tags: true
-    jdk: oraclejdk7
+    jdk: oraclejdk8
