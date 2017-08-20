@@ -140,7 +140,7 @@
                         <manifestEntries>
                             <SplashScreen-Image>images/splash.png</SplashScreen-Image>
                             <Class-Path>
-                                ./lib/commons-codec-1.6.jar
+                                ./lib/commons-codec-1.6.0.jar
                                 ./lib/httpclient-4.2.1.jar
                                 ./lib/httpcore-4.2.1.jar
                                 ./lib/httpmime-4.2.1.jar
@@ -190,7 +190,7 @@
             <groupId>org.apache.commons</groupId>
             <scope>system</scope>
             <version>1.6.0</version>
-            <systemPath>${pom.basedir}/lib/apachehttp/commons-codec-1.6.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/apachehttp/commons-codec-1.6.0.jar</systemPath>
         </dependency>
         <dependency>
             <artifactId>httpclient</artifactId>
