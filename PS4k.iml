@@ -50,7 +50,7 @@
     <orderEntry type="module-library">
       <library name="Maven: org.apache.commons:commons-codec:1.6.0">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/apachehttp/commons-codec-1.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/apachehttp/commons-codec-1.6.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
