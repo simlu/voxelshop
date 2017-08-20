@@ -26,6 +26,11 @@ public class HackedObjectInputStream extends ObjectInputStream {
             MIGRATION_MAP.put("com.vitco.app.engine.data.container.ExtendedVector", com.vitco.app.core.data.container.ExtendedVector.class);
             MIGRATION_MAP.put("com.vitco.app.engine.data.container.ExtendedLine", com.vitco.app.core.data.container.ExtendedLine.class);
             MIGRATION_MAP.put("com.vitco.app.engine.data.container.DataContainer", com.vitco.app.core.data.container.DataContainer.class);
+            MIGRATION_MAP.put("com.vitco.core.data.container.VoxelLayer", com.vitco.app.core.data.container.VoxelLayer.class);
+            MIGRATION_MAP.put("com.vitco.core.data.container.Voxel", com.vitco.app.core.data.container.Voxel.class);
+            MIGRATION_MAP.put("com.vitco.core.data.container.ExtendedVector", com.vitco.app.core.data.container.ExtendedVector.class);
+            MIGRATION_MAP.put("com.vitco.core.data.container.ExtendedLine", com.vitco.app.core.data.container.ExtendedLine.class);
+            MIGRATION_MAP.put("com.vitco.core.data.container.DataContainer", com.vitco.app.core.data.container.DataContainer.class);
         }
 
         /**
