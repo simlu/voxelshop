@@ -32,7 +32,7 @@ deploy:
   acl: public_read
   on:
       all_branches: true
-      jdk: oraclejdk7
+      jdk: oraclejdk8
 
 deploy:
   provider: releases
