@@ -1,6 +1,7 @@
 package com.vitco.app.layout.content.shortcut;
 
 import com.jidesoft.swing.JideButton;
+import com.jidesoft.swing.JideComboBox;
 import com.jidesoft.swing.JideTabbedPane;
 import com.vitco.app.layout.content.JCustomScrollPane;
 import com.vitco.app.layout.content.JCustomTable;
@@ -19,7 +20,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.TreeMap;
 
 /**
  * Handle the displaying and the logic for the editing of shortcuts. (view & link to logic)
@@ -57,8 +60,8 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         }
     }
 
-    // cell edit action
-    private class CellEditor extends AbstractCellEditor implements TableCellEditor {
+    // key cell edit action
+    private class KeyCellEditor extends AbstractCellEditor implements TableCellEditor {
 
         // handles the editing of the cell value
         JPanel wrapper;
@@ -67,7 +70,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         // so we have a reference to the current frame
         // this can be null if we handle global shortcuts
         private final String frame;
-        public CellEditor(String frame) {
+        public KeyCellEditor(String frame) {
             super();
             this.frame = frame;
         }
@@ -85,9 +88,6 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
                     if (shortcutManager.updateShortcutObject(keyStroke, frame, rowIndex)) {
                         String shortcutText = shortcutManager.asString(keyStroke);
                         component.setText(shortcutText);
-                        // make sure the table is up to date
-                        // note: workaround for resize bug
-                        table.setValueAt(shortcutText, rowIndex, vColIndex);
                     }
                     wrapper.setBackground(shortcutManager.getEditBgColor(frame, rowIndex));
                     stopCellEditing(); // immediately stop editing
@@ -170,8 +170,6 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             return wrapper;
         }
 
-        // edit complete
-        // Important: can not rely on this to fire (resize bug!)
         public Object getCellEditorValue() {
             return component.getText(); // return new value
         }
@@ -180,7 +178,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
     // internal - takes shortcuts, col names and frame key
     // frame key can be null if we handle global shortcuts
     // global flag
-    private JTable createTab(String[][] data, String[] columnNames, String frameKey) {
+    private JTable createTab(String[][] data, String[] columnNames) {
         // create the default model for data and column names
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
         // create table, only allow editing for second column (shortcuts)
@@ -218,8 +216,93 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         TableRenderer tableRenderer = new TableRenderer();
         shortcut_table.getColumnModel().getColumn(0).setCellRenderer(tableRenderer);
         shortcut_table.getColumnModel().getColumn(1).setCellRenderer(tableRenderer);
+        return shortcut_table;
+    }
+
+    // tab to customize key shortcuts
+    private JTable createKeyTab(String[][] data, String[] columnNames, String frameKey) {
+        JTable shortcut_table = createTab(data, columnNames);
         // create a new custom cell editor for the second column (shortcuts)
-        shortcut_table.getColumnModel().getColumn(1).setCellEditor(new CellEditor(frameKey));
+        shortcut_table.getColumnModel().getColumn(1).setCellEditor(new ShortcutManagerView.KeyCellEditor(frameKey));
+        return shortcut_table;
+    }
+
+    // mouse cell edit action
+    private class MouseCellEditor extends AbstractCellEditor implements TableCellEditor {
+
+        final TreeMap<String, String> actionLookup = new TreeMap<>();
+
+        // handles the editing of the cell value
+        JPanel wrapper;
+        JideComboBox component;
+
+        public MouseCellEditor() {
+            super();
+            actionLookup.put("rotate", "Rotate Camera");
+            actionLookup.put("truck", "Truck Camera");
+        }
+
+        @Override
+        public boolean isCellEditable( EventObject e ) {
+            // only edit with double-click
+            return !(e instanceof MouseEvent) || ((MouseEvent) e).getClickCount() >= 2;
+        }
+
+        // start editing
+        public Component getTableCellEditorComponent(final JTable table, Object value,
+                                                     boolean isSelected, final int rowIndex, final int vColIndex) {
+            component = new JideComboBox(actionLookup.values().toArray());
+            component.setFont(VitcoSettings.TABLE_FONT_BOLD);
+            component.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    preferences.storeString("mbutton" + (rowIndex + 1), (String) actionLookup.keySet().toArray()[component.getSelectedIndex()]);
+                }
+            });
+            component.setSelectedIndex(new ArrayList<>(actionLookup.keySet()).indexOf(preferences.loadString("mbutton" + (rowIndex + 1))));
+
+            component.setCursor(Cursor.getDefaultCursor()); // just show the ordinary mouse cursor
+            component.setOpaque(false);
+            component.setForeground(VitcoSettings.EDIT_TEXT_COLOR); // set text color when edit
+
+            // holds drop down select
+            wrapper = new JPanel();
+            wrapper.setLayout(new BorderLayout());
+            wrapper.add(component, BorderLayout.CENTER);
+            wrapper.setBackground(shortcutManager.getEditBgColor(null, rowIndex)); // bg color when edit
+
+            return wrapper;
+        }
+
+        public Object getCellEditorValue() {
+            return actionLookup.values().toArray()[component.getSelectedIndex()];
+        }
+    }
+
+    // tab to customize mouse shortcuts
+    private JTable createMouseTab() {
+        MouseCellEditor mouseCellEditor = new ShortcutManagerView.MouseCellEditor();
+        String[] columnNames = new String[] {
+                langSelector.getString("shortcut_mg_header_mbutton"),
+                langSelector.getString("shortcut_mg_header_action")
+        };
+        // set default preferences
+        for (String[] btn : new String[][] {
+                new String[] {"mbutton1", "rotate"},
+                new String[] {"mbutton2", "rotate"},
+                new String[] {"mbutton3", "truck"}
+        }) {
+            if (!preferences.contains(btn[0])) {
+                preferences.storeString(btn[0], btn[1]);
+            }
+        }
+        String[][] data = new String[][] {
+                new String[] {langSelector.getString("mouse_button_left_caption"), mouseCellEditor.actionLookup.get(preferences.loadString("mbutton1"))},
+                new String[] {langSelector.getString("mouse_button_middle_caption"), mouseCellEditor.actionLookup.get(preferences.loadString("mbutton2"))},
+                new String[] {langSelector.getString("mouse_button_right_caption"), mouseCellEditor.actionLookup.get(preferences.loadString("mbutton3"))}
+        };
+        JTable shortcut_table = createTab(data, columnNames);
+        // create a new custom cell editor for the second column (shortcuts)
+        shortcut_table.getColumnModel().getColumn(1).setCellEditor(new ShortcutManagerView.MouseCellEditor());
         return shortcut_table;
     }
 
@@ -240,7 +323,12 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         // add the global shortcuts
         String[][] globalShortcuts = shortcutManager.getShortcuts(null);
         tabbedPane.addTab(langSelector.getString("global_shortcuts_caption"),
-                new JCustomScrollPane(createTab(globalShortcuts, columnNames, null)));
+                new JCustomScrollPane(createKeyTab(globalShortcuts, columnNames, null)));
+        // add mouse shortcuts
+        tabbedPane.addTab(
+                langSelector.getString("mouse_shortcuts_caption"),
+                new JCustomScrollPane(createMouseTab())
+        );
         // add the frame shortcuts
         String[][] frames = shortcutManager.getFrames();
         for (String[] frame : frames) {
@@ -248,8 +336,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             String[][] data = shortcutManager.getShortcuts(frame[0]); // the shortcuts (list)
             if (data.length > 0) { // only create tab if it has shortcuts
                 // add this tab to the tabbedPane
-                tabbedPane.addTab(frame[1],
-                        new JCustomScrollPane(createTab(data, columnNames, frame[0])));
+                tabbedPane.addTab(frame[1], new JCustomScrollPane(createKeyTab(data, columnNames, frame[0])));
             }
         }
         // set tooltips
