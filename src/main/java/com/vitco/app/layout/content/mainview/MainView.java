@@ -328,8 +328,14 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 });
             }
 
-            private Point leftMouseDown = null;
-            private Point rightMouseDown = null;
+            // left, middle, right
+            private Point[] mouseDown = new Point[] {null, null, null};
+            private String[] mouseAction = new String[] {null, null, null};
+            {
+                preferences.addPrefChangeListener("mbutton1", newValue -> mouseAction[0] = (String) newValue);
+                preferences.addPrefChangeListener("mbutton2", newValue -> mouseAction[1] = (String) newValue);
+                preferences.addPrefChangeListener("mbutton3", newValue -> mouseAction[2] = (String) newValue);
+            }
 
             @Override
             public void mousePressed(final MouseEvent e) {
@@ -337,8 +343,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                     @Override
                     public void performAction() {
                         switch (e.getModifiers() & (MouseEvent.BUTTON1_MASK | MouseEvent.BUTTON2_MASK | MouseEvent.BUTTON3_MASK)) {
-                            case MouseEvent.BUTTON1_MASK: case MouseEvent.BUTTON2_MASK: leftMouseDown = e.getPoint(); break;
-                            case MouseEvent.BUTTON3_MASK: rightMouseDown = e.getPoint(); break;
+                            case MouseEvent.BUTTON1_MASK: mouseDown[0] = e.getPoint(); break;
+                            case MouseEvent.BUTTON2_MASK: mouseDown[1] = e.getPoint(); break;
+                            case MouseEvent.BUTTON3_MASK: mouseDown[2] = e.getPoint(); break;
                             default: break;
                         }
                     }
@@ -351,8 +358,9 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                     @Override
                     public void performAction() {
                         switch (e.getModifiers() & (MouseEvent.BUTTON1_MASK | MouseEvent.BUTTON2_MASK | MouseEvent.BUTTON3_MASK)) {
-                            case MouseEvent.BUTTON1_MASK: case MouseEvent.BUTTON2_MASK: leftMouseDown = null; break;
-                            case MouseEvent.BUTTON3_MASK: rightMouseDown = null; break;
+                            case MouseEvent.BUTTON1_MASK: mouseDown[0] = null; break;
+                            case MouseEvent.BUTTON2_MASK: mouseDown[1] = null; break;
+                            case MouseEvent.BUTTON3_MASK: mouseDown[2] = null; break;
                             default: break;
                         }
                     }
@@ -364,16 +372,32 @@ public class MainView extends EngineInteractionPrototype implements MainViewInte
                 asyncActionManager.addAsyncAction(new AsyncAction() {
                     @Override
                     public void performAction() {
-                        if (leftMouseDown != null) {
-                            camera.rotate(e.getX() - leftMouseDown.x, e.getY() - leftMouseDown.y);
-                            leftMouseDown.x = e.getX();
-                            leftMouseDown.y = e.getY();
+                        Point rotateMouseButton = null;
+                        Point truckMouseButton = null;
+                        for (int i = 0; i < 3; i++) {
+                            switch (mouseAction[i]) {
+                                case "rotate":
+                                    if (rotateMouseButton == null) {
+                                        rotateMouseButton = mouseDown[i];
+                                    }
+                                    break;
+                                case "truck":
+                                    if (truckMouseButton == null) {
+                                        truckMouseButton = mouseDown[i];
+                                    }
+                                    break;
+                            }
+                        }
+                        if (rotateMouseButton != null) {
+                            camera.rotate(e.getX() - rotateMouseButton.x, e.getY() - rotateMouseButton.y);
+                            rotateMouseButton.x = e.getX();
+                            rotateMouseButton.y = e.getY();
                             container.doNotSkipNextWorldRender();
                             forceRepaint();
-                        } else if (rightMouseDown != null) {
-                            camera.shift(e.getX() - rightMouseDown.x, e.getY() - rightMouseDown.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
-                            rightMouseDown.x = e.getX();
-                            rightMouseDown.y = e.getY();
+                        } else if (truckMouseButton != null) {
+                            camera.shift(e.getX() - truckMouseButton.x, e.getY() - truckMouseButton.y, VitcoSettings.MAIN_VIEW_SIDE_MOVE_FACTOR);
+                            truckMouseButton.x = e.getX();
+                            truckMouseButton.y = e.getY();
                             container.doNotSkipNextWorldRender();
                             forceRepaint();
                         }
