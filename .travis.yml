@@ -33,9 +33,8 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    tags: false
-    branch: develop
-    jdk: oraclejdk8
+      all_branches: true
+      jdk: oraclejdk8
 
 deploy:
   provider: releases
