@@ -24,7 +24,8 @@ before_install:
 deploy:
   provider: s3
   access_key_id: $S3_ACCESS_KEY_ID
-  secret_access_key: $S3_SECRET_ACCESS_KEY
+  secret_access_key:
+    secure: "Pp91agMoerJ2VfIjN6Y+exx9f/9Ncp6X6WMZkUTSDNkbSOXl8eX+HTlH6ji2GkskqCIpEonj5QYj9gptgzA0QJ2ZP+D3z05Rnnzd1Mmj6KpdXDRR6rmVi/5V0gz1IteqrdZx2ro0v7vDvAKujSouIP10HXCwgKBu92qvbmNkXmcpLCp4w7kyZ4h1w/BgeYa6JakgTT8TRWtuLHlUZ4Bo8Ei6aIjsTGvHF2S+XOV5g8tMs/hRIUW7sAsPvssQEKa/LJ6CFnPdYQn9H/3Oo3KWJGTZpXgjZ8wEeJqDdE5XDju/dvFbY1C3k30yblKDEpQMURU1EPhQTkc+rakxSZlGZio63jskZ/UOgNRY3H+jw1koSxi4pWw0xCSQ93qvqWwhycUQNASxwOBj/1f7HIdLSiL4OoTiCGzX8AdtGi/hSBrK92p1Ls95a6inwZrfF3EupTCCEXOnvoFp6qnkiiLbUJvYt0bJFuOoR6PFslKfEuNk+7CF9QIF+ZsfII9A8JOtDWfHF80RmtIWl0nn0njkjALWEHr2VvKS2h/ZnwdA8WiIA3J5VDAZnnDu4OxvJ44IcD3Ue1liYlfOviZuMiJLHdZR9ySZyLVggk5qmrFJzfFXNY5ZAjLGmPP3unSGSRAQ0E3VsICzdtnolPCh/2mLma+URRNPfvYUc8aRlDvfhrw="
   bucket: $S3_BUCKET
   region: $S3_REGION
   upload-dir: build/$TRAVIS_BRANCH
