@@ -33,7 +33,6 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    tags: false
     all_branches: true
     jdk: oraclejdk8
 
