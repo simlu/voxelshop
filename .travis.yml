@@ -36,7 +36,7 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    repo: simlu/voxelshop
+    repo: $DEPLOY_REPO
     tags: false
     all_branches: true
     jdk: oraclejdk8
@@ -49,7 +49,7 @@ deploy:
   file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
   skip_cleanup: true
   on:
-    repo: simlu/voxelshop
+    repo: $DEPLOY_REPO
     branch: qa
     tags: true
     jdk: oraclejdk8
@@ -61,7 +61,7 @@ deploy:
   file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
   skip_cleanup: true
   on:
-    repo: simlu/voxelshop
+    repo: $DEPLOY_REPO
     branch: master
     tags: true
     jdk: oraclejdk8
