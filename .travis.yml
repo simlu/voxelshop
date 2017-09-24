@@ -36,7 +36,10 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    branch: develop
+    repo: simlu/voxelshop
+    tags: false
+    all_branches: true
+    jdk: oraclejdk8
 
 deploy:
   provider: releases
