@@ -33,6 +33,7 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
+    tags: false
     branches:
       only:
         - master
