@@ -34,11 +34,7 @@ deploy:
   acl: public_read
   on:
     tags: false
-    branches:
-      only:
-        - master
-        - qa
-        - develop
+    branch: develop
     jdk: oraclejdk8
 
 deploy:
