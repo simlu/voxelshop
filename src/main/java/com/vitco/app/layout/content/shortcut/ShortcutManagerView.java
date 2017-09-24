@@ -231,6 +231,10 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
     private class MouseCellEditor extends AbstractCellEditor implements TableCellEditor {
 
         final TreeMap<String, String> actionLookup = new TreeMap<>();
+        {
+            actionLookup.put("rotate", "Rotate Camera");
+            actionLookup.put("truck", "Truck Camera");
+        }
 
         // handles the editing of the cell value
         JPanel wrapper;
@@ -238,8 +242,6 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
 
         public MouseCellEditor() {
             super();
-            actionLookup.put("rotate", "Rotate Camera");
-            actionLookup.put("truck", "Truck Camera");
         }
 
         @Override
