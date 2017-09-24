@@ -35,8 +35,8 @@ deploy:
   local-dir: $TRAVIS_BUILD_DIR/target/build
   skip_cleanup: true
   acl: public_read
-    on:
-      branch: develop
+  on:
+    branch: develop
 
 deploy:
   provider: releases
