@@ -35,9 +35,6 @@ deploy:
   local-dir: $TRAVIS_BUILD_DIR/target/build
   skip_cleanup: true
   acl: public_read
-  on:
-      all_branches: true
-      jdk: oraclejdk8
 
 deploy:
   provider: releases
