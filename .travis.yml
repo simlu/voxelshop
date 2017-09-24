@@ -21,6 +21,9 @@ before_install:
   - if [ "$TRAVIS_BRANCH" != "master" ]; then echo "$TRAVIS_BUILD_NUMBER" >> $TRAVIS_BUILD_DIR/target/classes/resource/build.txt; fi
   - echo $(date +"%Y-%m-%d") >> $TRAVIS_BUILD_DIR/target/classes/resource/date.txt
 
+before_deploy:
+  - "mvn -DskipTests package"
+
 deploy:
   provider: s3
   access_key_id: $S3_ACCESS_KEY_ID
