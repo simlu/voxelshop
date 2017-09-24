@@ -33,7 +33,11 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    all_branches: true
+    branches:
+      only:
+        - master
+        - qa
+        - develop
     jdk: oraclejdk8
 
 deploy:
