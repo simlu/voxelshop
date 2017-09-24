@@ -10,7 +10,7 @@ Documentation on how to use the program can be found [here](https://simlu.github
 ## Setup, Run Locally and Distributable
 
 ### Required Tools
-Git, IntelliJ and JDK7 (e.g. http://downloads.puresoftware.org/files/android/JDK/)
+Git, IntelliJ and JDK8 (e.g. http://downloads.puresoftware.org/files/android/JDK/)
 
 ### Git
 Fork the git repository, open a terminal, go to the desired project location and type:
@@ -37,7 +37,7 @@ Make sure you use a different branch for each change set.
 
 ### IntelliJ
 - Click Open and select PS4k Folder (within the folder you selected as root)
-- Ensure the JDK7 is selected under File > Project Structure > Project
+- Ensure the JDK8 is selected under File > Project Structure > Project
 - Right click on PS4k > src > com > vitco > Main and "Run" to start VoxelShop
 - **Important**: Click on Main and on "Edit Configuration" and add "debug" as a program argument
 
