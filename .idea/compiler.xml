@@ -25,7 +25,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="PS4k" target="1.7" />
+      <module name="PS4k" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
