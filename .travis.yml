@@ -24,8 +24,7 @@ before_install:
 after_success:
   - "mvn -DskipTests package"
   - "pip install --user awscli"
-  - "~/.local/bin/aws s3 upload $TRAVIS_BUILD_DIR/target/build s3://$S3_BUCKET/build/$TRAVIS_BRANCH --region=$S3_REGION"
-
+  - "~/.local/bin/aws s3 cp $TRAVIS_BUILD_DIR/target/build s3://$S3_BUCKET/build/$TRAVIS_BRANCH --region=$S3_REGION"
 
 deploy:
   provider: releases
