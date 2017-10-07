@@ -27,26 +27,24 @@ after_success:
   - "~/.local/bin/aws s3 cp $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip s3://$S3_BUCKET/build/$TRAVIS_BRANCH/voxelshop-bin.zip --region=$S3_REGION"
 
 deploy:
-  provider: releases
-  prerelease: true
-  api_key:
-    secure: "mA6DaAr2VXyE8Zn0LPq7XX3e3/Dnlk3trkNDhuWNbs4jCISbCLBJalJEaovgd392/tKYjmOdN7kN+PUVyOwQZgwl2v7Q4cx0epMksibLhjICvVegGRMM/epPaOBqrQXy31gZN6RDKxVG/XFw9K9ez3TUZr0GmsjaRjQ9rNL62eRwvywrNzNFHLDJAWtM4Jl/DijN1LHO17OcecQArRA/Dk8y2r52DlKBXqQlksqfr3slJOH2natY/Nf2ZkfEyYZNRZ+6J9uKbkCTFncVoN80V/1nlA9QQ17gJx5ZnhpWqytebMgdRBKHgVECuLRHfw7vUzkQkk3V9U/VMxYTassWYYcfV9PNWCSshL4czl5LjMzRU65M+H2l/pISFwpwFM4E5u7A8lJ4KWclgfU7vFn/iWkb95NeAbYvPOfvB4OGIiaSI8xTWWL/tKdX+hmjWIKPSdhQd8B26syfJeqL2DcgE8uFjgisLZuBlWl7dKr11ausTPcA8lu4A4dWsZpuBVIPT6/Oi0XEFYVaTiy3CSV/XVV1XORME6G3UC0098DlWW/sZw5dA6jv/cf0o4IwttYDZdNq8fQVL2aXM7uJpv54gAjtBUpoFb/nNnkMw6MuN/xSzcgKs/ZWQk3HSPNuSuiWi/XPftNPUYJIJsZCeZscfKIBupzUhU9W8NX4r+LmYHA="
-  file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
-  skip_cleanup: true
-  on:
-    repo: $DEPLOY_REPO
-    branch: qa
-    tags: true
-    jdk: oraclejdk8
-
-deploy:
-  provider: releases
-  api_key:
-    secure: "mA6DaAr2VXyE8Zn0LPq7XX3e3/Dnlk3trkNDhuWNbs4jCISbCLBJalJEaovgd392/tKYjmOdN7kN+PUVyOwQZgwl2v7Q4cx0epMksibLhjICvVegGRMM/epPaOBqrQXy31gZN6RDKxVG/XFw9K9ez3TUZr0GmsjaRjQ9rNL62eRwvywrNzNFHLDJAWtM4Jl/DijN1LHO17OcecQArRA/Dk8y2r52DlKBXqQlksqfr3slJOH2natY/Nf2ZkfEyYZNRZ+6J9uKbkCTFncVoN80V/1nlA9QQ17gJx5ZnhpWqytebMgdRBKHgVECuLRHfw7vUzkQkk3V9U/VMxYTassWYYcfV9PNWCSshL4czl5LjMzRU65M+H2l/pISFwpwFM4E5u7A8lJ4KWclgfU7vFn/iWkb95NeAbYvPOfvB4OGIiaSI8xTWWL/tKdX+hmjWIKPSdhQd8B26syfJeqL2DcgE8uFjgisLZuBlWl7dKr11ausTPcA8lu4A4dWsZpuBVIPT6/Oi0XEFYVaTiy3CSV/XVV1XORME6G3UC0098DlWW/sZw5dA6jv/cf0o4IwttYDZdNq8fQVL2aXM7uJpv54gAjtBUpoFb/nNnkMw6MuN/xSzcgKs/ZWQk3HSPNuSuiWi/XPftNPUYJIJsZCeZscfKIBupzUhU9W8NX4r+LmYHA="
-  file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
-  skip_cleanup: true
-  on:
-    repo: $DEPLOY_REPO
-    branch: master
-    tags: true
-    jdk: oraclejdk8
+  - provider: releases
+    prerelease: true
+    api_key:
+      secure: "mA6DaAr2VXyE8Zn0LPq7XX3e3/Dnlk3trkNDhuWNbs4jCISbCLBJalJEaovgd392/tKYjmOdN7kN+PUVyOwQZgwl2v7Q4cx0epMksibLhjICvVegGRMM/epPaOBqrQXy31gZN6RDKxVG/XFw9K9ez3TUZr0GmsjaRjQ9rNL62eRwvywrNzNFHLDJAWtM4Jl/DijN1LHO17OcecQArRA/Dk8y2r52DlKBXqQlksqfr3slJOH2natY/Nf2ZkfEyYZNRZ+6J9uKbkCTFncVoN80V/1nlA9QQ17gJx5ZnhpWqytebMgdRBKHgVECuLRHfw7vUzkQkk3V9U/VMxYTassWYYcfV9PNWCSshL4czl5LjMzRU65M+H2l/pISFwpwFM4E5u7A8lJ4KWclgfU7vFn/iWkb95NeAbYvPOfvB4OGIiaSI8xTWWL/tKdX+hmjWIKPSdhQd8B26syfJeqL2DcgE8uFjgisLZuBlWl7dKr11ausTPcA8lu4A4dWsZpuBVIPT6/Oi0XEFYVaTiy3CSV/XVV1XORME6G3UC0098DlWW/sZw5dA6jv/cf0o4IwttYDZdNq8fQVL2aXM7uJpv54gAjtBUpoFb/nNnkMw6MuN/xSzcgKs/ZWQk3HSPNuSuiWi/XPftNPUYJIJsZCeZscfKIBupzUhU9W8NX4r+LmYHA="
+    file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
+    skip_cleanup: true
+    on:
+      repo: $DEPLOY_REPO
+      branch: qa
+      tags: true
+      jdk: oraclejdk8
+  - provider: releases
+    api_key:
+      secure: "mA6DaAr2VXyE8Zn0LPq7XX3e3/Dnlk3trkNDhuWNbs4jCISbCLBJalJEaovgd392/tKYjmOdN7kN+PUVyOwQZgwl2v7Q4cx0epMksibLhjICvVegGRMM/epPaOBqrQXy31gZN6RDKxVG/XFw9K9ez3TUZr0GmsjaRjQ9rNL62eRwvywrNzNFHLDJAWtM4Jl/DijN1LHO17OcecQArRA/Dk8y2r52DlKBXqQlksqfr3slJOH2natY/Nf2ZkfEyYZNRZ+6J9uKbkCTFncVoN80V/1nlA9QQ17gJx5ZnhpWqytebMgdRBKHgVECuLRHfw7vUzkQkk3V9U/VMxYTassWYYcfV9PNWCSshL4czl5LjMzRU65M+H2l/pISFwpwFM4E5u7A8lJ4KWclgfU7vFn/iWkb95NeAbYvPOfvB4OGIiaSI8xTWWL/tKdX+hmjWIKPSdhQd8B26syfJeqL2DcgE8uFjgisLZuBlWl7dKr11ausTPcA8lu4A4dWsZpuBVIPT6/Oi0XEFYVaTiy3CSV/XVV1XORME6G3UC0098DlWW/sZw5dA6jv/cf0o4IwttYDZdNq8fQVL2aXM7uJpv54gAjtBUpoFb/nNnkMw6MuN/xSzcgKs/ZWQk3HSPNuSuiWi/XPftNPUYJIJsZCeZscfKIBupzUhU9W8NX4r+LmYHA="
+    file: $TRAVIS_BUILD_DIR/target/build/voxelshop-bin.zip
+    skip_cleanup: true
+    on:
+      repo: $DEPLOY_REPO
+      branch: master
+      tags: true
+      jdk: oraclejdk8
