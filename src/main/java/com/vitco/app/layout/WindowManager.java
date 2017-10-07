@@ -38,10 +38,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /*
  * Manages the creation of the main window.
@@ -480,9 +477,12 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // set the icon
-        this.setIconImage(
-                new SaveResourceLoader("resource/img/icons/application/paintbucket.png").asImage()
-        );
+        this.setIconImages(Arrays.asList(
+                new SaveResourceLoader("resource/img/icons/application/icons/icon-16x16.png").asImage(),
+                new SaveResourceLoader("resource/img/icons/application/icons/icon-24x24.png").asImage(),
+                new SaveResourceLoader("resource/img/icons/application/icons/icon-32x32.png").asImage(),
+                new SaveResourceLoader("resource/img/icons/application/icons/icon-48x48.png").asImage()
+        ));
 
         final DockingManager dockingManager = getDockingManager();
 

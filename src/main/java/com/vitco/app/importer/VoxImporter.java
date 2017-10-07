@@ -116,7 +116,7 @@ public class VoxImporter extends AbstractImporter {
             return false;
         }
 
-        ArrayList<Integer> voxels = new ArrayList<Integer>();
+        ArrayList<Integer> voxels = new ArrayList<>();
         int[] palette = voxColors;
 
         int[] offset = new int[3];
@@ -169,7 +169,7 @@ public class VoxImporter extends AbstractImporter {
         for (Integer voxel : voxels) {
             buf.position(0);
             buf.putInt(voxel);
-            addVoxel(offset[0] -(buf.get(0) & 0xFF), -(buf.get(2) & 0xFF), -offset[1] + (buf.get(1) & 0xFF), palette[(buf.get(3) & 0xFF) - 1]);
+            addVoxel(-offset[0] + (buf.get(0) & 0xFF) - 1, -(buf.get(2) & 0xFF),-offset[1] + (buf.get(1) & 0xFF), palette[(buf.get(3) & 0xFF) - 1]);
         }
 
         return true;
