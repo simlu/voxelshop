@@ -101,7 +101,7 @@ public class ExportDataManager extends ProgressReporter {
 
     // constructor
     public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP,
-                             int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
+                             int originMode, boolean forcePOT, int separationMode, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
                              boolean exportTexturedVoxels, boolean useOverlappingUvs, boolean useSkewedUvs) {
         super(dialog, console);
 
@@ -114,13 +114,27 @@ public class ExportDataManager extends ProgressReporter {
         int minz = Integer.MAX_VALUE;
         int maxz = Integer.MIN_VALUE;
 
-        if (useLayers) {
+        if (separationMode == ColladaExportWrapper.SEPARATION_VOXEL) {
+            // handle voxels separately
+            for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                HullManagerExt<Voxel> hullManager = new HullManagerExt<>();
+                hullManager.update(voxel.posId, voxel);
+                minx = Math.min(minx, voxel.x);
+                maxx = Math.max(maxx, voxel.x);
+                miny = Math.min(miny, voxel.y);
+                maxy = Math.max(maxy, voxel.y);
+                minz = Math.min(minz, voxel.z);
+                maxz = Math.max(maxz, voxel.z);
+                hullManagers.add(hullManager);
+                layerNames.add("voxel_" + voxel.x + "_" + voxel.y + "_" + voxel.z);
+            }
+        } else if (separationMode == ColladaExportWrapper.SEPARATION_LAYER) {
             // handle layers separately
             for (Integer layerId : data.getLayers()) {
                 if (data.getLayerVisible(layerId)) {
                     Voxel[] layerVoxel = data.getLayerVoxels(layerId);
                     if (layerVoxel.length != 0) {
-                        HullManagerExt<Voxel> hullManager = new HullManagerExt<Voxel>();
+                        HullManagerExt<Voxel> hullManager = new HullManagerExt<>();
                         for (Voxel voxel : data.getLayerVoxels(layerId)) {
                             hullManager.update(voxel.posId, voxel);
                             minx = Math.min(minx, voxel.x);
@@ -135,9 +149,9 @@ public class ExportDataManager extends ProgressReporter {
                     }
                 }
             }
-        } else {
+        } else if (separationMode == ColladaExportWrapper.SEPARATION_MERGED) {
             // merge all layers
-            HullManagerExt<Voxel> hullManager = new HullManagerExt<Voxel>();
+            HullManagerExt<Voxel> hullManager = new HullManagerExt<>();
             for (Voxel voxel : data.getVisibleLayerVoxel()) {
                 hullManager.update(voxel.posId, voxel);
                 minx = Math.min(minx, voxel.x);
