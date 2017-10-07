@@ -84,16 +84,11 @@ public class MagicaVoxelExporter extends AbstractExporter {
 
         // ensure generated file is deterministic
         Voxel[] voxels = data.getVisibleLayerVoxel();
-        Arrays.sort(voxels, new Comparator<Voxel>() {
-            @Override
-            public int compare(Voxel o1, Voxel o2) {
-                return o2.posId - o1.posId;
-            }
-        });
+        Arrays.sort(voxels, Comparator.comparingInt(o -> o.posId));
 
         // write voxel data
         for (Voxel voxel : voxels) {
-            final int vx = -(voxel.x - max[0]);
+            final int vx = voxel.x - min[0];
             final int vy = -(voxel.y - max[1]);
             final int vz = voxel.z - min[2];
             final int colorId = colorPalette.get(voxel.getColor().getRGB()) + 1;

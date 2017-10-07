@@ -60,8 +60,47 @@ public class ExportDataManager extends ProgressReporter {
     // whether to fix tjunction problems
     private final boolean fixTJunctions;
 
-    // center of this object
+    // center of all voxels
     private final float[] center;
+
+    // centers of individual objects
+    private final ArrayList<float[]> centers = new ArrayList<>();
+
+    // retrieve offsets
+    public final float[][] getOffsets() {
+        float[][] result = new float[centers.size()][];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = centers.get(i).clone();
+            float[] entry = result[i];
+            switch (originMode) {
+                case ColladaExportWrapper.ORIGIN_CENTER:
+                    entry[0] -= center[0];
+                    entry[1] -= center[1];
+                    entry[2] -= center[2];
+                    break;
+                case ColladaExportWrapper.ORIGIN_PLANE_CENTER:
+                    entry[0] -= center[0];
+                    entry[1] -= 0.5f;
+                    entry[2] -= center[2];
+                    break;
+                case ColladaExportWrapper.ORIGIN_BOX_CENTER:
+                    entry[0] -= DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? -0.5f : 0f;
+                    entry[1] -= 0.5f - DynamicSettings.VOXEL_PLANE_RANGE_Y;
+                    entry[2] -= DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? -0.5f : 0f;
+                    break;
+                case ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER:
+                    entry[0] -= DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? -0.5f : 0f;
+                    entry[1] -= 0.5f;
+                    entry[2] -= DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? -0.5f : 0f;
+                    break;
+                case ColladaExportWrapper.ORIGIN_CROSS:
+                default:
+                    break;
+            }
+        }
+
+        return result;
+    }
 
     // -------------
     // Layer names of layers that are being exported
@@ -101,26 +140,46 @@ public class ExportDataManager extends ProgressReporter {
 
     // constructor
     public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP,
-                             int originMode, boolean forcePOT, boolean useLayers, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
+                             int originMode, boolean forcePOT, int separationMode, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
                              boolean exportTexturedVoxels, boolean useOverlappingUvs, boolean useSkewedUvs) {
         super(dialog, console);
 
         // create hull manager that exposes hull information
         setActivity("Computing Hull...", true);
-        int minx = Integer.MAX_VALUE;
-        int maxx = Integer.MIN_VALUE;
-        int miny = Integer.MAX_VALUE;
-        int maxy = Integer.MIN_VALUE;
-        int minz = Integer.MAX_VALUE;
-        int maxz = Integer.MIN_VALUE;
-
-        if (useLayers) {
+        int gminx = Integer.MAX_VALUE;
+        int gmaxx = Integer.MIN_VALUE;
+        int gminy = Integer.MAX_VALUE;
+        int gmaxy = Integer.MIN_VALUE;
+        int gminz = Integer.MAX_VALUE;
+        int gmaxz = Integer.MIN_VALUE;
+        if (separationMode == ColladaExportWrapper.SEPARATION_VOXEL) {
+            // handle voxels separately
+            for (Voxel voxel : data.getVisibleLayerVoxel()) {
+                HullManagerExt<Voxel> hullManager = new HullManagerExt<>();
+                hullManager.update(voxel.posId, voxel);
+                hullManagers.add(hullManager);
+                layerNames.add("voxel_" + voxel.x + "_" + voxel.y + "_" + voxel.z);
+                centers.add(new float[] {voxel.x, voxel.y, voxel.z});
+                gminx = Math.min(gminx, voxel.x);
+                gmaxx = Math.max(gmaxx, voxel.x);
+                gminy = Math.min(gminy, voxel.y);
+                gmaxy = Math.max(gmaxy, voxel.y);
+                gminz = Math.min(gminz, voxel.z);
+                gmaxz = Math.max(gmaxz, voxel.z);
+            }
+        } else if (separationMode == ColladaExportWrapper.SEPARATION_LAYER) {
             // handle layers separately
             for (Integer layerId : data.getLayers()) {
                 if (data.getLayerVisible(layerId)) {
                     Voxel[] layerVoxel = data.getLayerVoxels(layerId);
                     if (layerVoxel.length != 0) {
-                        HullManagerExt<Voxel> hullManager = new HullManagerExt<Voxel>();
+                        HullManagerExt<Voxel> hullManager = new HullManagerExt<>();
+                        int minx = Integer.MAX_VALUE;
+                        int maxx = Integer.MIN_VALUE;
+                        int miny = Integer.MAX_VALUE;
+                        int maxy = Integer.MIN_VALUE;
+                        int minz = Integer.MAX_VALUE;
+                        int maxz = Integer.MIN_VALUE;
                         for (Voxel voxel : data.getLayerVoxels(layerId)) {
                             hullManager.update(voxel.posId, voxel);
                             minx = Math.min(minx, voxel.x);
@@ -132,12 +191,25 @@ public class ExportDataManager extends ProgressReporter {
                         }
                         layerNames.add(data.getLayerName(layerId));
                         hullManagers.add(hullManager);
+                        centers.add(new float[] {(minx + maxx) / 2f, (miny + maxy) / 2f, (minz + maxz) / 2f});
+                        gminx = Math.min(gminx, minx);
+                        gmaxx = Math.max(gmaxx, maxx);
+                        gminy = Math.min(gminy, miny);
+                        gmaxy = Math.max(gmaxy, maxy);
+                        gminz = Math.min(gminz, minz);
+                        gmaxz = Math.max(gmaxz, maxz);
                     }
                 }
             }
-        } else {
+        } else if (separationMode == ColladaExportWrapper.SEPARATION_MERGED) {
             // merge all layers
-            HullManagerExt<Voxel> hullManager = new HullManagerExt<Voxel>();
+            HullManagerExt<Voxel> hullManager = new HullManagerExt<>();
+            int minx = Integer.MAX_VALUE;
+            int maxx = Integer.MIN_VALUE;
+            int miny = Integer.MAX_VALUE;
+            int maxy = Integer.MIN_VALUE;
+            int minz = Integer.MAX_VALUE;
+            int maxz = Integer.MIN_VALUE;
             for (Voxel voxel : data.getVisibleLayerVoxel()) {
                 hullManager.update(voxel.posId, voxel);
                 minx = Math.min(minx, voxel.x);
@@ -149,11 +221,18 @@ public class ExportDataManager extends ProgressReporter {
             }
             layerNames.add("Merged");
             hullManagers.add(hullManager);
+            centers.add(new float[] {(minx + maxx) / 2f, (miny + maxy) / 2f, (minz + maxz) / 2f});
+            gminx = Math.min(gminx, minx);
+            gmaxx = Math.max(gmaxx, maxx);
+            gminy = Math.min(gminy, miny);
+            gmaxy = Math.max(gmaxy, maxy);
+            gminz = Math.min(gminz, minz);
+            gmaxz = Math.max(gmaxz, maxz);
         }
         center = new float[] {
-            (minx + maxx) / 2f,
-            (miny + maxy) / 2f,
-            (minz + maxz) / 2f
+            (gminx + gmaxx) / 2f,
+            (gminy + gmaxy) / 2f,
+            (gminz + gmaxz) / 2f
         };
 
         // store references
@@ -308,8 +387,10 @@ public class ExportDataManager extends ProgressReporter {
     private void extract(final int algorithm) {
         setActivity("Extracting Mesh...", false);
         // loop over all managers
-        for (final HullManagerExt<Voxel> hullManager : hullManagers) {
-            final TexTriangleManager triangleManager =  new TexTriangleManager();
+        for (int i = 0; i < hullManagers.size(); i++) {
+            final int finalI = i;
+            HullManagerExt<Voxel> hullManager = hullManagers.get(i);
+            final TexTriangleManager triangleManager = new TexTriangleManager();
             triangleManagers.add(triangleManager);
             // loop over all sides
             for (int side = 0; side < 6; side++) {
@@ -487,25 +568,7 @@ public class ExportDataManager extends ProgressReporter {
                                 texTri.invert(1);
                                 texTri.invert(2);
 
-                                if (originMode == ColladaExportWrapper.ORIGIN_CROSS) {
-                                    texTri.move(0.5f, 0.5f, 0.5f); // move one up
-                                } else if (originMode == ColladaExportWrapper.ORIGIN_CENTER) {
-                                    texTri.move(center[0] + 0.5f, center[2] + 0.5f, center[1] + 0.5f);
-                                } else if (originMode == ColladaExportWrapper.ORIGIN_PLANE_CENTER) {
-                                    texTri.move(center[0] + 0.5f, center[2] + 0.5f, 1f);
-                                } else if (originMode == ColladaExportWrapper.ORIGIN_BOX_CENTER) {
-                                    texTri.move(
-                                            DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? 0f : 0.5f,
-                                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : 0.5f,
-                                            1f - DynamicSettings.VOXEL_PLANE_RANGE_Y
-                                    );
-                                } else if (originMode == ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER) {
-                                    texTri.move(
-                                            DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? 0f : 0.5f,
-                                            DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? 0f : 0.5f,
-                                            1f
-                                    );
-                                }
+                                texTri.move(centers.get(finalI)[0] + 0.5f, centers.get(finalI)[2] + 0.5f, centers.get(finalI)[1] + 0.5f);
 
                                 if (useYUP) {
                                     texTri.swap(1, 2);

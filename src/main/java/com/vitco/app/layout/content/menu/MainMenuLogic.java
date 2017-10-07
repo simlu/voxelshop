@@ -460,12 +460,17 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         fixTJunctions.setEnabledLookup("collada.type=poly2tri");
         collada.addComponent(fixTJunctions);
 
-        // option: layer as object
-        CheckBoxModule layersAsObjects = new CheckBoxModule("layers_as_objects", "Create a new Object for every Layer", true);
-        collada.addComponent(layersAsObjects);
+        collada.addComponent(new SeparatorModule("Object Separation"));
+        ComboBoxModule separationMode = new ComboBoxModule("separation_mode", new String[][]{
+                new String[]{"merged", "Merged"},
+                new String[]{"layer", "Per Layer"},
+                new String[]{"voxel", "Per Voxel"}
+        }, 0);
+        collada.addComponent(separationMode);
 
         // option: remove holes
         CheckBoxModule removeEnclosed = new CheckBoxModule("remove_holes", "Fill in enclosed Holes", true);
+        removeEnclosed.setDisabledLookup("collada.separation_mode=voxel");
         collada.addComponent(removeEnclosed);
 
         collada.addComponent(new SeparatorModule("Format"));
@@ -742,7 +747,13 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 ColladaExportWrapper colladaExportWrapper = new ColladaExportWrapper(progressDialog, console);
 
                                 // set the "use layers" flag
-                                colladaExportWrapper.setUseLayers(dialog.is("collada.layers_as_objects=true"));
+                                if (dialog.is("collada.separation_mode=merged")) {
+                                    colladaExportWrapper.setSeparationMode(ColladaExportWrapper.SEPARATION_MERGED);
+                                } else if (dialog.is("collada.separation_mode=layer")) {
+                                    colladaExportWrapper.setSeparationMode(ColladaExportWrapper.SEPARATION_LAYER);
+                                } else if (dialog.is("collada.separation_mode=voxel")) {
+                                    colladaExportWrapper.setSeparationMode(ColladaExportWrapper.SEPARATION_VOXEL);
+                                }
                                 // set remove holes flag
                                 colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
                                 // set pad textures flag

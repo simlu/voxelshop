@@ -30,10 +30,14 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.objectName = objectName;
     }
 
-    // true if every voxel layer should be exported as its own object
-    private boolean useLayers = false;
-    public final void setUseLayers(boolean state) {
-        useLayers = state;
+    // the origin mode
+    public static final int SEPARATION_MERGED = 0;
+    public static final int SEPARATION_LAYER = 1;
+    public static final int SEPARATION_VOXEL = 2;
+    // setter for origin mode
+    private int separationMode = SEPARATION_MERGED;
+    public final void setSeparationMode(int separationMode) {
+        this.separationMode = separationMode;
     }
 
     // true if holes should be removed
@@ -125,7 +129,7 @@ public class ColladaExportWrapper extends ProgressReporter {
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(
                 getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode,
-                forcePOT, useLayers, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels, useOverlappingUvs,
+                forcePOT, separationMode, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels, useOverlappingUvs,
                 useSkewedUvs);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
                 getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);

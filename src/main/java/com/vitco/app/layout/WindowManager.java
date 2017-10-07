@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -480,9 +481,11 @@ public class WindowManager extends ExtendedDockableBarDockableHolder implements 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // set the icon
-        this.setIconImage(
-                new SaveResourceLoader("resource/img/icons/application/paintbucket.png").asImage()
-        );
+        ArrayList<Image> icons = new ArrayList<>();
+        for (File f : new File("resource/img/icons/application/icons").listFiles()) {
+            icons.add(new SaveResourceLoader(f.getPath()).asImage());
+        }
+        this.setIconImages(icons);
 
         final DockingManager dockingManager = getDockingManager();
 
