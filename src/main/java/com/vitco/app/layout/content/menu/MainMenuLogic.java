@@ -460,15 +460,15 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 "prefix_object_names_with_file_name", "Prefix Object Names with File Name", true);
         collada.addComponent(prefixObjectNamesWithFileName);
 
-        // option: set output scale
-        TextInputModule objectScale = new TextInputModule(
-                "object_scale", "Object Scale", "0.05", true, "^([0-9]*\\.[0-9]+|[0-9]+)$");
-        collada.addComponent(objectScale);
-
         // option: fix t junction problems
         CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
         fixTJunctions.setEnabledLookup("collada.type=poly2tri");
         collada.addComponent(fixTJunctions);
+
+        // option: set output scale
+        TextInputModule objectScale = new TextInputModule(
+                "object_scale", "Object Scale", "0.05", true, "^([0-9]*\\.[0-9]+|[0-9]+)$");
+        collada.addComponent(objectScale);
 
         collada.addComponent(new SeparatorModule("Object Separation"));
         ComboBoxModule separationMode = new ComboBoxModule("separation_mode", new String[][]{
