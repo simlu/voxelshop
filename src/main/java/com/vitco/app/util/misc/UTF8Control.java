@@ -14,11 +14,17 @@ import java.util.ResourceBundle.Control;
 
 public class UTF8Control extends Control {
 
-    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
+    private final Locale locale;
+
+    public UTF8Control(Locale locale) {
+        this.locale = locale;
+    }
+
+    public ResourceBundle newBundle(String baseName, Locale ignored, String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException
     {
         // The below is a copy of the default implementation.
-        String bundleName = toBundleName(baseName, locale);
+        String bundleName = toBundleName(baseName, this.locale);
         String resourceName = toResourceName(bundleName, "properties");
         ResourceBundle bundle = null;
         InputStream stream = null;
