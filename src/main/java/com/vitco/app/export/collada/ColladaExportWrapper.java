@@ -63,6 +63,16 @@ public class ColladaExportWrapper extends ProgressReporter {
         this.useVertexColoring = useVertexColoring;
     }
 
+    private boolean prefixObjectNamesWithFileName = true;
+    public void setPrefixObjectNamesWithFileName(boolean prefixObjectNamesWithFileName) {
+        this.prefixObjectNamesWithFileName = prefixObjectNamesWithFileName;
+    }
+
+    private float objectScale = 0.05f;
+    public void setObjectScale(float objectScale) {
+        this.objectScale = objectScale;
+    }
+
     private boolean exportTexturedVoxels = false;
     public void setExportTexturedVoxels(boolean exportTexturedVoxels) {
         this.exportTexturedVoxels = exportTexturedVoxels;
@@ -132,7 +142,10 @@ public class ColladaExportWrapper extends ProgressReporter {
                 forcePOT, separationMode, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels, useOverlappingUvs,
                 useSkewedUvs);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(
-                getProgressDialog(), getConsole(), exportDataManager, prefix, objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring);
+                getProgressDialog(), getConsole(), exportDataManager, prefix,
+                objectName, useYUP, exportOrthogonalVertexNormals, useVertexColoring,
+                prefixObjectNamesWithFileName, objectScale
+        );
 
         setActivity("Writing Data File...", true);
         // write the dae file

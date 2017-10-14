@@ -2,12 +2,9 @@ package com.vitco.app.util.components.dialog.components;
 
 import com.vitco.app.util.components.dialog.BlankDialogModule;
 import com.vitco.app.util.components.textfield.JCustomTextField;
-import com.vitco.app.util.components.textfield.TextChangeListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
@@ -22,10 +19,21 @@ public class TextInputModule extends BlankDialogModule {
     // the text field part
     private final JCustomTextField textField = new JCustomTextField();
 
-    // constructor
+    private final String regex;
+    private final String text;
+
+    // constructor without regex
     public TextInputModule(String identifier, String caption, String text, boolean requireText) {
+        this(identifier, caption, text, requireText, null);
+    }
+
+    // constructor
+    public TextInputModule(String identifier, String caption, String text, boolean requireText, String regex) {
         super(identifier);
         setLayout(new BorderLayout());
+        assert regex == null || text.matches(regex);
+        this.regex = regex;
+        this.text = text;
         // create label
         JLabel textLabel = new JLabel(caption);
         // add spacing to the right
@@ -41,44 +49,36 @@ public class TextInputModule extends BlankDialogModule {
             setReady(!textField.getText().trim().equals(""));
 
             // listen to edit events
-            textField.addTextChangeListener(new TextChangeListener() {
-                @Override
-                public void onChange() {
+            textField.addTextChangeListener(() -> {
+                setReady(!textField.getText().trim().equals("") || !textField.isEnabled());
+                notifyContentChanged();
+            });
+
+            // listen to enabled/disabled changes (they affect the "readyness")
+            textField.addPropertyChangeListener(evt -> {
+                if ("enabled".equals(evt.getPropertyName())) {
                     setReady(!textField.getText().trim().equals("") || !textField.isEnabled());
                     notifyContentChanged();
                 }
             });
-
-            // listen to enabled/disabled changes (they affect the "readyness")
-            textField.addPropertyChangeListener(new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if ("enabled".equals(evt.getPropertyName())) {
-                        setReady(!textField.getText().trim().equals("") || !textField.isEnabled());
-                        notifyContentChanged();
-                    }
-                }
-            });
         } else {
             // listen to change events (simple)
-            textField.addTextChangeListener(new TextChangeListener() {
-                @Override
-                public void onChange() {
-                    notifyContentChanged();
-                }
-            });
+            textField.addTextChangeListener(this::notifyContentChanged);
         }
     }
 
     // get the value of this object
     @Override
     protected String getValue(String identifier) {
-        return textField.getText();
+        if (this.regex != null && !textField.getText().trim().matches(this.regex)) {
+            textField.setText(this.text);
+        }
+        return textField.getText().trim();
     }
 
     @Override
     protected ArrayList<String[]> getSerialization(String path) {
-        ArrayList<String[]> keyValuePair = new ArrayList<String[]>();
+        ArrayList<String[]> keyValuePair = new ArrayList<>();
         keyValuePair.add(new String[] {path, getValue(null)});
         return keyValuePair;
     }

@@ -1,5 +1,7 @@
 package com.vitco.app.manager.lang;
 
+import com.vitco.app.util.misc.UTF8Control;
+
 import javax.annotation.PostConstruct;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -22,7 +24,7 @@ public final class LangSelector implements LangSelectorInterface {
     @Override
     public void init() {
         Locale locale = new Locale(language, country);
-        rb = ResourceBundle.getBundle(defaultFile, locale);
+        rb = ResourceBundle.getBundle(defaultFile, locale, new UTF8Control());
     }
 
     @Override
