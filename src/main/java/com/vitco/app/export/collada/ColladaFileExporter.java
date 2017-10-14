@@ -37,15 +37,21 @@ public class ColladaFileExporter extends ProgressReporter {
     // overwriting of textures that belong to different files)
     private final String texturePrefix;
 
+    // whether to prefix all object names with the file name
+    private final boolean prefixObjectNamesWithFileName;
+
     // scale factor (useful for Blender)
-    private static final float SCALE = 0.05f;
+    private final float objectScale;
 
     // constructor
     public ColladaFileExporter(ProgressDialog dialog, ConsoleInterface console, ExportDataManager exportDataManager,
-                               String texturePrefix, String name, boolean useYUP, boolean exportOrthogonalVertexNormals, boolean useVertexColoring) {
+                               String texturePrefix, String name, boolean useYUP, boolean exportOrthogonalVertexNormals, boolean useVertexColoring,
+                               boolean prefixObjectNamesWithFileName, float objectScale) {
         super(dialog, console);
         this.exportDataManager = exportDataManager;
         this.texturePrefix = texturePrefix;
+        this.prefixObjectNamesWithFileName = prefixObjectNamesWithFileName;
+        this.objectScale = objectScale;
         // initialize the xml file
         setActivity("Creating File Data...", true);
         initXmlFile(useYUP, useVertexColoring);
@@ -65,35 +71,35 @@ public class ColladaFileExporter extends ProgressReporter {
 
     // create the object in the scene
     private void writeObjects(String name) {
-        String cleanName = name.replace(" ", "_").replaceAll("[^a-zA-Z0-9_\\-\\.]", "").toLowerCase();
+        String cleanName = name.replace(" ", "_").replaceAll("[^a-zA-Z0-9_\\-\\.]", "");
         String[] layerNames = exportDataManager.getLayerNames();
         HashSet<String> knownObjectIds = new HashSet<>();
         float[][] offsets = exportDataManager.getOffsets();
         for (int layerRef = 0; layerRef < layerNames.length; layerRef++) {
             float[] offset = offsets[layerRef];
             String layerName = layerNames[layerRef];
-            String cleanLayerName = layerName.replace(" ", "_").replaceAll("[^a-zA-Z0-9_\\-\\.]", "").toLowerCase();
-            String objectId = cleanLayerName;
+            String cleanLayerName = layerName.replace(" ", "_").replaceAll("[^a-zA-Z0-9_\\-\\.]", "");
+            String objectId = cleanName.toLowerCase() + "." + cleanLayerName.toLowerCase();
             int count = 1;
             while (knownObjectIds.contains(objectId)) {
-                objectId = cleanLayerName + "." + String.format("%03d", count);
+                objectId = cleanName.toLowerCase() + "." + cleanLayerName.toLowerCase() + "." + String.format("%03d", count);
                 count++;
             }
             knownObjectIds.add(objectId);
             // create the object
             xmlFile.resetTopNode("library_visual_scenes/visual_scene/node[-1]");
             xmlFile.addAttributes("", new String[]{
-                    "id=" + cleanName + "." + objectId,
-                    "name=" + cleanName + "." + objectId,
+                    "id=" + objectId,
+                    "name=" + (this.prefixObjectNamesWithFileName ? cleanName + "." : "") + cleanLayerName,
                     "type=NODE"
             });
             xmlFile.addAttrAndTextContent("translate", new String[]{"sid=location"},
-                    (-SCALE * offset[0] * 2) + " " + (-SCALE * offset[2] * 2) + " " + (-SCALE * offset[1] * 2));
+                    (-objectScale * offset[0] * 2) + " " + (-objectScale * offset[2] * 2) + " " + (-objectScale * offset[1] * 2));
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationZ"}, "0 0 1 0");
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationY"}, "0 1 0 0");
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationX"}, "1 0 0 0");
-            // scale the object down
-            xmlFile.addAttrAndTextContent("scale", new String[]{"sid=scale"}, SCALE + " " + SCALE + " " + SCALE);
+            // scale the object
+            xmlFile.addAttrAndTextContent("scale", new String[]{"sid=scale"}, objectScale + " " + objectScale + " " + objectScale);
 
 
             // add the material to the object

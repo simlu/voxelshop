@@ -383,7 +383,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // add help links
         dialog.addLink(console, "Export to Blender", "https://github.com/simlu/voxelshop/wiki/Export-for-Blender");
         dialog.addLink(console, "Export to Unity", "https://github.com/simlu/voxelshop/wiki/Export-for-Unity");
-        dialog.addLink(console, "Export to Stonehearth", "https://github.com/simlu/voxelshop/wiki/Export-for-Stonehearth");
+        dialog.addLink(console, "Export to Stonehearth", "https://discourse.stonehearth.net/t/5289");
 
         // add file select
         FieldSet location = new FieldSet("location", "Location");
@@ -455,10 +455,20 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         collada.addComponent(new SeparatorModule("Misc"));
 
+        // option: prefix object names with file name
+        CheckBoxModule prefixObjectNamesWithFileName = new CheckBoxModule(
+                "prefix_object_names_with_file_name", "Prefix Object Names with File Name", true);
+        collada.addComponent(prefixObjectNamesWithFileName);
+
         // option: fix t junction problems
         CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
         fixTJunctions.setEnabledLookup("collada.type=poly2tri");
         collada.addComponent(fixTJunctions);
+
+        // option: set output scale
+        TextInputModule objectScale = new TextInputModule(
+                "object_scale", "Object Scale", "0.05", true, "^([0-9]*\\.[0-9]+|[0-9]+)$");
+        collada.addComponent(objectScale);
 
         collada.addComponent(new SeparatorModule("Object Separation"));
         ComboBoxModule separationMode = new ComboBoxModule("separation_mode", new String[][]{
@@ -762,6 +772,10 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 colladaExportWrapper.setTriangulateByColor(dialog.is("collada.triangulate_by_color=true"));
                                 // set use vertex coloring
                                 colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
+                                // set prefix object names with file name
+                                colladaExportWrapper.setPrefixObjectNamesWithFileName(dialog.is("collada.prefix_object_names_with_file_name=true"));
+                                // set object scale
+                                colladaExportWrapper.setObjectScale(Float.parseFloat(dialog.getValue("collada.object_scale")));
                                 // set export textured voxels
                                 colladaExportWrapper.setExportTexturedVoxels(dialog.is("collada.export_textured_voxels=true"));
                                 // set force power of two force textures
