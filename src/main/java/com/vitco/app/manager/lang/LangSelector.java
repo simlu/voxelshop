@@ -24,7 +24,7 @@ public final class LangSelector implements LangSelectorInterface {
     @Override
     public void init() {
         Locale locale = new Locale(language, country);
-        rb = ResourceBundle.getBundle(defaultFile, locale, new UTF8Control(locale));
+        rb = ResourceBundle.getBundle(defaultFile, locale, new UTF8Control());
     }
 
     @Override
