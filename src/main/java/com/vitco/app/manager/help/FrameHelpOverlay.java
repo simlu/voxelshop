@@ -288,7 +288,7 @@ public class FrameHelpOverlay extends JComponent {
                                     int h = comp.getHeight();
                                     // add to front
                                     rects.add(0, new CRectangle(xn, yn, w, h,
-                                            "generic_header_button_" + ((JideButton) comp).getToolTipText()
+                                            "generic_header_button_" + comp.getName()
                                                     .replace(" ", "_").toLowerCase())
                                     );
                                 }

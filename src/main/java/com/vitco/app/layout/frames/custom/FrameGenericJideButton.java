@@ -11,8 +11,9 @@ public class FrameGenericJideButton extends JideButton {
         super.setIcon((Icon) UIManager.get(icon));
     }
 
-    public FrameGenericJideButton(String icon, String tooltip) {
+    public FrameGenericJideButton(String name, String icon, String tooltip) {
         super();
+        this.setName(name);
         this.setIcon(icon);
         this.setToolTipText(icon);
         this.setMargin(new Insets(5, 10, 5, 10));
