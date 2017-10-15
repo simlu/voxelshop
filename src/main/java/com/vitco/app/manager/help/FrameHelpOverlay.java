@@ -338,7 +338,7 @@ public class FrameHelpOverlay extends JComponent {
                                         parent = parent.getParent();
                                     }
                                     if (parent != null) {
-                                        String name = "window_" + ((DockableFrame)parent).getKey() + "_tab_" + tabbedPane.getTitleAt(k).replace(" ", "_").toLowerCase();
+                                        String name = "window_" + ((DockableFrame)parent).getKey() + "_tab_" + tabbedPane.getComponentAt(k).getName().replace(" ", "_").toLowerCase();
                                         int xn = x + rect.x;
                                         int yn = y + rect.y;
                                         int w = rect.width;
