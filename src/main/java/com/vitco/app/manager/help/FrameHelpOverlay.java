@@ -15,6 +15,7 @@ import com.vitco.app.manager.lang.LangSelectorInterface;
 import com.vitco.app.settings.VitcoSettings;
 import com.vitco.app.util.misc.FontUtil;
 import com.vitco.app.util.misc.SaveResourceLoader;
+import com.vitco.app.util.misc.FontTools;
 
 import javax.swing.*;
 import java.awt.*;
@@ -394,6 +395,8 @@ public class FrameHelpOverlay extends JComponent {
             }
 //            g2.drawRoundRect(displayRect.x, displayRect.y, displayRect.width, displayRect.height, 4, 4); // debug
             g2 = (Graphics2D) g2.create();
+            // make it display UTF-8 text
+            FontTools.setRightFont(g2, help_text, Font.PLAIN, 18);
             // extract the dimension of the rect that drawing the string will take
             Rectangle rect = FontUtil.drawString(g2, mainFont, fallbackFont, help_text, displayRect.x, displayRect.y, displayRect.width, false);
             // compute the top left point for our info text
