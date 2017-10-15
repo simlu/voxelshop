@@ -71,6 +71,9 @@ public class FontUtil {
                 }
             }
         }
+        if (fallback) {
+            result.addAttribute(TextAttribute.FONT, fallbackFont, fallbackBegin, text.length());
+        }
         return result;
     }
 
