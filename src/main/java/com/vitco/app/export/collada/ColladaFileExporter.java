@@ -57,7 +57,7 @@ public class ColladaFileExporter extends ProgressReporter {
         initXmlFile(useYUP, useVertexColoring);
         // create the object in the scene
         setActivity("Creating Objects...", true);
-        writeObjects(name);
+        writeObjects(name, useYUP);
         if (!useVertexColoring) {
             // write the texture information
             setActivity("Creating Textures...", true);
@@ -70,7 +70,7 @@ public class ColladaFileExporter extends ProgressReporter {
     }
 
     // create the object in the scene
-    private void writeObjects(String name) {
+    private void writeObjects(String name, boolean useYUP) {
         String cleanName = name.replace(" ", "_").replaceAll("[^a-zA-Z0-9_\\-\\.]", "");
         String[] layerNames = exportDataManager.getLayerNames();
         HashSet<String> knownObjectIds = new HashSet<>();
@@ -94,7 +94,9 @@ public class ColladaFileExporter extends ProgressReporter {
                     "type=NODE"
             });
             xmlFile.addAttrAndTextContent("translate", new String[]{"sid=location"},
-                    (-objectScale * offset[0] * 2) + " " + (-objectScale * offset[2] * 2) + " " + (-objectScale * offset[1] * 2));
+                    (-objectScale * offset[0] * 2) + " " +
+                            (-objectScale * (useYUP ? offset[1] : offset[2]) * 2) + " " +
+                            (-objectScale * (useYUP ? -offset[2] : offset[1]) * 2));
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationZ"}, "0 0 1 0");
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationY"}, "0 1 0 0");
             xmlFile.addAttrAndTextContent("rotate[-1]", new String[]{"sid=rotationX"}, "1 0 0 0");
