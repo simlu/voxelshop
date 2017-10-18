@@ -494,7 +494,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                 "export_orthogonal_vertex_normals", "Export orthogonal Vertex Normals", false);
         collada.addComponent(exportOrthogonalVertexNormals);
 
-        collada.addComponent(new SeparatorModule("Origin"));
+        collada.addComponent(new SeparatorModule("Scene Origin"));
         ComboBoxModule setOriginModeSelect = new ComboBoxModule("origin_mode", new String[][]{
                 new String[]{"cross", "Use Cross"},
                 new String[]{"center", "Use Object Center"},
