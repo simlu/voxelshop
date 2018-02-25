@@ -497,12 +497,23 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         collada.addComponent(new SeparatorModule("Scene Origin"));
         ComboBoxModule setOriginModeSelect = new ComboBoxModule("origin_mode", new String[][]{
                 new String[]{"cross", "Use Cross"},
-                new String[]{"center", "Use Object Center"},
-                new String[]{"plane_center", "Use Object Center Projected onto Plane"},
+                new String[]{"center", "Use Global Object Center"},
+                new String[]{"plane_center", "Use Global Object Center Projected onto Plane"},
                 new String[]{"box_center", "Use Bounding Box Center"},
                 new String[]{"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
         }, 0);
         collada.addComponent(setOriginModeSelect);
+
+        collada.addComponent(new SeparatorModule("Object Origin"));
+        ComboBoxModule setObjectOrigin = new ComboBoxModule("object_origin", new String[][]{
+                new String[]{"local_center", "Use Local Object Center(s)"},
+                new String[]{"cross", "Use Cross"},
+                new String[]{"center", "Use Global Object Center"},
+                new String[]{"plane_center", "Use Global Object Center Projected onto Plane"},
+                new String[]{"box_center", "Use Bounding Box Center"},
+                new String[]{"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
+        }, 0);
+        collada.addComponent(setObjectOrigin);
 
         // ---------------
 
@@ -797,13 +808,28 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 if (dialog.is("collada.origin_mode=cross")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CROSS);
                                 } else if (dialog.is("collada.origin_mode=center")) {
-                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CENTER);
+                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_GLOBAL_CENTER);
                                 } else if (dialog.is("collada.origin_mode=plane_center")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_PLANE_CENTER);
                                 } else if (dialog.is("collada.origin_mode=box_center")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_CENTER);
                                 } else if (dialog.is("collada.origin_mode=box_plane_center")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER);
+                                }
+
+                                // set object centering
+                                if (dialog.is("collada.object_origin=local_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_LOCAL_CENTER);
+                                } else if (dialog.is("collada.object_origin=cross")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_CROSS);
+                                } else if (dialog.is("collada.object_origin=center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_GLOBAL_CENTER);
+                                } else if (dialog.is("collada.object_origin=plane_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_PLANE_CENTER);
+                                } else if (dialog.is("collada.object_origin=box_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_BOX_CENTER);
+                                } else if (dialog.is("collada.object_origin=box_plane_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER);
                                 }
 
                                 // set the algorithm type
