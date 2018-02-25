@@ -2,7 +2,6 @@
   <library name="apachehttp">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/lib/apachehttp" />
-      <root url="file://$PROJECT_DIR$/lib/apachehttp" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -24,9 +24,10 @@ public class JCustomScrollPane extends JScrollPane {
         init();
     }
 
-    public JCustomScrollPane(Component view) {
+    public JCustomScrollPane(String name, Component view) {
         super(view);
         init();
+        this.setName(name);
     }
 
     public JCustomScrollPane(int vsbPolicy, int hsbPolicy) {
