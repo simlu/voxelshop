@@ -13,6 +13,7 @@ import com.vitco.app.low.CubeIndexer;
 import com.vitco.app.low.hull.HullManagerExt;
 import com.vitco.app.manager.action.types.StateActionPrototype;
 import com.vitco.app.settings.VitcoSettings;
+import com.vitco.app.util.components.dialog.BlankDialogModule;
 import com.vitco.app.util.components.dialog.UserInputDialog;
 import com.vitco.app.util.components.dialog.UserInputDialogListener;
 import com.vitco.app.util.components.dialog.components.*;
@@ -418,52 +419,60 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         collada.addComponent(new SeparatorModule("Textures"));
 
+        BlankDialogModule textures = new BlankDialogModule("texture");
+        textures.setLayout(new GridLayout(4, 2));
+        collada.addComponent(textures);
+
         // option: exported textured voxels
         CheckBoxModule exportTexturedVoxels = new CheckBoxModule("export_textured_voxels", "Export textured Voxels", false);
-        exportTexturedVoxels.setEnabledLookup("collada.triangulate_by_color=false");
-        collada.addComponent(exportTexturedVoxels);
+        exportTexturedVoxels.setEnabledLookup("collada.texture.triangulate_by_color=false");
+        textures.addModule(exportTexturedVoxels);
 
         // option: triangulate by color
-        CheckBoxModule triangulateByColor = new CheckBoxModule("triangulate_by_color", "Triangulate by Color (higher triangle count)", false);
-        triangulateByColor.setEnabledLookup("collada.export_textured_voxels=false");
-        collada.addComponent(triangulateByColor);
+        CheckBoxModule triangulateByColor = new CheckBoxModule("triangulate_by_color", "Triangulate by Color (more triangles)", false);
+        triangulateByColor.setEnabledLookup("collada.texture.export_textured_voxels=false");
+        textures.addModule(triangulateByColor);
 
         // option: use vertex colors
         CheckBoxModule useVertexColors = new CheckBoxModule("use_vertex_coloring", "Use Vertex Coloring", false);
-        useVertexColors.setEnabledLookup("collada.triangulate_by_color=true&collada.export_textured_voxels=false");
-        collada.addComponent(useVertexColors);
+        useVertexColors.setEnabledLookup("collada.texture.triangulate_by_color=true&collada.texture.export_textured_voxels=false");
+        textures.addModule(useVertexColors);
 
         // option: make uvs overlapping
         CheckBoxModule useOverlappingUvs = new CheckBoxModule("use_overlapping_uvs", "Use overlapping UVs", true);
-        useOverlappingUvs.setEnabledLookup("collada.use_vertex_coloring=false");
-        collada.addComponent(useOverlappingUvs);
+        useOverlappingUvs.setEnabledLookup("collada.texture.use_vertex_coloring=false");
+        textures.addModule(useOverlappingUvs);
 
         // option: use skewed uvs
         CheckBoxModule useSkewedUvs = new CheckBoxModule("use_skewed_uvs", "Use skewed UVs", true);
-        useSkewedUvs.setEnabledLookup("collada.use_vertex_coloring=false");
-        collada.addComponent(useSkewedUvs);
+        useSkewedUvs.setEnabledLookup("collada.texture.use_vertex_coloring=false");
+        textures.addModule(useSkewedUvs);
 
         // option: make texture edges save (pad textures)
         CheckBoxModule padTextures = new CheckBoxModule("pad_textures", "Use Texture Padding", true);
-        padTextures.setEnabledLookup("collada.use_vertex_coloring=false");
-        collada.addComponent(padTextures);
+        padTextures.setEnabledLookup("collada.texture.use_vertex_coloring=false");
+        textures.addModule(padTextures);
 
         // option: force power of two textures
         CheckBoxModule forcePOT = new CheckBoxModule("force_pot", "Use Power of Two textures", false);
-        forcePOT.setEnabledLookup("collada.use_vertex_coloring=false");
-        collada.addComponent(forcePOT);
+        forcePOT.setEnabledLookup("collada.texture.use_vertex_coloring=false");
+        textures.addModule(forcePOT);
 
         collada.addComponent(new SeparatorModule("Misc"));
+
+        BlankDialogModule misc = new BlankDialogModule("misc");
+        misc.setLayout(new GridLayout(1, 2));
+        collada.addComponent(misc);
 
         // option: prefix object names with file name
         CheckBoxModule prefixObjectNamesWithFileName = new CheckBoxModule(
                 "prefix_object_names_with_file_name", "Prefix Object Names with File Name", true);
-        collada.addComponent(prefixObjectNamesWithFileName);
+        misc.addModule(prefixObjectNamesWithFileName);
 
         // option: fix t junction problems
         CheckBoxModule fixTJunctions = new CheckBoxModule("fix_tjunctions", "Fix all T-Junction problems", true);
         fixTJunctions.setEnabledLookup("collada.type=poly2tri");
-        collada.addComponent(fixTJunctions);
+        misc.addModule(fixTJunctions);
 
         // option: set output scale
         TextInputModule objectScale = new TextInputModule(
@@ -485,24 +494,39 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         collada.addComponent(new SeparatorModule("Format"));
 
+        BlankDialogModule format = new BlankDialogModule("format");
+        format.setLayout(new GridLayout(1, 2));
+        collada.addComponent(format);
+
         // option: export with y-up or z-up
         CheckBoxModule useYup = new CheckBoxModule("use_yup", "Set Y instead of Z as the up axis", false);
-        collada.addComponent(useYup);
+        format.addModule(useYup);
 
         // option: export orthogonal vertex normals
         CheckBoxModule exportOrthogonalVertexNormals = new CheckBoxModule(
                 "export_orthogonal_vertex_normals", "Export orthogonal Vertex Normals", false);
-        collada.addComponent(exportOrthogonalVertexNormals);
+        format.addModule(exportOrthogonalVertexNormals);
 
-        collada.addComponent(new SeparatorModule("Origin"));
+        collada.addComponent(new SeparatorModule("Scene Origin"));
         ComboBoxModule setOriginModeSelect = new ComboBoxModule("origin_mode", new String[][]{
                 new String[]{"cross", "Use Cross"},
-                new String[]{"center", "Use Object Center"},
-                new String[]{"plane_center", "Use Object Center Projected onto Plane"},
+                new String[]{"center", "Use Global Object Center"},
+                new String[]{"plane_center", "Use Global Object Center Projected onto Plane"},
                 new String[]{"box_center", "Use Bounding Box Center"},
                 new String[]{"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
         }, 0);
         collada.addComponent(setOriginModeSelect);
+
+        collada.addComponent(new SeparatorModule("Object Origin"));
+        ComboBoxModule setObjectOrigin = new ComboBoxModule("object_origin", new String[][]{
+                new String[]{"local_center", "Use Local Object Center(s)"},
+                new String[]{"cross", "Use Cross"},
+                new String[]{"center", "Use Global Object Center"},
+                new String[]{"plane_center", "Use Global Object Center Projected onto Plane"},
+                new String[]{"box_center", "Use Bounding Box Center"},
+                new String[]{"box_plane_center", "Use Bounding Box Center Projected onto Plane"}
+        }, 0);
+        collada.addComponent(setObjectOrigin);
 
         // ---------------
 
@@ -767,43 +791,58 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 // set remove holes flag
                                 colladaExportWrapper.setRemoveHoles(dialog.is("collada.remove_holes=true"));
                                 // set pad textures flag
-                                colladaExportWrapper.setPadTextures(dialog.is("collada.pad_textures=true"));
+                                colladaExportWrapper.setPadTextures(dialog.is("collada.texture.pad_textures=true"));
                                 // set triangulate by color
-                                colladaExportWrapper.setTriangulateByColor(dialog.is("collada.triangulate_by_color=true"));
+                                colladaExportWrapper.setTriangulateByColor(dialog.is("collada.texture.triangulate_by_color=true"));
                                 // set use vertex coloring
-                                colladaExportWrapper.setUseVertexColoring(dialog.is("collada.use_vertex_coloring=true"));
+                                colladaExportWrapper.setUseVertexColoring(dialog.is("collada.texture.use_vertex_coloring=true"));
                                 // set prefix object names with file name
-                                colladaExportWrapper.setPrefixObjectNamesWithFileName(dialog.is("collada.prefix_object_names_with_file_name=true"));
+                                colladaExportWrapper.setPrefixObjectNamesWithFileName(dialog.is("collada.misc.prefix_object_names_with_file_name=true"));
                                 // set object scale
                                 colladaExportWrapper.setObjectScale(Float.parseFloat(dialog.getValue("collada.object_scale")));
                                 // set export textured voxels
-                                colladaExportWrapper.setExportTexturedVoxels(dialog.is("collada.export_textured_voxels=true"));
+                                colladaExportWrapper.setExportTexturedVoxels(dialog.is("collada.texture.export_textured_voxels=true"));
                                 // set force power of two force textures
-                                colladaExportWrapper.setForcePOT(dialog.is("collada.force_pot=true"));
+                                colladaExportWrapper.setForcePOT(dialog.is("collada.texture.force_pot=true"));
                                 // set the file name (only used if the layers are not used)
                                 colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
                                 // set the YUP flag (whether to use z-up or y-up)
-                                colladaExportWrapper.setUseYUP(dialog.is("collada.use_yup=true"));
+                                colladaExportWrapper.setUseYUP(dialog.is("collada.format.use_yup=true"));
                                 // set the YUP flag (whether to use z-up or y-up)
-                                colladaExportWrapper.setFixTJunctions(dialog.is("collada.fix_tjunctions=true"));
+                                colladaExportWrapper.setFixTJunctions(dialog.is("collada.misc.fix_tjunctions=true"));
                                 // set "export exportOrthogonalVertexNormals vertex normals" flag
-                                colladaExportWrapper.setExportOrthogonalVertexNormals(dialog.is("collada.export_orthogonal_vertex_normals=true"));
+                                colladaExportWrapper.setExportOrthogonalVertexNormals(dialog.is("collada.format.export_orthogonal_vertex_normals=true"));
                                 // set "use overlapping uvs" option
-                                colladaExportWrapper.setUseOverlappingUvs(dialog.is("collada.use_overlapping_uvs=true"));
+                                colladaExportWrapper.setUseOverlappingUvs(dialog.is("collada.texture.use_overlapping_uvs=true"));
                                 // set "use skewed uvs" option
-                                colladaExportWrapper.setUseSkewedUvs(dialog.is("collada.use_skewed_uvs=true"));
+                                colladaExportWrapper.setUseSkewedUvs(dialog.is("collada.texture.use_skewed_uvs=true"));
 
                                 // set the center mode
                                 if (dialog.is("collada.origin_mode=cross")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CROSS);
                                 } else if (dialog.is("collada.origin_mode=center")) {
-                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_CENTER);
+                                    colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_GLOBAL_CENTER);
                                 } else if (dialog.is("collada.origin_mode=plane_center")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_PLANE_CENTER);
                                 } else if (dialog.is("collada.origin_mode=box_center")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_CENTER);
                                 } else if (dialog.is("collada.origin_mode=box_plane_center")) {
                                     colladaExportWrapper.setOriginMode(ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER);
+                                }
+
+                                // set object centering
+                                if (dialog.is("collada.object_origin=local_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_LOCAL_CENTER);
+                                } else if (dialog.is("collada.object_origin=cross")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_CROSS);
+                                } else if (dialog.is("collada.object_origin=center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_GLOBAL_CENTER);
+                                } else if (dialog.is("collada.object_origin=plane_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_PLANE_CENTER);
+                                } else if (dialog.is("collada.object_origin=box_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_BOX_CENTER);
+                                } else if (dialog.is("collada.object_origin=box_plane_center")) {
+                                    colladaExportWrapper.setObjectCenter(ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER);
                                 }
 
                                 // set the algorithm type

@@ -81,7 +81,7 @@ public class ConsoleView extends ViewPrototype implements ConsoleViewInterface {
             public boolean autoShow = true; // true iff auto showing is enabled
             public boolean tempScrollStop = false; // true iff user scrolls (disable auto scroll!)
             public ScrollPane(JComponent component) {
-                super(component);
+                super("console", component);
             }
         }
         final ScrollPane scrollPane = new ScrollPane(textArea);

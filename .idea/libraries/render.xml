@@ -2,7 +2,6 @@
   <library name="render">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/lib/render" />
-      <root url="file://$PROJECT_DIR$/lib/render" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

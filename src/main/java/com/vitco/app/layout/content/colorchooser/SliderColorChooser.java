@@ -75,17 +75,17 @@ public class SliderColorChooser extends ColorChooserPrototype {
         cmykTab.addColorChangeListener(ccl);
 
         // add the tabs
-        JCustomScrollPane RGBscrollPane = new JCustomScrollPane(rgbTab);
+        JCustomScrollPane RGBscrollPane = new JCustomScrollPane("rgb", rgbTab);
         RGBscrollPane.setHorizontalScrollBarPolicy(JCustomScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         RGBscrollPane.setVerticalScrollBarPolicy(JCustomScrollPane.VERTICAL_SCROLLBAR_NEVER);
         tabbedPane.addTab("RGB", RGBscrollPane);
 
-        JCustomScrollPane HSBscrollPane = new JCustomScrollPane(hsbTab);
+        JCustomScrollPane HSBscrollPane = new JCustomScrollPane("hsb", hsbTab);
         HSBscrollPane.setHorizontalScrollBarPolicy(JCustomScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         HSBscrollPane.setVerticalScrollBarPolicy(JCustomScrollPane.VERTICAL_SCROLLBAR_NEVER);
         tabbedPane.addTab("HSB", HSBscrollPane);
 
-        JCustomScrollPane CMYKscrollPane = new JCustomScrollPane(cmykTab);
+        JCustomScrollPane CMYKscrollPane = new JCustomScrollPane("cmyk", cmykTab);
         CMYKscrollPane.setHorizontalScrollBarPolicy(JCustomScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         CMYKscrollPane.setVerticalScrollBarPolicy(JCustomScrollPane.VERTICAL_SCROLLBAR_NEVER);
         tabbedPane.addTab("CMYK", CMYKscrollPane);

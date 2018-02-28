@@ -119,14 +119,20 @@ public class ColladaExportWrapper extends ProgressReporter {
 
     // the origin mode
     public static final int ORIGIN_CROSS = 0;
-    public static final int ORIGIN_CENTER = 1;
+    public static final int ORIGIN_GLOBAL_CENTER = 1;
     public static final int ORIGIN_PLANE_CENTER = 2;
     public static final int ORIGIN_BOX_CENTER = 3;
     public static final int ORIGIN_BOX_PLANE_CENTER = 4;
+    public static final int ORIGIN_LOCAL_CENTER = 5;
     // setter for origin mode
     private int originMode = ORIGIN_CROSS;
     public final void setOriginMode(int originMode) {
         this.originMode = originMode;
+    }
+    // setter for object center
+    private int objectCenter = ORIGIN_LOCAL_CENTER;
+    public final void setObjectCenter(int objectCenter) {
+        this.objectCenter = objectCenter;
     }
 
     // do the exporting
@@ -138,7 +144,7 @@ public class ColladaExportWrapper extends ProgressReporter {
 
         // create data export objects
         ExportDataManager exportDataManager = new ExportDataManager(
-                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode,
+                getProgressDialog(), getConsole(), data, padTextures, removeHoles, algorithm, useYUP, originMode, objectCenter,
                 forcePOT, separationMode, triangulateByColor, useVertexColoring, fixTJunctions, exportTexturedVoxels, useOverlappingUvs,
                 useSkewedUvs);
         ColladaFileExporter colladaFileExporter = new ColladaFileExporter(

@@ -51,6 +51,9 @@ public class ExportDataManager extends ProgressReporter {
     // the origin mode
     private final int originMode;
 
+    // the object center
+    private final int objectCenter;
+
     // whether to export textured voxels
     private final boolean exportTexturedVoxels;
 
@@ -73,7 +76,7 @@ public class ExportDataManager extends ProgressReporter {
             result[i] = centers.get(i).clone();
             float[] entry = result[i];
             switch (originMode) {
-                case ColladaExportWrapper.ORIGIN_CENTER:
+                case ColladaExportWrapper.ORIGIN_GLOBAL_CENTER:
                     entry[0] -= center[0];
                     entry[1] -= center[1];
                     entry[2] -= center[2];
@@ -140,7 +143,7 @@ public class ExportDataManager extends ProgressReporter {
 
     // constructor
     public ExportDataManager(ProgressDialog dialog, ConsoleInterface console, Data data, boolean usePadding, boolean removeHoles, int algorithm, boolean useYUP,
-                             int originMode, boolean forcePOT, int separationMode, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
+                             int originMode, int objectCenter, boolean forcePOT, int separationMode, boolean triangulateByColor, boolean useVertexColoring, boolean fixTJunctions,
                              boolean exportTexturedVoxels, boolean useOverlappingUvs, boolean useSkewedUvs) {
         super(dialog, console);
 
@@ -241,10 +244,14 @@ public class ExportDataManager extends ProgressReporter {
         this.removeHoles = removeHoles;
         this.useYUP = useYUP;
         this.originMode = originMode;
+        this.objectCenter = objectCenter;
         this.triangulateByColor = triangulateByColor;
         this.fixTJunctions = fixTJunctions;
         this.exportTexturedVoxels = exportTexturedVoxels;
         this.useSkewedUvs = useSkewedUvs;
+
+        // rewrite centers for different modes
+        rewriteCenters();
 
         // pre-compute exterior hole if necessary
         if (removeHoles) {
@@ -271,6 +278,50 @@ public class ExportDataManager extends ProgressReporter {
             // validate uv mappings
             setActivity("Validating UV Mappings...", true);
             textureManager.validateUVMappings();
+        }
+    }
+
+    private void rewriteCenters() {
+        switch (objectCenter) {
+            case ColladaExportWrapper.ORIGIN_GLOBAL_CENTER:
+                for (float[] c : centers) {
+                    c[0] = center[0];
+                    c[1] = center[1];
+                    c[2] = center[2];
+                }
+                break;
+            case ColladaExportWrapper.ORIGIN_PLANE_CENTER:
+                for (float[] c : centers) {
+                    c[0] = center[0];
+                    c[1] = 0.5f;
+                    c[2] = center[2];
+                }
+                break;
+            case ColladaExportWrapper.ORIGIN_BOX_CENTER:
+                for (float[] c : centers) {
+                    c[0] = DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? -0.5f : 0f;
+                    c[1] = 0.5f - DynamicSettings.VOXEL_PLANE_RANGE_Y;
+                    c[2] = DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? -0.5f : 0f;
+                }
+                break;
+            case ColladaExportWrapper.ORIGIN_BOX_PLANE_CENTER:
+                for (float[] c : centers) {
+                    c[0] = DynamicSettings.VOXEL_PLANE_SIZE_X % 2 == 0 ? -0.5f : 0f;
+                    c[1] = 0.5f;
+                    c[2] = DynamicSettings.VOXEL_PLANE_SIZE_Z % 2 == 0 ? -0.5f : 0f;
+                }
+                break;
+            case ColladaExportWrapper.ORIGIN_CROSS:
+                for (float[] c : centers) {
+                    c[0] = 0;
+                    c[1] = 0;
+                    c[2] = 0;
+                }
+                break;
+            case ColladaExportWrapper.ORIGIN_LOCAL_CENTER:
+                break;
+            default:
+                break;
         }
     }
 

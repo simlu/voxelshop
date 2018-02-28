@@ -43,11 +43,11 @@ class TitlePane extends JPanel {
         buttons.setOpaque(false);
         this.add(buttons, BorderLayout.EAST);
         // define buttons layout
-        help = new FrameGenericJideButton("DockableFrameTitlePane.helpIcon", langSelector.getString("help_frame_button_tooltip"));
+        help = new FrameGenericJideButton("help", "DockableFrameTitlePane.helpIcon", langSelector.getString("help_frame_button_tooltip"));
         buttons.add(help);
-        floating = new FrameGenericJideButton("DockableFrameTitlePane.floatIcon", langSelector.getString("toggle_floating_frame_button_tooltip"));
+        floating = new FrameGenericJideButton("toggle_floating","DockableFrameTitlePane.floatIcon", langSelector.getString("toggle_floating_frame_button_tooltip"));
         buttons.add(floating);
-        FrameGenericJideButton hide = new FrameGenericJideButton("DockableFrameTitlePane.hideIcon", langSelector.getString("close_frame_button_tooltip"));
+        FrameGenericJideButton hide = new FrameGenericJideButton("close","DockableFrameTitlePane.hideIcon", langSelector.getString("close_frame_button_tooltip"));
         buttons.add(hide);
         // define actions
         floating.addActionListener(frame.getFloatingAction());

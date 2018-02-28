@@ -13,6 +13,7 @@ import com.vitco.app.manager.action.ActionManager;
 import com.vitco.app.manager.action.ComplexActionManager;
 import com.vitco.app.manager.lang.LangSelectorInterface;
 import com.vitco.app.settings.VitcoSettings;
+import com.vitco.app.util.misc.FontUtil;
 import com.vitco.app.util.misc.SaveResourceLoader;
 
 import javax.swing.*;
@@ -63,7 +64,11 @@ public class FrameHelpOverlay extends JComponent {
     private final JComponent thisInstance = this;
 
     // handwriting font
-    private static Font font = null;
+    private static final int fontType = Font.PLAIN;
+    private static final float fontSize = 18f;
+
+    private static Font mainFont = null;
+    private static final Font fallbackFont = new JLabel().getFont().deriveFont(fontType, fontSize);
 
     // close button image
     private static Image closeButton = null;
@@ -81,8 +86,8 @@ public class FrameHelpOverlay extends JComponent {
     static {
         // read handwriting font from file
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT,
-                    new SaveResourceLoader("resource/font/font.ttf").asInputStream()).deriveFont(Font.PLAIN, 18f);
+            mainFont = Font.createFont(Font.TRUETYPE_FONT,
+                    new SaveResourceLoader("resource/font/font.ttf").asInputStream()).deriveFont(fontType, fontSize);
         } catch (FontFormatException e) {
             // should never happen
             e.printStackTrace();
@@ -288,7 +293,7 @@ public class FrameHelpOverlay extends JComponent {
                                     int h = comp.getHeight();
                                     // add to front
                                     rects.add(0, new CRectangle(xn, yn, w, h,
-                                            "generic_header_button_" + ((JideButton) comp).getToolTipText()
+                                            "generic_header_button_" + comp.getName()
                                                     .replace(" ", "_").toLowerCase())
                                     );
                                 }
@@ -338,7 +343,7 @@ public class FrameHelpOverlay extends JComponent {
                                         parent = parent.getParent();
                                     }
                                     if (parent != null) {
-                                        String name = "window_" + ((DockableFrame)parent).getKey() + "_tab_" + tabbedPane.getTitleAt(k).replace(" ", "_").toLowerCase();
+                                        String name = "window_" + ((DockableFrame)parent).getKey() + "_tab_" + tabbedPane.getComponentAt(k).getName().replace(" ", "_").toLowerCase();
                                         int xn = x + rect.x;
                                         int yn = y + rect.y;
                                         int w = rect.width;
@@ -376,44 +381,6 @@ public class FrameHelpOverlay extends JComponent {
     // Drawing logic
     // ====================
 
-    // Draw a string consisting of words with automatic line breaks.
-    // Returns the dimensions that drawing this string takes (drawing can be prevented with the draw flag)
-    public Rectangle drawString(Graphics g, String str, int x, int y, int width, boolean draw) {
-        FontMetrics fm = g.getFontMetrics();
-        int lineHeight = fm.getHeight(); // get line hight
-        int curX = x;
-        int curY = y;
-        int maxX = x;
-        // replace line breaks (the "|" characters)
-        str = str.replace("|","| ");
-        for (String word : str.split(" ")) { // split into words
-            boolean lineEnd = word.endsWith("|");
-            if (lineEnd) {
-                // remove line break
-                word = word.substring(0, word.length()-1);
-            }
-            int wordWidth = fm.stringWidth(word + (lineEnd ? "" : " ")); // get word width
-            if (curX + wordWidth >= x + width) { // check if we need to do a line break
-                curY += lineHeight;
-                curX = x;
-            }
-            if (!word.equals("")) {
-                maxX = Math.max(maxX, curX + wordWidth);
-                if (draw) {
-                    g.drawString(word, curX, curY);
-                }
-                // add word width to current x
-                curX += wordWidth;
-            }
-            if (lineEnd) {
-                curY += lineHeight;
-                curX = x;
-            }
-        }
-        // return dimensions
-        return new Rectangle(x, y, maxX-x, (curY + lineHeight)-y);
-    }
-
     // helper - draw information to rectangle and also draw a connections curve (Bezier)
     // if a rectangle is hovered (selected)
     private void drawHelpContent(Graphics2D g2, String identifier) {
@@ -428,7 +395,7 @@ public class FrameHelpOverlay extends JComponent {
 //            g2.drawRoundRect(displayRect.x, displayRect.y, displayRect.width, displayRect.height, 4, 4); // debug
             g2 = (Graphics2D) g2.create();
             // extract the dimension of the rect that drawing the string will take
-            Rectangle rect = drawString(g2, help_text, displayRect.x, displayRect.y, displayRect.width, false);
+            Rectangle rect = FontUtil.drawString(g2, mainFont, fallbackFont, help_text, displayRect.x, displayRect.y, displayRect.width, false);
             // compute the top left point for our info text
             int topX = displayRect.x + (displayRect.width - rect.width) / 2;
             int topY = displayRect.y + g2.getFontMetrics().getHeight()/2 + 30;
@@ -443,7 +410,7 @@ public class FrameHelpOverlay extends JComponent {
             g2.drawRoundRect(topX - 10, topY - 10, rect.width + 20, rect.height + 20, 15, 15);
             // draw text into text box
             g2.setStroke(new BasicStroke(1f));
-            drawString(g2, help_text, topX, topY + g2.getFontMetrics().getHeight()/2, displayRect.width, true);
+            FontUtil.drawString(g2, mainFont, fallbackFont, help_text, topX, topY + g2.getFontMetrics().getHeight()/2, displayRect.width, true);
             // dispose graphics element
             g2.dispose();
         }
@@ -562,8 +529,8 @@ public class FrameHelpOverlay extends JComponent {
                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-            if (font != null) {
-                g2.setFont(font);
+            if (mainFont != null) {
+                g2.setFont(mainFont);
             }
             g2.setColor(VitcoSettings.HELP_OVERLAY_DEFAULT_COLOR);
             g2.setStroke(new BasicStroke(2f));

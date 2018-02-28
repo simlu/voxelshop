@@ -182,6 +182,11 @@ public class BlankDialogModule extends JComponent {
 
     // ------------------
 
+    // allow directly adding
+    public final void addModule(BlankDialogModule module) {
+        addModule(module, true);
+    }
+
     // add a child module to this module
     protected final void addModule(BlankDialogModule module, boolean display) {
         // remove spacing (the child deals with that now)

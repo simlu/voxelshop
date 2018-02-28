@@ -325,11 +325,11 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
         // add the global shortcuts
         String[][] globalShortcuts = shortcutManager.getShortcuts(null);
         tabbedPane.addTab(langSelector.getString("global_shortcuts_caption"),
-                new JCustomScrollPane(createKeyTab(globalShortcuts, columnNames, null)));
+                new JCustomScrollPane("global", createKeyTab(globalShortcuts, columnNames, null)));
         // add mouse shortcuts
         tabbedPane.addTab(
                 langSelector.getString("mouse_shortcuts_caption"),
-                new JCustomScrollPane(createMouseTab())
+                new JCustomScrollPane("mouse", createMouseTab())
         );
         // add the frame shortcuts
         String[][] frames = shortcutManager.getFrames();
@@ -338,7 +338,7 @@ public class ShortcutManagerView extends ViewPrototype implements ShortcutManage
             String[][] data = shortcutManager.getShortcuts(frame[0]); // the shortcuts (list)
             if (data.length > 0) { // only create tab if it has shortcuts
                 // add this tab to the tabbedPane
-                tabbedPane.addTab(frame[1], new JCustomScrollPane(createKeyTab(data, columnNames, frame[0])));
+                tabbedPane.addTab(frame[1], new JCustomScrollPane(frame[0], createKeyTab(data, columnNames, frame[0])));
             }
         }
         // set tooltips
