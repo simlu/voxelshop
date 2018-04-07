@@ -1,8 +1,6 @@
 package com.vitco.app.layout.content.menu;
 
 import com.jidesoft.action.DefaultDockableBarDockableHolder;
-import com.sun.imageio.plugins.gif.GIFImageReader;
-import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.vitco.app.core.data.container.Voxel;
 import com.vitco.app.export.*;
 import com.vitco.app.export.collada.ColladaExportWrapper;
@@ -237,9 +235,8 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                             } else if ("gif".equals(ext)) {
                                 // ----------------
                                 // import gif image data (including frame animation)
-                                ImageInputStream inputStream = ImageIO.createImageInputStream(toOpen);
-                                try {
-                                    ImageReader ir = new GIFImageReader(new GIFImageReaderSpi());
+                                try (ImageInputStream inputStream = ImageIO.createImageInputStream(toOpen)) {
+                                    ImageReader ir = ImageIO.getImageReadersByFormatName("gif").next();
                                     ir.setInput(inputStream);
                                     int count = ir.getNumImages(true);
                                     if (count > 1) {
@@ -255,8 +252,6 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                         data.selectLayer(data.createLayer(FileTools.extractNameWithoutExtension(toOpen)));
                                         importImage(ir.read(0));
                                     }
-                                } finally {
-                                    inputStream.close();
                                 }
                             } else if ("binvox".equals(ext)) {
                                 // ----------------
