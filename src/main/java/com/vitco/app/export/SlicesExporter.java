@@ -39,13 +39,8 @@ public class SlicesExporter extends AbstractExporter {
         this.invertOrder = invert;
     }
 
-    // allow control over how this is called
+    // allow explicit access since multiple files are generated
     public boolean generateImages() throws IOException {
-        return writeFile();
-    }
-
-    @Override
-    protected boolean writeFile() throws IOException {
         int[] size = getSize();
         int nSlices = size[ax1];  // number of slices
         int width = size[ax2];  // width of slice bitmaps
@@ -77,5 +72,10 @@ public class SlicesExporter extends AbstractExporter {
         }
 
         return true; // success
+    }
+
+    @Override
+    protected boolean writeFile() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
