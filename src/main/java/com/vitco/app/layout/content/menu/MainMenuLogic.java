@@ -827,7 +827,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                                 colladaExportWrapper.setExportTexturedVoxels(dialog.is("collada.texture.export_textured_voxels=true"));
                                 // set force power of two force textures
                                 colladaExportWrapper.setForcePOT(dialog.is("collada.texture.force_pot=true"));
-                                // set the file name (only used if the layers are not used) 
+                                // set the file name (only used if the layers are not used)
                                 colladaExportWrapper.setObjectName(FileTools.extractNameWithoutExtension(exportColladaTo));
                                 // set the YUP flag (whether to use z-up or y-up)
                                 colladaExportWrapper.setUseYUP(dialog.is("collada.format.use_yup=true"));
