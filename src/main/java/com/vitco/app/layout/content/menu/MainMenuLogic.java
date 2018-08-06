@@ -634,11 +634,11 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         // add bitmap slices exporter
         FieldSet slicesExporter = new FieldSet("slices_format", "Sliced model (png/gif)");
         // add information for the exporter
-        LabelModule slicesInfo = new LabelModule("Info: This exporter generates a series of bitmap images. Each image corresponds to "
-        		+ "a cross-section of the model at each coordinate of the selected axis.\nBe warned that this export option may generate a large"
-        		+ " number of files!");
+        LabelModule slicesInfo = new LabelModule("Info: Generates series of bitmap images. Each image corresponds to "
+        		+ "cross-section of visible voxels at each coordinate of selected axis.\nImportant: Can generate a large "
+        		+ "number of files!");
        	slicesExporter.addComponent(slicesInfo);
-       	slicesExporter.addComponent(new SeparatorModule("Slice axis"));
+       	slicesExporter.addComponent(new SeparatorModule("Slice Along"));
        	ComboBoxModule sliceAxis = new ComboBoxModule("axis", new String[][] {
             new String[] {"x", "x-axis"},
             new String[] {"y", "y-axis"},
@@ -646,20 +646,19 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
        	}, 0);
         slicesExporter.addComponent(sliceAxis);
         
-       	slicesExporter.addComponent(new SeparatorModule("Export format"));
+       	slicesExporter.addComponent(new SeparatorModule("Output Format"));
        	ComboBoxModule formatSelect = new ComboBoxModule("export_format", new String[][] {
-            new String[] {"png", "PNG format"},
-            new String[] {"gif", "GIF format"},
+            new String[] {"png", "*.png"},
+            new String[] {"gif", "*.gif"},
        	}, 0);
         slicesExporter.addComponent(formatSelect);
-        slicesExporter.addComponent(new SeparatorModule("Invert slicing direction"));
+        slicesExporter.addComponent(new SeparatorModule("Misc"));
         slicesExporter.addComponent(new CheckBoxModule("invert", "Invert direction", false));
-        LabelModule invertInfo = new LabelModule("This option effectively inverts the order of the numbers in the file names.");
+        LabelModule invertInfo = new LabelModule("This option effectively inverts order of the numbers in file names.");
         slicesExporter.addComponent(invertInfo);
-        
-        
-        
-        
+
+        // ---------------
+
         // add all formats
         dialog.addComboBox("export_type", new FieldSet[] {
                 collada, magicaVoxelExporter, voxVoxLapExporter, kv6Exporter, pnxExporter, qbExporter, slicesExporter, imageRenderer
