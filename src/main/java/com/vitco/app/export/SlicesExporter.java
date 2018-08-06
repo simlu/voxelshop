@@ -39,7 +39,6 @@ public class SlicesExporter extends AbstractExporter {
         this.invertOrder = invert;
     }
 
-
     // allow control over how this is called
     public boolean generateImages() throws IOException {
         return writeFile();

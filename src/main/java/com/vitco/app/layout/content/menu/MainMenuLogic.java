@@ -630,27 +630,28 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         qbExporter.addComponent(right_handed_z_axis_orientation_info);
 
         // ---------------
-        
+
         // add bitmap slices exporter
         FieldSet slicesExporter = new FieldSet("slices_format", "Sliced model (png/gif)");
         // add information for the exporter
         LabelModule slicesInfo = new LabelModule("Info: Generates series of bitmap images. Each image corresponds to "
-        		+ "cross-section of visible voxels at each coordinate of selected axis.\nImportant: Can generate a large "
-        		+ "number of files!");
-       	slicesExporter.addComponent(slicesInfo);
-       	slicesExporter.addComponent(new SeparatorModule("Slice Along"));
-       	ComboBoxModule sliceAxis = new ComboBoxModule("axis", new String[][] {
-            new String[] {"x", "x-axis"},
-            new String[] {"y", "y-axis"},
-            new String[] {"z", "z-axis"}
-       	}, 0);
+                + "cross-section of visible voxels at each coordinate of selected axis.\nImportant: Can generate a large "
+                + "number of files!");
+        slicesExporter.addComponent(slicesInfo);
+        slicesExporter.addComponent(new SeparatorModule("Slice Along"));
+        slicesExporter.addComponent(new SeparatorModule("Slice Along"));
+        ComboBoxModule sliceAxis = new ComboBoxModule("axis", new String[][]{
+                new String[]{"x", "x-axis"},
+                new String[]{"y", "y-axis"},
+                new String[]{"z", "z-axis"}
+        }, 0);
         slicesExporter.addComponent(sliceAxis);
-        
-       	slicesExporter.addComponent(new SeparatorModule("Output Format"));
-       	ComboBoxModule formatSelect = new ComboBoxModule("export_format", new String[][] {
-            new String[] {"png", "*.png"},
-            new String[] {"gif", "*.gif"},
-       	}, 0);
+
+        slicesExporter.addComponent(new SeparatorModule("Output Format"));
+        ComboBoxModule formatSelect = new ComboBoxModule("export_format", new String[][]{
+                new String[]{"png", "*.png"},
+                new String[]{"gif", "*.gif"},
+        }, 0);
         slicesExporter.addComponent(formatSelect);
         slicesExporter.addComponent(new SeparatorModule("Misc"));
         slicesExporter.addComponent(new CheckBoxModule("invert", "Invert direction", false));
@@ -1151,19 +1152,19 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
                         // do the exporting
                         progressDialog.start(new ProgressWorker() {
                             @Override
-                            protected Object doInBackground() throws Exception {
+                            protected Object doInBackground() {
 
-                            	final File exportTo = new File(baseName);
-                                                                
+                                final File exportTo = new File(baseName);
+
                                 // export sliced files format
                                 boolean success;
                                 long time = System.currentTimeMillis();
                                 try {
-                                	SlicesExporter exporter = new SlicesExporter(exportTo, data, progressDialog, console);
-                                	exporter.setSliceDirection(dialog.getValue("slices_format.axis"));
-                                	exporter.setExportFormat(dialog.getValue("slices_format.export_format"));
-                                	exporter.setInvertOrder(dialog.is("slices_format.invert=true"));
-                                		
+                                    SlicesExporter exporter = new SlicesExporter(exportTo, data, progressDialog, console);
+                                    exporter.setSliceDirection(dialog.getValue("slices_format.axis"));
+                                    exporter.setExportFormat(dialog.getValue("slices_format.export_format"));
+                                    exporter.setInvertOrder(dialog.is("slices_format.invert=true"));
+
                                     success = exporter.generateImages();
                                 } catch (IOException ignored) {
                                     success = false;
