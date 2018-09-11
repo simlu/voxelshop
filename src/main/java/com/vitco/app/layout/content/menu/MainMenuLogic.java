@@ -599,7 +599,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
         LabelModule box_as_matrix_info = new LabelModule(
                 "Warning: This option will result in loss of information for voxels outside the bounding box. " +
                         "Use this setting to gain control over the matrix size. " +
-                        "Check for StoneHearth and set bounding box to 31 41 31."
+                        "Un-check for StoneHearth."
         );
         qbExporter.addComponent(box_as_matrix_info);
 
@@ -608,7 +608,7 @@ public class MainMenuLogic extends MenuLogicPrototype implements MenuLogicInterf
 
         LabelModule origin_as_zero_info = new LabelModule(
                 "Info: Un-checking will move exported voxel into positive space. This means voxels are " +
-                        "shifted when re-importing the exported file. Un-check for StoneHearth."
+                        "shifted when re-importing the exported file. Check for StoneHearth."
         );
         qbExporter.addComponent(origin_as_zero_info);
 
