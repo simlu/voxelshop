@@ -16,6 +16,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/static</directory>
+            <outputDirectory>voxelshop/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory>voxelshop/</outputDirectory>
             <includes>
