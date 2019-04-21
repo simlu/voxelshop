@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=VoxelShop
+GenericName=VoxelShop 3D Voxel-based Painting Software
+Comment=3D voxel modeling, rendering and export
+Keywords=3d;cg;modeling;painting;sculpting;texturing;voxel,rendering;game design;
+Exec=voxelshop %f
+Icon=/usr/local/share/pixmaps/voxelshop.png
+Terminal=false
+Type=Application
+Categories=Graphics;3DGraphics;
+MimeType=application/x-voxelshop;
