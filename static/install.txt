@@ -1,0 +1,22 @@
+--------------------------
+-------- INSTALL ---------
+--------------------------
+
+LINUX
+=====
+
+Run `install-linux.sh` to install and `uninstall-linux.sh` to uninstall.
+
+You can also start VoxelShop without installation by running `java -jar voxelshop-start.jsr`
+
+
+OSX
+===
+
+No installation is necessary. Start by running `voxelshop-start.jar`.
+
+
+WINDOWS
+=======
+
+No installation is necessary. Start by running `voxelshop-start.jar`.
