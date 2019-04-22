@@ -68,6 +68,9 @@ if [ ! -f "$lib_jar_path" ]; then
 fi
 icon_img_name=voxelshop.png
 icon_img_path=$install_src/share/pixmaps/icon-48x48.png
+if [ ! -f "$icon_img_path" ]; then
+    echo "WARNING: Missing '$icon_img_path' (shortcut will have no icon image)"
+fi
 shortcut_name=com.blackflux.voxelshop.desktop
 shortcut_path=$install_src/share/applications/$shortcut_name
 
@@ -95,7 +98,7 @@ install_log=$dest_dir_path/$install_log_name
 if [ -f "$install_log" ]; then
     # stopping in this case avoids creating a faulty install_log that
     # may contain files the user added to the directory.
-    customDie "The program is already installed. Run uninstall.sh or delete $dest_dir_path before trying to reinstall."
+    customDie "The program is already installed. Run uninstall-linux.sh or delete $dest_dir_path before trying to reinstall."
 fi
 cp -f $install_src/* $dest_dir_path/
 find $dest_dir_path | grep -v "$install_log_name" > $install_log
@@ -111,7 +114,7 @@ else
     echo "Writing $bin_name..."
 fi
 echo '#!/bin/sh' > $PREFIX/bin/$bin_name
-echo "java -jar $dest_dir_path/$lib_jar_name" >> $PREFIX/bin/$bin_name
+echo "java -jar $dest_dir_path/$lib_jar_name || notify-send \"Install openjdk-8-jre (Ubuntu), java-1.8.0-openjdk (Fedora), or another version of Java with GUI support.\"" >> $PREFIX/bin/$bin_name
 echo "$PREFIX/bin/$bin_name" >> $install_log
 chmod +x $PREFIX/bin/$bin_name
 if [ -f $shortcut_path ]; then
@@ -133,7 +136,7 @@ if [ -f $shortcut_path ]; then
         if [ ! -d $PREFIX/share/pixmaps ]; then
             echo "ERROR: cannot create $PREFIX/share/pixmaps, so not installing graphic for icon"
         else
-            cp -f $icon_img_path $PREFIX/share/pixmaps/
+            cp -f $icon_img_path $PREFIX/share/pixmaps/$icon_img_name
             echo Icon=$PREFIX/share/pixmaps/$icon_img_name >> $tmp_shortcut
         fi
         if [ ! -d $PREFIX/share/applications ]; then
