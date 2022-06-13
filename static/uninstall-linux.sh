@@ -74,6 +74,14 @@ rmdir --ignore-fail-on-non-empty "$PREFIX/share/applications"
 rmdir --ignore-fail-on-non-empty "$PREFIX/share/pixmaps"
 rmdir --ignore-fail-on-non-empty "$PREFIX/share"
 rmdir --ignore-fail-on-non-empty "$PREFIX/lib"
-rmdir --ignore-fail-on-non-empty "$PREFIX/bin"
+if [ -f "$HOME/.var/log/voxelshop/last_run.err" ]; then
+    rm "$HOME/.var/log/voxelshop/last_run.err"
+fi
+if [ -f "$HOME/.var/log/voxelshop/last_run.log" ]; then
+    rm "$HOME/.var/log/voxelshop/last_run.log"
+fi
+rmdir --ignore-fail-on-non-empty "$HOME/.var/log/voxelshop"
+rmdir --ignore-fail-on-non-empty "$HOME/.var/log"
+rmdir --ignore-fail-on-non-empty "$HOME/.var"
 
 echo "Uninstall is complete."

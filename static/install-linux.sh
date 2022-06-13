@@ -153,6 +153,9 @@ if [ ! -f "\`command -v java\`" ]; then
     exit 127  # 127 is for command not found.
 fi
 logs_dir="\$HOME/.var/log/voxelshop"
+if [ -f "\$logs_dir/last_run.err" ]; then
+    rm "\$logs_dir/last_run.err"
+fi
 mkdir -p "\$logs_dir"
 java -jar $dest_dir_path/$lib_jar_name > \$logs_dir/last_run.log 2>&1
 code=\$?
@@ -171,7 +174,8 @@ if [ \$code -ne 0 ]; then
     xmessage -file \$logs_dir/last_run.err
 fi
 END
-# ^ INFO: >& only works with bash, so use 1>&2
+# ^ NOTE: >& only works with bash, so use 1>&2
+# ^ NOTE: any file(s) written above should also be placed in the uninstall script.
 echo "$PREFIX/bin/$bin_name" >> $install_log
 chmod +x $PREFIX/bin/$bin_name
 if [ -f $shortcut_path ]; then
