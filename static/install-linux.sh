@@ -15,6 +15,16 @@ customExit() {
 }
 
 # region environment checks
+if [ -z "$REINSTALL" ]; then
+    REINSTALL=false
+fi
+
+for var in "$@"
+do
+    if [ "$var" = "--reinstall" ]; then
+        REINSTALL=true
+    fi
+done
 
 if [ -z "$REFRESH_WM" ]; then
     REFRESH_WM=true
@@ -29,7 +39,7 @@ elif [ "@$REFRESH_WM" = "@on" ]; then
     REFRESH_WM=true
 fi
 if [ -z "$PREFIX" ]; then
-    if [[ $EUID = 0 ]]; then
+    if [ "$EUID" = "0" ]; then
         PREFIX=/usr/local
         echo "PREFIX not set, so using '$PREFIX'"
     else
@@ -63,13 +73,22 @@ dest_dir_path=$programs_path/$dest_dir_name
 install_src=`pwd`
 lib_jar_name=voxelshop-start.jar
 lib_jar_path=$install_src/$lib_jar_name
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+if [ -z "$BASH_VERSION" ]; then
+    # Handle shells other than bash.
+    SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+    echo "INFO: Bash is not being used, so \$0 will be used to determine SCRIPT_DIR=\"$SCRIPT_DIR\""
+else
+    echo "THIS_SHELL=$THIS_SHELL"
+    echo "BASH_VERSION=$BASH_VERSION"
+    SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";\
+fi
 # ^ from https://stackoverflow.com/a/246128/4541104
 
 if [ ! -f "$lib_jar_path" ]; then
     customExit "You must run $me in same path as built $lib_jar_name."
 fi
 icon_img_name=voxelshop.png
+# ^ This (only) sets the destination name, therefore it must be unique.
 icon_img_path=$install_src/share/pixmaps/icon-48x48.png
 
 if [ ! -f "$icon_img_path" ]; then
@@ -77,6 +96,8 @@ if [ ! -f "$icon_img_path" ]; then
     if [ -f "$try_icon_path" ]; then
         echo "INFO: $icon_img_path wasn't present, so $try_icon_path will be used instead."
         icon_img_path="$try_icon_path"
+    else
+        echo "WARNING: Neither $icon_img_path nor $try_icon_path exists."
     fi
 fi
 if [ ! -f "$icon_img_path" ]; then
@@ -89,6 +110,8 @@ if [ ! -f "$shortcut_path" ]; then
     if [ -f "$try_shortcut_path" ]; then
         echo "INFO: $shortcut_path wasn't present, so $try_shortcut_path will be used instead."
         shortcut_path="$try_shortcut_path"
+    else
+        echo "WARNING: Neither $shortcut_path nor $try_shortcut_path exists."
     fi
 fi
 # endregion hardcoded settings
@@ -101,6 +124,23 @@ if [ ! -d $PREFIX/bin ]; then
     mkdir -p $PREFIX/bin || customExit "Cannot create $PREFIX/bin"
 fi
 
+install_log_name=install.log
+install_log=$dest_dir_path/$install_log_name
+if [ -f "$install_log" ]; then
+    # stopping in this case avoids creating a faulty install_log that
+    # may contain files the user added to the directory.
+    customExit "The program is already installed. Run uninstall-linux.sh (recommended) or delete $dest_dir_path before trying to reinstall (Deleting only $install_log is not recommended as that will cause the next install to log all files there, so after that, an uninstall would remove any files you may have put there)."
+fi
+if [ -d "$dest_dir_path" ]; then
+    echo "WARNING: \"$dest_dir_path\" already exists but there is no install log"
+    if [ "$REINSTALL" != "true" ]; then
+        echo "  so nothing was done. To force reinstall, use the --reinstall option."
+        exit 1
+    else
+        echo "  The directory will be upgraded (any prepackaged files that remain will be overwritten)."
+    fi
+fi
+
 if [ ! -d "$dest_dir_path/lib" ]; then
     msg="Cannot create '$dest_dir_path/lib'"
     mkdir -p $dest_dir_path/lib || customExit "$msg"
@@ -110,19 +150,8 @@ if [ ! -d "$dest_dir_path/share/applications" ]; then
     msg="Cannot create '$dest_dir_path/share/applications'"
     mkdir -p $dest_dir_path/share/applications || customExit "$msg"
 fi
-install_log_name=install.log
-install_log=$dest_dir_path/$install_log_name
-if [ -f "$install_log" ]; then
-    # stopping in this case avoids creating a faulty install_log that
-    # may contain files the user added to the directory.
-    customExit "The program is already installed. Run uninstall-linux.sh or delete $dest_dir_path before trying to reinstall."
-fi
 
-if [ -d "$dest_dir_path" ]; then
-    echo "WARNING: \"$dest_dir_path\" already exists but there is no install log. The directory will be upgraded (any prepackaged files that remain will be overwritten)."
-fi
 
-# cp -f $install_src/* $dest_dir_path/
 cp -R $install_src $programs_path/
 # ^ dest_dir_path can't be used for cp -R, otherwise if it exists, the
 #   folder will be copied inside the dest instead of as the dest.
@@ -135,8 +164,6 @@ fi
 if [ ! -d "$dest_dir_path/lib" ]; then
     customExit "lib wasn't copied, so install could not complete."
 fi
-# cp -f $install_src/lib/* $dest_dir_path/lib/
-# find $dest_dir_path | grep -v "$install_log_name" >> $install_log
 
 echo
 if [ -f "$bin_name" ]; then
@@ -179,7 +206,6 @@ END
 echo "$PREFIX/bin/$bin_name" >> $install_log
 chmod +x $PREFIX/bin/$bin_name
 if [ -f $shortcut_path ]; then
-    #tmp_shortcut=/tmp/$USER$shortcut_name
     tmp_shortcut=$dest_dir_path/share/applications/$shortcut_name
     if [ -f $tmp_shortcut ]; then
         rm $tmp_shortcut || customExit "Cannot remove old $tmp_shortcut"
@@ -213,16 +239,17 @@ if [ -f $shortcut_path ]; then
         echo "$PREFIX/share/applications/$shortcut_name" >> $install_log
         echo "Writing shortcut '$PREFIX/share/applications/$shortcut_name' is complete."
         if [ "@$REFRESH_WM" = "@true" ]; then
-            if [[ $EUID -ne 0 ]]; then
+            if [ "$EUID" != "0" ]]; then
                 THIS_DE=
                 # See <https://unix.stackexchange.com/a/645761/343286>
                 # regarding the old and new ways of checking what DE
                 # is running.
                 if [ ! -z "$XDG_SESSION_DESKTOP" ]; then
-                    THIS_DE=${XDG_SESSION_DESKTOP,,}  # convert to lower case
+                    THIS_DE=`echo "$XDG_SESSION_DESKTOP" | tr '[:upper:]' '[:lower:]'`
                 elif [ ! -z "$XDG_CURRENT_DESKTOP" ]; then
-                    THIS_DE=${XDG_CURRENT_DESKTOP,,}  # convert to lower case
+                    THIS_DE=`echo "$XDG_CURRENT_DESKTOP" | tr '[:upper:]' '[:lower:]'`
                 fi
+                echo "THIS_DE=$THIS_DE"
                 if [ "$THIS_DE" = "kde-plasma" ]; then
                     THIS_DE="kde"
                 elif [ "$THIS_DE" = "xfce4" ]; then
@@ -261,9 +288,11 @@ if [ -f $shortcut_path ]; then
                     echo "* refreshing LXQt icons..."
                     killall lxqt-panel && lxqt-panel & disown
                 elif [ "$THIS_DE" = "mate" ]; then
-                    echo "* refreshing MATE icons..."
-                    mate-panel --replace & disown
-                    sleep 3
+                    echo
+                    echo "If the icon doesn't appear, logout or try the following in a terminal:"
+                    echo "  mate-panel --replace & disown"
+                    echo
+                    # sleep 3
                 else
                     echo "WARNING: You may have to restart your panel to see the new shortcut. Your desktop environment \"$THIS_DE\" is unknown, so please report the issue along with this full message."
                 fi
@@ -274,9 +303,10 @@ if [ -f $shortcut_path ]; then
             fi
         fi
     else
-        echo "WARNING: cannot add graphical icon to shortcut since missing $install_src/$icon_img_name."
+        echo "WARNING: cannot add graphical icon to shortcut since missing $icon_img_path."
     fi
 else
     echo "WARNING: cannot add shortcut since missing $shortcut_path."
 fi
 echo "Install is complete."
+

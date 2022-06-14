@@ -63,11 +63,13 @@ else
     echo "  file in itself (this is not ideal, as entries after it may"
     echo "  have been lost, leading to incomplete uninstall)"
 fi
+echo "rmdir \"$PREFIX/lib/$dest_dir_name/share/applications\""
 rmdir "$PREFIX/lib/$dest_dir_name/share/applications"
+echo "rmdir \"$PREFIX/lib/$dest_dir_name/share\""
 rmdir "$PREFIX/lib/$dest_dir_name/share"
+echo "rmdir \"$PREFIX/lib/$dest_dir_name/lib\""
 rmdir "$PREFIX/lib/$dest_dir_name/lib"
-# echo "deleting uninstall.sh..."
-# rm "$PREFIX/lib/$dest_dir_name/uninstall.sh"
+echo "rmdir \"$PREFIX/lib/$dest_dir_name\""
 rmdir "$PREFIX/lib/$dest_dir_name"
 # Statements below won't do anything bad--they only remove dir if empty.
 rmdir --ignore-fail-on-non-empty "$PREFIX/share/applications"
@@ -80,8 +82,8 @@ fi
 if [ -f "$HOME/.var/log/voxelshop/last_run.log" ]; then
     rm "$HOME/.var/log/voxelshop/last_run.log"
 fi
-rmdir --ignore-fail-on-non-empty "$HOME/.var/log/voxelshop"
-rmdir --ignore-fail-on-non-empty "$HOME/.var/log"
-rmdir --ignore-fail-on-non-empty "$HOME/.var"
+rmdir --ignore-fail-on-non-empty "$HOME/.var/log/voxelshop" > /dev/null 2>&1
+rmdir --ignore-fail-on-non-empty "$HOME/.var/log" > /dev/null 2>&1
+rmdir --ignore-fail-on-non-empty "$HOME/.var" > /dev/null 2>&1
 
 echo "Uninstall is complete."
